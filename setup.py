@@ -1,7 +1,11 @@
+""" 
+author : charlie
+date : 20220220
+"""
+
 from setuptools import setup
 
-
-INSTALL_REQUIRES = ["Biopython", "numpy"]
+INSTALL_REQUIRES = ["matplotlib", "numpy", "scipy", "argparse"]
 
 TEST_REQUIRES = [
     # testing and coverage
@@ -14,12 +18,14 @@ TEST_REQUIRES = [
 ]
 
 
+__version__ = "0.0.1"
+long_description = ""
+
 with open("README.md", "r") as fo:
     long_description = fo.read()
 
 with open("GSAT/__init__.py", "r") as fo:
     init = fo.readlines()
-
 for line in init:
     if "__version__" in line:
         __version__ = line.split('"')[-2]
@@ -29,7 +35,7 @@ setup(
     version=__version__,
     author="CharlesHahn",
     author_email="",
-    description="Some tools for GMX results analysis"
+    description="Some tools for GMX results analysis",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/CharlesHahn/GMX_Simple_Analysis_Tool",

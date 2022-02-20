@@ -3,9 +3,9 @@ Written by Charles Hahn.
 Python modules
 ----------------
 The package consists of the following Python modules:
-* GSAT
-* XPM
-* XVG
+* GSAT : the CLI application.
+* XPM  : module to process XPM files.
+* XVG  : module to process XVG files.
 """
 
 __version__ = "0.0.1"
