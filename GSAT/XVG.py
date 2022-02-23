@@ -70,11 +70,11 @@ class XVG(object):
         self.xvg_ylabel = ""
         self.xvg_legends = []
         self.xvg_column_num = 0
-        self.xvg_row_numn = 0
+        self.xvg_row_num = 0
         self.xvg_columns = []
 
-        self.ylabel_list = []
-        self.data = {}
+        self.data_heads = []
+        self.data_columns = []
 
         ## check kand read xpm file
         if not os.path.exists(xvgfile):
@@ -103,7 +103,7 @@ class XVG(object):
                 ## extract the column data part
                 items = line.split()
                 if len(self.xvg_columns) == 0:
-                    self.xvg_columns = [ [] for i in range(len(items)) ]
+                    self.xvg_columns = [ [] for _ in range(len(items)) ]
                     self.xvg_column_num = len(items)
                     self.xvg_row_num = 0
                 if len(items) != len(self.xvg_columns):
@@ -123,24 +123,68 @@ class XVG(object):
             print("Error -> no data line detected in xvg file")
             exit()
 
-        self.data[self.xvg_xlabel] = [ float(c) for c in self.xvg_columns[0] ]
+        self.data_heads.append(self.xvg_xlabel)
+        self.data_columns.append([float(c) for c in self.xvg_columns[0]])
         if len(self.xvg_legends) == 0 and len(self.xvg_columns) > 1:
-            self.ylabel_list.append(self.xvg_ylabel)
-            self.data[self.xvg_ylabel] = [ float(c) for c in self.xvg_columns[1] ]
+            self.data_heads.append(self.xvg_ylabel)
+            self.data_columns.append([float(c) for c in self.xvg_columns[1]])
         if len(self.xvg_legends) > 0 and len(self.xvg_columns) > len(self.xvg_legends):
             items = [ item.strip() for item in self.xvg_ylabel.split(",") ]
-            self.ylabel_list = self.xvg_legends
+            heads = [ l for l in self.xvg_legends]
             if len(items) == len(self.xvg_legends):
                 for i in range(len(items)):
-                    self.ylabel_list[i] += " " + items[i]
-            for i in range(len(self.ylabel_list)):
-                self.data[self.ylabel_list[i]] = [ float(c) for c in self.xvg_columns[i+1]]
+                    heads[i] += " " + items[i]
+            elif len(items) == 1:
+                for i in range(len(self.data_heads)):
+                    heads[i] += " " + items[0]
+            else:
+                print("Warning -> failed to pair ylabels and legends, use legends in xvg file")
+            self.data_heads += heads
+            for i in range(len(heads)):
+                self.data_columns.append([ float(c) for c in self.xvg_columns[i+1]])
+
+        ## test
+        # print(self.xvg_title)
+        # print(self.xvg_xlabel)
+        # print(self.xvg_ylabel)
+        # print(self.xvg_legends)
+        # print(self.xvg_column_num)
+        # print(self.xvg_row_num)
+        # print(len(self.xvg_columns))
+        # print(self.data_heads)
+        # print(len(self.data_columns))
 
         print("Info -> read {} sucessfully".format(self.xvg_filename))
 
 
-    def calc_average(self):
-        pass
+    def calc_average(self, start:int=None, end:int=None) -> tuple:
+        """
+        calculate the average of each column
+
+        parameters:
+            start: the start index 
+            end: the end index
+        return:
+            data_heads: a list contains all data legends
+            column_averages: a list contains all average numbers
+            column_stds: a list contains all standard error numbers
+        """
+
+        if (start != None and end != None) and (start >= end):
+            print("Error -> start index should be less than end index")
+            exit()
+        if (start != None and start >= self.xvg_row_num) or (
+                end != None and end >= self.xvg_row_num):
+            print("Error -> start or end index should be less than the number of rows in xvg file")
+            exit()
+        
+        column_averages = []
+        column_stds = []
+        for column in self.data_columns:
+            column_averages.append(np.average(column[start:end]))
+            column_stds.append(np.std(column[start:end]))
+
+        return self.data_heads, column_averages, column_stds
 
     def calc_mvave(self):
         pass
@@ -170,7 +214,10 @@ def ramachandran(xvgfiles:list=[]):
 
 def main():
     file = sys.argv[1]
-    XVG(file)
+    xvg = XVG(file)
+    heads, aves, stds = xvg.calc_average()
+    for i in range(len(heads)):
+        print("{:>20} {:.2f} {:.2f}".format(heads[i], aves[i], stds[i]))
 
 
 
