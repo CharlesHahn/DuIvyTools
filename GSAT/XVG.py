@@ -16,8 +16,10 @@ import sys
 import math
 import argparse
 import numpy as np
+import scipy.stats as stats
 import matplotlib.pyplot as plt
 from matplotlib import pylab as pylab
+
 
 myparams = {
     "axes.labelsize": "12",
@@ -186,8 +188,46 @@ class XVG(object):
 
         return self.data_heads, column_averages, column_stds
 
-    def calc_mvave(self):
-        pass
+    def calc_mvave(self, windowsize:int=10, confidence:float=0.95) -> tuple:
+        """
+        calculate the moving average of each column
+
+        parameters:
+            windowsize: the window size for calculating moving average
+            confidence: the confidence to calculate interval
+
+        return:
+            data_heads: a list contains all data legends
+            column_mvaves: a list contains all moving average
+            column_highs: the high value of interval of moving averages
+            column_lows: the low value of interval of moving averages
+        """
+
+        if windowsize <=0 or windowsize > int(self.xvg_row_num/2):
+            print("Error -> windowsize value is not proper")
+            exit()
+        if confidence <=0 or confidence >= 1:
+            print("Error -> confidence value is not proper, it should be in (0,1)")
+            exit()
+
+        column_mvaves, column_highs, column_lows = [], [], []
+        for column in self.data_columns:
+            mv_ave = [ np.nan for _ in range(windowsize)]
+            high   = [ np.nan for _ in range(windowsize)]
+            low    = [ np.nan for _ in range(windowsize)]
+            for i in range(windowsize, self.xvg_row_num):
+                window_data = column[i-windowsize:i]
+                ave = np.mean(window_data)
+                std = np.std(window_data)
+                interval = stats.norm.interval(confidence, ave, std)
+                mv_ave.append(ave)
+                low.append(interval[0])
+                high.append(interval[1])
+            column_mvaves.append(mv_ave)
+            column_lows.append(low)
+            column_highs.append(high)
+
+        return self.data_heads, column_mvaves, column_highs, column_lows
 
     def xvg2csv(self):
         pass
