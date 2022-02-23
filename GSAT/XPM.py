@@ -10,6 +10,7 @@ This module contains:
 
 This file is provided to you under GPLv2 License"""
 
+## TODO: data convertion and process in XPM class
 
 import os
 import math
@@ -43,7 +44,7 @@ myparams = {
 pylab.rcParams.update(myparams)
 
 
-class XPM:
+class XPM(object):
     """class XPM was defined to process xpm files
 
     Attributes:
