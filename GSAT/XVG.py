@@ -1,6 +1,10 @@
-"""
+"""This module is part of GMX_Simple_Analysis_Tool library. Written by CharlesHahn.
+
 XVG module contains the code to process xvg files, including read information from xvg file, visualization, and data convertion.
-"""
+
+This module requires Numpy, Matplotlib and argparse. 
+
+This file is provided to you under GPLv2 License"""
 
 import os
 import math

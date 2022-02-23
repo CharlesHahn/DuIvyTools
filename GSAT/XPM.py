@@ -1,6 +1,15 @@
-""" 
-XPM module contains the code to process xpm files, including ges information from xpm, visualization and data convertion. Written by DuIvy.
-"""
+"""This module is part of GMX_Simple_Analysis_Tool library. Written by CharlesHahn.
+
+XPM module process xpm files, including get information from xpm, visualization and data convertion. 
+
+This module requires Numpy, Scipy, Matplotlib and argparse. 
+
+This module contains:
+    class XPM
+    function xpm_combine
+
+This file is provided to you under GPLv2 License"""
+
 
 import os
 import math
@@ -35,10 +44,51 @@ pylab.rcParams.update(myparams)
 
 
 class XPM:
-    """class XPM was defined to process xpmfiles"""
+    """class XPM was defined to process xpm files
+
+    Attributes:
+    xpmfile: the name of xpm file
+    xpm_title: the title of xpm file
+    xpm_legend: the legend of xpm file
+    xpm_type: two type of xpm file, "Continuous", "Discrete"
+    xpm_xlabel: the x-label of xpm file
+    xpm_ylabel: the y-label of xpm file
+    xpm_width: the width of xpm file
+    xpm_height: the height of xpm file
+    xpm_color_num: the number of colors in xpm file
+    xpm_char_per_pixel: the number of chars to represent a pixel of xpm figure
+    chars: a list to store the chars which reprent pixels in xpm figure
+    colors: a list to store the colors in xpm figure
+    notes: a list to store the notes (comments to chars and colors) in xpm figure
+    colors_rgb: a list of colors in rgb type
+    xpm_xaxis: a list to store x-axis values
+    xpm_yaxis: a list to store y-axis values
+    xpm_datalines: a list to store each line of xpm figure content
+
+    Methods:
+    get_scatter_data(self): convert xpm figure content to scatter data
+        return: 
+            scatter_x, scatter_y, x, y, v
+    xpm2csv(self, outcsv: str = ""): convert xpm data to csv data
+            outcsv: the output csv file name
+    xpm2gpl(self, outgpl: str = ""): convert xpm data to gnuplot script
+            outgpl: the output gpl file name
+    draw_origin(self, IP: bool = False, outputpng: str = None, noshow: bool = False): draw xpm by plt.imshow()
+            IP : whether to do interpolation
+            outputpng : the output figure file name
+            noshow: whether not to show figure, useful for computer without GUI
+    draw_pcm(self, IP: bool = False, outputpng: str = None, noshow: bool = False): draw xpm by plt.pcolormesh()
+            IP : whether to do interpolation
+            outputpng : the output figure file name
+            noshow: whether not to show figure, useful for computer without GUI
+    draw_3D(self, IP: bool = False, outputpng: str = None, noshow: bool = False): draw xpm in 3D style
+            IP : whether to do interpolation
+            outputpng : the output figure file name
+            noshow: whether not to show figure, useful for computer without GUI
+    """
 
     def __init__(self, xpmfile):
-        """read xpm file and get infos"""
+        """read xpm file and save infos to class xpm"""
 
         self.xpmfile = xpmfile
         self.xpm_title = ""
@@ -239,7 +289,8 @@ class XPM:
 
     def xpm2csv(self, outcsv: str = "") -> None:
         """convert xpm file to csv file
-        outcsv: the name of output csv file"""
+            outcsv: the name of output csv file
+        """
 
         if outcsv == "":
             outcsv = self.xpmfile[:-4] + ".csv"
@@ -269,7 +320,8 @@ class XPM:
 
     def xpm2gpl(self, outgpl: str = "") -> None:
         """convert xpm file to gnuplot script
-        outgpl: the name of output gnuplot script"""
+            outgpl: the name of output gnuplot script
+        """
 
         ## check files
         if outgpl == "":
@@ -348,9 +400,9 @@ class XPM:
         self, IP: bool = False, outputpng: str = None, noshow: bool = False
     ) -> None:
         """draw xpm figure by plt.imshow
-        IP : whether to interpolation
-        outputpng: the name for figure output
-        noshow: whether not to show figure, useful for PC without gui
+            IP : whether to interpolation
+            outputpng: the name for figure output
+            noshow: whether not to show figure, useful for PC without gui
         """
 
         ## check parameters
@@ -458,9 +510,9 @@ class XPM:
         self, IP: bool = False, outputpng: str = None, noshow: bool = False
     ) -> None:
         """draw xpm figure by pcolormesh (with interpolation)
-        IP : whether to interpolation
-        outputpng: the name for figure output
-        noshow: whether not to show figure, useful for PC without gui
+            IP : whether to interpolation
+            outputpng: the name for figure output
+            noshow: whether not to show figure, useful for PC without gui
         """
 
         ## check parameters
@@ -525,9 +577,9 @@ class XPM:
         self, IP: bool = False, outputpng: str = None, noshow: bool = False
     ) -> None:
         """draw xpm 3D figure (with interpolation)
-        IP : whether to interpolation
-        outputpng: the name for figure output
-        noshow: whether not to show figure, useful for PC without gui
+            IP : whether to interpolation
+            outputpng: the name for figure output
+            noshow: whether not to show figure, useful for PC without gui
         """
 
         ## check parameters
@@ -620,9 +672,9 @@ def xpm_combine(
     xpm_files: list = [], outputpng: str = None, noshow: bool = False
 ) -> None:
     """Combination of xpm files, still in construction, not suggest to use it
-    xpm_file_list : a list contains all xpm file names
-    outputpng : the name for figure output
-    noshow: whether not to show figure, useful for PC without gui
+        xpm_file_list : a list contains all xpm file names
+        outputpng : the name for figure output
+        noshow: whether not to show figure, useful for PC without gui
     """
 
     x_list, y_list = [], []
