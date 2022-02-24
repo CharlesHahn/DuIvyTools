@@ -17,6 +17,8 @@ import math
 import argparse
 import numpy as np
 import scipy.stats as stats
+import seaborn as sns
+from cycler import cycler
 import matplotlib.pyplot as plt
 from matplotlib import pylab as pylab
 
@@ -25,9 +27,9 @@ myparams = {
     "axes.labelsize": "12",
     "xtick.labelsize": "12",
     "ytick.labelsize": "12",
-    "ytick.left": False,
+    "ytick.left": True,
     "ytick.direction": "in",
-    "xtick.bottom": False,
+    "xtick.bottom": True,
     "xtick.direction": "in",
     "lines.linewidth": "2",
     "axes.linewidth": "1",
@@ -39,6 +41,10 @@ myparams = {
     "font.size": 12,
     "figure.dpi": 150,
     "savefig.dpi": 300,
+    # "axes.prop_cycle": cycler("color", ["#999999", "#287885", "#9AC9DB", "#F8AC8C", "#E64B35"]),
+    "axes.prop_cycle": cycler("color", ["#38A7D0", "#F67088", "#66C2A5", "#FC8D62", "#8DA0CB",
+                                        "#E78AC3", "#A6D854", "#FFD92F", "#E5C494", "#B3B3B3", 
+                                        "#66C2A5", "#FC8D62"]),
 }
 pylab.rcParams.update(myparams)
 
@@ -251,13 +257,22 @@ def energy_compute(xvgfiles:list=[]):
 def ramachandran(xvgfiles:list=[]):
     pass
 
+def average_bar_draw(xvgfiles:list=[]):
+    pass
+
 
 def main():
     file = sys.argv[1]
     xvg = XVG(file)
-    heads, aves, stds = xvg.calc_average()
-    for i in range(len(heads)):
-        print("{:>20} {:.2f} {:.2f}".format(heads[i], aves[i], stds[i]))
+    heads, mvaves, highs, lows = xvg.calc_mvave(100, 0.90)
+    for i in range(1, len(heads)):
+        # print("{:>20} {:.2f} {:.2f}".format(heads[i], mvaves[i], highs[i], lows[i]))
+        print(heads[i])
+        plt.plot(xvg.data_columns[0], xvg.data_columns[i])
+        plt.plot(xvg.data_columns[0], mvaves[i])
+        plt.plot(xvg.data_columns[0], highs[i])
+        plt.plot(xvg.data_columns[0], lows[i])
+        plt.show()
 
 
 
