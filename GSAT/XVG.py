@@ -151,15 +151,15 @@ class XVG(object):
                 self.data_columns.append([ float(c) for c in self.xvg_columns[i+1]])
 
         ## test
-        print(self.xvg_title)
-        print(self.xvg_xlabel)
-        print(self.xvg_ylabel)
-        print(self.xvg_legends)
-        print(self.xvg_column_num)
-        print(self.xvg_row_num)
-        print(len(self.xvg_columns))
-        print(self.data_heads)
-        print(len(self.data_columns))
+        # print(self.xvg_title)
+        # print(self.xvg_xlabel)
+        # print(self.xvg_ylabel)
+        # print(self.xvg_legends)
+        # print(self.xvg_column_num)
+        # print(self.xvg_row_num)
+        # print(len(self.xvg_columns))
+        # print(self.data_heads)
+        # print(len(self.data_columns))
 
         print("Info -> read {} successfully. ".format(self.xvg_filename))
 
@@ -266,10 +266,35 @@ class XVG(object):
 
         print("Info -> convert {} into {} successfully.".format(self.xvg_filename, outcsv))
 
-    def draw(self):
-        pass
+    def draw(self) -> None:
+        """
+        draw xvg data into figure
+        """
+
+        column_num = len(self.data_columns)
+        x_min = np.min(self.data_columns[0])
+        x_max = np.max(self.data_columns[0])
+        x_space = int((x_max - x_min)/100)
+        for i in range(1, column_num):
+            ax = plt.subplot(column_num-1, 1, i)
+            ax.plot(self.data_columns[0], self.data_columns[i])
+            ax.set_ylabel(self.data_heads[i])
+            plt.xlim(int(x_min - x_space), int(x_max + x_space))
+            if i == column_num-1:
+                plt.xlabel(self.data_heads[0])
+            if i != column_num-1:
+                ax.set_xticks([])
+            if i == 1:
+                plt.title(self.xvg_title)
+        plt.show()
 
     def draw_distribution(self):
+        pass
+
+    def draw_stacking(self):
+        pass
+
+    def draw_scatter(self):
         pass
 
 
@@ -295,7 +320,7 @@ def average_bar_draw(xvgfiles:list=[]):
 def main():
     file = sys.argv[1]
     xvg = XVG(file)
-    xvg.xvg2csv("test.csv")
+    xvg.draw()
 
     """
     heads, mvaves, highs, lows = xvg.calc_mvave(100, 0.90)
