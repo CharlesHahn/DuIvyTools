@@ -162,7 +162,7 @@ class XVG(object):
             if len(items) == len(self.xvg_legends):
                 for i in range(len(items)):
                     heads[i] += " " + items[i]
-            elif len(items) == 1:
+            elif len(items) == 1 and len(items[0]) < 5:
                 for i in range(len(heads)):
                     heads[i] += " " + items[0]
             else:
@@ -386,8 +386,31 @@ class XVG(object):
         plt.tight_layout()
         plt.show()
 
-    def draw_stacking(self):
-        pass
+    def draw_stacking(self, column_index2start_stack:int=1) -> None:
+        """ 
+        draw xvg data into stacking figure
+        """
+
+        ylim_max, ylim_min = 0, 0
+        for stack_index in range(column_index2start_stack, len(self.data_columns)):
+            stack_data = [sum([self.data_columns[i][row] for i in range(
+                stack_index, len(self.data_columns))]) for row in range(self.xvg_row_num)]
+            # plt.plot(self.data_columns[0], stack_data, label=self.data_heads[stack_index])
+            plt.fill_between(self.data_columns[0], stack_data,
+                             [0 for _ in range(len(stack_data))], 
+                             label=self.data_heads[stack_index])
+            ylim_max = (ylim_max, np.max(stack_data))[ylim_max < np.max(stack_data)]
+            ylim_min = (ylim_min, np.min(stack_data))[ylim_min > np.min(stack_data)]
+        plt.xlabel(self.data_heads[0])
+        plt.ylabel(self.xvg_ylabel)
+        plt.title("Stacked plot of " + self.xvg_title)
+        plt.xlim(np.min(self.data_columns[0]), np.max(self.data_columns[0]))
+        plt.ylim(ylim_min, ylim_max)
+        plt.legend()
+        plt.show()
+
+
+
 
     def draw_scatter(self):
         pass
@@ -420,19 +443,18 @@ def average_box_draw(xvgfiles: list = []):
 def main():
     file = sys.argv[1]
     xvg = XVG(file)
-    """
-    xvg.draw()
-    xvg.draw_distribution(100)
-    heads, mvaves, highs, lows = xvg.calc_mvave(100, 0.90)
-    for i in range(1, len(heads)):
-        # print("{:>20} {:.2f} {:.2f}".format(heads[i], mvaves[i], highs[i], lows[i]))
-        print(heads[i])
-        plt.plot(xvg.data_columns[0], xvg.data_columns[i])
-        plt.plot(xvg.data_columns[0], mvaves[i])
-        plt.plot(xvg.data_columns[0], highs[i])
-        plt.plot(xvg.data_columns[0], lows[i])
-        plt.show()
-    """
+    # xvg.draw()
+    xvg.draw_stacking(2)
+    # xvg.draw_distribution(100)
+    # heads, mvaves, highs, lows = xvg.calc_mvave(100, 0.90)
+    # for i in range(1, len(heads)):
+    #     # print("{:>20} {:.2f} {:.2f}".format(heads[i], mvaves[i], highs[i], lows[i]))
+    #     print(heads[i])
+    #     plt.plot(xvg.data_columns[0], xvg.data_columns[i])
+    #     plt.plot(xvg.data_columns[0], mvaves[i])
+    #     plt.plot(xvg.data_columns[0], highs[i])
+    #     plt.plot(xvg.data_columns[0], lows[i])
+    #     plt.show()
 
 
 if __name__ == "__main__":
