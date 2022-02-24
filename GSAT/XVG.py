@@ -41,7 +41,6 @@ myparams = {
     "font.size": 12,
     "figure.dpi": 150,
     "savefig.dpi": 300,
-    # "axes.prop_cycle": cycler("color", ["#999999", "#287885", "#9AC9DB", "#F8AC8C", "#E64B35"]),
     "axes.prop_cycle": cycler("color", ["#38A7D0", "#F67088", "#66C2A5", "#FC8D62", "#8DA0CB",
                                         "#E78AC3", "#A6D854", "#FFD92F", "#E5C494", "#B3B3B3", 
                                         "#66C2A5", "#FC8D62"]),
@@ -99,7 +98,7 @@ class XVG(object):
             if line.startswith("#") or line.startswith("&"):
                 continue
             elif line.startswith("@"):
-                if "title" in line:
+                if "title" in line and "subtitle" not in line:
                     self.xvg_title = line.strip("\"").split("\"")[-1]
                 elif "xaxis" in line and "label" in line:
                     self.xvg_xlabel = line.strip("\"").split("\"")[-1]
@@ -143,7 +142,7 @@ class XVG(object):
                 for i in range(len(items)):
                     heads[i] += " " + items[i]
             elif len(items) == 1:
-                for i in range(len(self.data_heads)):
+                for i in range(len(heads)):
                     heads[i] += " " + items[0]
             else:
                 print("Warning -> failed to pair ylabels and legends, use legends in xvg file")
@@ -152,17 +151,17 @@ class XVG(object):
                 self.data_columns.append([ float(c) for c in self.xvg_columns[i+1]])
 
         ## test
-        # print(self.xvg_title)
-        # print(self.xvg_xlabel)
-        # print(self.xvg_ylabel)
-        # print(self.xvg_legends)
-        # print(self.xvg_column_num)
-        # print(self.xvg_row_num)
-        # print(len(self.xvg_columns))
-        # print(self.data_heads)
-        # print(len(self.data_columns))
+        print(self.xvg_title)
+        print(self.xvg_xlabel)
+        print(self.xvg_ylabel)
+        print(self.xvg_legends)
+        print(self.xvg_column_num)
+        print(self.xvg_row_num)
+        print(len(self.xvg_columns))
+        print(self.data_heads)
+        print(len(self.data_columns))
 
-        print("Info -> read {} sucessfully".format(self.xvg_filename))
+        print("Info -> read {} successfully. ".format(self.xvg_filename))
 
 
     def calc_average(self, start:int=None, end:int=None) -> tuple:
@@ -235,10 +234,42 @@ class XVG(object):
 
         return self.data_heads, column_mvaves, column_highs, column_lows
 
-    def xvg2csv(self):
-        pass
+    def xvg2csv(self, outcsv:str="") -> None:
+        """
+        convert xvg data into csv file
+
+        parameters:
+            outcsv: the csv file name for output
+        """
+
+        ## check parameters
+        if outcsv == "":
+            outcsv = self.xvg_filename[:-4] + ".csv"
+        if outcsv[-4:] != ".csv":
+            print("Error -> please specify a csv file name with suffix .csv")
+            exit()
+        if os.path.exists(outcsv):
+            print("Error -> already a {} in current directory".format(outcsv))
+            exit()
+
+        ## write csv file
+        out_data = []
+        if len(self.data_columns) == len(self.xvg_columns):
+            out_data = [ column for column in self.data_columns ]
+        elif len(self.data_columns) < len(self.xvg_columns):
+            out_data = [ column for column in self.data_columns ]
+            out_data += [column for column in self.xvg_columns[len(self.data_columns):] ]
+        with open(outcsv, 'w') as fo:
+            fo.write(",".join(self.data_heads) + "\n")
+            for row in range(self.xvg_row_num):
+                fo.write(",".join([str(column[row]) for column in out_data]) + "\n")
+
+        print("Info -> convert {} into {} successfully.".format(self.xvg_filename, outcsv))
 
     def draw(self):
+        pass
+
+    def draw_distribution(self):
         pass
 
 
@@ -264,6 +295,9 @@ def average_bar_draw(xvgfiles:list=[]):
 def main():
     file = sys.argv[1]
     xvg = XVG(file)
+    xvg.xvg2csv("test.csv")
+
+    """
     heads, mvaves, highs, lows = xvg.calc_mvave(100, 0.90)
     for i in range(1, len(heads)):
         # print("{:>20} {:.2f} {:.2f}".format(heads[i], mvaves[i], highs[i], lows[i]))
@@ -273,6 +307,7 @@ def main():
         plt.plot(xvg.data_columns[0], highs[i])
         plt.plot(xvg.data_columns[0], lows[i])
         plt.show()
+    """
 
 
 
