@@ -275,21 +275,67 @@ class XVG(object):
         x_min = np.min(self.data_columns[0])
         x_max = np.max(self.data_columns[0])
         x_space = int((x_max - x_min)/100)
+        grid = (plt.GridSpec(1, column_num), plt.GridSpec(2, int(column_num/2)))[column_num > 2]
         for i in range(1, column_num):
-            ax = plt.subplot(column_num-1, 1, i)
+            ## use grid for subplots layout
+            if i == column_num -1:
+                ax = plt.subplot(grid[(1, 0)[i-1 < int((column_num)/2)], (i-1)%int((column_num)/2):])
+            else:
+                ax = plt.subplot(grid[(1, 0)[i-1 < int((column_num)/2)], (i-1)%int((column_num)/2)])
             ax.plot(self.data_columns[0], self.data_columns[i])
             ax.set_ylabel(self.data_heads[i])
             plt.xlim(int(x_min - x_space), int(x_max + x_space))
-            if i == column_num-1:
-                plt.xlabel(self.data_heads[0])
-            if i != column_num-1:
-                ax.set_xticks([])
-            if i == 1:
-                plt.title(self.xvg_title)
+            plt.xlabel(self.data_heads[0])
+        plt.suptitle(self.xvg_title)
+        plt.tight_layout()
         plt.show()
 
-    def draw_distribution(self):
-        pass
+    def draw_distribution(self, bin:int=100) -> None:
+        """
+        calculate the distribution of each column and draw
+
+        parameters:
+            bin: the bin size of frequency calculation
+        """
+
+        column_num = len(self.data_columns)
+        grid = plt.GridSpec(2, int((column_num+1)/2))
+        for i in range(column_num):
+            column = self.data_columns[i]
+            ## calculate distribution
+            column_min = np.min(column)
+            column_max = np.max(column)
+            bin_window = (column_max - column_min)/bin
+            if bin_window != 0:
+                frequency = [ 0 for _ in range(bin) ]
+                for value in column:
+                    index = int((value - column_min)/bin_window)
+                    if index == bin:  # for the column_max
+                        index = bin-1
+                    frequency[index] += 1
+                if sum(frequency) != self.xvg_row_num:
+                    print("Error -> wrong in calculating distribution")
+                    exit()
+                frequency = [ f*100.0/self.xvg_row_num for f in frequency ]
+                x_value = [ column_min + bin_window*b for b in range(bin)]
+            else:   # for data without fluctuation
+                frequency = [1]
+                x_value = [column_min]
+            ## draw distribution
+            if i == column_num -1:
+                ax = plt.subplot(grid[(1, 0)[i < int((column_num+1)/2)], i%int((column_num+1)/2):])
+            else:
+                ax = plt.subplot(grid[(1, 0)[i < int((column_num+1)/2)], i%int((column_num+1)/2)])
+            # ax = plt.subplot(int((column_num+1)/2), 2, i+1)
+            ax.plot(x_value, frequency)
+            ax.set_xlabel(self.data_heads[i])
+            ax.set_ylabel("Frequency %")
+            plt.xlim(column_min-bin_window, column_max+bin_window)
+        plt.suptitle("Frequency of " + self.xvg_title)
+        plt.tight_layout()
+        plt.show()
+
+
 
     def draw_stacking(self):
         pass
@@ -316,13 +362,16 @@ def ramachandran(xvgfiles:list=[]):
 def average_bar_draw(xvgfiles:list=[]):
     pass
 
+def average_box_draw(xvgfiles:list=[]):
+    pass
+
 
 def main():
     file = sys.argv[1]
     xvg = XVG(file)
-    xvg.draw()
-
     """
+    xvg.draw()
+    xvg.draw_distribution(100)
     heads, mvaves, highs, lows = xvg.calc_mvave(100, 0.90)
     for i in range(1, len(heads)):
         # print("{:>20} {:.2f} {:.2f}".format(heads[i], mvaves[i], highs[i], lows[i]))
