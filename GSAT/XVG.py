@@ -17,7 +17,6 @@ import math
 import argparse
 import numpy as np
 import scipy.stats as stats
-import seaborn as sns
 from cycler import cycler
 import matplotlib.pyplot as plt
 from matplotlib import pylab as pylab
@@ -41,9 +40,23 @@ myparams = {
     "font.size": 12,
     "figure.dpi": 150,
     "savefig.dpi": 300,
-    "axes.prop_cycle": cycler("color", ["#38A7D0", "#F67088", "#66C2A5", "#FC8D62", "#8DA0CB",
-                                        "#E78AC3", "#A6D854", "#FFD92F", "#E5C494", "#B3B3B3", 
-                                        "#66C2A5", "#FC8D62"]),
+    "axes.prop_cycle": cycler(
+        "color",
+        [
+            "#38A7D0",
+            "#F67088",
+            "#66C2A5",
+            "#FC8D62",
+            "#8DA0CB",
+            "#E78AC3",
+            "#A6D854",
+            "#FFD92F",
+            "#E5C494",
+            "#B3B3B3",
+            "#66C2A5",
+            "#FC8D62",
+        ],
+    ),
 }
 pylab.rcParams.update(myparams)
 
@@ -68,8 +81,8 @@ class XVG(object):
     draw: draw xvg data to figure
     """
 
-    def __init__(self, xvgfile:str = "") -> None:
-        """ read xvg file and extract infos """
+    def __init__(self, xvgfile: str = "") -> None:
+        """read xvg file and extract infos"""
 
         self.xvg_filename = xvgfile
         self.xvg_title = ""
@@ -99,22 +112,26 @@ class XVG(object):
                 continue
             elif line.startswith("@"):
                 if "title" in line and "subtitle" not in line:
-                    self.xvg_title = line.strip("\"").split("\"")[-1]
+                    self.xvg_title = line.strip('"').split('"')[-1]
                 elif "xaxis" in line and "label" in line:
-                    self.xvg_xlabel = line.strip("\"").split("\"")[-1]
+                    self.xvg_xlabel = line.strip('"').split('"')[-1]
                 elif "yaxis" in line and "label" in line:
-                    self.xvg_ylabel = line.strip("\"").split("\"")[-1]
+                    self.xvg_ylabel = line.strip('"').split('"')[-1]
                 elif line.startswith("@ s") and "legend" in line:
-                    self.xvg_legends.append(line.strip("\"").split("\"")[-1])
+                    self.xvg_legends.append(line.strip('"').split('"')[-1])
             else:
                 ## extract the column data part
                 items = line.split()
                 if len(self.xvg_columns) == 0:
-                    self.xvg_columns = [ [] for _ in range(len(items)) ]
+                    self.xvg_columns = [[] for _ in range(len(items))]
                     self.xvg_column_num = len(items)
                     self.xvg_row_num = 0
                 if len(items) != len(self.xvg_columns):
-                    print("Error -> the number of columns in {} is not equal. ".format(self.xvg_filename))
+                    print(
+                        "Error -> the number of columns in {} is not equal. ".format(
+                            self.xvg_filename
+                        )
+                    )
                     print("        " + line)
                     exit()
                 for i in range(len(items)):
@@ -124,7 +141,11 @@ class XVG(object):
         ## post-process the infos
         for c in range(self.xvg_column_num):
             if len(self.xvg_columns[c]) != self.xvg_row_num:
-                print("Error -> length of column {} if not equal to count of rows".format(c))
+                print(
+                    "Error -> length of column {} if not equal to count of rows".format(
+                        c
+                    )
+                )
                 exit()
         if self.xvg_column_num == 0 or self.xvg_row_num == 0:
             print("Error -> no data line detected in xvg file")
@@ -136,8 +157,8 @@ class XVG(object):
             self.data_heads.append(self.xvg_ylabel)
             self.data_columns.append([float(c) for c in self.xvg_columns[1]])
         if len(self.xvg_legends) > 0 and len(self.xvg_columns) > len(self.xvg_legends):
-            items = [ item.strip() for item in self.xvg_ylabel.split(",") ]
-            heads = [ l for l in self.xvg_legends]
+            items = [item.strip() for item in self.xvg_ylabel.split(",")]
+            heads = [l for l in self.xvg_legends]
             if len(items) == len(self.xvg_legends):
                 for i in range(len(items)):
                     heads[i] += " " + items[i]
@@ -145,10 +166,12 @@ class XVG(object):
                 for i in range(len(heads)):
                     heads[i] += " " + items[0]
             else:
-                print("Warning -> failed to pair ylabels and legends, use legends in xvg file")
+                print(
+                    "Warning -> failed to pair ylabels and legends, use legends in xvg file"
+                )
             self.data_heads += heads
             for i in range(len(heads)):
-                self.data_columns.append([ float(c) for c in self.xvg_columns[i+1]])
+                self.data_columns.append([float(c) for c in self.xvg_columns[i + 1]])
 
         ## test
         # print(self.xvg_title)
@@ -163,13 +186,12 @@ class XVG(object):
 
         print("Info -> read {} successfully. ".format(self.xvg_filename))
 
-
-    def calc_average(self, start:int=None, end:int=None) -> tuple:
+    def calc_average(self, start: int = None, end: int = None) -> tuple:
         """
         calculate the average of each column
 
         parameters:
-            start: the start index 
+            start: the start index
             end: the end index
         return:
             data_heads: a list contains all data legends
@@ -181,10 +203,13 @@ class XVG(object):
             print("Error -> start index should be less than end index")
             exit()
         if (start != None and start >= self.xvg_row_num) or (
-                end != None and end >= self.xvg_row_num):
-            print("Error -> start or end index should be less than the number of rows in xvg file")
+            end != None and end >= self.xvg_row_num
+        ):
+            print(
+                "Error -> start or end index should be less than the number of rows in xvg file"
+            )
             exit()
-        
+
         column_averages = []
         column_stds = []
         for column in self.data_columns:
@@ -193,7 +218,7 @@ class XVG(object):
 
         return self.data_heads, column_averages, column_stds
 
-    def calc_mvave(self, windowsize:int=10, confidence:float=0.95) -> tuple:
+    def calc_mvave(self, windowsize: int = 10, confidence: float = 0.95) -> tuple:
         """
         calculate the moving average of each column
 
@@ -208,20 +233,20 @@ class XVG(object):
             column_lows: the low value of interval of moving averages
         """
 
-        if windowsize <=0 or windowsize > int(self.xvg_row_num/2):
+        if windowsize <= 0 or windowsize > int(self.xvg_row_num / 2):
             print("Error -> windowsize value is not proper")
             exit()
-        if confidence <=0 or confidence >= 1:
+        if confidence <= 0 or confidence >= 1:
             print("Error -> confidence value is not proper, it should be in (0,1)")
             exit()
 
         column_mvaves, column_highs, column_lows = [], [], []
         for column in self.data_columns:
-            mv_ave = [ np.nan for _ in range(windowsize)]
-            high   = [ np.nan for _ in range(windowsize)]
-            low    = [ np.nan for _ in range(windowsize)]
+            mv_ave = [np.nan for _ in range(windowsize)]
+            high = [np.nan for _ in range(windowsize)]
+            low = [np.nan for _ in range(windowsize)]
             for i in range(windowsize, self.xvg_row_num):
-                window_data = column[i-windowsize:i]
+                window_data = column[i - windowsize : i]
                 ave = np.mean(window_data)
                 std = np.std(window_data)
                 interval = stats.norm.interval(confidence, ave, std)
@@ -234,7 +259,7 @@ class XVG(object):
 
         return self.data_heads, column_mvaves, column_highs, column_lows
 
-    def xvg2csv(self, outcsv:str="") -> None:
+    def xvg2csv(self, outcsv: str = "") -> None:
         """
         convert xvg data into csv file
 
@@ -255,16 +280,20 @@ class XVG(object):
         ## write csv file
         out_data = []
         if len(self.data_columns) == len(self.xvg_columns):
-            out_data = [ column for column in self.data_columns ]
+            out_data = [column for column in self.data_columns]
         elif len(self.data_columns) < len(self.xvg_columns):
-            out_data = [ column for column in self.data_columns ]
-            out_data += [column for column in self.xvg_columns[len(self.data_columns):] ]
-        with open(outcsv, 'w') as fo:
+            out_data = [column for column in self.data_columns]
+            out_data += [
+                column for column in self.xvg_columns[len(self.data_columns) :]
+            ]
+        with open(outcsv, "w") as fo:
             fo.write(",".join(self.data_heads) + "\n")
             for row in range(self.xvg_row_num):
                 fo.write(",".join([str(column[row]) for column in out_data]) + "\n")
 
-        print("Info -> convert {} into {} successfully.".format(self.xvg_filename, outcsv))
+        print(
+            "Info -> convert {} into {} successfully.".format(self.xvg_filename, outcsv)
+        )
 
     def draw(self) -> None:
         """
@@ -274,14 +303,26 @@ class XVG(object):
         column_num = len(self.data_columns)
         x_min = np.min(self.data_columns[0])
         x_max = np.max(self.data_columns[0])
-        x_space = int((x_max - x_min)/100)
-        grid = (plt.GridSpec(1, column_num), plt.GridSpec(2, int(column_num/2)))[column_num > 2]
+        x_space = int((x_max - x_min) / 100)
+        grid = (plt.GridSpec(1, column_num), plt.GridSpec(2, int(column_num / 2)))[
+            column_num > 2
+        ]
         for i in range(1, column_num):
             ## use grid for subplots layout
-            if i == column_num -1:
-                ax = plt.subplot(grid[(1, 0)[i-1 < int((column_num)/2)], (i-1)%int((column_num)/2):])
+            if i == column_num - 1:
+                ax = plt.subplot(
+                    grid[
+                        (1, 0)[i - 1 < int((column_num) / 2)],
+                        (i - 1) % int((column_num) / 2) :,
+                    ]
+                )
             else:
-                ax = plt.subplot(grid[(1, 0)[i-1 < int((column_num)/2)], (i-1)%int((column_num)/2)])
+                ax = plt.subplot(
+                    grid[
+                        (1, 0)[i - 1 < int((column_num) / 2)],
+                        (i - 1) % int((column_num) / 2),
+                    ]
+                )
             ax.plot(self.data_columns[0], self.data_columns[i])
             ax.set_ylabel(self.data_heads[i])
             plt.xlim(int(x_min - x_space), int(x_max + x_space))
@@ -290,7 +331,7 @@ class XVG(object):
         plt.tight_layout()
         plt.show()
 
-    def draw_distribution(self, bin:int=100) -> None:
+    def draw_distribution(self, bin: int = 100) -> None:
         """
         calculate the distribution of each column and draw
 
@@ -299,43 +340,51 @@ class XVG(object):
         """
 
         column_num = len(self.data_columns)
-        grid = plt.GridSpec(2, int((column_num+1)/2))
+        grid = plt.GridSpec(2, int((column_num + 1) / 2))
         for i in range(column_num):
             column = self.data_columns[i]
             ## calculate distribution
             column_min = np.min(column)
             column_max = np.max(column)
-            bin_window = (column_max - column_min)/bin
+            bin_window = (column_max - column_min) / bin
             if bin_window != 0:
-                frequency = [ 0 for _ in range(bin) ]
+                frequency = [0 for _ in range(bin)]
                 for value in column:
-                    index = int((value - column_min)/bin_window)
+                    index = int((value - column_min) / bin_window)
                     if index == bin:  # for the column_max
-                        index = bin-1
+                        index = bin - 1
                     frequency[index] += 1
                 if sum(frequency) != self.xvg_row_num:
                     print("Error -> wrong in calculating distribution")
                     exit()
-                frequency = [ f*100.0/self.xvg_row_num for f in frequency ]
-                x_value = [ column_min + bin_window*b for b in range(bin)]
-            else:   # for data without fluctuation
+                frequency = [f * 100.0 / self.xvg_row_num for f in frequency]
+                x_value = [column_min + bin_window * b for b in range(bin)]
+            else:  # for data without fluctuation
                 frequency = [1]
                 x_value = [column_min]
             ## draw distribution
-            if i == column_num -1:
-                ax = plt.subplot(grid[(1, 0)[i < int((column_num+1)/2)], i%int((column_num+1)/2):])
+            if i == column_num - 1:
+                ax = plt.subplot(
+                    grid[
+                        (1, 0)[i < int((column_num + 1) / 2)],
+                        i % int((column_num + 1) / 2) :,
+                    ]
+                )
             else:
-                ax = plt.subplot(grid[(1, 0)[i < int((column_num+1)/2)], i%int((column_num+1)/2)])
+                ax = plt.subplot(
+                    grid[
+                        (1, 0)[i < int((column_num + 1) / 2)],
+                        i % int((column_num + 1) / 2),
+                    ]
+                )
             # ax = plt.subplot(int((column_num+1)/2), 2, i+1)
             ax.plot(x_value, frequency)
             ax.set_xlabel(self.data_heads[i])
             ax.set_ylabel("Frequency %")
-            plt.xlim(column_min-bin_window, column_max+bin_window)
+            plt.xlim(column_min - bin_window, column_max + bin_window)
         plt.suptitle("Frequency of " + self.xvg_title)
         plt.tight_layout()
         plt.show()
-
-
 
     def draw_stacking(self):
         pass
@@ -344,25 +393,27 @@ class XVG(object):
         pass
 
 
-def xvg_combine(xvgfiles:list=[]):
+def xvg_combine(xvgfiles: list = []):
     pass
 
 
-def xvg_compare(xvgfiles:list=[]):
+def xvg_compare(xvgfiles: list = []):
     pass
 
 
-def energy_compute(xvgfiles:list=[]):
+def energy_compute(xvgfiles: list = []):
     pass
 
 
-def ramachandran(xvgfiles:list=[]):
+def ramachandran(xvgfiles: list = []):
     pass
 
-def average_bar_draw(xvgfiles:list=[]):
+
+def average_bar_draw(xvgfiles: list = []):
     pass
 
-def average_box_draw(xvgfiles:list=[]):
+
+def average_box_draw(xvgfiles: list = []):
     pass
 
 
@@ -384,9 +435,5 @@ def main():
     """
 
 
-
-
-
 if __name__ == "__main__":
     main()
-
