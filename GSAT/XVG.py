@@ -386,31 +386,64 @@ class XVG(object):
         plt.tight_layout()
         plt.show()
 
-    def draw_stacking(self, column_index2start_stack:int=1) -> None:
-        """ 
+    def draw_stacking(
+        self, column_index2start: int = 1, column_index2end: int = None
+    ) -> None:
+        """
         draw xvg data into stacking figure
         """
 
+        ## check parameters
+        if column_index2start >= len(self.data_columns):
+            print(
+                "Warning -> column_index2start not in proper range, use default value."
+            )
+            column_index2end = 1
+        if column_index2end == None:
+            column_index2end = len(self.data_columns)
+        else:
+            if column_index2end <= column_index2start or column_index2end > len(
+                self.data_columns
+            ):
+                print(
+                    "Warning -> column_index2end not in proper range, use default value."
+                )
+                column_index2end = len(self.data_columns)
+
+        ## draw stacked plot
         ylim_max, ylim_min = 0, 0
-        for stack_index in range(column_index2start_stack, len(self.data_columns)):
-            stack_data = [sum([self.data_columns[i][row] for i in range(
-                stack_index, len(self.data_columns))]) for row in range(self.xvg_row_num)]
+        for stack_index in range(column_index2start, column_index2end):
+            stack_data = [
+                sum(
+                    [
+                        self.data_columns[i][row]
+                        for i in range(
+                            column_index2start,
+                            column_index2end - (stack_index - column_index2start),
+                        )
+                    ]
+                )
+                for row in range(self.xvg_row_num)
+            ]
             # plt.plot(self.data_columns[0], stack_data, label=self.data_heads[stack_index])
-            plt.fill_between(self.data_columns[0], stack_data,
-                             [0 for _ in range(len(stack_data))], 
-                             label=self.data_heads[stack_index])
-            ylim_max = (ylim_max, np.max(stack_data))[ylim_max < np.max(stack_data)]
-            ylim_min = (ylim_min, np.min(stack_data))[ylim_min > np.min(stack_data)]
+            plt.fill_between(
+                self.data_columns[0],
+                stack_data,
+                [0 for _ in range(len(stack_data))],
+                label=self.data_heads[
+                    column_index2end + column_index2start - stack_index - 1
+                ],
+            )
+            ylim_max = (ylim_max, max(stack_data))[ylim_max < max(stack_data)]
+            ylim_min = (ylim_min, min(stack_data))[ylim_min > min(stack_data)]
+        # print(ylim_min, ylim_max)
         plt.xlabel(self.data_heads[0])
         plt.ylabel(self.xvg_ylabel)
         plt.title("Stacked plot of " + self.xvg_title)
         plt.xlim(np.min(self.data_columns[0]), np.max(self.data_columns[0]))
         plt.ylim(ylim_min, ylim_max)
-        plt.legend()
+        plt.legend(loc=3)
         plt.show()
-
-
-
 
     def draw_scatter(self):
         pass
@@ -444,7 +477,7 @@ def main():
     file = sys.argv[1]
     xvg = XVG(file)
     # xvg.draw()
-    xvg.draw_stacking(2)
+    xvg.draw_stacking(2, 7)
     # xvg.draw_distribution(100)
     # heads, mvaves, highs, lows = xvg.calc_mvave(100, 0.90)
     # for i in range(1, len(heads)):
