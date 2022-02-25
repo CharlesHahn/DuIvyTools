@@ -135,7 +135,7 @@ class XVG(object):
                             self.xvg_filename
                         )
                     )
-                    print("        " + line)
+                    print("{} -> ".format(self.xvg_row_num) + line)
                     exit()
                 for i in range(len(items)):
                     self.xvg_columns[i].append(items[i])
@@ -165,7 +165,7 @@ class XVG(object):
             if len(items) == len(self.xvg_legends):
                 for i in range(len(items)):
                     heads[i] += " " + items[i]
-            elif len(items) == 1 and len(items[0]) < 5:
+            elif len(items) == 1 and (items[0][0] == "(" and items[0][-1] == ")"):
                 for i in range(len(heads)):
                     heads[i] += " " + items[0]
             else:
@@ -386,6 +386,7 @@ class XVG(object):
             ax.set_ylabel("Frequency %")
             plt.xlim(column_min - bin_window, column_max + bin_window)
         plt.suptitle("Frequency of " + self.xvg_title)
+        # plt.subplots_adjust(wspace=0.8)
         plt.tight_layout()
         plt.show()
 
@@ -484,9 +485,14 @@ class XVG(object):
         plt.show()
 
 
-def xvg_combine(xvgfile_0:str="", xvgfile_1:str="", column_select_0:list=[],
-                column_select_1:list=[], outfilename:str="") -> None:
-    """ 
+def xvg_combine(
+    xvgfile_0: str = "",
+    xvgfile_1: str = "",
+    column_select_0: list = [],
+    column_select_1: list = [],
+    outfilename: str = "",
+) -> None:
+    """
     combine two xvg files by specified column index
 
     parameters:
@@ -514,12 +520,18 @@ def xvg_combine(xvgfile_0:str="", xvgfile_1:str="", column_select_0:list=[],
     if len(column_select_1) == 0:
         column_select_1 = [i for i in range(len(xvg_1.data_columns))]
     if not (set(column_select_0) <= set([i for i in range(len(xvg_0.data_columns))])):
-        print("Error -> column_select_0 should be in proper range, [{},{})".format(
-            0, len(xvg_0.data_columns)))
+        print(
+            "Error -> column_select_0 should be in proper range, [{},{})".format(
+                0, len(xvg_0.data_columns)
+            )
+        )
         exit()
-    if not (set(column_select_1) <= set([ i for i in range(len(xvg_1.data_columns))])):
-        print("Error -> column_select_1 should be in proper range, [{},{})".format(
-            0, len(xvg_1.data_columns)))
+    if not (set(column_select_1) <= set([i for i in range(len(xvg_1.data_columns))])):
+        print(
+            "Error -> column_select_1 should be in proper range, [{},{})".format(
+                0, len(xvg_1.data_columns)
+            )
+        )
         exit()
     if xvg_0.xvg_row_num != xvg_1.xvg_row_num:
         print("Error -> the numbers of rows in your input xvg files are not equal !")
@@ -530,39 +542,190 @@ def xvg_combine(xvgfile_0:str="", xvgfile_1:str="", column_select_0:list=[],
     combined_data_heads += [xvg_1.data_heads[i] for i in column_select_1]
     combined_data_columns = [xvg_0.data_columns[i] for i in column_select_0]
     combined_data_columns += [xvg_1.data_columns[i] for i in column_select_1]
-    combined_title = (" And ".join([xvg_0.xvg_title, xvg_1.xvg_title]), 
-                      xvg_0.xvg_title)[xvg_0.xvg_title == xvg_1.xvg_title]
+    combined_title = (
+        " And ".join([xvg_0.xvg_title, xvg_1.xvg_title]),
+        xvg_0.xvg_title,
+    )[xvg_0.xvg_title == xvg_1.xvg_title]
     combined_xlabel = combined_data_heads[0]
     ## write combined results
-    with open(outfilename, 'w') as fo:
+    with open(outfilename, "w") as fo:
         fo.write("# this file was created by combination of thess two xvg file:\n")
-        fo.write("#     file 0: {}, column index: {};\n".format(
-            xvgfile_0, " ".join([str(i) for i in column_select_0])))
-        fo.write("#     file 1: {}, column index: {};\n".format(
-            xvgfile_1, " ".join([str(i) for i in column_select_1])))
-        fo.write("@    title \"{}\"\n".format(combined_title))
-        fo.write("@    xaxis label \"{}\"\n".format(combined_xlabel))
+        fo.write(
+            "#     file 0: {}, column index: {};\n".format(
+                xvgfile_0, " ".join([str(i) for i in column_select_0])
+            )
+        )
+        fo.write(
+            "#     file 1: {}, column index: {};\n".format(
+                xvgfile_1, " ".join([str(i) for i in column_select_1])
+            )
+        )
+        fo.write('@    title "{}"\n'.format(combined_title))
+        fo.write('@    xaxis label "{}"\n'.format(combined_xlabel))
         fo.write("@TYPE xy\n@ view 0.15, 0.15, 0.75, 0.85\n")
         fo.write("@ legend on\n@ legend box on\n@ legend loctype view\n")
-        fo.write("@ legend 0.78, 0.8\n@ legend length {}\n".format(
-            len(combined_data_heads)-1))
+        fo.write(
+            "@ legend 0.78, 0.8\n@ legend length {}\n".format(
+                len(combined_data_heads) - 1
+            )
+        )
         for s in range(1, len(combined_data_heads)):
-            fo.write("@ s{} legend \"{}\"\n".format(s-1, combined_data_heads[s]))
+            fo.write('@ s{} legend "{}"\n'.format(s - 1, combined_data_heads[s]))
         for row in range(xvg_0.xvg_row_num):
-            fo.write(" ".join(["{:>20.6f}".format(combined_data_columns[i][row]) 
-                            for i in range(len(combined_data_columns))]) + "\n")
-        print("Info -> {} and {} combined sucessfully.".format(xvgfile_0, xvgfile_1))
+            fo.write(
+                " ".join(
+                    [
+                        "{:>20.6f}".format(combined_data_columns[i][row])
+                        for i in range(len(combined_data_columns))
+                    ]
+                )
+                + "\n"
+            )
+    print("Info -> {} and {} combined sucessfully.".format(xvgfile_0, xvgfile_1))
 
 
-def energy_compute(xvgfiles: list = []):
-    pass
+def energy_compute(
+    prolig_xvg: str = "", pro_xvg: str = "", lig_xvg: str = "", outfile: str = ""
+):
+    """
+    compute the interaction between protein and ligand by:
+        binding energy  = prolig energy - pro energy - lig energy
 
+    parameters::
+        prolig_xvg: energy xvg file of prolig
+        pro_xvg: energy xvg file of protein
+        lig_xvg: energy xvg file of ligand
+        outfile: the output xvg file name
 
+    IMPORTANT:
+        the xvg file used here should contain and ONLY contain five columns:
+        Time, LJ(SR), Disper.corr., Coulomb(SR), Coul.recip.
+    """
+
+    ## check parameters
+    for xvgfile in [prolig_xvg, pro_xvg, lig_xvg]:
+        if not os.path.exists(xvgfile):
+            print("Error -> No {} in current directory".format(xvgfile))
+            exit()
+    if os.path.exists(outfile):
+        print("Error -> {} already in current directory".format(outfile))
+        exit()
+    if len(outfile) < 4 or outfile[-4:] != ".xvg":
+        print("Error -> please specify a output filename with suffix .xvg")
+        exit()
+    prolig, pro, lig = XVG(prolig_xvg), XVG(pro_xvg), XVG(lig_xvg)
+    if not (prolig.data_heads == pro.data_heads == lig.data_heads) or (
+        len(prolig.data_heads) != 5
+    ):
+        print(
+            "Error -> three xvg files should contain same number (5) of columns, "
+            + "and the order should be: \n"
+            + "    Time, LJ(SR), Disper.corr., Coulomb(SR), Coul.recip. "
+        )
+        exit()
+    if not (
+        ("Time" in prolig.data_heads[0])
+        and ("LJ" in prolig.data_heads[1])
+        and ("Disper" in prolig.data_heads[2])
+        and ("Coulomb" in prolig.data_heads[3])
+        and ("recip" in prolig.data_heads[4])
+    ):
+        print(
+            "Error ->  the legend order should be: \n"
+            + "    Time, LJ(SR), Disper.corr., Coulomb(SR), Coul.recip. "
+        )
+        exit()
+    if not (prolig.xvg_row_num == pro.xvg_row_num == lig.xvg_row_num):
+        print("Error -> {}, {}, {} should contain same number of rows.")
+        exit()
+    if not (prolig.data_columns[0] == pro.data_columns[0] == lig.data_columns[0]):
+        print("Error -> the Time axis may not be the same, check the interval of time.")
+        exit()
+
+    ## compute the bingding energy
+    ## time
+    out_data = [prolig.data_columns[0]] + [[] for i in range(9)]
+    out_heads = (
+        [prolig.data_heads[0]]
+        + [head for head in prolig.xvg_legends]
+        + ["LJ(all)", "Coulomb(all)", "Short-Range", "Long-Range", "Total Energy"]
+    )
+    ## LJ(SR)
+    out_data[1] = [
+        prolig.data_columns[1][row]
+        - pro.data_columns[1][row]
+        - lig.data_columns[1][row]
+        for row in range(prolig.xvg_row_num)
+    ]
+    ## Disper.corr.
+    out_data[2] = [
+        prolig.data_columns[2][row]
+        - pro.data_columns[2][row]
+        - lig.data_columns[2][row]
+        for row in range(prolig.xvg_row_num)
+    ]
+    ## Coulomb(SR)
+    out_data[3] = [
+        prolig.data_columns[3][row]
+        - pro.data_columns[3][row]
+        - lig.data_columns[3][row]
+        for row in range(prolig.xvg_row_num)
+    ]
+    ## Coul.recip.
+    out_data[4] = [
+        prolig.data_columns[4][row]
+        - pro.data_columns[4][row]
+        - lig.data_columns[4][row]
+        for row in range(prolig.xvg_row_num)
+    ]
+    ## LJ(all)
+    out_data[5] = [
+        out_data[1][row] + out_data[2][row] for row in range(prolig.xvg_row_num)
+    ]
+    ## Coulomb(all)
+    out_data[6] = [
+        out_data[3][row] + out_data[4][row] for row in range(prolig.xvg_row_num)
+    ]
+    ## Short-Range
+    out_data[7] = [
+        out_data[1][row] + out_data[3][row] for row in range(prolig.xvg_row_num)
+    ]
+    ## Long-Range
+    out_data[8] = [
+        out_data[2][row] + out_data[4][row] for row in range(prolig.xvg_row_num)
+    ]
+    ## Total Energy
+    out_data[9] = [
+        out_data[5][row] + out_data[6][row] for row in range(prolig.xvg_row_num)
+    ]
+
+    ## write energy computation results
+    with open(outfile, "w") as fo:
+        fo.write("# this file was created by XVG.energy_compute through: \n")
+        fo.write("#    binding = prolig energy - protein energy - ligand energy\n")
+        fo.write('@    title "{}"\n'.format(prolig.xvg_title))
+        fo.write('@    xaxis label "{}"\n'.format(out_heads[0]))
+        fo.write('@    yaxis label "{}"\n'.format("(kJ/mol)"))
+        fo.write("@TYPE xy\n@ view 0.15, 0.15, 0.75, 0.85\n")
+        fo.write("@ legend on\n@ legend box on\n@ legend loctype view\n")
+        fo.write("@ legend 0.78, 0.8\n@ legend length 9\n")
+        for s in range(1, 10):
+            fo.write('@ s{} legend "{}"\n'.format(s - 1, out_heads[s]))
+        for row in range(prolig.xvg_row_num):
+            fo.write(
+                " ".join(["{:>16.6f}".format(out_data[i][row]) for i in range(10)])
+                + "\n"
+            )
+
+    print(
+        "Info -> energy computation through {}, {} and {} sucessfully.".format(
+            prolig_xvg, pro_xvg, lig_xvg
+        )
+    )
 
 
 def xvg_compare(xvgfiles: list = []):
     pass
-
 
 
 def ramachandran(xvgfiles: list = []):
@@ -579,7 +742,6 @@ def average_box_draw(xvgfiles: list = []):
 
 def main():
     file = sys.argv[1]
-
     # xvg = XVG(file)
     # xvg.draw()
     # xvg.draw_stacking(2, 7)
