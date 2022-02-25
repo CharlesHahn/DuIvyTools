@@ -391,6 +391,10 @@ class XVG(object):
     ) -> None:
         """
         draw xvg data into stacking figure
+
+        parameters:
+            column_index2start: the index of data column to start plot
+            column_index2end: the index of data column to end plot
         """
 
         ## check parameters
@@ -398,7 +402,7 @@ class XVG(object):
             print(
                 "Warning -> column_index2start not in proper range, use default value."
             )
-            column_index2end = 1
+            column_index2start = 1
         if column_index2end == None:
             column_index2end = len(self.data_columns)
         else:
@@ -445,8 +449,36 @@ class XVG(object):
         plt.legend(loc=3)
         plt.show()
 
-    def draw_scatter(self):
-        pass
+    def draw_scatter(self, x_index: int = 0, y_index: int = None) -> None:
+        """
+        draw xvg data to scatter plot
+
+        parameters:
+            x_index: the column index of x values for scatter plot
+            y_index: the column index of y values for scatter plot
+        """
+
+        ## check parameters
+        if x_index >= len(self.data_columns) or x_index < 0:
+            print("Warning -> x_index not in proper range, use default value.")
+            x_index = 0
+        if y_index == None:
+            y_index = len(self.data_columns) - 1
+        else:
+            if y_index >= len(self.data_columns) or y_index < 0:
+                print("Warning -> y_index not in proper range, use default value.")
+                y_index = len(self.data_columns) - 1
+
+        ## draw scatter plot
+        plt.scatter(self.data_columns[x_index], self.data_columns[y_index])
+        plt.ylabel(self.data_heads[y_index])
+        plt.xlabel(self.data_heads[x_index])
+        plt.title(
+            "Scatter plot of {} vs {}".format(
+                self.data_heads[x_index], self.data_heads[y_index]
+            )
+        )
+        plt.show()
 
 
 def xvg_combine(xvgfiles: list = []):
@@ -477,7 +509,8 @@ def main():
     file = sys.argv[1]
     xvg = XVG(file)
     # xvg.draw()
-    xvg.draw_stacking(2, 7)
+    # xvg.draw_stacking(2, 7)
+    # xvg.draw_scatter(0, 1)
     # xvg.draw_distribution(100)
     # heads, mvaves, highs, lows = xvg.calc_mvave(100, 0.90)
     # for i in range(1, len(heads)):
