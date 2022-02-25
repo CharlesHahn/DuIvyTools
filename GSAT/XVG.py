@@ -15,12 +15,15 @@ import os
 import sys
 import math
 import argparse
+import logging
 import numpy as np
 import scipy.stats as stats
 from cycler import cycler
 import matplotlib.pyplot as plt
 from matplotlib import pylab as pylab
 
+
+logging.basicConfig(level=logging.INFO)
 
 myparams = {
     "axes.labelsize": "12",
@@ -111,13 +114,13 @@ class XVG(object):
             if line.startswith("#") or line.startswith("&"):
                 continue
             elif line.startswith("@"):
-                if "title" in line and "subtitle" not in line:
+                if " title " in line:
                     self.xvg_title = line.strip('"').split('"')[-1]
-                elif "xaxis" in line and "label" in line:
+                elif " xaxis " in line and " label " in line:
                     self.xvg_xlabel = line.strip('"').split('"')[-1]
-                elif "yaxis" in line and "label" in line:
+                elif " yaxis " in line and " label " in line:
                     self.xvg_ylabel = line.strip('"').split('"')[-1]
-                elif line.startswith("@ s") and "legend" in line:
+                elif line.startswith("@ s") and " legend " in line:
                     self.xvg_legends.append(line.strip('"').split('"')[-1])
             else:
                 ## extract the column data part
@@ -481,16 +484,85 @@ class XVG(object):
         plt.show()
 
 
-def xvg_combine(xvgfiles: list = []):
+def xvg_combine(xvgfile_0:str="", xvgfile_1:str="", column_select_0:list=[],
+                column_select_1:list=[], outfilename:str="") -> None:
+    """ 
+    combine two xvg files by specified column index
+
+    parameters:
+        xvgfile_0: the first xvg file you wanna combine
+        xvgfile_1: the last xvg file you wanna combine
+        column_select_0: a list to store all column index you wanna combine in xvgfile_0
+        column_select_1: a list to store all column index you wanna combine in xvgfile_1
+        outfilename: the output xvg file name
+    """
+
+    ## check parameters
+    if not os.path.exists(xvgfile_0) or not os.path.exists(xvgfile_1):
+        print("Error -> No {} or {} in current directory".format(xvgfile_0, xvgfile_1))
+        exit()
+    if os.path.exists(outfilename):
+        print("Error -> {} already in current directory".format(outfilename))
+        exit()
+    if len(outfilename) < 4 or outfilename[-4:] != ".xvg":
+        print("Error -> please specify a output filename with suffix .xvg")
+        exit()
+
+    xvg_0, xvg_1 = XVG(xvgfile_0), XVG(xvgfile_1)
+    if len(column_select_0) == 0:
+        column_select_0 = [i for i in range(len(xvg_0.data_columns))]
+    if len(column_select_1) == 0:
+        column_select_1 = [i for i in range(len(xvg_1.data_columns))]
+    if not (set(column_select_0) <= set([i for i in range(len(xvg_0.data_columns))])):
+        print("Error -> column_select_0 should be in proper range, [{},{})".format(
+            0, len(xvg_0.data_columns)))
+        exit()
+    if not (set(column_select_1) <= set([ i for i in range(len(xvg_1.data_columns))])):
+        print("Error -> column_select_1 should be in proper range, [{},{})".format(
+            0, len(xvg_1.data_columns)))
+        exit()
+    if xvg_0.xvg_row_num != xvg_1.xvg_row_num:
+        print("Error -> the numbers of rows in your input xvg files are not equal !")
+        exit()
+
+    ## process xvg combination
+    combined_data_heads = [xvg_0.data_heads[i] for i in column_select_0]
+    combined_data_heads += [xvg_1.data_heads[i] for i in column_select_1]
+    combined_data_columns = [xvg_0.data_columns[i] for i in column_select_0]
+    combined_data_columns += [xvg_1.data_columns[i] for i in column_select_1]
+    combined_title = (" And ".join([xvg_0.xvg_title, xvg_1.xvg_title]), 
+                      xvg_0.xvg_title)[xvg_0.xvg_title == xvg_1.xvg_title]
+    combined_xlabel = combined_data_heads[0]
+    ## write combined results
+    with open(outfilename, 'w') as fo:
+        fo.write("# this file was created by combination of thess two xvg file:\n")
+        fo.write("#     file 0: {}, column index: {};\n".format(
+            xvgfile_0, " ".join([str(i) for i in column_select_0])))
+        fo.write("#     file 1: {}, column index: {};\n".format(
+            xvgfile_1, " ".join([str(i) for i in column_select_1])))
+        fo.write("@    title \"{}\"\n".format(combined_title))
+        fo.write("@    xaxis label \"{}\"\n".format(combined_xlabel))
+        fo.write("@TYPE xy\n@ view 0.15, 0.15, 0.75, 0.85\n")
+        fo.write("@ legend on\n@ legend box on\n@ legend loctype view\n")
+        fo.write("@ legend 0.78, 0.8\n@ legend length {}\n".format(
+            len(combined_data_heads)-1))
+        for s in range(1, len(combined_data_heads)):
+            fo.write("@ s{} legend \"{}\"\n".format(s-1, combined_data_heads[s]))
+        for row in range(xvg_0.xvg_row_num):
+            fo.write(" ".join(["{:>20.6f}".format(combined_data_columns[i][row]) 
+                            for i in range(len(combined_data_columns))]) + "\n")
+        print("Info -> {} and {} combined sucessfully.".format(xvgfile_0, xvgfile_1))
+
+
+def energy_compute(xvgfiles: list = []):
     pass
+
+
 
 
 def xvg_compare(xvgfiles: list = []):
     pass
 
-
-def energy_compute(xvgfiles: list = []):
-    pass
 
 
 def ramachandran(xvgfiles: list = []):
@@ -507,7 +579,8 @@ def average_box_draw(xvgfiles: list = []):
 
 def main():
     file = sys.argv[1]
-    xvg = XVG(file)
+
+    # xvg = XVG(file)
     # xvg.draw()
     # xvg.draw_stacking(2, 7)
     # xvg.draw_scatter(0, 1)
