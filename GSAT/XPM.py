@@ -678,6 +678,10 @@ def xpm_combine(
         noshow: whether not to show figure, useful for PC without gui
     """
 
+    ###################### bolzmann
+    #### G(x) = -kT*Ln(P(x)) + c
+    ######################
+
     x_list, y_list = [], []
     xpm_title, xpm_legend, xpm_xlabel, xpm_ylabel = "", "", "", ""
     for file in xpm_files:
