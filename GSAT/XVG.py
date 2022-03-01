@@ -771,7 +771,7 @@ def ramachandran(xvgfile: str = "") -> None:
             "cmap": mplcolors.ListedColormap(["#FFFFFF", "#D0FFC5", "#7FFF8C"]),
             "bounds": [0, 0.002, 0.02, 1],
         },
-        "PRE-PRO": {
+        "Pre-PRO": {
             "file": os.path.join("data", "pref_preproline.data"),
             "cmap": mplcolors.ListedColormap(["#FFFFFF", "#B3E8FF", "#7FD9FF"]),
             "bounds": [0, 0.002, 0.02, 1],
@@ -780,8 +780,9 @@ def ramachandran(xvgfile: str = "") -> None:
 
     rama_pref_values = {}
     for key, val in rama_preferences.items():
+        data_file_path = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
         rama_pref_values[key] = [[0 for i in range(361)] for i in range(361)]
-        with open(val["file"]) as fn:
+        with open(os.path.join(data_file_path, val["file"])) as fn:
             for line in fn:
                 if line.startswith("#"):
                     continue
@@ -800,7 +801,7 @@ def ramachandran(xvgfile: str = "") -> None:
         outliers[key] = {"phi": [], "psi": []}
     for row in range(xvg.xvg_row_num):
         if row < xvg.xvg_row_num - 1 and "PRO" in xvg.xvg_columns[2][row + 1]:
-            AA_type = "PRE-PRO"
+            AA_type = "Pre-PRO"
         elif "PRO" in xvg.xvg_columns[2][row]:
             AA_type = "PRO"
         elif "GLY" in xvg.xvg_columns[2][row]:
@@ -818,10 +819,21 @@ def ramachandran(xvgfile: str = "") -> None:
             normals[AA_type]["phi"].append(phi)
             normals[AA_type]["psi"].append(psi)
 
-    for idx, (key, val) in enumerate(
-        sorted(rama_preferences.items(), key=lambda x: x[0].lower())
-    ):
-        plt.subplot(2, 2, idx + 1)
+    ## print some infos
+    print("Info -> ramachandran method can draw four types of figure: ")
+    print("        Pre-PRO: the dihedrals of amino acids before prolines")
+    print("        PRO: the dihedrals of prolines")
+    print("        GLY: the dihedrals of glynine")
+    print("        General: the dihedrals of other amino acids")
+    print("\n{:<10} {:>20} {:>20}".format("", "Normal Dihedrals", "Outlier Dihedrals"))
+    for key in ["General", "GLY", "Pre-PRO", "PRO"]:
+        print("{:<10} {:>20} {:>20}".format(
+            key, len(normals[key]["phi"]), len(outliers[key]["phi"])))
+
+    ## draw ramachandran plot
+    for key in ["General", "GLY", "Pre-PRO", "PRO"]:
+        if len(normals[key]["phi"]) + len(outliers[key]["phi"]) == 0 :
+            continue
         plt.title(key)
         plt.imshow(
             rama_pref_values[key],
@@ -835,15 +847,12 @@ def ramachandran(xvgfile: str = "") -> None:
         plt.scatter(outliers[key]["phi"], outliers[key]["psi"], s=8)
         plt.xlim([-180, 180])
         plt.ylim([-180, 180])
-        plt.plot([-180, 180], [0, 0], color="black")
-        plt.plot([0, 0], [-180, 180], color="black")
-        plt.locator_params(axis="x", nbins=7)
+        plt.xticks([-180, -120, -60, 0, 60, 120, 180])
+        plt.yticks([-180, -120, -60, 0, 60, 120, 180])
+        plt.tick_params(left=False, bottom=False)
         plt.xlabel("Phi")
         plt.ylabel("Psi")
-        plt.grid()
-    plt.suptitle(xvg.xvg_title)
-    plt.tight_layout()
-    plt.show()
+        plt.show()
 
 
 def xvg_compare(xvgfiles: list = []):
@@ -860,8 +869,8 @@ def average_box_draw(xvgfiles: list = []):
 
 def main():
     file = sys.argv[1]
-    ramachandran(file)
 
+    # ramachandran(file)
     # xvg = XVG(file)
     # xvg.draw()
     # xvg.draw_stacking(2, 7)
