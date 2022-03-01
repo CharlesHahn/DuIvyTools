@@ -38,7 +38,8 @@ myparams = {
     "lines.linewidth": "2",
     "axes.linewidth": "1",
     "legend.fontsize": "12",
-    "legend.loc": "upper right",
+    # "legend.loc": "upper right",
+    "legend.loc": "best",
     "legend.fancybox": False,
     "legend.frameon": False,
     "font.family": "Arial",
@@ -780,7 +781,9 @@ def ramachandran(xvgfile: str = "") -> None:
 
     rama_pref_values = {}
     for key, val in rama_preferences.items():
-        data_file_path = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
+        data_file_path = os.path.realpath(
+            os.path.join(os.getcwd(), os.path.dirname(__file__))
+        )
         rama_pref_values[key] = [[0 for i in range(361)] for i in range(361)]
         with open(os.path.join(data_file_path, val["file"])) as fn:
             for line in fn:
@@ -827,12 +830,15 @@ def ramachandran(xvgfile: str = "") -> None:
     print("        General: the dihedrals of other amino acids")
     print("\n{:<10} {:>20} {:>20}".format("", "Normal Dihedrals", "Outlier Dihedrals"))
     for key in ["General", "GLY", "Pre-PRO", "PRO"]:
-        print("{:<10} {:>20} {:>20}".format(
-            key, len(normals[key]["phi"]), len(outliers[key]["phi"])))
+        print(
+            "{:<10} {:>20} {:>20}".format(
+                key, len(normals[key]["phi"]), len(outliers[key]["phi"])
+            )
+        )
 
     ## draw ramachandran plot
     for key in ["General", "GLY", "Pre-PRO", "PRO"]:
-        if len(normals[key]["phi"]) + len(outliers[key]["phi"]) == 0 :
+        if len(normals[key]["phi"]) + len(outliers[key]["phi"]) == 0:
             continue
         plt.title(key)
         plt.imshow(
@@ -855,10 +861,20 @@ def ramachandran(xvgfile: str = "") -> None:
         plt.show()
 
 
-def xvg_compare(xvgfiles: list = [], column_select:list=[], legend_list:list=None, 
-                start:int=0, end:int=None, xlabel:str=None, ylabel:str=None, 
-                title:str=None, showMV:bool=False, windowsize:int=50, 
-                confidence:float=0.95, alpha:float=0.4) -> None:
+def xvg_compare(
+    xvgfiles: list = [],
+    column_select: list = [],
+    legend_list: list = None,
+    start: int = 0,
+    end: int = None,
+    xlabel: str = None,
+    ylabel: str = None,
+    title: str = None,
+    showMV: bool = False,
+    windowsize: int = 50,
+    confidence: float = 0.95,
+    alpha: float = 0.4,
+) -> None:
     """
     comparison of xvgfiles, draw different columns into figure.
 
@@ -866,7 +882,7 @@ def xvg_compare(xvgfiles: list = [], column_select:list=[], legend_list:list=Non
         xvgfiles: a list to store all xvg files you want to compare
         column_select: a list to store the columns you select to compare
                         This list has to contain lists with same number to xvg files
-        legend_list: a list to store the legends you specify, and it's number should 
+        legend_list: a list to store the legends you specify, and it's number should
                      be the same with column_index_list and xvgfilees
         start: the start index of column data you want to compare
         end: the end index of column data you want to compare
@@ -876,9 +892,9 @@ def xvg_compare(xvgfiles: list = [], column_select:list=[], legend_list:list=Non
         showMV: whether to show moving average
         windowsize: the size of window for calculation of moving average
         confidence: the confidence to calculate interval
-    
+
     :example:
-        xvg_compare([file1, file2], [[1,2], [2,3]], 
+        xvg_compare([file1, file2], [[1,2], [2,3]],
                     ["legend1", "legend2", "legend3", "legend4"],
                     0, 100, "Time", "ylabel", "title")
     """
@@ -895,14 +911,15 @@ def xvg_compare(xvgfiles: list = [], column_select:list=[], legend_list:list=Non
             print("Error -> the item in column_select must be list type")
             exit()
     if legend_list != None and len(legend_list) != sum(
-            [len(column) for column in column_select]):
+        [len(column) for column in column_select]
+    ):
         print("Error -> number of legends you input can not pair to columns you select")
         exit()
     if title == None:
         title = "XVG Comparison"
 
     ## draw comparison
-    XVGS = [ XVG(xvg) for xvg in xvgfiles]
+    XVGS = [XVG(xvg) for xvg in xvgfiles]
     legend_count, xmin, xmax = 0, None, None
     for id, column_indexs in enumerate(column_select):
         xvg = XVGS[id]
@@ -929,16 +946,29 @@ def xvg_compare(xvgfiles: list = [], column_select:list=[], legend_list:list=Non
             if xmax == None:
                 xmax = max(xvg.data_columns[0][start:end])
             xmin = (min(xvg.data_columns[0][start:end]), xmin)[
-                xmin < min(xvg.data_columns[0][start:end])]
+                xmin < min(xvg.data_columns[0][start:end])
+            ]
             xmax = (max(xvg.data_columns[0][start:end]), xmax)[
-                xmax > max(xvg.data_columns[0][start:end])]
+                xmax > max(xvg.data_columns[0][start:end])
+            ]
             if showMV == True:
-                plt.fill_between(xvg.data_columns[0], highs[index], 
-                                 lows[index], alpha=alpha)
-                plt.plot(xvg.data_columns[0], mvaves[index], label=legend)
+                plt.fill_between(
+                    xvg.data_columns[0][start:end],
+                    highs[index][start:end],
+                    lows[index][start:end],
+                    alpha=alpha,
+                )
+                plt.plot(
+                    xvg.data_columns[0][start:end],
+                    mvaves[index][start:end],
+                    label=legend,
+                )
             else:
-                plt.plot(xvg.data_columns[0][start: end], 
-                        xvg.data_columns[index][start: end], label=legend)
+                plt.plot(
+                    xvg.data_columns[0][start:end],
+                    xvg.data_columns[index][start:end],
+                    label=legend,
+                )
     plt.xlim(xmin, xmax)
     plt.legend()
     plt.xlabel(xlabel)
@@ -947,9 +977,120 @@ def xvg_compare(xvgfiles: list = [], column_select:list=[], legend_list:list=Non
     plt.show()
 
 
+def average_bar_draw(
+    xvgfiles: list = [],
+    column_list: list = [],
+    legend_list: list = [],
+    xtitle_list: list = [],
+    start: int = 0,
+    end: int = None,
+    xlabel: str = None,
+    ylabel: str = None,
+    title: str = None,
+    ave2csv: bool = False,
+    csvname: str = None,
+) -> None:
+    """
+    draw bar figure of averages of xvg files
 
-def average_bar_draw(xvgfiles: list = []):
-    pass
+    :parameters:
+        xvgfiles: a list (with list in ) to store xvg files
+                  eg. [["f0_0","f0_1","f0_2"], ["f1_0","f1_1","f1_2"]]
+        column_list: a list to store column index
+        legend_list: a list to store legends you specify
+        xtitle_list: a list to store xtitles
+        start: the start index of data
+        end: th eend index of data
+        xlabel: the xlabel of figure
+        ylabel: the ylabel of figure
+        title: the title of figure
+        ave2csv: whether save average data to csv file
+        csvname: name of csv file to save average data
+    :example:
+        average_bar_draw([["f0_0","f0_1","f0_2"], ["f1_0","f1_1","f1_2"]],
+                        [1,2,3,4], ["l1","l2","l3","l4"], ["x1","x2","x3","x4"],
+                        0, 10, "xlabel", "ylabel", "title", True, "bar_ave.csv")
+    """
+
+    ## check parameters
+    if len(xvgfiles) == 0:
+        print("Error -> no input xvg files")
+        exit()
+    for xvg_list in xvgfiles:
+        if not isinstance(xvg_list, list):
+            print("Error -> the item in xvgfiles must be list type")
+            exit()
+    if len(legend_list) != 0 and len(legend_list) != len(xvgfiles):
+        print("Error -> wrong number of legends you specified")
+        exit()
+    if len(legend_list) == 0:
+        for xvg_list in xvgfiles:
+            legend_list.append(xvg_list[0])
+    if len(xtitle_list) != 0 and len(xtitle_list) != len(column_list):
+        print("Error -> wrong number of legends you specified")
+        exit()
+
+    ## calculate averages
+    final_averages, final_stds = [], []
+    for xvg_list in xvgfiles:
+        column_averages_matrix = [[] for _ in column_list]
+        for xvgfile in xvg_list:
+            xvg = XVG(xvgfile)
+            heads, averages, _ = xvg.calc_average(start, end)
+            if len(xtitle_list) == 0:
+                xtitle_list = [heads[c] for c in column_list]
+            for i, value in enumerate([averages[c] for c in column_list]):
+                column_averages_matrix[i].append(value)
+        column_averages, column_stds = [], []
+        for lis in column_averages_matrix:
+            column_averages.append(np.mean(lis))
+            column_stds.append(np.std(lis))
+        final_averages.append(column_averages)
+        final_stds.append(column_stds)
+
+    # print averages
+    print()
+    print(" ".join("{:<20}".format(item) for item in ["Average"] + xtitle_list))
+    for i in range(len(final_averages)):
+        print("{:<20}".format(legend_list[i]), end=" ")
+        print(" ".join(["{:<20.4f}".format(ave) for ave in final_averages[i]]))
+    print()
+    print(" ".join("{:<20}".format(item) for item in ["std"] + xtitle_list))
+    for i in range(len(final_stds)):
+        print("{:<20}".format(legend_list[i]), end=" ")
+        print(" ".join(["{:<20.4f}".format(std) for std in final_stds[i]]))
+
+    ## save average data to csv file
+    if ave2csv == True:
+        if csvname == None:
+            csvname = "bar_average_data.csv"
+        with open(csvname, "w") as fo:
+            fo.write(",".join(["Average"] + xtitle_list) + "\n")
+            for i in range(len(final_averages)):
+                fo.write(legend_list[i] + ",")
+                fo.write(",".join(["{:.4f}".format(ave) for ave in final_averages[i]]))
+                fo.write("\n")
+            fo.write(",".join(["std"] + xtitle_list) + "\n")
+            for i in range(len(final_stds)):
+                fo.write(legend_list[i] + ",")
+                fo.write(",".join(["{:.4f}".format(std) for std in final_stds[i]]))
+                fo.write("\n")
+
+    ## draw bar figure
+    width = 80 // len(xvgfiles) * 0.01
+    x_loc = [x - 0.4 for x in range(len(column_list))]
+    for i in range(len(final_averages)):
+        plt.bar(
+            [x + width * i for x in x_loc],
+            final_averages[i],
+            width,
+            yerr=final_stds[i],
+            capsize=2,
+            label=legend_list[i],
+        )
+    plt.xticks([x for x in range(len(column_list))], labels=xtitle_list)
+    plt.legend()
+    plt.show()
 
 
 def average_box_draw(xvgfiles: list = []):
@@ -958,8 +1099,9 @@ def average_box_draw(xvgfiles: list = []):
 
 def main():
     f1 = sys.argv[1]
-
-    xvg_compare([f1], [[1,2,3,4]], ["1", "2", "3", "4"], showMV=True)
+    f2 = sys.argv[2]
+    f3 = sys.argv[3]
+    average_bar_draw([[f1, f3], [f2]], [1, 2, 3, 4])
 
 
 if __name__ == "__main__":
