@@ -1097,14 +1097,71 @@ def average_bar_draw(
     plt.show()
 
 
-def average_box_draw(xvgfiles: list = []):
-    pass
+def xvg_box_compare(
+    xvgfiles: list = [],
+    column_select: list = [],
+    xtitle_list: list = [],
+    start: int = 0,
+    end: int = None,
+    xlabel: str = None,
+    ylabel: str = None,
+    title: str = None,
+) -> None:
+    """
+    convert xvg data into box figure
+
+    :parameters:
+        xvgfiles: a list to store input files
+        column_select: a list to store column indexs
+        xtitle_list: a list to store xtitles
+        start: the start index of xvg data
+        end: the end index of xvg data
+        xlabel: xlabel of box figure
+        ylabel: ylabel of box figure
+        title: title of box figure
+
+    :example:
+        xvg_box_compare(["f1", "f2"], [1,3], ["A", "B"], 0, 1000,
+                        "xlabel", "ylabel", "title")
+    """
+
+    ## check parameters
+    if len(xvgfiles) == 0:
+        print("Error -> no input xvg file to compare")
+        exit()
+    if len(xtitle_list) != 0 and len(xtitle_list) != len(column_select):
+        print("Error -> number of xtitle you input can not pair to columns you select")
+        exit()
+    if title == None:
+        title = "XVG box Comparison"
+
+    ## draw bar comparison
+    XVGS = [XVG(xvg) for xvg in xvgfiles]
+    box_data, positions_list = [], []
+    width = 80 // len(xvgfiles) * 0.01
+    for id, xvg in enumerate(XVGS):
+        if start < 0:
+            start = 0
+        if end != None and (end < 0 or end >= xvg.xvg_row_num):
+            print("Warning -> end index not in proper range, set it to be None")
+        for index, column in enumerate(column_select):
+            box_data.append(xvg.data_columns[column][start:end])
+            positions_list.append(index - 0.4 + width / 2.0 + width * id)
+
+    plt.boxplot(box_data, meanline=True, showmeans=True, positions=positions_list)
+    if len(xtitle_list) == 0:
+        xtitle_list = [XVGS[0].data_heads[i] for i in column_select]
+    plt.xticks([i for i in range(len(column_select))], xtitle_list)
+    plt.ylabel(ylabel)
+    plt.xlabel(xlabel)
+    plt.title(title)
+    plt.show()
 
 
 def main():
     f1 = sys.argv[1]
     f2 = sys.argv[2]
-    f3 = sys.argv[3]
+    xvg_box_compare([f1], [1, 2, 3, 4], ylabel="kJ/mol")
 
 
 if __name__ == "__main__":
