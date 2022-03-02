@@ -13,7 +13,6 @@ This file is provided to you under GPLv2 License"""
 
 import os
 import sys
-import math
 import argparse
 import logging
 import numpy as np
@@ -224,7 +223,7 @@ class XVG(object):
 
         return self.data_heads, column_averages, column_stds
 
-    def calc_mvave(self, windowsize: int = 10, confidence: float = 0.95) -> tuple:
+    def calc_mvave(self, windowsize: int = 20, confidence: float = 0.95) -> tuple:
         """
         calculate the moving average of each column
 
@@ -489,80 +488,55 @@ class XVG(object):
 
 
 def xvg_combine(
-    xvgfile_0: str = "",
-    xvgfile_1: str = "",
-    column_select_0: list = [],
-    column_select_1: list = [],
-    outfilename: str = "",
+    xvgfiles: list = [],
+    column_select: list = [],
+    outfile: str = "",
 ) -> None:
     """
     combine two xvg files by specified column index
 
     :parameters:
-        xvgfile_0: the first xvg file you wanna combine
-        xvgfile_1: the last xvg file you wanna combine
-        column_select_0: a list to store all column index you wanna combine in xvgfile_0
-        column_select_1: a list to store all column index you wanna combine in xvgfile_1
-        outfilename: the output xvg file name
+        xvgfiles: a list to store files you specify
+        column_select: a list to specify the columns
+        outfile: the output xvg file name
     """
 
     ## check parameters
-    if not os.path.exists(xvgfile_0) or not os.path.exists(xvgfile_1):
-        print("Error -> No {} or {} in current directory".format(xvgfile_0, xvgfile_1))
+    if os.path.exists(outfile):
+        print("Error -> {} already in current directory".format(outfile))
         exit()
-    if os.path.exists(outfilename):
-        print("Error -> {} already in current directory".format(outfilename))
-        exit()
-    if len(outfilename) < 4 or outfilename[-4:] != ".xvg":
+    if len(outfile) < 4 or outfile[-4:] != ".xvg":
         print("Error -> please specify a output filename with suffix .xvg")
         exit()
-
-    xvg_0, xvg_1 = XVG(xvgfile_0), XVG(xvgfile_1)
-    if len(column_select_0) == 0:
-        column_select_0 = [i for i in range(len(xvg_0.data_columns))]
-    if len(column_select_1) == 0:
-        column_select_1 = [i for i in range(len(xvg_1.data_columns))]
-    if not (set(column_select_0) <= set([i for i in range(len(xvg_0.data_columns))])):
-        print(
-            "Error -> column_select_0 should be in proper range, [{},{})".format(
-                0, len(xvg_0.data_columns)
-            )
-        )
-        exit()
-    if not (set(column_select_1) <= set([i for i in range(len(xvg_1.data_columns))])):
-        print(
-            "Error -> column_select_1 should be in proper range, [{},{})".format(
-                0, len(xvg_1.data_columns)
-            )
-        )
-        exit()
-    if xvg_0.xvg_row_num != xvg_1.xvg_row_num:
-        print("Error -> the numbers of rows in your input xvg files are not equal !")
-        exit()
+    for indexs in column_select:
+        if not isinstance(indexs, list):
+            print("Error -> the item in column_select must be list type")
+            exit()
 
     ## process xvg combination
-    combined_data_heads = [xvg_0.data_heads[i] for i in column_select_0]
-    combined_data_heads += [xvg_1.data_heads[i] for i in column_select_1]
-    combined_data_columns = [xvg_0.data_columns[i] for i in column_select_0]
-    combined_data_columns += [xvg_1.data_columns[i] for i in column_select_1]
-    combined_title = (
-        " And ".join([xvg_0.xvg_title, xvg_1.xvg_title]),
-        xvg_0.xvg_title,
-    )[xvg_0.xvg_title == xvg_1.xvg_title]
+    xvgs = [XVG(file) for file in xvgfiles]
+    row_num = xvgs[0].xvg_row_num
+    combined_data_heads, combined_data_columns = [], []
+    for id, indexs in enumerate(column_select):
+        if xvgs[id].xvg_row_num != row_num:
+            print("Error -> the row number of input files are not equal")
+            exit()
+        for index in indexs:
+            if index >= len(xvgs[id].data_heads):
+                print("Error -> wrong column_select index {} of {}".format(
+                    index, xvgs[id].xvg_filename))
+                exit()
+            combined_data_heads.append(xvgs[id].data_heads[index])
+            combined_data_columns.append(xvgs[id].data_columns[index])
+    combined_title = " And ".join(list(set([xvg.xvg_title for xvg in xvgs])))
     combined_xlabel = combined_data_heads[0]
+
     ## write combined results
-    with open(outfilename, "w") as fo:
-        fo.write("# this file was created by combination of thess two xvg file:\n")
-        fo.write(
-            "#     file 0: {}, column index: {};\n".format(
-                xvgfile_0, " ".join([str(i) for i in column_select_0])
-            )
-        )
-        fo.write(
-            "#     file 1: {}, column index: {};\n".format(
-                xvgfile_1, " ".join([str(i) for i in column_select_1])
-            )
-        )
+    with open(outfile, "w") as fo:
+        fo.write("# this file was created by combination of thess xvg files:\n")
+        for i in range(len(xvgfiles)):
+            fo.write("#    file: {}; indexs: {};\n".format(
+                xvgfiles[i], ",".join([str(c) for c in column_select[i]])))
         fo.write('@    title "{}"\n'.format(combined_title))
         fo.write('@    xaxis label "{}"\n'.format(combined_xlabel))
         fo.write("@TYPE xy\n@ view 0.15, 0.15, 0.75, 0.85\n")
@@ -574,17 +548,17 @@ def xvg_combine(
         )
         for s in range(1, len(combined_data_heads)):
             fo.write('@ s{} legend "{}"\n'.format(s - 1, combined_data_heads[s]))
-        for row in range(xvg_0.xvg_row_num):
+        for row in range(row_num):
             fo.write(
                 " ".join(
                     [
-                        "{:>20.6f}".format(combined_data_columns[i][row])
+                        "{:>16.6f}".format(combined_data_columns[i][row])
                         for i in range(len(combined_data_columns))
                     ]
                 )
                 + "\n"
             )
-    print("Info -> {} and {} combined sucessfully.".format(xvgfile_0, xvgfile_1))
+    print("Info -> xvg files combined sucessfully.")
 
 
 def energy_compute(
@@ -977,7 +951,7 @@ def xvg_compare(
     plt.show()
 
 
-def average_bar_draw(
+def xvg_bar_compare(
     xvgfiles: list = [],
     column_list: list = [],
     legend_list: list = [],
@@ -1158,11 +1132,92 @@ def xvg_box_compare(
     plt.show()
 
 
-def main():
-    f1 = sys.argv[1]
-    f2 = sys.argv[2]
-    xvg_box_compare([f1], [1, 2, 3, 4], ylabel="kJ/mol")
+def xvg_calc_ave(file:str=None, start:int=None, end:int=None) -> None:
+    """ do average calculation and print results """
+    if file == None:
+        print("Error -> no input file")
+        exit()
+    xvg = XVG(file)
+    heads, averages, stds = xvg.calc_average(start, end)
+    print()
+    print("".join(["{:>16}".format(item) for item in [" "] + heads]))
+    print("".join(["{:>16}".format("ave")] + [
+        "{:>16.4f}".format(item) for item in stds]))
+    print("".join(["{:>16}".format("std")] + [
+        "{:>16.4f}".format(item) for item in stds]))
 
+
+def xvg_calc_mvave2csv(file:str=None, outcsv:str=None, 
+                       windowsize:int=20, confidence:float=0.95) -> None:
+    """ do moving average calculation and output data to csv """
+    if file == None:
+        print("Error -> no input file")
+        exit()
+    if outcsv == None:
+        print("Error -> specify the output csv file name")
+        exit()
+    if os.path.exists(outcsv):
+        print("Error -> {} already in current directory".format(outcsv))
+        exit()
+    xvg = XVG(file)
+    heads, mvaves, _, _ = xvg.calc_mvave(windowsize, confidence)
+    with open(outcsv, 'w') as fo:
+        fo.write(",".join(heads) + "\n")
+        for row in range(xvg.xvg_row_num):
+            fo.write(",".join([ "{}".format(column[row]) for column in mvaves]))
+            fo.write("\n")
+    print("Info -> moving averages have been saved to {}".format(outcsv))
+
+
+
+def main():
+    ## parse the command parameters
+    parser = argparse.ArgumentParser(description="GROMACS Simple Analysis Tool")
+    parser.add_argument("-f", "--input", help="input your file or files")
+    parser.add_argument("-o", "--output", help="file name for output")
+    parser.add_argument("-s", "--start", type=int, help="the start index of data")
+    parser.add_argument("-e", "--end", type=int, help="the end index of data")
+    parser.add_argument("-ws", "--windowsize", type=int, 
+                        help="window size for moving average calculation")
+    parser.add_argument("-cf", "--confidence", type=float, 
+                        help="confidence for confidence interval calculation")
+    parser.add_argument("-bin", "--bin", type=int, 
+                        help="the bin number for distribution calculation")
+    parser.add_argument("-cis", "--conlumn_index2start", type=int, 
+                        help="the column index of data to start stacking")
+    parser.add_argument("-cie", "--conlumn_index2end", type=int, 
+                        help="the column index of data to end stacking")
+    parser.add_argument("-xi", "--x_index", type=int, 
+                        help="the x index of data for drawing scatter")
+    parser.add_argument("-yi", "--y_index", type=int, 
+                        help="the y index of data for drawing scatter")
+    parser.add_argument("-c", "--column_selet", type=list, 
+                        help="to select column of data")
+    parser.add_argument("-l", "--legend_list", type=list, 
+                        help="the legends you wanna specify")
+    parser.add_argument("-x", "--xlabel", type=str, 
+                        help="the xlabel of figure")
+    parser.add_argument("-y", "--ylabel", type=str, 
+                        help="the ylabel of figure")
+    parser.add_argument("-t", "--title", type=str, 
+                        help="the title of figure")
+    parser.add_argument("-smv", "--showMV", type=bool, 
+                        help="whether to show moving average")
+    parser.add_argument("-a", "--alpha", type=float, 
+                        help="the alpha of background lines")
+    parser.add_argument("-ac", "--ave2csv", type=float, 
+                        help="whether to save average to csv file, used in xvg_bar_draw")
+    parser.add_argument("-xt", "--xtitles", type=float, 
+                        help="the x tick labels for box comparison")
+
+    method = sys.argv[1]
+    print(method)
+    args = parser.parse_args(sys.argv[3:])
+    print(args)
+
+
+
+        
 
 if __name__ == "__main__":
     main()
