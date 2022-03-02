@@ -1078,7 +1078,7 @@ def average_bar_draw(
 
     ## draw bar figure
     width = 80 // len(xvgfiles) * 0.01
-    x_loc = [x - 0.4 for x in range(len(column_list))]
+    x_loc = [x - 0.4 + width / 2.0 for x in range(len(column_list))]
     for i in range(len(final_averages)):
         plt.bar(
             [x + width * i for x in x_loc],
@@ -1089,7 +1089,11 @@ def average_bar_draw(
             label=legend_list[i],
         )
     plt.xticks([x for x in range(len(column_list))], labels=xtitle_list)
+    plt.axhline(0, color="k", linewidth=1)
     plt.legend()
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    plt.title(title)
     plt.show()
 
 
@@ -1101,7 +1105,6 @@ def main():
     f1 = sys.argv[1]
     f2 = sys.argv[2]
     f3 = sys.argv[3]
-    average_bar_draw([[f1, f3], [f2]], [1, 2, 3, 4])
 
 
 if __name__ == "__main__":
