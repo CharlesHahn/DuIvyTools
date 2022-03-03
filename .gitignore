@@ -1,2 +1,4 @@
 test/*
-GSAT/__pycache__/*
+build/*
+DuIvyTools/__pycache__/*
+

@@ -24,29 +24,31 @@ long_description = ""
 with open("README.md", "r") as fo:
     long_description = fo.read()
 
-with open("GSAT/__init__.py", "r") as fo:
+with open("DuIvyTools/__init__.py", "r") as fo:
     init = fo.readlines()
 for line in init:
     if "__version__" in line:
         __version__ = line.split('"')[-2]
 
 setup(
-    name="GMX_Simple_Analysis_Tool",
+    name="DuIvyTools",
     version=__version__,
     author="CharlesHahn",
     author_email="",
     description="Some tools for GMX results analysis",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/CharlesHahn/GMX_Simple_Analysis_Tool",
-    download_url="https://github.com/CharlesHahn/GMX_Simgle_Analysis_Tool/",
+    url="https://github.com/CharlesHahn/DuIvyTools",
+    download_url="https://github.com/CharlesHahn/DuIvyTools",
     platforms="cross-platform",
-    packages=["GMX_Simple_Analysis_Tool"],
+    packages=["DuIvyTools"],
     install_requires=INSTALL_REQUIRES,
     extras_require={
         "test": TEST_REQUIRES + INSTALL_REQUIRES,
     },
-    entry_points={"console_scripts": ["dit = GSAT.GSAT:main"]},
+    package_data={"DuIvyTools":["data/*.data"]},
+    exclude_package_data={"DuIvyTools":["test/*"]},
+    entry_points={"console_scripts": ["dit = DuIvyTools.DIT:main"]},
     classifiers=[
         # Trove classifiers
         # (https://pypi.python.org/pypi?%3Aaction=list_classifiers)

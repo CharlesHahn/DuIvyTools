@@ -1,6 +1,6 @@
-"""This module is part of GMX_Simple_Analysis_Tool library. Written by CharlesHahn.
+"""This module is part of DuIvyTools library. Written by CharlesHahn.
 
-GSAT module provide some simple API and CLI commands for you to use conveniently. 
+DIT module provide some simple API and CLI commands for you to use conveniently. 
 
 This module requires argparse. 
 

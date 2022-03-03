@@ -1,12 +1,12 @@
-# GMX_Simple_Analysis_Tool
+# DuIvyTools
 
-A simple tool for analysis of GROMACS result files(.xvg, .xpm, .ndx, .mdp). 
+DuIvyTools (DIT): A simple tool for analysis of GROMACS result files(.xvg, .xpm, .ndx, .mdp). 
 
 This tool can perform data visualization and convertion, and is able to cover daily tasks when analyzing results of molecular dynamics simulations by GROMACS. 
 
 ## Intro
 
-The usage of GSAT is similar to GMX, type `dit` and followed by commands and parameters, like:
+The usage of DIT is similar to GMX, type `dit` and followed by commands and parameters, like:
 
 ```bash
 dit xvg_show -f test.xvg
@@ -16,7 +16,7 @@ dit xvg_show -f test.xvg
 
 This tool is a python library which you can install it by `pip`.
 
-## Commands 
+## Commands
 
 This tool contains quite a lot commands.
 
