@@ -1383,7 +1383,7 @@ def xvg_call_functions(arguments: list = None):
 
     ## process nargs="+"
     if args.input == None:
-        print("Error -> No input file")
+        print("Error -> No input parameters")
         exit()
     xvgfiles = []
     if "," in "".join(args.input):
