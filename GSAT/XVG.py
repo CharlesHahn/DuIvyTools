@@ -469,11 +469,11 @@ class XVG(object):
             print("Warning -> x_index not in proper range, use default value.")
             x_index = 0
         if y_index == None:
-            y_index = (len(self.data_columns)-1, 1)[len(self.data_columns) >=2]
+            y_index = (len(self.data_columns) - 1, 1)[len(self.data_columns) >= 2]
         else:
             if y_index >= len(self.data_columns) or y_index < 0:
                 print("Warning -> y_index not in proper range, use default value.")
-                y_index = (len(self.data_columns)-1, 1)[len(self.data_columns) >=2]
+                y_index = (len(self.data_columns) - 1, 1)[len(self.data_columns) >= 2]
 
         ## draw scatter plot
         plt.scatter(self.data_columns[x_index], self.data_columns[y_index])
@@ -521,7 +521,7 @@ def xvg_combine(
         if isinstance(indexs, list):
             break
     else:
-        column_select = [ [columns] for columns in column_select]
+        column_select = [[columns] for columns in column_select]
     for xvgs in xvgfiles:
         if not isinstance(xvgs, str):
             print("Error -> item of xvgfiles should be str, do not use ,")
@@ -537,8 +537,11 @@ def xvg_combine(
             exit()
         for index in indexs:
             if index >= len(xvgs[id].data_heads):
-                print("Error -> wrong column_select index {} of {}".format(
-                    index, xvgs[id].xvg_filename))
+                print(
+                    "Error -> wrong column_select index {} of {}".format(
+                        index, xvgs[id].xvg_filename
+                    )
+                )
                 exit()
             combined_data_heads.append(xvgs[id].data_heads[index])
             combined_data_columns.append(xvgs[id].data_columns[index])
@@ -549,8 +552,11 @@ def xvg_combine(
     with open(outfile, "w") as fo:
         fo.write("# this file was created by combination of thess xvg files:\n")
         for i in range(len(xvgfiles)):
-            fo.write("#    file: {}; indexs: {};\n".format(
-                xvgfiles[i], ",".join([str(c) for c in column_select[i]])))
+            fo.write(
+                "#    file: {}; indexs: {};\n".format(
+                    xvgfiles[i], ",".join([str(c) for c in column_select[i]])
+                )
+            )
         fo.write('@    title "{}"\n'.format(combined_title))
         fo.write('@    xaxis label "{}"\n'.format(combined_xlabel))
         fo.write("@TYPE xy\n@ view 0.15, 0.15, 0.75, 0.85\n")
@@ -575,7 +581,7 @@ def xvg_combine(
     print("Info -> xvg files combined sucessfully.")
 
 
-def energy_compute(xvgfiles:list=[], outfile: str = None):
+def energy_compute(xvgfiles: list = [], outfile: str = None):
     """
     compute the interaction between protein and ligand by:
         binding energy  = prolig energy - pro energy - lig energy
@@ -924,7 +930,7 @@ def xvg_compare(
         if isinstance(indexs, list):
             break
     else:
-        column_select = [ [columns] for columns in column_select]
+        column_select = [[columns] for columns in column_select]
     if len(legend_list) != 0 and len(legend_list) != sum(
         [len(column) for column in column_select]
     ):
@@ -1036,7 +1042,7 @@ def xvg_bar_compare(
         if isinstance(xvgs, list):
             break
     else:
-        xvgfiles = [ [xvg] for xvg in xvgfiles]
+        xvgfiles = [[xvg] for xvg in xvgfiles]
 
     if len(legend_list) != 0 and len(legend_list) != len(xvgfiles):
         print("Error -> wrong number of legends you specified")
@@ -1066,8 +1072,11 @@ def xvg_bar_compare(
             heads, averages, _ = xvg.calc_average(start, end)
             for index in column_list:
                 if index >= len(heads):
-                    print("Error -> index {} is out of range of file {}".format(
-                        index, xvg.xvg_filename))
+                    print(
+                        "Error -> index {} is out of range of file {}".format(
+                            index, xvg.xvg_filename
+                        )
+                    )
                     exit()
             if len(xtitle_list) == 0:
                 xtitle_list = [heads[c] for c in column_list]
@@ -1161,7 +1170,7 @@ def xvg_box_compare(
     if title == None:
         title = "XVG box Comparison"
     if start == None:
-        start =0 
+        start = 0
     if xtitle_list == None:
         xtitle_list = []
     if column_select == None:
@@ -1206,8 +1215,8 @@ def xvg_box_compare(
     plt.show()
 
 
-def xvg_calc_ave(file:str=None, start:int=None, end:int=None) -> None:
-    """ do average calculation and print results """
+def xvg_calc_ave(file: str = None, start: int = None, end: int = None) -> None:
+    """do average calculation and print results"""
     if file == None:
         print("Error -> no input file")
         exit()
@@ -1215,15 +1224,20 @@ def xvg_calc_ave(file:str=None, start:int=None, end:int=None) -> None:
     heads, averages, stds = xvg.calc_average(start, end)
     print()
     print("".join(["{:>16}".format(item) for item in [" "] + heads]))
-    print("".join(["{:>16}".format("ave")] + [
-        "{:>16.4f}".format(item) for item in averages]))
-    print("".join(["{:>16}".format("std")] + [
-        "{:>16.4f}".format(item) for item in stds]))
+    print(
+        "".join(
+            ["{:>16}".format("ave")] + ["{:>16.4f}".format(item) for item in averages]
+        )
+    )
+    print(
+        "".join(["{:>16}".format("std")] + ["{:>16.4f}".format(item) for item in stds])
+    )
 
 
-def xvg_calc_mvave2csv(file:str=None, outcsv:str=None, 
-                       windowsize:int=20, confidence:float=0.90) -> None:
-    """ do moving average calculation and output data to csv """
+def xvg_calc_mvave2csv(
+    file: str = None, outcsv: str = None, windowsize: int = 20, confidence: float = 0.90
+) -> None:
+    """do moving average calculation and output data to csv"""
     if file == None:
         print("Error -> no input file")
         exit()
@@ -1239,97 +1253,131 @@ def xvg_calc_mvave2csv(file:str=None, outcsv:str=None,
         confidence = 0.90
     xvg = XVG(file)
     heads, mvaves, _, _ = xvg.calc_mvave(windowsize, confidence)
-    with open(outcsv, 'w') as fo:
+    with open(outcsv, "w") as fo:
         fo.write(",".join(heads) + "\n")
         for row in range(xvg.xvg_row_num):
-            fo.write(",".join([ "{}".format(column[row]) for column in mvaves]))
+            fo.write(",".join(["{}".format(column[row]) for column in mvaves]))
             fo.write("\n")
     print("Info -> moving averages have been saved to {}".format(outcsv))
 
 
-def xvg2csv(xvgfile:str="", outcsv:str="") -> None:
-    """ convert xvg file to csv file """
+def xvg2csv(xvgfile: str = "", outcsv: str = "") -> None:
+    """convert xvg file to csv file"""
     xvg = XVG(xvgfile)
     xvg.xvg2csv(outcsv)
 
-def xvg_show(xvgfile:str="") -> None:
-    """ visualization of xvg file """
+
+def xvg_show(xvgfile: str = "") -> None:
+    """visualization of xvg file"""
     xvg = XVG(xvgfile)
     xvg.draw()
 
-def xvg_show_distribution(xvgfile:str="", bin:int=100) -> None:
-    """ visualization of distribution of xvg data """
+
+def xvg_show_distribution(xvgfile: str = "", bin: int = 100) -> None:
+    """visualization of distribution of xvg data"""
     if bin == None:
         bin = 100
     xvg = XVG(xvgfile)
     xvg.draw_distribution(bin)
 
 
-def xvg_show_stacking(xvgfile:str="", column_index2start:int=1, column_index2end:int=None) -> None:
-    """ visualization of stacked xvg data """
+def xvg_show_stacking(
+    xvgfile: str = "", column_index2start: int = 1, column_index2end: int = None
+) -> None:
+    """visualization of stacked xvg data"""
     if column_index2start == None:
         column_index2start = 1
     xvg = XVG(xvgfile)
     xvg.draw_stacking(column_index2start, column_index2end)
 
-def xvg_show_scatter(xvgfile:str="", x_index:int=0, y_index:int=None) -> None:
-    """ visualization of scatter plot of xvg file """
+
+def xvg_show_scatter(xvgfile: str = "", x_index: int = 0, y_index: int = None) -> None:
+    """visualization of scatter plot of xvg file"""
     if x_index == None:
         x_index = 0
     xvg = XVG(xvgfile)
     xvg.draw_scatter(x_index, y_index)
 
 
-def main():
+def xvg_call_functions(arguments: list = None):
+    """call functions by method"""
+
+    if arguments == None:
+        arguments = [argv for argv in sys.argv]
+
     ## parse the command parameters
     parser = argparse.ArgumentParser(description="GROMACS Simple Analysis Tool")
-    parser.add_argument("-f", "--input", nargs="+",
-                        help="input your file or files")
+    parser.add_argument("-f", "--input", nargs="+", help="input your file or files")
     parser.add_argument("-o", "--output", help="file name for output")
     parser.add_argument("-s", "--start", type=int, help="the start index of data")
     parser.add_argument("-e", "--end", type=int, help="the end index of data")
-    parser.add_argument("-x", "--xlabel", type=str, 
-                        help="the xlabel of figure")
-    parser.add_argument("-y", "--ylabel", type=str, 
-                        help="the ylabel of figure")
-    parser.add_argument("-t", "--title", type=str, 
-                        help="the title of figure")
-    parser.add_argument("-c", "--column_select", nargs="+", 
-                        help="to select column of data")
-    parser.add_argument("-l", "--legend_list", nargs="+", 
-                        help="the legends you wanna specify")
-    parser.add_argument("-ws", "--windowsize", type=int, 
-                        help="window size for moving average calculation")
-    parser.add_argument("-cf", "--confidence", type=float, 
-                        help="confidence for confidence interval calculation")
-    parser.add_argument("-bin", "--bin", type=int, 
-                        help="the bin number for distribution calculation")
-    parser.add_argument("-cis", "--column_index2start", type=int, 
-                        help="the column index of data to start stacking")
-    parser.add_argument("-cie", "--column_index2end", type=int, 
-                        help="the column index of data to end stacking")
-    parser.add_argument("-xi", "--x_index", type=int, 
-                        help="the x index of data for drawing scatter")
-    parser.add_argument("-yi", "--y_index", type=int, 
-                        help="the y index of data for drawing scatter")
-    parser.add_argument("-smv", "--showMV", action="store_true",
-                        help="whether to show moving average")
-    parser.add_argument("-a", "--alpha", type=float, 
-                        help="the alpha of background lines")
-    parser.add_argument("-ac", "--ave2csv", action="store_true", 
-                        help="whether to save average to csv file, used in xvg_bar_draw")
-    parser.add_argument("-xt", "--xtitles", nargs="+", 
-                        help="the x tick labels for box comparison")
+    parser.add_argument("-x", "--xlabel", type=str, help="the xlabel of figure")
+    parser.add_argument("-y", "--ylabel", type=str, help="the ylabel of figure")
+    parser.add_argument("-t", "--title", type=str, help="the title of figure")
+    parser.add_argument(
+        "-c", "--column_select", nargs="+", help="to select column of data"
+    )
+    parser.add_argument(
+        "-l", "--legend_list", nargs="+", help="the legends you wanna specify"
+    )
+    parser.add_argument(
+        "-ws",
+        "--windowsize",
+        type=int,
+        help="window size for moving average calculation",
+    )
+    parser.add_argument(
+        "-cf",
+        "--confidence",
+        type=float,
+        help="confidence for confidence interval calculation",
+    )
+    parser.add_argument(
+        "-bin", "--bin", type=int, help="the bin number for distribution calculation"
+    )
+    parser.add_argument(
+        "-cis",
+        "--column_index2start",
+        type=int,
+        help="the column index of data to start stacking",
+    )
+    parser.add_argument(
+        "-cie",
+        "--column_index2end",
+        type=int,
+        help="the column index of data to end stacking",
+    )
+    parser.add_argument(
+        "-xi", "--x_index", type=int, help="the x index of data for drawing scatter"
+    )
+    parser.add_argument(
+        "-yi", "--y_index", type=int, help="the y index of data for drawing scatter"
+    )
+    parser.add_argument(
+        "-smv", "--showMV", action="store_true", help="whether to show moving average"
+    )
+    parser.add_argument(
+        "-a", "--alpha", type=float, help="the alpha of background lines"
+    )
+    parser.add_argument(
+        "-ac",
+        "--ave2csv",
+        action="store_true",
+        help="whether to save average to csv file, used in xvg_bar_draw",
+    )
+    parser.add_argument(
+        "-xt", "--xtitles", nargs="+", help="the x tick labels for box comparison"
+    )
 
-    if len(sys.argv) < 2:
+    if len(arguments) < 2:
         print("Error -> no input parameters, -h or --help for help messages")
         exit()
-    method = sys.argv[1]
+    method = arguments[1]
     # print(method)
     if method in ["-h", "--help"]:
-        parser.parse_args(sys.argv[1:])
+        parser.parse_args(arguments[1:])
         exit()
-    args = parser.parse_args(sys.argv[2:])
+    args = parser.parse_args(arguments[2:])
     # for key, value in vars(args).items():
     #     print(key, value)
 
@@ -1342,7 +1390,7 @@ def main():
         for xvgs in args.input:
             xvgfiles.append(xvgs.split(","))
     else:
-        xvgfiles = [ f for f in args.input ]
+        xvgfiles = [f for f in args.input]
     column_select = []
     if args.column_select != None:
         if "," in "".join(args.column_select):
@@ -1356,7 +1404,7 @@ def main():
             for legends in args.legend_list:
                 legend_list.append([l for l in legends.split(",")])
         else:
-            legend_list = [ l for l in args.legend_list]
+            legend_list = [l for l in args.legend_list]
     firstfile = (xvgfiles[0], xvgfiles[0][0])[isinstance(xvgfiles[0], list)]
 
     ## call functions
@@ -1381,20 +1429,52 @@ def main():
     elif method == "xvg_combine":  # [], [[],[]]
         xvg_combine(xvgfiles, column_select, args.output)
     elif method == "xvg_compare":  # [], [[], []]
-        xvg_compare(xvgfiles, column_select, legend_list, args.start, args.end, 
-                    args.xlabel, args.ylabel, args.title, args.showMV, 
-                    args.windowsize, args.confidence, args.alpha)
+        xvg_compare(
+            xvgfiles,
+            column_select,
+            legend_list,
+            args.start,
+            args.end,
+            args.xlabel,
+            args.ylabel,
+            args.title,
+            args.showMV,
+            args.windowsize,
+            args.confidence,
+            args.alpha,
+        )
     elif method == "xvg_ave_bar":  # [[], []], []
-        xvg_bar_compare(xvgfiles, column_select, legend_list, args.xtitles, 
-                        args.start, args.end, args.xlabel, args.ylabel, 
-                        args.title, args.ave2csv, args.output)
-    elif method == "xvg_box":     # [], []
-        xvg_box_compare(xvgfiles, column_select, args.xtitles, args.start, args.end, 
-                        args.xlabel, args.ylabel, args.title)
+        xvg_bar_compare(
+            xvgfiles,
+            column_select,
+            legend_list,
+            args.xtitles,
+            args.start,
+            args.end,
+            args.xlabel,
+            args.ylabel,
+            args.title,
+            args.ave2csv,
+            args.output,
+        )
+    elif method == "xvg_box":  # [], []
+        xvg_box_compare(
+            xvgfiles,
+            column_select,
+            args.xtitles,
+            args.start,
+            args.end,
+            args.xlabel,
+            args.ylabel,
+            args.title,
+        )
     else:
         print("Error -> no command {} found".format(method))
         exit()
 
+
+def main():
+    xvg_call_functions()
 
 
 if __name__ == "__main__":
