@@ -5,20 +5,20 @@ date : 20220220
 
 from setuptools import setup
 
-INSTALL_REQUIRES = ["matplotlib", "numpy", "scipy", "argparse"]
+INSTALL_REQUIRES = ["matplotlib", "numpy", "scipy", "argparse", "cycler"]
 
 TEST_REQUIRES = [
     # testing and coverage
-    "pytest",
-    "coverage",
-    "pytest-cov",
+    # "pytest",
+    # "coverage",
+    # "pytest-cov",
     # to be able to run `python setup.py checkdocs`
-    "collective.checkdocs",
-    "pygments",
+    # "collective.checkdocs",
+    # "pygments",
 ]
 
 
-__version__ = "0.0.1"
+__version__ = "0.1.0"
 long_description = ""
 
 with open("README.md", "r") as fo:
@@ -46,11 +46,11 @@ setup(
     extras_require={
         "test": TEST_REQUIRES + INSTALL_REQUIRES,
     },
-    entry_points={"console_scripts": ["gsat = GSAT.GSAT:main"]},
+    entry_points={"console_scripts": ["dit = GSAT.GSAT:main"]},
     classifiers=[
         # Trove classifiers
         # (https://pypi.python.org/pypi?%3Aaction=list_classifiers)
-        "Development Status :: 3 - Alpha",
+        "Development Status :: 4 - Beta",
         "License :: OSI Approved :: GPLv2 License",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
