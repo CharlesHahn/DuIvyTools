@@ -9,7 +9,6 @@ The package consists of the following Python modules:
 
 """
 
-__version__ = "0.0.1"
 from .DIT import *
 from .XPM import *
 from .XVG import *

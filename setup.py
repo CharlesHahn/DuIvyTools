@@ -24,15 +24,10 @@ long_description = ""
 with open("README.md", "r") as fo:
     long_description = fo.read()
 
-with open("DuIvyTools/__init__.py", "r") as fo:
-    init = fo.readlines()
-for line in init:
-    if "__version__" in line:
-        __version__ = line.split('"')[-2]
 
 setup(
     name="DuIvyTools",
-    version=__version__,
+    version="0.1.0",
     author="CharlesHahn",
     author_email="",
     description="Some tools for GMX results analysis",

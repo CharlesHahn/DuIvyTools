@@ -1,4 +1,5 @@
 test/*
 build/*
+dist/*
+*.egg-info
 DuIvyTools/__pycache__/*
-
