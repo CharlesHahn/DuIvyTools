@@ -8,12 +8,15 @@ This file is provided to you under GPLv2 License"""
 
 
 import sys
-from XPM import xpm_call_functions
-from XVG import xvg_call_functions
+from .XPM import xpm_call_functions
+from .XVG import xvg_call_functions
 
 
 
 def main():
+    if len(sys.argv) < 2:
+        print("DuIvyTools is a simple analysis tool for GROMACS result files.")
+        exit()
     method = sys.argv[1]
     arguments = [ argv for argv in sys.argv ]
     if method.startswith("xvg"):

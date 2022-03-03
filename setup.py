@@ -48,7 +48,7 @@ setup(
         # Trove classifiers
         # (https://pypi.python.org/pypi?%3Aaction=list_classifiers)
         "Development Status :: 4 - Beta",
-        "License :: OSI Approved :: GPLv2 License",
+        "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
         "Topic :: Scientific/Engineering :: Bio-Informatics",

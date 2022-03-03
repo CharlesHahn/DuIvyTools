@@ -21,31 +21,31 @@ This tool is a python library which you can install it by `pip`.
 This tool contains quite a lot commands.
 
 For .xvg file:
-    - xvg_show
-    - xvg_compare
-    - xvg_ave
-    - xvg_mvave
-    - xvg2csv
-    - xvg_rama
-    - xvg_show_distribution
-    - xvg_show_stack
-    - xvg_show_scatter
-    - xvg_energy_compute
-    - xvg_combine
-    - xvg_ave_bar
-    - xvg_box
+- xvg_show
+- xvg_compare
+- xvg_ave
+- xvg_mvave
+- xvg2csv
+- xvg_rama
+- xvg_show_distribution
+- xvg_show_stack
+- xvg_show_scatter
+- xvg_energy_compute
+- xvg_combine
+- xvg_ave_bar
+- xvg_box
 
 For .xpm file:
-    - xpm_show
-    - xpm2csv
-    - xpm2gpl
-    - xpm_combine (not recommand to use it)
+- xpm_show
+- xpm2csv
+- xpm2gpl
+- xpm_combine (not recommand to use it)
 
 For .ndx file:
-    - still working on these
+- still working on these
 
 For .mdp file:
-    - still working on these
+- still working on these
 
 ## Cite 
 
