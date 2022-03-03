@@ -701,7 +701,7 @@ def energy_compute(
     )
 
 
-def ramachandran(xvgfile: str = "") -> None:
+def xvg_ramachandran(xvgfile: str = "") -> None:
     """
     convert xvg data into ramachandran plot
 
@@ -1142,7 +1142,7 @@ def xvg_calc_ave(file:str=None, start:int=None, end:int=None) -> None:
     print()
     print("".join(["{:>16}".format(item) for item in [" "] + heads]))
     print("".join(["{:>16}".format("ave")] + [
-        "{:>16.4f}".format(item) for item in stds]))
+        "{:>16.4f}".format(item) for item in averages]))
     print("".join(["{:>16}".format("std")] + [
         "{:>16.4f}".format(item) for item in stds]))
 
@@ -1169,14 +1169,51 @@ def xvg_calc_mvave2csv(file:str=None, outcsv:str=None,
     print("Info -> moving averages have been saved to {}".format(outcsv))
 
 
+def xvg2csv(xvgfile:str="", outcsv:str="") -> None:
+    """ convert xvg file to csv file """
+    xvg = XVG(xvgfile)
+    xvg.xvg2csv(outcsv)
+
+def xvg_show(xvgfile:str="") -> None:
+    """ visualization of xvg file """
+    xvg = XVG(xvgfile)
+    xvg.draw()
+
+def xvg_show_distribution(xvgfile:str="", bin:int=100) -> None:
+    """ visualization of distribution of xvg data """
+    xvg = XVG(xvgfile)
+    xvg.draw_distribution(bin)
+
+
+def xvg_show_stacking(xvgfile:str="", column_index2start:int=1, column_index2end:int=None) -> None:
+    """ visualization of stacked xvg data """
+    xvg = XVG(xvgfile)
+    xvg.draw_stacking(column_index2start, column_index2end)
+
+def xvg_show_scatter(xvgfile:str="", x_index:int=0, y_index:int=None) -> None:
+    """ visualization of scatter plot of xvg file """
+    xvg = XVG(xvgfile)
+    xvg.draw_scatter(x_index, y_index)
+
 
 def main():
     ## parse the command parameters
     parser = argparse.ArgumentParser(description="GROMACS Simple Analysis Tool")
-    parser.add_argument("-f", "--input", help="input your file or files")
+    parser.add_argument("-f", "--input", nargs="+",
+                        help="input your file or files")
     parser.add_argument("-o", "--output", help="file name for output")
     parser.add_argument("-s", "--start", type=int, help="the start index of data")
     parser.add_argument("-e", "--end", type=int, help="the end index of data")
+    parser.add_argument("-x", "--xlabel", type=str, 
+                        help="the xlabel of figure")
+    parser.add_argument("-y", "--ylabel", type=str, 
+                        help="the ylabel of figure")
+    parser.add_argument("-t", "--title", type=str, 
+                        help="the title of figure")
+    parser.add_argument("-c", "--column_select", nargs="+", 
+                        help="to select column of data")
+    parser.add_argument("-l", "--legend_list", nargs="+", 
+                        help="the legends you wanna specify")
     parser.add_argument("-ws", "--windowsize", type=int, 
                         help="window size for moving average calculation")
     parser.add_argument("-cf", "--confidence", type=float, 
@@ -1191,33 +1228,75 @@ def main():
                         help="the x index of data for drawing scatter")
     parser.add_argument("-yi", "--y_index", type=int, 
                         help="the y index of data for drawing scatter")
-    parser.add_argument("-c", "--column_selet", type=list, 
-                        help="to select column of data")
-    parser.add_argument("-l", "--legend_list", type=list, 
-                        help="the legends you wanna specify")
-    parser.add_argument("-x", "--xlabel", type=str, 
-                        help="the xlabel of figure")
-    parser.add_argument("-y", "--ylabel", type=str, 
-                        help="the ylabel of figure")
-    parser.add_argument("-t", "--title", type=str, 
-                        help="the title of figure")
     parser.add_argument("-smv", "--showMV", type=bool, 
                         help="whether to show moving average")
     parser.add_argument("-a", "--alpha", type=float, 
                         help="the alpha of background lines")
     parser.add_argument("-ac", "--ave2csv", type=float, 
                         help="whether to save average to csv file, used in xvg_bar_draw")
-    parser.add_argument("-xt", "--xtitles", type=float, 
+    parser.add_argument("-xt", "--xtitles", nargs="+", 
                         help="the x tick labels for box comparison")
 
     method = sys.argv[1]
     print(method)
-    args = parser.parse_args(sys.argv[3:])
-    print(args)
+    args = parser.parse_args(sys.argv[2:])
+    for key, value in vars(args).items():
+        print(key, value)
+
+    ## process nargs="+"
+    xvgfiles = []
+    for xvgs in args.input:
+        if len(xvgs.split(",")) > 1:
+            xvgfiles.append(xvgs.split(","))
+        else:
+            xvgfiles.append(xvgs)
+    if args.column_select != None:
+        column_select = []
+        for columns in args.column_select:
+            if len(columns.split(",")) > 1:
+                column_select.append(columns.split(","))
+            else:
+                column_select.append(columns)
+    if args.legend_list != None:
+        legend_list = []
+        for legends in args.legend_list:
+            if len(legends.split(",")) > 1:
+                legend_list.append(legends.split(","))
+            else:
+                legend_list.append(legends)
+
+    ## call functions
+    if method == "xvg_calc_ave":
+        xvg_calc_ave()
+    elif method == "xvg_calc_mvave":
+        xvg_calc_mvave2csv()
+    elif method == "xvg2csv":
+        xvg2csv()
+    elif method == "xvg_show":
+        xvg_show()
+    elif method == "xvg_show_distribution":
+        xvg_show_distribution()
+    elif method == "xvg_show_stack":
+        xvg_show_stacking()
+    elif method == "xvg_show_scatter":
+        xvg_show_scatter()
+    elif method == "xvg_combine":
+        xvg_combine()
+    elif method == "xvg_energy_compute":
+        energy_compute()
+    elif method == "xvg_rama":
+        xvg_ramachandran()
+    elif method == "xvg_compare":
+        xvg_compare()
+    elif method == "xvg_average_bar":
+        xvg_bar_compare()
+    elif method == "xvg_box":
+        xvg_box_compare()
+    else:
+        print("Error -> no command {} found".format(method))
+        exit()
 
 
-
-        
 
 if __name__ == "__main__":
     main()
