@@ -158,8 +158,33 @@ class NDX(object):
         self.write_ndx(outndx)
 
 
-    def preserve_group(self, outndx:str, group_list:list) -> None:
-        pass
+    def preserve_group(self, outndx:str, group_list:list, interactive:bool=False) -> None:
+        """ preserve the groups you specify and remove all others """
+
+        ## remove the groups specified in group_list
+        out_name_list, out_index_list = [], []
+        if interactive == False:
+            for index_id, name in enumerate(self.group_name_list):
+                if name in group_list:
+                    out_name_list.append(name)
+                    out_index_list.append(self.group_index_list[index_id])
+                else:
+                    print("Info -> removed the group {}".format(name))
+        else:
+            for index_id, name in enumerate(self.group_name_list):
+                resp = input("\n  -> preserve group [ {} ] ? y/N : ".format(name)).strip()
+                if resp.lower() == "n" or resp == "" or resp.lower() == "no":
+                    print("Info -> removed the group {}".format(name))
+                elif resp.lower() == "y" or resp.lower() == "yes":
+                    out_name_list.append(name)
+                    out_index_list.append(self.group_index_list[index_id])
+                else:
+                    print("Error -> unknown response {}".format(resp))
+                    exit()
+
+        self.group_name_list = out_name_list
+        self.group_index_list = out_index_list
+        self.write_ndx(outndx)
 
 
     def combine_group(self, outndx:str, groupname:str, group_list:list) -> None:
@@ -170,7 +195,8 @@ class NDX(object):
         pass
 
 
-    def rename_group(self, outndx:str, old_name:str, new_name:str) -> None:
+    def rename_group(self, outndx:str, old_name:str, new_name:str, 
+                     interactive:bool=False) -> None:
         pass
 
 
@@ -208,7 +234,7 @@ def main():
     # arguments = [ argv for argv in sys.argv ]
     # ndx_call_functions(arguments)
     ndx = NDX(sys.argv[1])
-    ndx.remove_group("test.ndx", [], interactive=True)
+    ndx.preserve_group("test.ndx", [], interactive=True)
 
 
 
