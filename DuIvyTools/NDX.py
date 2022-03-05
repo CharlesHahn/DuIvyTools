@@ -31,7 +31,7 @@ class NDX(object):
         rename_group: rename the group
     """
 
-    def __init__(self, ndxfile:str):
+    def __init__(self, ndxfile:str) -> None:
         """ read ndx file and extract data """
 
         self.ndx_filename = ndxfile
@@ -40,11 +40,11 @@ class NDX(object):
         self.group_index_list = []
 
         ## check file 
+        if len(ndxfile) <= 4 or ndxfile[-4:] != ".ndx":
+            print("Error -> please specify a index file with suffix .ndx")
+            exit()
         if not os.path.exists(ndxfile):
             print("Error -> no {} in current directory".format(ndxfile))
-            exit()
-        if ndxfile[-4:] != ".ndx":
-            print("Error -> please specify a index file with suffix .ndx")
             exit()
 
         ## parse the content of ndxfile
@@ -76,42 +76,96 @@ class NDX(object):
         print("Info -> read {} groups from {} successfully".format(
             self.group_number, self.ndx_filename))
         
-    def remove_duplicate(self, outndx:str):
+
+    def write_ndx(self, outndx:str) -> None:
+        """ write data to new ndx file """
+
+        ## check file 
+        if len(outndx) <=4 or outndx[-4:] != ".ndx":
+            print("Error -> please specify a output file with suffix .ndx")
+            exit()
+        if os.path.exists(outndx):
+            print("Error -> {} is already in current directory".format(outndx))
+            exit()
+
+        ## write results
+        if len(self.group_name_list) != len(self.group_index_list):
+            print("Error -> shit happens sometimes, oops")
+            exit()
+        with open(outndx, 'w') as fo:
+            for i in range(len(self.group_name_list)):
+                fo.write("[ {} ]\n".format(self.group_name_list[i]))
+                sentence, count = "", 0
+                for index in self.group_index_list[i]:
+                    count += 1
+                    sentence += "{:>4d} ".format(index)
+                    if count == 15:
+                        sentence += "\n"
+                        count = 0
+                fo.write(sentence.strip() + "\n")
+        print("Info -> save index data to {} successfully".format(outndx))
+
+
+    def remove_duplicate(self, outndx:str) -> None:
+        """ remove the duplicate groups in ndx file """
+
+        ## remove duplicate
+        out_name_list, out_index_list = [], []
+        for index_id, index in enumerate(self.group_index_list):
+            if index not in out_index_list or (
+                self.group_name_list[index_id] not in out_name_list):
+                out_index_list.append(index)
+                if self.group_name_list[index_id] in out_name_list:
+                    print("Warning -> two groups with the same name", end="")
+                    print(" ({}) but index numbers are different? check it".format(
+                        self.group_name_list[index_id]))
+                out_name_list.append(self.group_name_list[index_id])
+            else:
+                print("Info -> removed the group {}".format(
+                    self.group_name_list[index_id]))
+
+        self.group_name_list = out_name_list
+        self.group_index_list = out_index_list
+        self.write_ndx(outndx)
+
+
+    def remove_group(self, outndx:str, group_list:list) -> None:
         pass
 
-    def remove_group(self, outndx:str, group_list:list):
-        pass
 
-    def preserve_group(self, outndx:str, group_list:list):
-        pass
-
-    def combine_group(self, outndx:str, groupname:str, group_list:list):
-        pass
-
-    def add_group(self, outndx:str, groupname:str, start:int, end:int, step:int):
-        pass
-
-    def rename_group(self, outndx:str, old_name:str, new_name:str):
+    def preserve_group(self, outndx:str, group_list:list) -> None:
         pass
 
 
+    def combine_group(self, outndx:str, groupname:str, group_list:list) -> None:
+        pass
 
-def ndx_remove_duplicate(ndxfile:str, outndx:str):
+
+    def add_group(self, outndx:str, groupname:str, start:int, end:int, step:int) -> None:
+        pass
+
+
+    def rename_group(self, outndx:str, old_name:str, new_name:str) -> None:
+        pass
+
+
+
+def ndx_remove_duplicate(ndxfile:str, outndx:str) -> None:
     pass
 
-def ndx_remove_group(ndxfile:str, outndx:str, group_list:list):
+def ndx_remove_group(ndxfile:str, outndx:str, group_list:list) -> None:
     pass
 
-def ndx_preserve_group(ndxfile:str, outndx:str, group_list:list):
+def ndx_preserve_group(ndxfile:str, outndx:str, group_list:list) -> None:
     pass
 
-def ndx_combine_group(ndxfile:str, outndx:str, groupname:str, group_list:list):
+def ndx_combine_group(ndxfile:str, outndx:str, groupname:str, group_list:list) -> None:
     pass
 
-def ndx_add_group(ndxfile:str, outndx:str, groupname:str, start:int, end:int, step:int):
+def ndx_add_group(ndxfile:str, outndx:str, groupname:str, start:int, end:int, step:int) -> None:
     pass
 
-def ndx_rename_group(ndxfile:str, outndx:str, old_name:str, new_name:str):
+def ndx_rename_group(ndxfile:str, outndx:str, old_name:str, new_name:str) -> None:
         pass
 
 
@@ -128,7 +182,8 @@ def ndx_call_functions(arguments):
 def main():
     # arguments = [ argv for argv in sys.argv ]
     # ndx_call_functions(arguments)
-    NDX(sys.argv[1])
+    ndx = NDX(sys.argv[1])
+    ndx.remove_duplicate("test.ndx")
 
 
 
