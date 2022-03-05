@@ -129,8 +129,33 @@ class NDX(object):
         self.write_ndx(outndx)
 
 
-    def remove_group(self, outndx:str, group_list:list) -> None:
-        pass
+    def remove_group(self, outndx:str, group_list:list, interactive:bool=False) -> None:
+        """ remove the groups you specify """
+
+        ## remove the groups specified in group_list
+        out_name_list, out_index_list = [], []
+        if interactive == False:
+            for index_id, name in enumerate(self.group_name_list):
+                if name not in group_list:
+                    out_name_list.append(name)
+                    out_index_list.append(self.group_index_list[index_id])
+                else:
+                    print("Info -> removed the group {}".format(name))
+        else:
+            for index_id, name in enumerate(self.group_name_list):
+                resp = input("\n  -> remove group [ {} ] ? y/N : ".format(name)).strip()
+                if resp.lower() == "n" or resp == "" or resp.lower() == "no":
+                    out_name_list.append(name)
+                    out_index_list.append(self.group_index_list[index_id])
+                elif resp.lower() == "y" or resp.lower() == "yes":
+                    print("Info -> removed the group {}".format(name))
+                else:
+                    print("Error -> unknown response {}".format(resp))
+                    exit()
+
+        self.group_name_list = out_name_list
+        self.group_index_list = out_index_list
+        self.write_ndx(outndx)
 
 
     def preserve_group(self, outndx:str, group_list:list) -> None:
@@ -183,7 +208,7 @@ def main():
     # arguments = [ argv for argv in sys.argv ]
     # ndx_call_functions(arguments)
     ndx = NDX(sys.argv[1])
-    ndx.remove_duplicate("test.ndx")
+    ndx.remove_group("test.ndx", [], interactive=True)
 
 
 
