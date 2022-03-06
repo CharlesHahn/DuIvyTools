@@ -108,7 +108,7 @@ class NDX(object):
                     if count == 15:
                         sentence += "\n"
                         count = 0
-                fo.write(sentence.strip() + "\n")
+                fo.write(sentence.strip("\n") + "\n")
         print("Info -> save index data to {} successfully".format(outndx))
 
 
@@ -215,10 +215,27 @@ class NDX(object):
         self.write_ndx(outndx)
 
 
-
     def add_group(self, outndx:str, groupname:str, start:int, end:int, step:int) -> None:
-        pass
+        """ add one index group by parameters specified """
 
+        ## add one group 
+        if step == None:
+            step = 1
+        if start == None or end == None:
+            print("Error -> start and end must be integer > 0")
+            exit()
+        if start <= 0 or end <= start:
+            print("Error -> start should > 0 and end should > start")
+            exit()
+        if groupname in self.group_name_list:
+            print("Warning -> already a group {} in {}, add to the end".format(
+                groupname, self.ndx_filename))
+        out_index = [ i for i in range(start, end, step)]
+        self.group_name_list.append(groupname)
+        self.group_index_list.append(out_index)
+        print("Info -> add group {} successfully".format(groupname))
+        self.write_ndx(outndx)
+        
 
     def rename_group(self, outndx:str, old_name:str, new_name:str, 
                      interactive:bool=False) -> None:
@@ -263,7 +280,7 @@ def main():
     # arguments = [ argv for argv in sys.argv ]
     # ndx_call_functions(arguments)
     ndx = NDX(sys.argv[1])
-    ndx.combine_group("test.ndx", "test", ["1ZIN", "2ZIN", "3ZIN"])
+    ndx.add_group("test.ndx", "1ZIN", 1, 100, 2)
 
 
 
