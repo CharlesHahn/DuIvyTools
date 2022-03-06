@@ -34,15 +34,15 @@ class NDX(object):
         rename_group: rename the group
     """
 
-    def __init__(self, ndxfile:str) -> None:
-        """ read ndx file and extract data """
+    def __init__(self, ndxfile: str) -> None:
+        """read ndx file and extract data"""
 
         self.ndx_filename = ndxfile
         self.group_number = 0
         self.group_name_list = []
         self.group_index_list = []
 
-        ## check file 
+        ## check file
         if len(ndxfile) <= 4 or ndxfile[-4:] != ".ndx":
             print("Error -> please specify a index file with suffix .ndx")
             exit()
@@ -51,8 +51,8 @@ class NDX(object):
             exit()
 
         ## parse the content of ndxfile
-        with open(ndxfile, 'r') as fo:
-            lines = [ line.strip() for line in fo.readlines() ]
+        with open(ndxfile, "r") as fo:
+            lines = [line.strip() for line in fo.readlines()]
         for line_id, line in enumerate(lines):
             if line == "":
                 continue
@@ -60,7 +60,7 @@ class NDX(object):
                 self.group_name_list.append(line[1:-1].strip())
                 self.group_number += 1
             elif (not "[" in line) and (not "]" in line):
-                if len(self.group_name_list) -1 == len(self.group_index_list):
+                if len(self.group_name_list) - 1 == len(self.group_index_list):
                     self.group_index_list.append([int(i) for i in line.split()])
                 elif len(self.group_name_list) == len(self.group_index_list):
                     self.group_index_list[-1] += [int(i) for i in line.split()]
@@ -71,29 +71,31 @@ class NDX(object):
             else:
                 print("Error -> a weired line appears at line {}".format(line_id))
                 exit()
-        if not (self.group_number == len(self.group_name_list) == len(
-                self.group_index_list)):
+        if not (
+            self.group_number == len(self.group_name_list) == len(self.group_index_list)
+        ):
             print("Error -> length of group name and group index are not equal")
             exit()
 
-        print("Info -> read {} groups from {} successfully".format(
-            self.group_number, self.ndx_filename))
-        
+        print(
+            "Info -> read {} groups from {} successfully".format(
+                self.group_number, self.ndx_filename
+            )
+        )
 
     def show_ndx(self) -> None:
-        """ print all group names """
+        """print all group names"""
         for name_id, name in enumerate(self.group_name_list):
             print("  {:>2} -> {}".format(name_id, name))
 
+    def write_ndx(self, outndx: str) -> None:
+        """write data to new ndx file"""
 
-    def write_ndx(self, outndx:str) -> None:
-        """ write data to new ndx file """
-
-        ## check file 
+        ## check file
         if outndx == None:
             print("Error -> please specify the output ndx file name")
             exit()
-        if len(outndx) <=4 or outndx[-4:] != ".ndx":
+        if len(outndx) <= 4 or outndx[-4:] != ".ndx":
             print("Error -> please specify a output file with suffix .ndx")
             exit()
         if os.path.exists(outndx):
@@ -104,7 +106,7 @@ class NDX(object):
         if len(self.group_name_list) != len(self.group_index_list):
             print("Error -> shit happens sometimes, oops")
             exit()
-        with open(outndx, 'w') as fo:
+        with open(outndx, "w") as fo:
             for i in range(len(self.group_name_list)):
                 fo.write("[ {} ]\n".format(self.group_name_list[i]))
                 sentence, count = "", 0
@@ -117,32 +119,39 @@ class NDX(object):
                 fo.write(sentence.strip("\n") + "\n")
         print("Info -> save index data to {} successfully".format(outndx))
 
-
-    def remove_duplicate(self, outndx:str) -> None:
-        """ remove the duplicate groups in ndx file """
+    def remove_duplicate(self, outndx: str) -> None:
+        """remove the duplicate groups in ndx file"""
 
         ## remove duplicate
         out_name_list, out_index_list = [], []
         for index_id, index in enumerate(self.group_index_list):
             if index not in out_index_list or (
-                self.group_name_list[index_id] not in out_name_list):
+                self.group_name_list[index_id] not in out_name_list
+            ):
                 out_index_list.append(index)
                 if self.group_name_list[index_id] in out_name_list:
                     print("Warning -> two groups with the same name", end="")
-                    print(" ({}) but index numbers are different? check it".format(
-                        self.group_name_list[index_id]))
+                    print(
+                        " ({}) but index numbers are different? check it".format(
+                            self.group_name_list[index_id]
+                        )
+                    )
                 out_name_list.append(self.group_name_list[index_id])
             else:
-                print("Info -> removed the group {}".format(
-                    self.group_name_list[index_id]))
+                print(
+                    "Info -> removed the group {}".format(
+                        self.group_name_list[index_id]
+                    )
+                )
 
         self.group_name_list = out_name_list
         self.group_index_list = out_index_list
         self.write_ndx(outndx)
 
-
-    def remove_group(self, outndx:str, group_list:list, interactive:bool=False) -> None:
-        """ remove the groups you specify """
+    def remove_group(
+        self, outndx: str, group_list: list, interactive: bool = False
+    ) -> None:
+        """remove the groups you specify"""
 
         ## check parameters
         if interactive == False and group_list == []:
@@ -173,9 +182,10 @@ class NDX(object):
         self.group_index_list = out_index_list
         self.write_ndx(outndx)
 
-
-    def preserve_group(self, outndx:str, group_list:list, interactive:bool=False) -> None:
-        """ preserve the groups you specify and remove all others """
+    def preserve_group(
+        self, outndx: str, group_list: list, interactive: bool = False
+    ) -> None:
+        """preserve the groups you specify and remove all others"""
 
         ## check parameters
         if interactive == False and group_list == []:
@@ -192,7 +202,9 @@ class NDX(object):
                     print("Info -> removed the group {}".format(name))
         else:
             for index_id, name in enumerate(self.group_name_list):
-                resp = input("\n  -> preserve group [ {} ] ? y/N : ".format(name)).strip()
+                resp = input(
+                    "\n  -> preserve group [ {} ] ? y/N : ".format(name)
+                ).strip()
                 if resp.lower() == "n" or resp == "" or resp.lower() == "no":
                     print("Info -> removed the group {}".format(name))
                 elif resp.lower() == "y" or resp.lower() == "yes":
@@ -206,9 +218,8 @@ class NDX(object):
         self.group_index_list = out_index_list
         self.write_ndx(outndx)
 
-
-    def combine_group(self, outndx:str, groupname:str, group_list:list) -> None:
-        """ combine the groups specified into one group """
+    def combine_group(self, outndx: str, groupname: str, group_list: list) -> None:
+        """combine the groups specified into one group"""
 
         if groupname == None:
             print("Error -> please specify the group name")
@@ -226,16 +237,17 @@ class NDX(object):
                 else:
                     print("Error -> shit happens when combination")
                     exit()
-        self.group_name_list += [ groupname ]
+        self.group_name_list += [groupname]
         self.group_index_list += out_index_list
         print("Info -> combined {} into {}".format(out_name_list[0], groupname))
         self.write_ndx(outndx)
 
+    def add_group(
+        self, outndx: str, groupname: str, start: int, end: int, step: int
+    ) -> None:
+        """add one index group by parameters specified"""
 
-    def add_group(self, outndx:str, groupname:str, start:int, end:int, step:int) -> None:
-        """ add one index group by parameters specified """
-
-        ## add one group 
+        ## add one group
         if groupname == None:
             print("Error -> please specify the group name")
             exit()
@@ -248,18 +260,21 @@ class NDX(object):
             print("Error -> start should > 0 and end should > start")
             exit()
         if groupname in self.group_name_list:
-            print("Warning -> already a group {} in {}, add to the end".format(
-                groupname, self.ndx_filename))
-        out_index = [ i for i in range(start, end, step)]
+            print(
+                "Warning -> already a group {} in {}, add to the end".format(
+                    groupname, self.ndx_filename
+                )
+            )
+        out_index = [i for i in range(start, end, step)]
         self.group_name_list.append(groupname)
         self.group_index_list.append(out_index)
         print("Info -> add group {} successfully".format(groupname))
         self.write_ndx(outndx)
-        
 
-    def rename_group(self, outndx:str, old_name:str, new_name:str, 
-                     interactive:bool=False) -> None:
-        """ rename the group name """
+    def rename_group(
+        self, outndx: str, old_name: str, new_name: str, interactive: bool = False
+    ) -> None:
+        """rename the group name"""
 
         ## check parameters
         if interactive == False:
@@ -291,51 +306,60 @@ class NDX(object):
         self.write_ndx(outndx)
 
 
-def ndx_show_name(ndxfile:str) -> None:
-    """ print the name of all groups """
+def ndx_show_name(ndxfile: str) -> None:
+    """print the name of all groups"""
     ndx = NDX(ndxfile)
     ndx.show_ndx()
 
-def ndx_remove_duplicate(ndxfile:str, outndx:str) -> None:
-    """ remove all duplicate groups """
+
+def ndx_remove_duplicate(ndxfile: str, outndx: str) -> None:
+    """remove all duplicate groups"""
     ndx = NDX(ndxfile)
     ndx.remove_duplicate(outndx)
 
 
-def ndx_remove_group(ndxfile:str, outndx:str, group_list:list, 
-                     interactive:bool=False) -> None:
-    """ remove the groups specified """
+def ndx_remove_group(
+    ndxfile: str, outndx: str, group_list: list, interactive: bool = False
+) -> None:
+    """remove the groups specified"""
     ndx = NDX(ndxfile)
     ndx.remove_group(outndx, group_list, interactive)
 
-def ndx_preserve_group(ndxfile:str, outndx:str, group_list:list,
-                       interactive:bool=False) -> None:
-    """ preserve the groups specified and remove all others"""
+
+def ndx_preserve_group(
+    ndxfile: str, outndx: str, group_list: list, interactive: bool = False
+) -> None:
+    """preserve the groups specified and remove all others"""
     ndx = NDX(ndxfile)
     ndx.preserve_group(outndx, group_list, interactive)
-    
 
-def ndx_combine_group(ndxfile:str, outndx:str, groupname:str, group_list:list) -> None:
-    """ combine the groups specified """
+
+def ndx_combine_group(
+    ndxfile: str, outndx: str, groupname: str, group_list: list
+) -> None:
+    """combine the groups specified"""
     ndx = NDX(ndxfile)
     ndx.combine_group(outndx, groupname, group_list)
 
 
-def ndx_add_group(ndxfile:str, outndx:str, groupname:str, start:int, end:int, step:int) -> None:
-    """ add one group by specified parameters """
+def ndx_add_group(
+    ndxfile: str, outndx: str, groupname: str, start: int, end: int, step: int
+) -> None:
+    """add one group by specified parameters"""
     ndx = NDX(ndxfile)
     ndx.add_group(outndx, groupname, start, end, step)
 
 
-def ndx_rename_group(ndxfile:str, outndx:str, old_name:str, new_name:str, 
-                     interactive:bool=False) -> None:
-    """ rename groups """
+def ndx_rename_group(
+    ndxfile: str, outndx: str, old_name: str, new_name: str, interactive: bool = False
+) -> None:
+    """rename groups"""
     ndx = NDX(ndxfile)
     ndx.rename_group(outndx, old_name, new_name, interactive)
 
 
-def ndx_call_functions(arguments:list=None):
-    """ call functions according to arguments """
+def ndx_call_functions(arguments: list = None):
+    """call functions according to arguments"""
 
     if arguments == None:
         arguments = [argv for argv in sys.argv]
@@ -344,22 +368,25 @@ def ndx_call_functions(arguments:list=None):
     parser = argparse.ArgumentParser(description="Process ndx files generated by GMX")
     parser.add_argument("-f", "--inputfile", help="input your ndx file")
     parser.add_argument("-o", "--outputfile", help="file name to output")
-    parser.add_argument("-int", "--interactive", action="store_true",
-                        help="whether to initiate interactive mode")
-    parser.add_argument("-gl", "--grouplist", nargs="+", 
-                        help="specify a list of group names")
-    parser.add_argument("-gn", "--groupname", type=str,
-                        help="specify the group name")
-    parser.add_argument("-on", "--oldname", type=str,
-                        help="specify the old group name")
-    parser.add_argument("-nn", "--newname", type=str,
-                        help="specify the new group name")
-    parser.add_argument("-s", "--start", type=int, 
-                        help="specify the start index number")
-    parser.add_argument("-e", "--end", type=int, 
-                        help="specify the end index number")
-    parser.add_argument("-t", "--step", type=int, 
-                        help="specify the step for generate index numbers")
+    parser.add_argument(
+        "-int",
+        "--interactive",
+        action="store_true",
+        help="whether to initiate interactive mode",
+    )
+    parser.add_argument(
+        "-gl", "--grouplist", nargs="+", help="specify a list of group names"
+    )
+    parser.add_argument("-gn", "--groupname", type=str, help="specify the group name")
+    parser.add_argument("-on", "--oldname", type=str, help="specify the old group name")
+    parser.add_argument("-nn", "--newname", type=str, help="specify the new group name")
+    parser.add_argument(
+        "-s", "--start", type=int, help="specify the start index number"
+    )
+    parser.add_argument("-e", "--end", type=int, help="specify the end index number")
+    parser.add_argument(
+        "-t", "--step", type=int, help="specify the step for generate index numbers"
+    )
 
     if len(arguments) < 2:
         print("Error -> no input parameters, -h or --help for help messages")
@@ -370,22 +397,40 @@ def ndx_call_functions(arguments:list=None):
         parser.parse_args(arguments[1:])
         exit()
     args = parser.parse_args(arguments[2:])
-    
+
     if method == "ndx_show":
         ndx_show_name(args.inputfile)
     elif method == "ndx_rm_dup":
         ndx_remove_duplicate(args.inputfile, args.outputfile)
     elif method == "ndx_rm":
-        ndx_remove_group(args.inputfile, args.outputfile, args.grouplist, args.interactive)
+        ndx_remove_group(
+            args.inputfile, args.outputfile, args.grouplist, args.interactive
+        )
     elif method == "ndx_preserve":
-        ndx_preserve_group(args.inputfile, args.outputfile, args.grouplist, args.interactive)
+        ndx_preserve_group(
+            args.inputfile, args.outputfile, args.grouplist, args.interactive
+        )
     elif method == "ndx_add":
-        ndx_add_group(args.inputfile, args.outputfile, args.groupname, 
-                      args.start, args.end, args.step)
+        ndx_add_group(
+            args.inputfile,
+            args.outputfile,
+            args.groupname,
+            args.start,
+            args.end,
+            args.step,
+        )
     elif method == "ndx_combine":
-        ndx_combine_group(args.inputfile, args.outputfile, args.groupname, args.grouplist)
+        ndx_combine_group(
+            args.inputfile, args.outputfile, args.groupname, args.grouplist
+        )
     elif method == "ndx_rename":
-        ndx_rename_group(args.inputfile, args.outputfile, args.oldname, args.newname, args.interactive)
+        ndx_rename_group(
+            args.inputfile,
+            args.outputfile,
+            args.oldname,
+            args.newname,
+            args.interactive,
+        )
     else:
         print("Error -> unknown method {}".format(method))
         exit()
@@ -394,7 +439,7 @@ def ndx_call_functions(arguments:list=None):
 
 
 def main():
-    arguments = [ argv for argv in sys.argv ]
+    arguments = [argv for argv in sys.argv]
     ndx_call_functions(arguments)
 
 
