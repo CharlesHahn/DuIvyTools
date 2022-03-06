@@ -12,6 +12,7 @@ from XPM import xpm_call_functions
 from XVG import xvg_call_functions
 from NDX import ndx_call_functions
 from MDP import mdp_call_functions
+from HELP import help_call_functions
 
 
 
@@ -29,6 +30,8 @@ def main():
         ndx_call_functions(arguments)
     elif method.startswith("mdp"):
         mdp_call_functions(arguments)
+    elif method.startswith("help"):
+        help_call_functions(arguments)
     else:
         print("Error -> unknown method {}".format(method))
 

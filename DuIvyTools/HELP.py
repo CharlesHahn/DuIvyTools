@@ -8,9 +8,7 @@ This HELP module contains:
 This file is provided to you by GPLv2 license."""
 
 
-import os
 import sys
-import argparse
 
 
 class HELP(object):
@@ -20,31 +18,87 @@ class HELP(object):
         """ init all help messages """
 
         self.help_infos = {
-            "xvg_show": "<",
-            "xvg_compare": "<",
-            "xvg_ave": "<",
-            "xvg_mvave": "<",
-            "xvg2csv": "<",
-            "xvg_rama": "<",
-            "xvg_show_distribution": "<",
-            "xvg_show_stack": "<",
-            "xvg_show_scatter": "<",
-            "xvg_energy_compute": "<",
-            "xvg_combine": "<",
-            "xvg_ave_bar": "<",
-            "xvg_box": "<",
-            "xpm_show": "<",
-            "xpm2csv": "<",
-            "xpm2gpl": "<",
-            "xpm_combine": "<",
-            "ndx_show": "<",
-            "ndx_rm_dup": "<",
-            "ndx_rm": "<",
-            "ndx_preserve": "<",
-            "ndx_add": "<",
-            "ndx_combine": "<",
-            "ndx_rename": "<",
-            "mdp_gen": "<",
+            "xvg_show": """
+xvg_show: draw xvg data into line figures.
+
+:examples: dit xvg_show -f test.xvg
+
+:parameters:
+    -f, --input
+            specify the xvg file for input
+""",
+            "xvg_compare": """
+
+""",
+            "xvg_ave": """
+
+""",
+            "xvg_mvave": """
+
+""",
+            "xvg2csv": """
+
+""",
+            "xvg_rama": """
+
+""",
+            "xvg_show_distribution": """
+
+""",
+            "xvg_show_stack": """
+
+""",
+            "xvg_show_scatter": """
+
+""",
+            "xvg_energy_compute": """
+
+""",
+            "xvg_combine": """
+
+""",
+            "xvg_ave_bar": """
+
+""",
+            "xvg_box": """
+
+""",
+            "xpm_show": """
+
+""",
+            "xpm2csv": """
+
+""",
+            "xpm2gpl": """
+
+""",
+            "xpm_combine": """
+
+""",
+            "ndx_show": """
+
+""",
+            "ndx_rm_dup": """
+
+""",
+            "ndx_rm": """
+
+""",
+            "ndx_preserve": """
+
+""",
+            "ndx_add": """
+
+""",
+            "ndx_combine": """
+
+""",
+            "ndx_rename": """
+
+""",
+            "mdp_gen": """
+
+""",
         }
 
     def print_help_infos(self, method:str) -> None:

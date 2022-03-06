@@ -82,7 +82,7 @@ def mdp_call_functions(arguments: list = None):
 
     ## parse the command parameters
     parser = argparse.ArgumentParser(description="generate mdp file templates")
-    parser.add_argument("-o", "--outputfile", help="file name to output")
+    parser.add_argument("-o", "--output", help="file name to output")
     parser.add_argument("-a", "--application", 
                 choices=["ions", "em", "nvt", "npt", "md", "blank"], 
                 help="specify the application of mdp, choices: ions, em, nvt, npt, md, blank")

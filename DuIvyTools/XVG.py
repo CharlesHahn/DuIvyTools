@@ -650,7 +650,7 @@ def energy_compute(xvgfiles: list = [], outfile: str = None):
 
     ## compute the bingding energy
     ## time
-    out_data = [prolig.data_columns[0]] + [[] for i in range(9)]
+    out_data = [prolig.data_columns[0]] + [[] for _ in range(9)]
     out_heads = (
         [prolig.data_heads[0]]
         + [head for head in prolig.xvg_legends]
