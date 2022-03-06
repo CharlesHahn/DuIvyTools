@@ -8,8 +8,10 @@ This file is provided to you under GPLv2 License"""
 
 
 import sys
-from .XPM import xpm_call_functions
-from .XVG import xvg_call_functions
+from XPM import xpm_call_functions
+from XVG import xvg_call_functions
+from NDX import ndx_call_functions
+from MDP import mdp_call_functions
 
 
 
@@ -23,6 +25,10 @@ def main():
         xvg_call_functions(arguments)
     elif method.startswith("xpm"):
         xpm_call_functions(arguments)
+    elif method.startswith("ndx"):
+        ndx_call_functions(arguments)
+    elif method.startswith("mdp"):
+        mdp_call_functions(arguments)
     else:
         print("Error -> unknown method {}".format(method))
 
