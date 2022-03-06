@@ -138,6 +138,10 @@ class NDX(object):
     def remove_group(self, outndx:str, group_list:list, interactive:bool=False) -> None:
         """ remove the groups you specify """
 
+        ## check parameters
+        if interactive == False and group_list == []:
+            print("Error -> please specify the names of groups you wanna remove")
+            exit()
         ## remove the groups specified in group_list
         out_name_list, out_index_list = [], []
         if interactive == False:
@@ -167,6 +171,10 @@ class NDX(object):
     def preserve_group(self, outndx:str, group_list:list, interactive:bool=False) -> None:
         """ preserve the groups you specify and remove all others """
 
+        ## check parameters
+        if interactive == False and group_list == []:
+            print("Error -> please specify the names of groups you wanna preserve")
+            exit()
         ## remove the groups specified in group_list
         out_name_list, out_index_list = [], []
         if interactive == False:
@@ -239,7 +247,36 @@ class NDX(object):
 
     def rename_group(self, outndx:str, old_name:str, new_name:str, 
                      interactive:bool=False) -> None:
-        pass
+        """ rename the group name """
+
+        ## check parameters
+        if interactive == False:
+            if old_name == None or old_name == "":
+                print("Error -> please specify the old name you wanna change")
+                exit()
+            if new_name == None or new_name == "":
+                print("Error -> please specify the new name you wanna apply")
+                exit()
+
+        out_name_list = []
+        if interactive == False:
+            for name in self.group_name_list:
+                if name == old_name:
+                    out_name_list.append(new_name)
+                    print("Info -> changed {} to {}".format(name, new_name))
+                else:
+                    out_name_list.append(name)
+        else:
+            print("Info -> change group names in interactive mode, type enter to pass")
+            for name in self.group_name_list:
+                name_input = input(" -> change {} to : ".format(name)).strip()
+                if name_input == "":
+                    out_name_list.append(name)
+                else:
+                    out_name_list.append(name_input)
+                    print("Info -> changed {} to {}".format(name, name_input))
+        self.group_name_list = out_name_list
+        self.write_ndx(outndx)
 
 
 
@@ -280,7 +317,7 @@ def main():
     # arguments = [ argv for argv in sys.argv ]
     # ndx_call_functions(arguments)
     ndx = NDX(sys.argv[1])
-    ndx.add_group("test.ndx", "1ZIN", 1, 100, 2)
+    ndx.rename_group("test.ndx", "", "", True)
 
 
 
