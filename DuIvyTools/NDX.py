@@ -439,8 +439,7 @@ def ndx_call_functions(arguments: list = None):
 
 
 def main():
-    arguments = [argv for argv in sys.argv]
-    ndx_call_functions(arguments)
+    ndx_call_functions()
 
 
 if __name__ == "__main__":
