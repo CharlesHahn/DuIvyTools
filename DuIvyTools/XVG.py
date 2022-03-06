@@ -787,8 +787,8 @@ def xvg_ramachandran(xvgfile: str = "") -> None:
         data_file_path = os.path.realpath(
             os.path.join(os.getcwd(), os.path.dirname(__file__))
         )
-        rama_pref_values[key] = [[0 for i in range(361)] for i in range(361)]
-        with open(os.path.join(data_file_path, val["file"])) as fn:
+        rama_pref_values[key] = [[0 for _ in range(361)] for _ in range(361)]
+        with open(os.path.join(data_file_path, val["file"]), 'r') as fn:
             for line in fn:
                 if line.startswith("#"):
                     continue

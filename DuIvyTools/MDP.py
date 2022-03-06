@@ -14,37 +14,64 @@ import argparse
 
 
 class MDP(object):
-    """
+    """ 
+    class MDP are designed to generate kinds of mdp files
+
     """
 
     def __init__(self) -> None:
-        pass
+        """ init the MDP class """
 
-    def gen_em(self, outmdp:str) -> None:
-        pass
+        self.application_loc = {
+            "ions":  os.path.join("data", "ions.mdp"),
+            "em":    os.path.join("data", "em.mdp"),
+            "nvt":   os.path.join("data", "nvt.mdp"),
+            "npt":   os.path.join("data", "npt.mdp"),
+            "md":    os.path.join("data", "md.mdp"),
+            "blank": os.path.join("data", "blank.mdp"),
+        }
 
-    def gen_nvt(self, outmdp:str) -> None:
-        pass
-
-    def gen_npt(self, outmdp:str) -> None:
-        pass
-
-    def gen_md(self, outmdp:str) -> None:
-        pass
+        print("Info -> MDP module could init some mdp templates for you.\n", end="")
+        print("        Specify application (-a) to generate a mdp file. ")
+        print("Info -> applications to choose: ions, em, nvt, npt, md, blank")
+        print("\nWARNING -> the generated mdp file may be not appropriate", end="")
+        print(" for your system, CHECK IT YOURSELF !\n")
 
 
-def mdp_gen_em(outmdp:str) -> None:
-    pass
+    def gen_mdp(self, outmdp:str, application:str) -> None:
+        """ gen mdp template by specified application """
+        
+        ## check parameters
+        if outmdp == None or len(outmdp) <= 4 or outmdp[-4:] != ".mdp":
+            print("Error -> please specify an output file name with suffix .mdp")
+            exit()
+        if os.path.exists(outmdp):
+            print("Error -> {} is already in current directory".format(outmdp))
+            exit()
+        if application == None or application not in self.application_loc.keys():
+            print("Info -> application available:\n         {}".format(" ".join(
+                self.application_loc.keys())))
+            print("Error -> no application {} found".format(application))
+            exit()
 
-def mdp_gen_nvt(outmdp:str) -> None:
-    pass
+        ## gen mdp
+        data_file_path = os.path.realpath(os.path.join(
+            os.getcwd(), os.path.dirname(__file__)))
+        with open(os.path.join(data_file_path, 
+                    self.application_loc[application]), 'r') as fo:
+            content = fo.read()
+        with open(outmdp, 'w') as fo:
+            fo.write(content)
 
-def mdp_gen_npt(outmdp:str) -> None:
-    pass
+        print("Info -> generate {}.mdp for {} application successfully".format(
+            outmdp, application))
 
-def mdp_gen_md(outmdp:str) -> None:
-    pass
 
+def mdp_gen(outmdp:str, application:str) -> None:
+    """ gen mdp templates """
+    
+    mdp = MDP()
+    mdp.gen_mdp(outmdp, application)
 
 
 def mdp_call_functions(arguments: list = None):
@@ -56,6 +83,10 @@ def mdp_call_functions(arguments: list = None):
     ## parse the command parameters
     parser = argparse.ArgumentParser(description="generate mdp file templates")
     parser.add_argument("-o", "--outputfile", help="file name to output")
+    parser.add_argument("-a", "--application", 
+                choices=["ions", "em", "nvt", "npt", "md", "blank"], 
+                help="specify the application of mdp, choices: ions, em, nvt, npt, md, blank")
+
     if len(arguments) < 2:
         print("Error -> no input parameters, -h or --help for help messages")
         exit()
@@ -65,11 +96,8 @@ def mdp_call_functions(arguments: list = None):
         parser.parse_args(arguments[1:])
         exit()
     args = parser.parse_args(arguments[2:])
-
-    if method == "ndx_show":
-        pass
-    elif method == "ndx_rm_dup":
-        pass
+    if method == "mdp_gen":
+        mdp_gen(args.outputfile, args.application)
     else:
         print("Error -> unknown method {}".format(method))
         exit()
