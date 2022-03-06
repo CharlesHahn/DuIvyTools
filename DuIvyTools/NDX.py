@@ -77,6 +77,12 @@ class NDX(object):
             self.group_number, self.ndx_filename))
         
 
+    def show_ndx(self) -> None:
+        """ print all group names """
+        for name_id, name in enumerate(self.group_name_list):
+            print("  {:>2} -> {}".format(name_id, name))
+
+
     def write_ndx(self, outndx:str) -> None:
         """ write data to new ndx file """
 
@@ -188,7 +194,26 @@ class NDX(object):
 
 
     def combine_group(self, outndx:str, groupname:str, group_list:list) -> None:
-        pass
+        """ combine the groups specified into one group """
+
+        ## combine the groups specified in group_list into one group
+        out_name_list, out_index_list = [], []
+        for index_id, name in enumerate(self.group_name_list):
+            if name in group_list:
+                if len(out_name_list) == 0:
+                    out_name_list.append(name)
+                    out_index_list.append(self.group_index_list[index_id])
+                elif len(out_name_list) == 1:
+                    out_name_list[0] += "_" + name
+                    out_index_list[0] += self.group_index_list[index_id]
+                else:
+                    print("Error -> shit happens when combination")
+                    exit()
+        self.group_name_list += [ groupname ]
+        self.group_index_list += out_index_list
+        print("Info -> combined {} into {}".format(out_name_list[0], groupname))
+        self.write_ndx(outndx)
+
 
 
     def add_group(self, outndx:str, groupname:str, start:int, end:int, step:int) -> None:
@@ -199,6 +224,10 @@ class NDX(object):
                      interactive:bool=False) -> None:
         pass
 
+
+
+def ndx_show_name(ndxfile:str) -> None:
+    pass
 
 
 def ndx_remove_duplicate(ndxfile:str, outndx:str) -> None:
@@ -234,7 +263,7 @@ def main():
     # arguments = [ argv for argv in sys.argv ]
     # ndx_call_functions(arguments)
     ndx = NDX(sys.argv[1])
-    ndx.preserve_group("test.ndx", [], interactive=True)
+    ndx.combine_group("test.ndx", "test", ["1ZIN", "2ZIN", "3ZIN"])
 
 
 
