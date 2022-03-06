@@ -358,7 +358,7 @@ def ndx_rename_group(
     ndx.rename_group(outndx, old_name, new_name, interactive)
 
 
-def ndx_call_functions(arguments: list = None):
+def ndx_call_functions(arguments: list = None) -> None:
     """call functions according to arguments"""
 
     if arguments == None:
