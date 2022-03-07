@@ -223,7 +223,7 @@ class XVG(object):
 
         return self.data_heads, column_averages, column_stds
 
-    def calc_mvave(self, windowsize: int = 20, confidence: float = 0.90) -> tuple:
+    def calc_mvave(self, windowsize: int = 50, confidence: float = 0.90) -> tuple:
         """
         calculate the moving average of each column
 
@@ -895,6 +895,7 @@ def xvg_compare(
         showMV: whether to show moving average
         windowsize: the size of window for calculation of moving average
         confidence: the confidence to calculate interval
+        alpha: the alpha (transparency) of figure
 
     :example:
         xvg_compare([file1, file2], [[1,2], [2,3]],
@@ -1235,7 +1236,7 @@ def xvg_calc_ave(file: str = None, start: int = None, end: int = None) -> None:
 
 
 def xvg_calc_mvave2csv(
-    file: str = None, outcsv: str = None, windowsize: int = 20, confidence: float = 0.90
+    file: str = None, outcsv: str = None, windowsize: int = 50, confidence: float = 0.90
 ) -> None:
     """do moving average calculation and output data to csv"""
     if file == None:
@@ -1248,7 +1249,7 @@ def xvg_calc_mvave2csv(
         print("Error -> {} already in current directory".format(outcsv))
         exit()
     if windowsize == None:
-        windowsize = 20
+        windowsize = 50
     if confidence == None:
         confidence = 0.90
     xvg = XVG(file)
