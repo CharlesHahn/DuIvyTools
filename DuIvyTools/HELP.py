@@ -258,19 +258,98 @@ xvg_ave_bar: First, the average of each data column you select by -c will be cal
             if you specified -ac, -o should be used to specify the csv file name.
 """,
             "xvg_box": """
+xvg_box: draw the data of columns you select into box figure.
 
+:examples:
+    dit xvg_box -f f1.xvg f2.xvg f3.xvg -c 1 2 -xt xt1 xt2 -s 100 -e 1000
+    dit xvg_box -f f1.xvg f2.xvg -c 1 2 3 -xt xt1 xt2 xt3 -x xlabel -y ylabel -t title
+
+:parameters:
+    -f, --input
+            accept one or more than one files as input.
+    -c, --column_select
+            specify the column indexs you want to plot. The indexs you specified will
+            be applied to each file you select in -f.
+    -xt, --xtitles
+            specity the names of x ticks in figure. The number of xtitles should be 
+            equal to the number of indexs in column_select (-c).
+    -s, --start
+            specify the row index of column data which you want to start to calculation.
+    -e, --end
+            specify the row index of column data which you want to stop calculation.
+    -x, --xlabel
+            sepecify the x-label you want to show in figure
+    -y, --ylabel
+            sepecify the y-label you want to show in figure
+    -t, --title
+            sepecify the title you want to show in figure
 """,
             "xpm_show": """
+xpm_show: vasualize the xpm file.
 
+:examples:
+    dit xpm_show -f f1.xpm 
+    dit xpm_show -f f1.xpm -ip 
+    dit xpm_show -f f1.xpm -pcm 
+    dit xpm_show -f f1.xpm -3d
+    dit xpm_show -f f1.xpm -o test.png -ns 
+
+:parameters:
+    -f, --input
+            specify the xpm file for input. 
+    -o, --output
+            specify the output figure name. 
+    -ip, --interpolation
+            whether to perform interpolation which will make your figure looks better.
+    -pcm, --pcolormesh
+            whether to use pcolormesh function to vasualize your xpm figure.
+    -3d, --threeDimensions
+            whether to draw a 3D figure. Useful for free energy landscape figure.
+    -ns, --noshow
+            whether not to show figure in GUI, useful when working without GUI.
 """,
             "xpm2csv": """
+xpm2csv: convert xpm file into csv data file. 
+         when number of x-axis (or y-axis) is 1 more than width (or height) of figure, 
+         the intermediate value of two adjacent values of x-axis (or y-axis) will be 
+         calculated to suit the width (or height).
 
+:examples:
+    dit xpm2csv -f f1.xpm -o test.csv
+
+:parameters:
+    -f, --input
+            specify the xpm file for input. 
+    -o, --output
+            specify the output csv file name.
 """,
             "xpm2gpl": """
+xpm2csv: convert xpm file into gnuplot script.
 
+:examples:
+    dit xpm2csv -f f1.xpm -o test.gpl
+
+:parameters:
+    -f, --input
+            specify the xpm file for input. 
+    -o, --output
+            specify the output gnuplot script file name.
 """,
             "xpm_combine": """
+xpm_combine: combine several xpm files into one figure. 
+             STILL WORKING ON IT. NOT RECOMMAND TO USE IT !!!
 
+:examples:
+    dit xpm_combine -c f1.xpm f2.xpm
+    dit xpm_combine -c f1.xpm f2.xpm -o test.png -ns
+
+:parameters:
+    -c, --combine
+            specify several xpm files for input. 
+    -o, --output
+            specify the output figure name. 
+    -ns, --noshow
+            whether not to show figure in GUI, useful when working without GUI.
 """,
             "ndx_show": """
 
