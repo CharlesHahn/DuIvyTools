@@ -783,8 +783,8 @@ def xpm_call_functions(arguments: list = None):
     # for key, value in vars(args).items():
     #     print(key, value)
 
-    inputxpm = args.inputfile
-    output = args.outputfile
+    inputxpm = args.input
+    output = args.output
     ip = args.interpolation
     noshow = args.noshow
     pcm = args.pcolormesh

@@ -352,28 +352,133 @@ xpm_combine: combine several xpm files into one figure.
             whether not to show figure in GUI, useful when working without GUI.
 """,
             "ndx_show": """
+ndx_show: print all group names in ndx file you specified.
 
+:examples:
+    dit ndx_show -f f1.ndx
+
+:parameters:
+    -f, --input
+            specify the ndx file for input. 
 """,
             "ndx_rm_dup": """
+ndx_rm_dup: remove all duplicated groups in ndx file.
 
+:examples:
+    dit ndx_rm_dup -f f1.ndx -o res.ndx
+
+:parameters:
+    -f, --input
+            specify the ndx file for input. 
+    -o, --output
+            specify the ndx file name for saving the results of romiving.
 """,
             "ndx_rm": """
+ndx_rm: remove index groups according to names you specified.
 
+:examples:
+    dit ndx_rm -f f1.ndx -o res.ndx -gl Protein SOL System
+    dit ndx_rm -f f1.ndx -o res.ndx -int
+
+:parameters:
+    -f, --input
+            specify the ndx file for input. 
+    -o, --output
+            specify the ndx file name for saving the results.
+    -gl, --grouplist
+            specify the group names you want to remove. Seperated by space.
+    -int, --interactive
+            specify the group names you want to remove by interactive mode.
 """,
             "ndx_preserve": """
+ndx_preserve: preserve index groups according to names you specified, and remove others.
 
+:examples:
+    dit ndx_preserve -f f1.ndx -o res.ndx -gl Protein SOL System
+    dit ndx_preserve -f f1.ndx -o res.ndx -int
+
+:parameters:
+    -f, --input
+            specify the ndx file for input. 
+    -o, --output
+            specify the ndx file name for saving the results.
+    -gl, --grouplist
+            specify the group names you want to preserve. Seperated by space.
+    -int, --interactive
+            specify the group names you want to preserve by interactive mode.
 """,
             "ndx_add": """
+ndx_add: add one index group to ndx file by specified group name, start, end, step.
 
+:examples:
+    dit ndx_add -f f1.ndx -o res.ndx -gn test -s 1 -e 10 -t 2
+
+:parameters:
+    -f, --input
+            specify the ndx file for input. 
+    -o, --output
+            specify the ndx file name for saving the results.
+    -gn, --groupname
+            specify the name of index group you want to add.
+    -s, --start
+            specify the start index of the group you want to add.
+    -e, --end
+            specify the end index of the group you want to add.
+    -t, --step
+            specify the step of indexs of the group you want to add. 
+            In the example, -s 1 -e 10 -t 2 means to generate a group contains index:
+            1 3 5 7 9 
 """,
             "ndx_combine": """
+ndx_combine: combine groups into one group by the group names you specified.
+             I recommand you to use gmx make_ndx command to do this.
 
+:example:
+    dit ndx_combine -f f1.ndx -o res.ndx -gn combined_group -gl Protein Ligand
+
+:parameters:
+    -f, --input
+            specify the ndx file for input. 
+    -o, --output
+            specify the ndx file name for saving the results.
+    -gn, --groupname
+            specify the name of combined index group.
+    -gl, --grouplist
+            specify the group names you want to combine. Seperated by space.
 """,
             "ndx_rename": """
+ndx_rename: rename groups in ndx file.
 
+:examples:
+    dit ndx_rename -f f1.ndx -o res.ndx -on Protein -nn test
+    dit ndx_rename -f f1.ndx -o res.ndx -int
+
+:parameters:
+    -f, --input
+            specify the ndx file for input. 
+    -o, --output
+            specify the ndx file name for saving the results.
+    -on, --oldname
+            specify the old name of group you want to rename.
+    -nn, --newname
+            specify a new name for the group you renamed.
+    -int, --interactive
+            rename groups in interactive mode.
 """,
             "mdp_gen": """
+mdp_gen: generate a template mdp file by purpose you specified. The mdp file generated 
+         may NOT be appropriate for your system, CHECK IT YOURSELF.
 
+:examples:
+    dit mdp_gen -o em.mdp -a em
+    dit mdp_gen -o npt.mdp -a npt
+
+:parameters:
+    -o, --output
+            specify an output mdp file to save the results.
+    -a, --application
+            specify the applications you want to use mdp file for. You can select from:
+            ions, em, nvt, npt, md, blank
 """,
         }
 

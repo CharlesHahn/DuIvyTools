@@ -42,6 +42,11 @@ class NDX(object):
         self.group_name_list = []
         self.group_index_list = []
 
+        ## to init without input ndx file
+        if ndxfile == None:
+            self.ndx_filename = ""
+            return 
+
         ## check file
         if len(ndxfile) <= 4 or ndxfile[-4:] != ".ndx":
             print("Error -> please specify a index file with suffix .ndx")
@@ -399,21 +404,21 @@ def ndx_call_functions(arguments: list = None) -> None:
     args = parser.parse_args(arguments[2:])
 
     if method == "ndx_show":
-        ndx_show_name(args.inputfile)
+        ndx_show_name(args.input)
     elif method == "ndx_rm_dup":
-        ndx_remove_duplicate(args.inputfile, args.outputfile)
+        ndx_remove_duplicate(args.input, args.output)
     elif method == "ndx_rm":
         ndx_remove_group(
-            args.inputfile, args.outputfile, args.grouplist, args.interactive
+            args.input, args.output, args.grouplist, args.interactive
         )
     elif method == "ndx_preserve":
         ndx_preserve_group(
-            args.inputfile, args.outputfile, args.grouplist, args.interactive
+            args.input, args.output, args.grouplist, args.interactive
         )
     elif method == "ndx_add":
         ndx_add_group(
-            args.inputfile,
-            args.outputfile,
+            args.input,
+            args.output,
             args.groupname,
             args.start,
             args.end,
@@ -421,12 +426,12 @@ def ndx_call_functions(arguments: list = None) -> None:
         )
     elif method == "ndx_combine":
         ndx_combine_group(
-            args.inputfile, args.outputfile, args.groupname, args.grouplist
+            args.input, args.output, args.groupname, args.grouplist
         )
     elif method == "ndx_rename":
         ndx_rename_group(
-            args.inputfile,
-            args.outputfile,
+            args.input,
+            args.output,
             args.oldname,
             args.newname,
             args.interactive,

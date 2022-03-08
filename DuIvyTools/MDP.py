@@ -97,7 +97,7 @@ def mdp_call_functions(arguments: list = None):
         exit()
     args = parser.parse_args(arguments[2:])
     if method == "mdp_gen":
-        mdp_gen(args.outputfile, args.application)
+        mdp_gen(args.output, args.application)
     else:
         print("Error -> unknown method {}".format(method))
         exit()
