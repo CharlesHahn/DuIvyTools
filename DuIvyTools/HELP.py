@@ -38,8 +38,8 @@ xvg_compare: comparison of xvg files, draw different data columns into line figu
 
 :parameters:
     -f, --input
-            specify the xvg files for input. accept more than input file names seperated
-            by space
+            specify the xvg files for input. accept one or one more input file names 
+            seperated by space
     -c, --column_select
             specify the index of columns you want to use. index starts from 0. 
             one xvg file in -f should be paired with one column index group seperated by
@@ -146,19 +146,116 @@ xvg_show_distribution: calculate distribution of each column in xvg file and sho
             specify the number of bins of calculating distribution. default == 100
 """,
             "xvg_show_stack": """
+xvg_show_stack: draw stack figure of column data.
 
+:examples:
+    dit xvg_show_stack -f f1.xvg
+    dit xvg_show_stack -f f1.xvg -cis 2 -cie 4
+
+:parameters:
+    -f, --input
+            specify the xvg file for input. 
+            Only the first file is valid, others will be dropped.
+    -cis, --column_index2start
+            specify the index of column you want to start to stack. default == 1
+    -cie, --column_index2end
+            specify the index of column you want to stop stacking. 
 """,
             "xvg_show_scatter": """
+xvg_show_scatter: draw scatter figure
 
+:examples:
+    dit xvg_show_scatter -f f1.xvg -xi 0 -yi 1
+
+:parameters:
+    -f, --input
+            specify the xvg file for input. 
+            Only the first file is valid, others will be dropped.
+    -xi, --x_index
+            specify the index of column which you want to use as x data
+    -yi, --y_index
+            specify the index of column which you want to use as y data
 """,
             "xvg_energy_compute": """
+xvg_energy_compute: calculate the interaction energy between two items.
 
+:examples:
+    dit xvg_energy_compute -f prolig.xvg pro.xvg lig.xvg -o energy_results.xvg
+
+:parameters:
+    -f, --input
+            specify three xvg files to calculate (complex energy file, component A 
+            energy file and component B energy file). Each should contain and ONLY 
+            contain five columns (Time, LJ(SR), Disper.corr., Coulomb(SR), Coul.recip.)
+    -o, --output
+            specify a xvg file to save results. 
 """,
             "xvg_combine": """
+xvg_combine: select columns from xvg files and conbine data columns into one xvg file. 
 
+:examples:
+    dit xvg_combine -f f1.xvg -c 1,2 -o res.xvg
+    dit xvg_combine -f f1.xvg f2.xvg -c 1,2 2,3 -o res.xvg
+
+:parameters:
+    -f, --input
+            specify the xvg files for input. accept one or one more input file names 
+            seperated by space
+    -c, --column_select
+            specify the index of columns you want to use. index starts from 0. 
+            one xvg file in -f should be paired with one column index group seperated by
+            space. And in each column index group, indexs should be seperated by comma. 
+            In second example, 1,2 is paired with f1.xvg, 2,3 is paird with f2.xvg; 
+            this means selecting the column 1 and 2 in f1.xvg, column 2 and 2 in 
+            f2.xvg to combine, and saving results to res.xvg. 
+    -o, --output
+            specify a xvg file to save results of combination.
 """,
             "xvg_ave_bar": """
+xvg_ave_bar: First, the average of each data column you select by -c will be calculated.
+             Second, the average and standard error of corresponding column averages in 
+             xvg file groups will be calculated.
+             Third, the averages and standard errors will be draw into bar figure.
 
+:examples:
+    dit xvg_ave_bar -f f1_1.xvg,f1_2.xvg,f1_3.xvg f2_1.xvg,f2_2.xvg,f2_3.xvg -c 1 2 
+    dit xvg_ave_bar -f f1.xvg f2.xvg -c 1 2 -l l1 l2 -s 100 -e 1000 
+    dit xvg_ave_bar -f f1.xvg f2.xvg -c 1 2 -l l1 l2 -x xlabel -y ylabel -t title
+    dit xvg_ave_bar -f f1.xvg f2.xvg f3.xvg -c 1 2 -l l1 l2 l3 -xt xt1 xt2
+    dit xvg_ave_bar -f f1.xvg f2.xvg -c 1 2 -l l1 l2 -ac -o average.csv
+
+:parameters:
+    -f, --input
+            specify the xvg files for input. accept one or one more file names or file 
+            name groups. Several file names seperated by comma is called a file name 
+            group. In first example, f1_1.xvg,f1_2.xvg,f1_3.xvg is the first file name 
+            group, and f2_1.xvg,f2_2.xvg,f2_3.xvg is the second file name group. 
+            This method will calculate averages of columns you select in each xvg file.
+            Then calculate the average and standard error of column averages in each 
+            file group. Finally, convert the averages and standard errors into bar plot.
+    -c, --column_select
+            specify the index of columns you want to calculate. Index starts from 0. 
+            The column indexs you select will be applied to EVERY xvg file in -f.
+    -l, --legend_list
+            specify the legends to show in figure. The number of legends should be equal
+            to the number of files or file groups you specified in -f. 
+    -xt, --xtitles
+            specity the names of x ticks in figure. The number of xtitles should be 
+            equal to the number of indexs in column_select (-c).
+    -s, --start
+            specify the row index of column data which you want to start to calculation.
+    -e, --end
+            specify the row index of column data which you want to stop calculation.
+    -x, --xlabel
+            sepecify the x-label you want to show in figure
+    -y, --ylabel
+            sepecify the y-label you want to show in figure
+    -t, --title
+            sepecify the title you want to show in figure
+    -ac, --ave2csv
+            whether save data of averages into csv file. default == False
+    -o, --output
+            if you specified -ac, -o should be used to specify the csv file name.
 """,
             "xvg_box": """
 
