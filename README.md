@@ -74,9 +74,9 @@ For help messages:
 
 ## still working 
 
--[ ] support space in the legends
--[ ] make the calculation of moving averages faster
--[ ] support of modification of x-values in XPM and XVG
--[ ] savefig() and noshow in XVG
--[ ] build a GUI maybe
+- [ ] support space in the legends
+- [ ] make the calculation of moving averages faster
+- [ ] support of modification of x-values in XPM and XVG
+- [ ] savefig() and noshow in XVG
+- [ ] build a GUI maybe
 
