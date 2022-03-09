@@ -16,6 +16,10 @@ dit xvg_show -f test.xvg
 
 This tool is a python library which you can install it by `pip`.
 
+```bash
+pip install DuIvyTools
+```
+
 ## Commands
 
 This tool contains quite a lot commands.
@@ -58,4 +62,4 @@ For help messages:
 
 ## Cite 
 
-pass
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6339994.svg)](https://doi.org/10.5281/zenodo.6339994)
