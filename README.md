@@ -12,6 +12,9 @@ The usage of DIT is similar to GMX, type `dit` and followed by commands and para
 dit xvg_show -f test.xvg
 ```
 
+Type `dit help` for more messages.
+
+
 ## Install
 
 This tool is a python library which you can install it by `pip`.
@@ -63,3 +66,4 @@ For help messages:
 ## Cite 
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6339994.svg)](https://doi.org/10.5281/zenodo.6339994)
+
