@@ -45,7 +45,7 @@ class NDX(object):
         ## to init without input ndx file
         if ndxfile == None:
             self.ndx_filename = ""
-            return 
+            return
 
         ## check file
         if len(ndxfile) <= 4 or ndxfile[-4:] != ".ndx":
@@ -408,13 +408,9 @@ def ndx_call_functions(arguments: list = None) -> None:
     elif method == "ndx_rm_dup":
         ndx_remove_duplicate(args.input, args.output)
     elif method == "ndx_rm":
-        ndx_remove_group(
-            args.input, args.output, args.grouplist, args.interactive
-        )
+        ndx_remove_group(args.input, args.output, args.grouplist, args.interactive)
     elif method == "ndx_preserve":
-        ndx_preserve_group(
-            args.input, args.output, args.grouplist, args.interactive
-        )
+        ndx_preserve_group(args.input, args.output, args.grouplist, args.interactive)
     elif method == "ndx_add":
         ndx_add_group(
             args.input,
@@ -425,9 +421,7 @@ def ndx_call_functions(arguments: list = None) -> None:
             args.step,
         )
     elif method == "ndx_combine":
-        ndx_combine_group(
-            args.input, args.output, args.groupname, args.grouplist
-        )
+        ndx_combine_group(args.input, args.output, args.groupname, args.grouplist)
     elif method == "ndx_rename":
         ndx_rename_group(
             args.input,

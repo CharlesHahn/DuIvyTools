@@ -18,7 +18,7 @@ TEST_REQUIRES = [
 ]
 
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 long_description = ""
 
 with open("README.md", "r") as fo:
@@ -27,10 +27,10 @@ with open("README.md", "r") as fo:
 
 setup(
     name="DuIvyTools",
-    version="0.1.0",
+    version=__version__,
     author="CharlesHahn",
     author_email="",
-    description="Some tools for GMX results analysis",
+    description="A tool for GROMACS results analysis and visualization",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/CharlesHahn/DuIvyTools",

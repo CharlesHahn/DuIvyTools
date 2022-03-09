@@ -12,10 +12,10 @@ import sys
 
 
 class HELP(object):
-    """ HELP class provides help infos about all method in DuIvyTools """
-    
+    """HELP class provides help infos about all method in DuIvyTools"""
+
     def __init__(self) -> None:
-        """ init all help messages """
+        """init all help messages"""
 
         self.help_infos = {
             "xvg_show": """
@@ -482,18 +482,22 @@ mdp_gen: generate a template mdp file by purpose you specified. The mdp file gen
 """,
         }
 
-    def print_help_infos(self, method:str) -> None:
-        """ print help messages """
+    def print_help_infos(self, method: str) -> None:
+        """print help messages"""
 
         if method in self.help_infos.keys():
             print(self.help_infos[method])
         else:
-            print("Error -> unknown method {}, type `dit help`".format(method))
+            print(
+                "Error -> unknown method {}, type `dit help` for more infos.".format(
+                    method
+                )
+            )
             exit()
 
 
-def print_help_msg(method:str) -> None:
-    """ print help messages """
+def print_help_msg(method: str) -> None:
+    """print help messages"""
 
     help_class = HELP()
     help_class.print_help_infos(method)
@@ -505,10 +509,12 @@ def help_call_functions(arguments: list = None) -> None:
     if arguments == None:
         arguments = [argv for argv in sys.argv]
 
-    description = "\nHELP method provides help messages about all methods in DuIvyTools\n"
-    description += "Type any methods below to find help messages:\n"
+    description = "HELP method provides help infos about all methods in DuIvyTools\n"
+    description += "Type any methods below to show help messages:\n"
+    description += "like: `dit help xvg_show` or `dit xvg_show -h`\n"
     description += "    XVG:\n"
-    description += "        xvg_show, xvg_compare, xvg_ave, xvg_mvave, xvg2csv, xvg_rama\n"
+    description += "        xvg_show, xvg_compare, xvg_ave, xvg_mvave, "
+    description += "xvg2csv, xvg_rama\n"
     description += "        xvg_show_distribution, xvg_show_stack, xvg_show_scatter\n"
     description += "        xvg_energy_compute, xvg_combine, xvg_ave_bar, xvg_box\n"
     description += "    XPM:\n"
@@ -520,14 +526,16 @@ def help_call_functions(arguments: list = None) -> None:
     description += "        mdp_gen\n"
 
     if len(arguments) < 2:
-        print("Error -> no input parameters, `dit help` for help messages")
+        print("DuIvyTools is a simple analysis and visualization tool ", end="")
+        print("for GROMACS result files.")
+        print("Info -> type `dit help` for more messages")
         exit()
     elif len(arguments) == 2:
-        if arguments[1] == "help":
+        if arguments[1] in ["help", "-h", "--help"]:
             print(description)
         else:
-            print("Error -> unknown command {}, `help` for help messages".format(
-                arguments[1]))
+            print("Error -> unknown command, type `dit help` for more information")
+            exit()
     else:
         if arguments[1] != "help":
             print("Error -> unknown command {}".format(arguments[1]))

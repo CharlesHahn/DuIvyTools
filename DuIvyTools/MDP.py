@@ -14,20 +14,20 @@ import argparse
 
 
 class MDP(object):
-    """ 
+    """
     class MDP are designed to generate kinds of mdp files
 
     """
 
     def __init__(self) -> None:
-        """ init the MDP class """
+        """init the MDP class"""
 
         self.application_loc = {
-            "ions":  os.path.join("data", "ions.mdp"),
-            "em":    os.path.join("data", "em.mdp"),
-            "nvt":   os.path.join("data", "nvt.mdp"),
-            "npt":   os.path.join("data", "npt.mdp"),
-            "md":    os.path.join("data", "md.mdp"),
+            "ions": os.path.join("data", "ions.mdp"),
+            "em": os.path.join("data", "em.mdp"),
+            "nvt": os.path.join("data", "nvt.mdp"),
+            "npt": os.path.join("data", "npt.mdp"),
+            "md": os.path.join("data", "md.mdp"),
             "blank": os.path.join("data", "blank.mdp"),
         }
 
@@ -37,10 +37,9 @@ class MDP(object):
         print("\nWARNING -> the generated mdp file may be not appropriate", end="")
         print(" for your system, CHECK IT YOURSELF !\n")
 
+    def gen_mdp(self, outmdp: str, application: str) -> None:
+        """gen mdp template by specified application"""
 
-    def gen_mdp(self, outmdp:str, application:str) -> None:
-        """ gen mdp template by specified application """
-        
         ## check parameters
         if outmdp == None or len(outmdp) <= 4 or outmdp[-4:] != ".mdp":
             print("Error -> please specify an output file name with suffix .mdp")
@@ -49,27 +48,35 @@ class MDP(object):
             print("Error -> {} is already in current directory".format(outmdp))
             exit()
         if application == None or application not in self.application_loc.keys():
-            print("Info -> application available:\n         {}".format(" ".join(
-                self.application_loc.keys())))
+            print(
+                "Info -> application available:\n         {}".format(
+                    " ".join(self.application_loc.keys())
+                )
+            )
             print("Error -> no application {} found".format(application))
             exit()
 
         ## gen mdp
-        data_file_path = os.path.realpath(os.path.join(
-            os.getcwd(), os.path.dirname(__file__)))
-        with open(os.path.join(data_file_path, 
-                    self.application_loc[application]), 'r') as fo:
+        data_file_path = os.path.realpath(
+            os.path.join(os.getcwd(), os.path.dirname(__file__))
+        )
+        with open(
+            os.path.join(data_file_path, self.application_loc[application]), "r"
+        ) as fo:
             content = fo.read()
-        with open(outmdp, 'w') as fo:
+        with open(outmdp, "w") as fo:
             fo.write(content)
 
-        print("Info -> generate {}.mdp for {} application successfully".format(
-            outmdp, application))
+        print(
+            "Info -> generate {}.mdp for {} application successfully".format(
+                outmdp, application
+            )
+        )
 
 
-def mdp_gen(outmdp:str, application:str) -> None:
-    """ gen mdp templates """
-    
+def mdp_gen(outmdp: str, application: str) -> None:
+    """gen mdp templates"""
+
     mdp = MDP()
     mdp.gen_mdp(outmdp, application)
 
@@ -83,9 +90,12 @@ def mdp_call_functions(arguments: list = None):
     ## parse the command parameters
     parser = argparse.ArgumentParser(description="generate mdp file templates")
     parser.add_argument("-o", "--output", help="file name to output")
-    parser.add_argument("-a", "--application", 
-                choices=["ions", "em", "nvt", "npt", "md", "blank"], 
-                help="specify the application of mdp, choices: ions, em, nvt, npt, md, blank")
+    parser.add_argument(
+        "-a",
+        "--application",
+        choices=["ions", "em", "nvt", "npt", "md", "blank"],
+        help="specify the application of mdp, choices: ions, em, nvt, npt, md, blank",
+    )
 
     if len(arguments) < 2:
         print("Error -> no input parameters, -h or --help for help messages")
