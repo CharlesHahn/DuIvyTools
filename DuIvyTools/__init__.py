@@ -12,9 +12,3 @@ The package consists of the following Python modules:
 
 """
 
-from XPM import *
-from XVG import *
-from NDX import *
-from MDP import *
-from HELP import *
-from DIT import *

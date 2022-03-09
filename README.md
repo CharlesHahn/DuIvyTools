@@ -5,7 +5,7 @@
 
 DuIvyTools (DIT): A simple tool for analysis of GROMACS result files(.xvg, .xpm, .ndx, .mdp). 
 
-This tool can perform data visualization and convertion, and is able to cover daily tasks when analyzing results of molecular dynamics simulations by GROMACS. 
+This tool can perform data visualization and convertion, and may be able to cover daily tasks when analyzing results of molecular dynamics simulations by GROMACS. 
 
 ## Intro
 
@@ -20,7 +20,7 @@ Type `dit help` for more messages.
 
 ## Install
 
-This tool is a python library which you can install it by `pip`.
+This tool is a python3 library which you can install it by `pip`.
 
 ```bash
 pip install DuIvyTools
@@ -66,7 +66,17 @@ For .mdp file:
 For help messages:
 - help
 
+
 ## Cite 
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6339994.svg)](https://doi.org/10.5281/zenodo.6339994)
+
+
+## still working 
+
+-[ ] support space in the legends
+-[ ] make the calculation of moving averages faster
+-[ ] support of modification of x-values in XPM and XVG
+-[ ] savefig() and noshow in XVG
+-[ ] build a GUI maybe
 

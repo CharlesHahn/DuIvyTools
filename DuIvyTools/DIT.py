@@ -6,11 +6,11 @@ This file is provided to you under GPLv2 License"""
 
 
 import sys
-from XPM import xpm_call_functions
-from XVG import xvg_call_functions
-from NDX import ndx_call_functions
-from MDP import mdp_call_functions
-from HELP import help_call_functions
+from DuIvyTools.XPM import xpm_call_functions
+from DuIvyTools.XVG import xvg_call_functions
+from DuIvyTools.NDX import ndx_call_functions
+from DuIvyTools.MDP import mdp_call_functions
+from DuIvyTools.HELP import help_call_functions
 
 
 def main():

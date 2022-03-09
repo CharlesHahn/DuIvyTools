@@ -5,7 +5,7 @@ date : 20220220
 
 from setuptools import setup
 
-INSTALL_REQUIRES = ["matplotlib", "numpy", "scipy", "argparse", "cycler"]
+INSTALL_REQUIRES = ["matplotlib", "numpy", "scipy", "argparse"]
 
 TEST_REQUIRES = [
     # testing and coverage
@@ -18,7 +18,7 @@ TEST_REQUIRES = [
 ]
 
 
-__version__ = "0.2.1"
+__version__ = "0.3.0"
 long_description = ""
 
 with open("README.md", "r") as fo:
