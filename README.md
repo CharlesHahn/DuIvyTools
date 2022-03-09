@@ -69,7 +69,7 @@ For help messages:
 
 ## Cite 
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6339994.svg)](https://doi.org/10.5281/zenodo.6339994)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6340263.svg)](https://doi.org/10.5281/zenodo.6340263)
 
 
 ## still working 
