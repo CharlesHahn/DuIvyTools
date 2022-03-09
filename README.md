@@ -1,4 +1,7 @@
 # DuIvyTools
+[![PyPI version](https://badge.fury.io/py/DuIvyTools.svg)](https://badge.fury.io/py/DuIvyTools)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/DuIvyTools)
+![PyPI - License](https://img.shields.io/pypi/l/DuIvyTools)
 
 DuIvyTools (DIT): A simple tool for analysis of GROMACS result files(.xvg, .xpm, .ndx, .mdp). 
 
