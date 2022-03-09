@@ -47,29 +47,29 @@ xvg_compare: comparison of xvg files, draw different data columns into line figu
             In first example, 1,2 is paired with f1.xvg, 2,3,4 is paird with f2.xvg; 
             this means selecting the column 1 and 2 in f1.xvg, column 2, 3 and 4 in 
             f2.xvg to compare. 
-    -l, --legend_list
+    -l, --legend_list (optional)
             specify the legends to show in figure. The number of legends should be equal
             to the number of indexs you sepecified in -c. 
-    -s, --start
+    -s, --start (optional)
             specify the row index of column data which you want to start to plot.
-    -e, --end
+    -e, --end (optional)
             specify the row index of column data which you want to stop plotting.
-    -x, --xlabel
+    -x, --xlabel (optional)
             sepecify the x-label you want to show in figure
-    -y, --ylabel
+    -y, --ylabel (optional)
             sepecify the y-label you want to show in figure
-    -t, --title
+    -t, --title (optional)
             sepecify the title you want to show in figure
-    -smv, --showMV  
+    -smv, --showMV  (optional)
             if you specified this parameter, moving average and confidence interval 
             will be calculated and shown in figure. 
-    -ws, --windowsize
+    -ws, --windowsize (optional)
             specify the windows size for moving average calculation. default == 50
             only valid when -smv specified. 
-    -cf, --confidence
+    -cf, --confidence (optional)
             specify the confidence for confidence interval calculation. default == 0.90
             only valid when -smv specified. 
-    -a, --alpha
+    -a, --alpha (optional)
             specify the transparency for plotting confidence interval. default == 0.4
             only valid when -smv specified. 
 """,
@@ -84,9 +84,9 @@ xvg_ave: calculate the average of each column in xvg file
     -f, --input
             specify the xvg file for input. 
             Only the first file is valid, others will be dropped.
-    -s, --start
+    -s, --start (optional)
             specify the row index of column data which you want to start to calculation.
-    -e, --end
+    -e, --end (optional)
             specify the row index of column data which you want to stop calculation.
 """,
             "xvg_mvave": """
@@ -102,9 +102,9 @@ xvg_mvave: calculate the moving average of each column in xvg file and save resu
             Only the first file is valid, others will be dropped.
     -o, --output
             specify the csv file to save results.
-    -ws, --windowsize
+    -ws, --windowsize (optional)
             specify the windows size for moving average calculation. default == 50
-    -cf, --confidence
+    -cf, --confidence (optional)
             specify the confidence for confidence interval calculation. default == 0.90
 """,
             "xvg2csv": """
@@ -142,7 +142,7 @@ xvg_show_distribution: calculate distribution of each column in xvg file and sho
     -f, --input
             specify the xvg file for input. 
             Only the first file is valid, others will be dropped.
-    -bin, --bin
+    -bin, --bin (optional)
             specify the number of bins of calculating distribution. default == 100
 """,
             "xvg_show_stack": """
@@ -156,9 +156,9 @@ xvg_show_stack: draw stack figure of column data.
     -f, --input
             specify the xvg file for input. 
             Only the first file is valid, others will be dropped.
-    -cis, --column_index2start
+    -cis, --column_index2start (optional)
             specify the index of column you want to start to stack. default == 1
-    -cie, --column_index2end
+    -cie, --column_index2end (optional)
             specify the index of column you want to stop stacking. 
 """,
             "xvg_show_scatter": """
@@ -171,10 +171,10 @@ xvg_show_scatter: draw scatter figure
     -f, --input
             specify the xvg file for input. 
             Only the first file is valid, others will be dropped.
-    -xi, --x_index
-            specify the index of column which you want to use as x data
-    -yi, --y_index
-            specify the index of column which you want to use as y data
+    -xi, --x_index (optional)
+            specify the index of column which you want to use as x data. default == 0
+    -yi, --y_index (optional)
+            specify the index of column which you want to use as y data. default == 1
 """,
             "xvg_energy_compute": """
 xvg_energy_compute: calculate the interaction energy between two items.
@@ -236,25 +236,25 @@ xvg_ave_bar: First, the average of each data column you select by -c will be cal
     -c, --column_select
             specify the index of columns you want to calculate. Index starts from 0. 
             The column indexs you select will be applied to EVERY xvg file in -f.
-    -l, --legend_list
+    -l, --legend_list (optional)
             specify the legends to show in figure. The number of legends should be equal
             to the number of files or file groups you specified in -f. 
-    -xt, --xtitles
+    -xt, --xtitles (optional)
             specity the names of x ticks in figure. The number of xtitles should be 
             equal to the number of indexs in column_select (-c).
-    -s, --start
+    -s, --start (optional)
             specify the row index of column data which you want to start to calculation.
-    -e, --end
+    -e, --end (optional)
             specify the row index of column data which you want to stop calculation.
-    -x, --xlabel
+    -x, --xlabel (optional)
             sepecify the x-label you want to show in figure
-    -y, --ylabel
+    -y, --ylabel (optional)
             sepecify the y-label you want to show in figure
-    -t, --title
+    -t, --title (optional)
             sepecify the title you want to show in figure
-    -ac, --ave2csv
+    -ac, --ave2csv (optional)
             whether save data of averages into csv file. default == False
-    -o, --output
+    -o, --output (optional)
             if you specified -ac, -o should be used to specify the csv file name.
 """,
             "xvg_box": """
@@ -270,18 +270,18 @@ xvg_box: draw the data of columns you select into box figure.
     -c, --column_select
             specify the column indexs you want to plot. The indexs you specified will
             be applied to each file you select in -f.
-    -xt, --xtitles
+    -xt, --xtitles (optional)
             specity the names of x ticks in figure. The number of xtitles should be 
             equal to the number of indexs in column_select (-c).
-    -s, --start
+    -s, --start (optional)
             specify the row index of column data which you want to start to calculation.
-    -e, --end
+    -e, --end (optional)
             specify the row index of column data which you want to stop calculation.
-    -x, --xlabel
+    -x, --xlabel (optional)
             sepecify the x-label you want to show in figure
-    -y, --ylabel
+    -y, --ylabel (optional)
             sepecify the y-label you want to show in figure
-    -t, --title
+    -t, --title (optional)
             sepecify the title you want to show in figure
 """,
             "xpm_show": """
@@ -297,15 +297,15 @@ xpm_show: vasualize the xpm file.
 :parameters:
     -f, --input
             specify the xpm file for input. 
-    -o, --output
+    -o, --output (optional)
             specify the output figure name. 
-    -ip, --interpolation
+    -ip, --interpolation (optional)
             whether to perform interpolation which will make your figure looks better.
-    -pcm, --pcolormesh
+    -pcm, --pcolormesh (optional)
             whether to use pcolormesh function to vasualize your xpm figure.
-    -3d, --threeDimensions
+    -3d, --threeDimensions (optional)
             whether to draw a 3D figure. Useful for free energy landscape figure.
-    -ns, --noshow
+    -ns, --noshow (optional)
             whether not to show figure in GUI, useful when working without GUI.
 """,
             "xpm2csv": """
@@ -348,7 +348,7 @@ xpm_combine: combine several xpm files into one figure.
             specify several xpm files for input. 
     -o, --output
             specify the output figure name. 
-    -ns, --noshow
+    -ns, --noshow (optional)
             whether not to show figure in GUI, useful when working without GUI.
 """,
             "ndx_show": """
@@ -385,9 +385,9 @@ ndx_rm: remove index groups according to names you specified.
             specify the ndx file for input. 
     -o, --output
             specify the ndx file name for saving the results.
-    -gl, --grouplist
+    -gl, --grouplist (optional)
             specify the group names you want to remove. Seperated by space.
-    -int, --interactive
+    -int, --interactive (optional)
             specify the group names you want to remove by interactive mode.
 """,
             "ndx_preserve": """
@@ -402,9 +402,9 @@ ndx_preserve: preserve index groups according to names you specified, and remove
             specify the ndx file for input. 
     -o, --output
             specify the ndx file name for saving the results.
-    -gl, --grouplist
+    -gl, --grouplist (optional)
             specify the group names you want to preserve. Seperated by space.
-    -int, --interactive
+    -int, --interactive (optional)
             specify the group names you want to preserve by interactive mode.
 """,
             "ndx_add": """
@@ -414,8 +414,8 @@ ndx_add: add one index group to ndx file by specified group name, start, end, st
     dit ndx_add -f f1.ndx -o res.ndx -gn test -s 1 -e 10 -t 2
 
 :parameters:
-    -f, --input
-            specify the ndx file for input. 
+    -f, --input (optional)
+            specify ndx file for input. -f could be ignored if you want a new ndx file.
     -o, --output
             specify the ndx file name for saving the results.
     -gn, --groupname
@@ -424,8 +424,8 @@ ndx_add: add one index group to ndx file by specified group name, start, end, st
             specify the start index of the group you want to add.
     -e, --end
             specify the end index of the group you want to add.
-    -t, --step
-            specify the step of indexs of the group you want to add. 
+    -t, --step (optional)
+            specify the step of indexs of the group you want to add. default == 1
             In the example, -s 1 -e 10 -t 2 means to generate a group contains index:
             1 3 5 7 9 
 """,
@@ -458,11 +458,11 @@ ndx_rename: rename groups in ndx file.
             specify the ndx file for input. 
     -o, --output
             specify the ndx file name for saving the results.
-    -on, --oldname
+    -on, --oldname (optional)
             specify the old name of group you want to rename.
-    -nn, --newname
+    -nn, --newname (optional)
             specify a new name for the group you renamed.
-    -int, --interactive
+    -int, --interactive (optional)
             rename groups in interactive mode.
 """,
             "mdp_gen": """
