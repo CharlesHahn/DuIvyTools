@@ -466,8 +466,8 @@ ndx_rename: rename groups in ndx file.
             rename groups in interactive mode.
 """,
             "mdp_gen": """
-mdp_gen: generate a template mdp file by purpose you specified. The mdp file generated 
-         may NOT be appropriate for your system, CHECK IT YOURSELF.
+mdp_gen: generate a template mdp file by application you specified. The mdp file 
+         generated may NOT be appropriate for your system, CHECK IT YOURSELF.
 
 :examples:
     dit mdp_gen -o em.mdp -a em

@@ -167,12 +167,13 @@ class XVG(object):
             if len(items) == len(self.xvg_legends):
                 for i in range(len(items)):
                     heads[i] += " " + items[i]
-            elif len(items) == 1 and (items[0][0] == "(" and items[0][-1] == ")"):
+            elif len(items) == 1 and items[0] != "" and (
+                items[0][0] == "(" and items[0][-1] == ")"):
                 for i in range(len(heads)):
                     heads[i] += " " + items[0]
             else:
                 print(
-                    "Warning -> failed to pair ylabels and legends, use legends in xvg file"
+                    "Warning -> failed to pair ylabel to legends, use legends in xvg file"
                 )
             self.data_heads += heads
             for i in range(len(heads)):
