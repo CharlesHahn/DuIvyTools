@@ -74,9 +74,10 @@ For help messages:
 
 ## still working 
 
-- [ ] support space in the legends
+- [x] support space in the legends
 - [ ] column_select in xvg_show_stack
 - [ ] xlabel and ylabel in xpm_show
+- [ ] plot control parameters
 - [ ] one item in column_select in xvg_ave_bar
 - [ ] make the calculation of moving averages faster
 - [ ] the location of ticks in xpm figure procesion

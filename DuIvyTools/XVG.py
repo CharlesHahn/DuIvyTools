@@ -1404,9 +1404,11 @@ def xvg_call_functions(arguments: list = None):
     if args.legend_list != None:
         if "," in "".join(args.legend_list):
             for legends in args.legend_list:
-                legend_list.append([l for l in legends.split(",")])
+                ## >> is used to reprensent space
+                legend_list.append([l.replace(">>", " ") for l in legends.split(",")])
         else:
-            legend_list = [l for l in args.legend_list]
+            ## >> is used to reprensent space
+            legend_list = [l.replace(">>", " ") for l in args.legend_list]
     firstfile = (xvgfiles[0], xvgfiles[0][0])[isinstance(xvgfiles[0], list)]
 
     ## call functions
