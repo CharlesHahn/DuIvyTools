@@ -50,6 +50,8 @@ xvg_compare: comparison of xvg files, draw different data columns into line figu
     -l, --legend_list (optional)
             specify the legends to show in figure. The number of legends should be equal
             to the number of indexs you sepecified in -c. 
+            if you want space in one legend, like "hh gg"; use "~~" for instead, like
+            "hh~~gg", ~~ will be turn into space and shown in figure.
     -s, --start (optional)
             specify the row index of column data which you want to start to plot.
     -e, --end (optional)
@@ -239,6 +241,8 @@ xvg_ave_bar: First, the average of each data column you select by -c will be cal
     -l, --legend_list (optional)
             specify the legends to show in figure. The number of legends should be equal
             to the number of files or file groups you specified in -f. 
+            if you want space in one legend, like "hh gg"; use "~~" for instead, like
+            "hh~~gg", ~~ will be turn into space and shown in figure.
     -xt, --xtitles (optional)
             specity the names of x ticks in figure. The number of xtitles should be 
             equal to the number of indexs in column_select (-c).
