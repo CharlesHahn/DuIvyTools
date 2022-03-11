@@ -393,7 +393,7 @@ class XVG(object):
         plt.tight_layout()
         plt.show()
 
-    def draw_stacking(
+    def draw_stacking2(
         self, column_index2start: int = 1, column_index2end: int = None
     ) -> None:
         """
@@ -445,6 +445,57 @@ class XVG(object):
                     column_index2end + column_index2start - stack_index - 1
                 ],
             )
+            ylim_max = (ylim_max, max(stack_data))[ylim_max < max(stack_data)]
+            ylim_min = (ylim_min, min(stack_data))[ylim_min > min(stack_data)]
+        # print(ylim_min, ylim_max)
+        plt.xlabel(self.data_heads[0])
+        plt.ylabel(self.xvg_ylabel)
+        plt.title("Stacked plot of " + self.xvg_title)
+        plt.xlim(np.min(self.data_columns[0]), np.max(self.data_columns[0]))
+        plt.ylim(ylim_min, ylim_max)
+        plt.legend(loc=3)
+        plt.show()
+
+    def draw_stacking(self, column_select:list=[], legend_list:list=[]) -> None:
+        """
+        draw xvg data into stacking figure
+
+        :parameters:
+            column_select: a list to store the column indexs you want to stack
+            legend_list: a list to store legends specified by user
+        """
+
+        ## check parameters
+        if column_select == None or len(column_select) == 0:
+            print("Error -> please specify column indexs you want to stack")
+            exit()
+        if not set(column_select).issubset(
+                set([ i for i in range(len(self.data_columns))])):
+            print("Error -> some column index you specified may not in ", end="")
+            print("range of [0:{}], check it".format(len(self.data_columns)))
+            exit()
+
+        if legend_list == None:
+            legend_list = []
+        if len(legend_list) != 0 and len(legend_list) != len(column_select):
+            print("Warning -> length of legends and column_select isn't equal")
+            print("Warning -> using default legends for instead")
+            legend_list = []
+        for legend in legend_list:
+            if not isinstance(legend, str):
+                print("Error -> you are not supposed to type comma in legends here")
+                exit()
+
+        ## draw stacked plot
+        column_select.reverse()
+        legend_list.reverse()
+        ylim_max, ylim_min = 0, 0
+        labels = (legend_list, [self.data_heads[c] for c in column_select])[len(legend_list) == 0]
+        for index_id, _ in enumerate(column_select):
+            stack_data = [ sum([ self.data_columns[c][row] for c in column_select[index_id:]]) for row in range(self.xvg_row_num)]
+            plt.fill_between(self.data_columns[0], stack_data, 
+                             [ 0 for _ in range(len(stack_data))], 
+                             label=labels[index_id])
             ylim_max = (ylim_max, max(stack_data))[ylim_max < max(stack_data)]
             ylim_min = (ylim_min, min(stack_data))[ylim_min > min(stack_data)]
         # print(ylim_min, ylim_max)
@@ -1283,14 +1334,11 @@ def xvg_show_distribution(xvgfile: str = "", bin: int = 100) -> None:
     xvg.draw_distribution(bin)
 
 
-def xvg_show_stacking(
-    xvgfile: str = "", column_index2start: int = 1, column_index2end: int = None
-) -> None:
+def xvg_show_stacking(xvgfile: str = "", column_select:list=[],
+                      legend_list:list=[]) -> None:
     """visualization of stacked xvg data"""
-    if column_index2start == None:
-        column_index2start = 1
     xvg = XVG(xvgfile)
-    xvg.draw_stacking(column_index2start, column_index2end)
+    xvg.draw_stacking(column_select, legend_list)
 
 
 def xvg_show_scatter(xvgfile: str = "", x_index: int = 0, y_index: int = None) -> None:
@@ -1336,18 +1384,6 @@ def xvg_call_functions(arguments: list = None):
     )
     parser.add_argument(
         "-bin", "--bin", type=int, help="the bin number for distribution calculation"
-    )
-    parser.add_argument(
-        "-cis",
-        "--column_index2start",
-        type=int,
-        help="the column index of data to start stacking",
-    )
-    parser.add_argument(
-        "-cie",
-        "--column_index2end",
-        type=int,
-        help="the column index of data to end stacking",
     )
     parser.add_argument(
         "-xi", "--x_index", type=int, help="the x index of data for drawing scatter"
@@ -1425,7 +1461,7 @@ def xvg_call_functions(arguments: list = None):
     elif method == "xvg_show_distribution":
         xvg_show_distribution(firstfile, args.bin)
     elif method == "xvg_show_stack":
-        xvg_show_stacking(firstfile, args.column_index2start, args.column_index2end)
+        xvg_show_stacking(firstfile, column_select, legend_list)
     elif method == "xvg_show_scatter":
         xvg_show_scatter(firstfile, args.x_index, args.y_index)
     elif method == "xvg_energy_compute":
