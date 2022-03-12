@@ -17,6 +17,8 @@ dit xvg_show -f test.xvg
 
 Type `dit help` for more messages.
 
+visit https://github.com/CharlesHahn/DuIvy/tree/master/Articles/20220310-DIT for more introductions.
+
 
 ## Install
 
@@ -75,7 +77,7 @@ For help messages:
 ## still working 
 
 - [x] support space in the legends
-- [ ] column_select in xvg_show_stack
+- [x] column_select in xvg_show_stack
 - [ ] xlabel and ylabel in xpm_show
 - [ ] plot control parameters
 - [ ] one item in column_select in xvg_ave_bar

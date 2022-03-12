@@ -152,16 +152,24 @@ xvg_show_stack: draw stack figure of column data.
 
 :examples:
     dit xvg_show_stack -f f1.xvg
-    dit xvg_show_stack -f f1.xvg -cis 2 -cie 4
+    dit xvg_show_stack -f f1.xvg -c 2 3 4 5 6 -s 500 -e 1000
+    dit xvg_show_stack -f f1.xvg -c 2 3 4 5 6 -l A B C D E
 
 :parameters:
     -f, --input
             specify the xvg file for input. 
             Only the first file is valid, others will be dropped.
-    -cis, --column_index2start (optional)
-            specify the index of column you want to start to stack. default == 1
-    -cie, --column_index2end (optional)
-            specify the index of column you want to stop stacking. 
+    -c, --column_select
+            specify the column indexs you want to stack,  seperated by space.
+    -l, --legend_list (optional)
+            Normally, legends could be assigned automatically, but you can specify them
+            by -l. The number of legends should be equal to the number of column indexs.
+            if you want space in one legend, like "hh gg"; use "~~" for instead, like
+            "hh~~gg", ~~ will be turn into space and shown in figure.
+    -s, --start (optional)
+            specify the row index of column data which you want to start to calculation.
+    -e, --end (optional)
+            specify the row index of column data which you want to stop calculation.
 """,
             "xvg_show_scatter": """
 xvg_show_scatter: draw scatter figure

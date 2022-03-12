@@ -167,8 +167,11 @@ class XVG(object):
             if len(items) == len(self.xvg_legends):
                 for i in range(len(items)):
                     heads[i] += " " + items[i]
-            elif len(items) == 1 and items[0] != "" and (
-                items[0][0] == "(" and items[0][-1] == ")"):
+            elif (
+                len(items) == 1
+                and items[0] != ""
+                and (items[0][0] == "(" and items[0][-1] == ")")
+            ):
                 for i in range(len(heads)):
                     heads[i] += " " + items[0]
             else:
@@ -393,70 +396,13 @@ class XVG(object):
         plt.tight_layout()
         plt.show()
 
-    def draw_stacking2(
-        self, column_index2start: int = 1, column_index2end: int = None
+    def draw_stacking(
+        self,
+        column_select: list = [],
+        legend_list: list = [],
+        start: int = 0,
+        end: int = None,
     ) -> None:
-        """
-        draw xvg data into stacking figure
-
-        :parameters:
-            column_index2start: the index of data column to start plot
-            column_index2end: the index of data column to end plot
-        """
-
-        ## check parameters
-        if column_index2start >= len(self.data_columns):
-            print(
-                "Warning -> column_index2start not in proper range, use default value."
-            )
-            column_index2start = 1
-        if column_index2end == None:
-            column_index2end = len(self.data_columns)
-        else:
-            if column_index2end <= column_index2start or column_index2end > len(
-                self.data_columns
-            ):
-                print(
-                    "Warning -> column_index2end not in proper range, use default value."
-                )
-                column_index2end = len(self.data_columns)
-
-        ## draw stacked plot
-        ylim_max, ylim_min = 0, 0
-        for stack_index in range(column_index2start, column_index2end):
-            stack_data = [
-                sum(
-                    [
-                        self.data_columns[i][row]
-                        for i in range(
-                            column_index2start,
-                            column_index2end - (stack_index - column_index2start),
-                        )
-                    ]
-                )
-                for row in range(self.xvg_row_num)
-            ]
-            # plt.plot(self.data_columns[0], stack_data, label=self.data_heads[stack_index])
-            plt.fill_between(
-                self.data_columns[0],
-                stack_data,
-                [0 for _ in range(len(stack_data))],
-                label=self.data_heads[
-                    column_index2end + column_index2start - stack_index - 1
-                ],
-            )
-            ylim_max = (ylim_max, max(stack_data))[ylim_max < max(stack_data)]
-            ylim_min = (ylim_min, min(stack_data))[ylim_min > min(stack_data)]
-        # print(ylim_min, ylim_max)
-        plt.xlabel(self.data_heads[0])
-        plt.ylabel(self.xvg_ylabel)
-        plt.title("Stacked plot of " + self.xvg_title)
-        plt.xlim(np.min(self.data_columns[0]), np.max(self.data_columns[0]))
-        plt.ylim(ylim_min, ylim_max)
-        plt.legend(loc=3)
-        plt.show()
-
-    def draw_stacking(self, column_select:list=[], legend_list:list=[]) -> None:
         """
         draw xvg data into stacking figure
 
@@ -470,7 +416,8 @@ class XVG(object):
             print("Error -> please specify column indexs you want to stack")
             exit()
         if not set(column_select).issubset(
-                set([ i for i in range(len(self.data_columns))])):
+            set([i for i in range(len(self.data_columns))])
+        ):
             print("Error -> some column index you specified may not in ", end="")
             print("range of [0:{}], check it".format(len(self.data_columns)))
             exit()
@@ -485,24 +432,51 @@ class XVG(object):
             if not isinstance(legend, str):
                 print("Error -> you are not supposed to type comma in legends here")
                 exit()
+        if start == None:
+            start = 0
+        if start < 0 or start >= self.xvg_row_num:
+            print(
+                "Error -> start of row index not in proper range [0:{}]".format(
+                    self.xvg_row_num
+                )
+            )
+            exit()
+        if end != None and (end <= start or end >= self.xvg_row_num):
+            print(
+                "Error -> end of row index not in proper range [{}:{}]".format(
+                    start + 1, self.xvg_row_num
+                )
+            )
+            exit()
 
         ## draw stacked plot
         column_select.reverse()
         legend_list.reverse()
         ylim_max, ylim_min = 0, 0
-        labels = (legend_list, [self.data_heads[c] for c in column_select])[len(legend_list) == 0]
+        labels = (legend_list, [self.data_heads[c] for c in column_select])[
+            len(legend_list) == 0
+        ]
         for index_id, _ in enumerate(column_select):
-            stack_data = [ sum([ self.data_columns[c][row] for c in column_select[index_id:]]) for row in range(self.xvg_row_num)]
-            plt.fill_between(self.data_columns[0], stack_data, 
-                             [ 0 for _ in range(len(stack_data))], 
-                             label=labels[index_id])
+            stack_data = [
+                sum([self.data_columns[c][row] for c in column_select[index_id:]])
+                for row in range(self.xvg_row_num)
+            ][start:end]
+            plt.fill_between(
+                self.data_columns[0][start:end],
+                stack_data,
+                [0 for _ in range(len(stack_data))],
+                label=labels[index_id],
+            )
             ylim_max = (ylim_max, max(stack_data))[ylim_max < max(stack_data)]
             ylim_min = (ylim_min, min(stack_data))[ylim_min > min(stack_data)]
         # print(ylim_min, ylim_max)
         plt.xlabel(self.data_heads[0])
         plt.ylabel(self.xvg_ylabel)
         plt.title("Stacked plot of " + self.xvg_title)
-        plt.xlim(np.min(self.data_columns[0]), np.max(self.data_columns[0]))
+        plt.xlim(
+            np.min(self.data_columns[0][start:end]),
+            np.max(self.data_columns[0][start:end]),
+        )
         plt.ylim(ylim_min, ylim_max)
         plt.legend(loc=3)
         plt.show()
@@ -1334,11 +1308,16 @@ def xvg_show_distribution(xvgfile: str = "", bin: int = 100) -> None:
     xvg.draw_distribution(bin)
 
 
-def xvg_show_stacking(xvgfile: str = "", column_select:list=[],
-                      legend_list:list=[]) -> None:
+def xvg_show_stacking(
+    xvgfile: str = "",
+    column_select: list = [],
+    legend_list: list = [],
+    start: int = 0,
+    end: int = None,
+) -> None:
     """visualization of stacked xvg data"""
     xvg = XVG(xvgfile)
-    xvg.draw_stacking(column_select, legend_list)
+    xvg.draw_stacking(column_select, legend_list, start, end)
 
 
 def xvg_show_scatter(xvgfile: str = "", x_index: int = 0, y_index: int = None) -> None:
@@ -1461,7 +1440,7 @@ def xvg_call_functions(arguments: list = None):
     elif method == "xvg_show_distribution":
         xvg_show_distribution(firstfile, args.bin)
     elif method == "xvg_show_stack":
-        xvg_show_stacking(firstfile, column_select, legend_list)
+        xvg_show_stacking(firstfile, column_select, legend_list, args.start, args.end)
     elif method == "xvg_show_scatter":
         xvg_show_scatter(firstfile, args.x_index, args.y_index)
     elif method == "xvg_energy_compute":
