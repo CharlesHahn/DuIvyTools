@@ -26,57 +26,59 @@ xvg_show: draw xvg data into line figures.
 
 :parameters:
     -f, --input
-            specify the xvg file for input
+            specify the xvg file for input.
 """,
             "xvg_compare": """
-xvg_compare: comparison of xvg files, draw different data columns into line figure.
+xvg_compare: comparison of xvg files, draw different data columns you selected
+             into line figure.
 
 :examples:
     dit xvg_compare -f f1.xvg f2.xvg -c 1,2 2,3,4 -l l1 l2 l3 l4 l5
-    dit xvg_compare -f f1.xvg f2.xvg -c 1 1 -l l1 l2 -x Time(ns) -y ylabel -t tile
-    dit xvg_compare -f f1.xvg f2.xvg -c 1,2 2 -l l1 l2 l3 -s 100 -e 1000
+    dit xvg_compare -f f1.xvg f2.xvg -c 1 1 -l l1 l2 -x Time(ns) -y ylabel 
+    dit xvg_compare -f f1.xvg f2.xvg -c 1,2 2 -l l1 l2 l3 -s 100 -e 1000 -t test
 
 :parameters:
     -f, --input
-            specify the xvg files for input. accept one or one more input file names 
-            seperated by space
+            specify the xvg files for input. accept one or one more input file
+            names seperated by space.
     -c, --column_select
             specify the index of columns you want to use. index starts from 0. 
-            one xvg file in -f should be paired with one column index group seperated by
-            space, and in each column index group, indexs should be seperated by comma. 
-            In first example, 1,2 is paired with f1.xvg, 2,3,4 is paird with f2.xvg; 
-            this means selecting the column 1 and 2 in f1.xvg, column 2, 3 and 4 in 
-            f2.xvg to compare. 
+            one xvg file in -f should be paired with one column index group 
+            seperated by space, and in each column index group, indexs should 
+            be seperated by comma. 
+            In first example, 1,2 is paired with f1.xvg, 2,3,4 is paird with 
+            f2.xvg. This means selecting the column 1 and 2 in f1.xvg, column 
+            2, 3 and 4 in f2.xvg to compare. 
     -l, --legend_list (optional)
-            specify the legends to show in figure. The number of legends should be equal
-            to the number of indexs you sepecified in -c. 
-            if you want space in one legend, like "hh gg"; use "~~" for instead, like
-            "hh~~gg", ~~ will be turn into space and shown in figure.
+            specify the legends to show in figure. The number of legends should
+            be equal to the number of indexs you sepecified in -c. 
+            if you want space in one legend, like "hh gg"; use "~~" for instead,
+            like "hh~~gg", ~~ will be turn into space and shown in figure.
     -s, --start (optional)
-            specify the row index of column data which you want to start to plot.
+            specify row index of column data which you want to start to plot.
     -e, --end (optional)
-            specify the row index of column data which you want to stop plotting.
+            specify row index of column data which you want to stop plotting.
     -x, --xlabel (optional)
-            sepecify the x-label you want to show in figure
+            sepecify the x-label you want to show in figure.
     -y, --ylabel (optional)
-            sepecify the y-label you want to show in figure
+            sepecify the y-label you want to show in figure.
     -t, --title (optional)
-            sepecify the title you want to show in figure
+            sepecify the title you want to show in figure.
     -smv, --showMV  (optional)
-            if you specified this parameter, moving average and confidence interval 
-            will be calculated and shown in figure. 
+            if you specified this parameter, moving average and confidence 
+            interval will be calculated and shown in figure. 
     -ws, --windowsize (optional)
-            specify the windows size for moving average calculation. default == 50
-            only valid when -smv specified. 
+            specify the windows size for moving average calculation. 
+            default == 50, only valid when -smv specified. 
     -cf, --confidence (optional)
-            specify the confidence for confidence interval calculation. default == 0.90
-            only valid when -smv specified. 
+            specify the confidence for confidence interval calculation. 
+            default == 0.90, only valid when -smv specified. 
     -a, --alpha (optional)
-            specify the transparency for plotting confidence interval. default == 0.4
-            only valid when -smv specified. 
+            specify the transparency for plotting confidence interval. 
+            default == 0.4, only valid when -smv specified. 
 """,
             "xvg_ave": """
-xvg_ave: calculate the average of each column in xvg file
+xvg_ave: calculate the average of each column in xvg file.
 
 :examples:
     dit xvg_ave -f f1.xvg
@@ -87,12 +89,15 @@ xvg_ave: calculate the average of each column in xvg file
             specify the xvg file for input. 
             Only the first file is valid, others will be dropped.
     -s, --start (optional)
-            specify the row index of column data which you want to start to calculation.
+            specify the row index of column data which you want to start to 
+            calculation.
     -e, --end (optional)
-            specify the row index of column data which you want to stop calculation.
+            specify the row index of column data which you want to stop 
+            calculation.
 """,
             "xvg_mvave": """
-xvg_mvave: calculate the moving average of each column in xvg file and save results to csv file.
+xvg_mvave: calculate the moving average of each column in xvg file and save 
+           results to csv file.
 
 :examples:
     dit xvg_mvave -f f1.xvg -o res.csv 
@@ -105,9 +110,11 @@ xvg_mvave: calculate the moving average of each column in xvg file and save resu
     -o, --output
             specify the csv file to save results.
     -ws, --windowsize (optional)
-            specify the windows size for moving average calculation. default == 50
+            specify the windows size for moving average calculation. 
+            default == 50
     -cf, --confidence (optional)
-            specify the confidence for confidence interval calculation. default == 0.90
+            specify the confidence for confidence interval calculation. 
+            default == 0.90
 """,
             "xvg2csv": """
 xvg2csv: convert xvg file into csv file.
@@ -134,7 +141,8 @@ xvg_rama: draw ramachandran figure from a rama data xvg file.
             Only the first file is valid, others will be dropped.
 """,
             "xvg_show_distribution": """
-xvg_show_distribution: calculate distribution of each column in xvg file and show.
+xvg_show_distribution: calculate distribution of each data column in xvg file 
+                       and show.
 
 :examples:
     dit xvg_show_distribution -f f1.xvg
@@ -145,7 +153,8 @@ xvg_show_distribution: calculate distribution of each column in xvg file and sho
             specify the xvg file for input. 
             Only the first file is valid, others will be dropped.
     -bin, --bin (optional)
-            specify the number of bins of calculating distribution. default == 100
+            specify the number of bins of calculating distribution. 
+            default == 100
 """,
             "xvg_show_stack": """
 xvg_show_stack: draw stack figure of column data.
@@ -162,17 +171,20 @@ xvg_show_stack: draw stack figure of column data.
     -c, --column_select
             specify the column indexs you want to stack,  seperated by space.
     -l, --legend_list (optional)
-            Normally, legends could be assigned automatically, but you can specify them
-            by -l. The number of legends should be equal to the number of column indexs.
-            if you want space in one legend, like "hh gg"; use "~~" for instead, like
-            "hh~~gg", ~~ will be turn into space and shown in figure.
+            Normally, legends could be assigned automatically, but you can 
+            specify them by -l. The number of legends should be equal to the 
+            number of column indexs. if you want space in one legend, like 
+            "hh gg", use "~~" for instead, like "hh~~gg". ~~ will be turn into 
+            space and shown in figure.
     -s, --start (optional)
-            specify the row index of column data which you want to start to calculation.
+            specify the row index of column data which you want to start to 
+            calculation.
     -e, --end (optional)
-            specify the row index of column data which you want to stop calculation.
+            specify the row index of column data which you want to stop 
+            calculation.
 """,
             "xvg_show_scatter": """
-xvg_show_scatter: draw scatter figure
+xvg_show_scatter: draw scatter figure.
 
 :examples:
     dit xvg_show_scatter -f f1.xvg -xi 0 -yi 1
@@ -182,9 +194,11 @@ xvg_show_scatter: draw scatter figure
             specify the xvg file for input. 
             Only the first file is valid, others will be dropped.
     -xi, --x_index (optional)
-            specify the index of column which you want to use as x data. default == 0
+            specify the index of column which you want to use as x data. 
+            default == 0
     -yi, --y_index (optional)
-            specify the index of column which you want to use as y data. default == 1
+            specify the index of column which you want to use as y data. 
+            default == 1
 """,
             "xvg_energy_compute": """
 xvg_energy_compute: calculate the interaction energy between two items.
@@ -194,14 +208,15 @@ xvg_energy_compute: calculate the interaction energy between two items.
 
 :parameters:
     -f, --input
-            specify three xvg files to calculate (complex energy file, component A 
-            energy file and component B energy file). Each should contain and ONLY 
-            contain five columns (Time, LJ(SR), Disper.corr., Coulomb(SR), Coul.recip.)
+            specify three xvg files to calculate (complex energy file, 
+            component A energy file and component B energy file). Each should 
+            contain and ONLY contain five columns 
+            (Time, LJ(SR), Disper.corr., Coulomb(SR), Coul.recip.).
     -o, --output
             specify a xvg file to save results. 
 """,
             "xvg_combine": """
-xvg_combine: select columns from xvg files and conbine data columns into one xvg file. 
+xvg_combine: combine data columns selected and save results into one xvg file. 
 
 :examples:
     dit xvg_combine -f f1.xvg -c 1,2 -o res.xvg
@@ -209,65 +224,73 @@ xvg_combine: select columns from xvg files and conbine data columns into one xvg
 
 :parameters:
     -f, --input
-            specify the xvg files for input. accept one or one more input file names 
-            seperated by space
+            specify the xvg files for input. accept one or one more input file
+            names seperated by space.
     -c, --column_select
             specify the index of columns you want to use. index starts from 0. 
-            one xvg file in -f should be paired with one column index group seperated by
-            space. And in each column index group, indexs should be seperated by comma. 
-            In second example, 1,2 is paired with f1.xvg, 2,3 is paird with f2.xvg; 
-            this means selecting the column 1 and 2 in f1.xvg, column 2 and 2 in 
-            f2.xvg to combine, and saving results to res.xvg. 
+            one xvg file in -f should be paired with one column index group 
+            seperated by space. And in each column index group, indexs should
+            be seperated by comma. 
+            In second example, 1,2 is paired with f1.xvg, 2,3 is paird with 
+            f2.xvg. This means selecting the column 1 and 2 in f1.xvg, column 2
+            and 2 in f2.xvg to combine, and saving results to res.xvg. 
     -o, --output
             specify a xvg file to save results of combination.
 """,
             "xvg_ave_bar": """
-xvg_ave_bar: First, the average of each data column you select by -c will be calculated.
-             Second, the average and standard error of corresponding column averages in 
-             xvg file groups will be calculated.
-             Third, the averages and standard errors will be draw into bar figure.
+xvg_ave_bar: First, the average of each data column you select by -c will be
+             calculated.
+             Second, the average and standard error of corresponding column 
+             averages in xvg file groups will be calculated.
+             Third, the averages and standard errors will be drawn into bar 
+             figure.
 
 :examples:
     dit xvg_ave_bar -f f1_1.xvg,f1_2.xvg,f1_3.xvg f2_1.xvg,f2_2.xvg,f2_3.xvg -c 1 2 
     dit xvg_ave_bar -f f1.xvg f2.xvg -c 1 2 -l l1 l2 -s 100 -e 1000 
-    dit xvg_ave_bar -f f1.xvg f2.xvg -c 1 2 -l l1 l2 -x xlabel -y ylabel -t title
+    dit xvg_ave_bar -f f1.xvg f2.xvg -c 1 2 -l l1 l2 -x xlabel -y ylabel -t test
     dit xvg_ave_bar -f f1.xvg f2.xvg f3.xvg -c 1 2 -l l1 l2 l3 -xt xt1 xt2
     dit xvg_ave_bar -f f1.xvg f2.xvg -c 1 2 -l l1 l2 -ac -o average.csv
 
 :parameters:
     -f, --input
-            specify the xvg files for input. accept one or one more file names or file 
-            name groups. Several file names seperated by comma is called a file name 
-            group. In first example, f1_1.xvg,f1_2.xvg,f1_3.xvg is the first file name 
+            specify the xvg files for input. accept one or one more file names
+            or file name groups. 
+            Several file names seperated by comma is called a file name group. 
+            In first example, f1_1.xvg,f1_2.xvg,f1_3.xvg is the first file name
             group, and f2_1.xvg,f2_2.xvg,f2_3.xvg is the second file name group. 
-            This method will calculate averages of columns you select in each xvg file.
-            Then calculate the average and standard error of column averages in each 
-            file group. Finally, convert the averages and standard errors into bar plot.
+            This method will calculate averages of columns you select in each
+            xvg file. Then calculate the average and standard error of column
+            averages in each file group. Finally, convert the averages and 
+            standard errors into bar plot.
     -c, --column_select
-            specify the index of columns you want to calculate. Index starts from 0. 
-            The column indexs you select will be applied to EVERY xvg file in -f.
+            specify the index of columns you want to calculate. Index starts 
+            from 0. The column indexs you select will be applied to EVERY xvg
+            file in -f.
     -l, --legend_list (optional)
-            specify the legends to show in figure. The number of legends should be equal
-            to the number of files or file groups you specified in -f. 
-            if you want space in one legend, like "hh gg"; use "~~" for instead, like
-            "hh~~gg", ~~ will be turn into space and shown in figure.
+            specify the legends to show in figure. The number of legends should
+            be equal to the number of files or file groups you specified in -f. 
+            if you want space in one legend, like "hh gg"; use "~~" for instead,
+            like "hh~~gg", ~~ will be turn into space and shown in figure.
     -xt, --xtitles (optional)
-            specity the names of x ticks in figure. The number of xtitles should be 
-            equal to the number of indexs in column_select (-c).
+            specity the names of x ticks in figure. The number of xtitles should
+            be equal to the number of indexs in column_select (-c).
     -s, --start (optional)
-            specify the row index of column data which you want to start to calculation.
+            specify the row index of column data which you want to start to 
+            calculation.
     -e, --end (optional)
-            specify the row index of column data which you want to stop calculation.
+            specify the row index of column data which you want to stop 
+            calculation.
     -x, --xlabel (optional)
-            sepecify the x-label you want to show in figure
+            sepecify the x-label you want to show in figure.
     -y, --ylabel (optional)
-            sepecify the y-label you want to show in figure
+            sepecify the y-label you want to show in figure.
     -t, --title (optional)
-            sepecify the title you want to show in figure
+            sepecify the title you want to show in figure.
     -ac, --ave2csv (optional)
             whether save data of averages into csv file. default == False
     -o, --output (optional)
-            if you specified -ac, -o should be used to specify the csv file name.
+            if -ac is specified, -o should be used to specify the csv file name.
 """,
             "xvg_box": """
 xvg_box: draw the data of columns you select into box figure.
@@ -280,21 +303,23 @@ xvg_box: draw the data of columns you select into box figure.
     -f, --input
             accept one or more than one files as input.
     -c, --column_select
-            specify the column indexs you want to plot. The indexs you specified will
-            be applied to each file you select in -f.
+            specify the column indexs you want to plot. The indexs you specified
+            will be applied to each file you select in -f.
     -xt, --xtitles (optional)
-            specity the names of x ticks in figure. The number of xtitles should be 
-            equal to the number of indexs in column_select (-c).
+            specity the names of x ticks in figure. The number of xtitles should
+            be equal to the number of indexs in column_select (-c).
     -s, --start (optional)
-            specify the row index of column data which you want to start to calculation.
+            specify the row index of column data which you want to start to 
+            calculation.
     -e, --end (optional)
-            specify the row index of column data which you want to stop calculation.
+            specify the row index of column data which you want to stop 
+            calculation.
     -x, --xlabel (optional)
-            sepecify the x-label you want to show in figure
+            sepecify the x-label you want to show in figure.
     -y, --ylabel (optional)
-            sepecify the y-label you want to show in figure
+            sepecify the y-label you want to show in figure.
     -t, --title (optional)
-            sepecify the title you want to show in figure
+            sepecify the title you want to show in figure.
 """,
             "xpm_show": """
 xpm_show: vasualize the xpm file.
@@ -312,19 +337,20 @@ xpm_show: vasualize the xpm file.
     -o, --output (optional)
             specify the output figure name. 
     -ip, --interpolation (optional)
-            whether to perform interpolation which will make your figure looks better.
+            whether to perform interpolation which will make your figure looks 
+            smoother.
     -pcm, --pcolormesh (optional)
             whether to use pcolormesh function to vasualize your xpm figure.
     -3d, --threeDimensions (optional)
-            whether to draw a 3D figure. Useful for free energy landscape figure.
+            whether to draw a 3D figure. Useful for free energy landscape figure
     -ns, --noshow (optional)
             whether not to show figure in GUI, useful when working without GUI.
 """,
             "xpm2csv": """
 xpm2csv: convert xpm file into csv data file. 
-         when number of x-axis (or y-axis) is 1 more than width (or height) of figure, 
-         the intermediate value of two adjacent values of x-axis (or y-axis) will be 
-         calculated to suit the width (or height).
+         when number of x-axis (or y-axis) is 1 more than width (or height) of
+         figure, the intermediate value of two adjacent values of x-axis (or
+         y-axis) will be calculated to suit the width (or height).
 
 :examples:
     dit xpm2csv -f f1.xpm -o test.csv
@@ -403,7 +429,8 @@ ndx_rm: remove index groups according to names you specified.
             specify the group names you want to remove by interactive mode.
 """,
             "ndx_preserve": """
-ndx_preserve: preserve index groups according to names you specified, and remove others.
+ndx_preserve: preserve index groups according to names you specified, and 
+              remove others.
 
 :examples:
     dit ndx_preserve -f f1.ndx -o res.ndx -gl Protein SOL System
@@ -420,14 +447,16 @@ ndx_preserve: preserve index groups according to names you specified, and remove
             specify the group names you want to preserve by interactive mode.
 """,
             "ndx_add": """
-ndx_add: add one index group to ndx file by specified group name, start, end, step.
+ndx_add: add one index group to ndx file by specified group name(-gn), 
+         start(-s), end(-e), step(-t).
 
 :examples:
     dit ndx_add -f f1.ndx -o res.ndx -gn test -s 1 -e 10 -t 2
 
 :parameters:
     -f, --input (optional)
-            specify ndx file for input. -f could be ignored if you want a new ndx file.
+            specify ndx file for input. -f could be ignored if you want a new
+            ndx file with the index group added.
     -o, --output
             specify the ndx file name for saving the results.
     -gn, --groupname
@@ -437,9 +466,9 @@ ndx_add: add one index group to ndx file by specified group name, start, end, st
     -e, --end
             specify the end index of the group you want to add.
     -t, --step (optional)
-            specify the step of indexs of the group you want to add. default == 1
-            In the example, -s 1 -e 10 -t 2 means to generate a group contains index:
-            1 3 5 7 9 
+            specify the step of indexs of the group you want to add. 
+            default == 1. In the example, -s 1 -e 10 -t 2 means to generate a
+            group contains index: 1 3 5 7 9 
 """,
             "ndx_combine": """
 ndx_combine: combine groups into one group by the group names you specified.
@@ -489,8 +518,8 @@ mdp_gen: generate a template mdp file by application you specified. The mdp file
     -o, --output
             specify an output mdp file to save the results.
     -a, --application
-            specify the applications you want to use mdp file for. You can select from:
-            ions, em, nvt, npt, md, blank
+            specify the applications you want to use mdp file for. You can 
+            select from: ions, em, nvt, npt, md, blank
 """,
         }
 
