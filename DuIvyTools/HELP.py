@@ -358,8 +358,10 @@ xpm_show: vasualize the xpm file.
             specify a factor for multiplication of x-axis. default == 1.0
             For instance, if "-xs 0.001" is specified, all x-axis value of xpm
             will multiply this value. x-axis 1000 will be shown as 1. 
-            Useful for converting the unit (ps) of time into (ns). Don't forget 
+            Useful for converting the unit (ps) of time into (ns). Don't forget
             to change xlabel too after specifing -xs.
+            I advise you'd better to use -tu in gmx commands for convertion of 
+            unit of x-axis.
 """,
             "xpm2csv": """
 xpm2csv: convert xpm file into csv data file. 
@@ -385,8 +387,10 @@ xpm2csv: convert xpm file into csv data file.
             specify a factor for multiplication of x-axis. default == 1.0
             For instance, if "-xs 0.001" is specified, all x-axis value of xpm
             will multiply this value. x-axis 1000 will be shown as 1. 
-            Useful for converting the unit (ps) of time into (ns). Don't forget 
+            Useful for converting the unit (ps) of time into (ns). Don't forget
             to change xlabel too after specifing -xs.
+            I advise you'd better to use -tu in gmx commands for convertion of 
+            unit of x-axis.
 """,
             "xpm2gpl": """
 xpm2gpl: convert xpm file into gnuplot script.
@@ -411,8 +415,10 @@ xpm2gpl: convert xpm file into gnuplot script.
             specify a factor for multiplication of x-axis. default == 1.0
             For instance, if "-xs 0.001" is specified, all x-axis value of xpm
             will multiply this value. x-axis 1000 will be shown as 1. 
-            Useful for converting the unit (ps) of time into (ns). Don't forget 
+            Useful for converting the unit (ps) of time into (ns). Don't forget
             to change xlabel too after specifing -xs.
+            I advise you'd better to use -tu in gmx commands for convertion of 
+            unit of x-axis.
 """,
             "xpm_combine": """
 xpm_combine: combine several xpm files into one figure. 
