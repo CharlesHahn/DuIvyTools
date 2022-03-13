@@ -59,11 +59,11 @@ xvg_compare: comparison of xvg files, draw different data columns you selected
     -e, --end (optional)
             specify row index of column data which you want to stop plotting.
     -x, --xlabel (optional)
-            sepecify the x-label you want to show in figure.
+            specify the x-label you want to show in figure.
     -y, --ylabel (optional)
-            sepecify the y-label you want to show in figure.
+            specify the y-label you want to show in figure.
     -t, --title (optional)
-            sepecify the title you want to show in figure.
+            specify the title you want to show in figure.
     -smv, --showMV  (optional)
             if you specified this parameter, moving average and confidence 
             interval will be calculated and shown in figure. 
@@ -282,11 +282,11 @@ xvg_ave_bar: First, the average of each data column you select by -c will be
             specify the row index of column data which you want to stop 
             calculation.
     -x, --xlabel (optional)
-            sepecify the x-label you want to show in figure.
+            specify the x-label you want to show in figure.
     -y, --ylabel (optional)
-            sepecify the y-label you want to show in figure.
+            specify the y-label you want to show in figure.
     -t, --title (optional)
-            sepecify the title you want to show in figure.
+            specify the title you want to show in figure.
     -ac, --ave2csv (optional)
             whether save data of averages into csv file. default == False
     -o, --output (optional)
@@ -315,11 +315,11 @@ xvg_box: draw the data of columns you select into box figure.
             specify the row index of column data which you want to stop 
             calculation.
     -x, --xlabel (optional)
-            sepecify the x-label you want to show in figure.
+            specify the x-label you want to show in figure.
     -y, --ylabel (optional)
-            sepecify the y-label you want to show in figure.
+            specify the y-label you want to show in figure.
     -t, --title (optional)
-            sepecify the title you want to show in figure.
+            specify the title you want to show in figure.
 """,
             "xpm_show": """
 xpm_show: vasualize the xpm file.
@@ -331,6 +331,8 @@ xpm_show: vasualize the xpm file.
     dit xpm_show -f f1.xpm -3d
     dit xpm_show -f f1.xpm -o test.png -ns 
     dit xpm_show -f 31.xpm -x xlabel -y ylabel -t title
+    dit xpm_show -f 31.xpm -x xlabel -xs 0.001
+
 
 :parameters:
     -f, --input
@@ -347,11 +349,17 @@ xpm_show: vasualize the xpm file.
     -ns, --noshow (optional)
             whether not to show figure in GUI, useful when working without GUI.
     -x, --xlabel (optional)
-            sepecify the x-label you want to show in figure.
+            specify the x-label you want to show in figure.
     -y, --ylabel (optional)
-            sepecify the y-label you want to show in figure.
+            specify the y-label you want to show in figure.
     -t, --title (optional)
-            sepecify the title you want to show in figure.
+            specify the title you want to show in figure.
+    -xs, --xshrink (optional)
+            specify a factor for multiplication of x-axis. default == 1.0
+            For instance, if "-xs 0.001" is specified, all x-axis value of xpm
+            will multiply this value. x-axis 1000 will be shown as 1. 
+            Useful for converting the unit (ps) of time into (ns). Don't forget 
+            to change xlabel too after specifing -xs.
 """,
             "xpm2csv": """
 xpm2csv: convert xpm file into csv data file. 
@@ -362,6 +370,7 @@ xpm2csv: convert xpm file into csv data file.
 :examples:
     dit xpm2csv -f f1.xpm -o test.csv
     dit xpm2csv -f f1.xpm -o test.csv -x xlabel -y ylabel
+    dit xpm2csv -f f1.xpm -o test.csv -x xlabel -xs 0.001
 
 :parameters:
     -f, --input
@@ -369,9 +378,15 @@ xpm2csv: convert xpm file into csv data file.
     -o, --output
             specify the output csv file name.
     -x, --xlabel (optional)
-            sepecify the x-label you want to write to csv file.
+            specify the x-label you want to write to csv file.
     -y, --ylabel (optional)
-            sepecify the y-label you want to write to csv file.
+            specify the y-label you want to write to csv file.
+    -xs, --xshrink (optional)
+            specify a factor for multiplication of x-axis. default == 1.0
+            For instance, if "-xs 0.001" is specified, all x-axis value of xpm
+            will multiply this value. x-axis 1000 will be shown as 1. 
+            Useful for converting the unit (ps) of time into (ns). Don't forget 
+            to change xlabel too after specifing -xs.
 """,
             "xpm2gpl": """
 xpm2gpl: convert xpm file into gnuplot script.
@@ -379,6 +394,7 @@ xpm2gpl: convert xpm file into gnuplot script.
 :examples:
     dit xpm2gpl -f f1.xpm -o test.gpl
     dit xpm2gpl -f f1.xpm -o test.gpl -x xlabel -y ylabel -t title
+    dit xpm2gpl -f f1.xpm -o test.gpl -x xlabel -xs 0.001
 
 :parameters:
     -f, --input
@@ -386,11 +402,17 @@ xpm2gpl: convert xpm file into gnuplot script.
     -o, --output
             specify the output gnuplot script file name.
     -x, --xlabel (optional)
-            sepecify the x-label you want to show in figure.
+            specify the x-label you want to show in figure.
     -y, --ylabel (optional)
-            sepecify the y-label you want to show in figure.
+            specify the y-label you want to show in figure.
     -t, --title (optional)
-            sepecify the title you want to show in figure.
+            specify the title you want to show in figure.
+    -xs, --xshrink (optional)
+            specify a factor for multiplication of x-axis. default == 1.0
+            For instance, if "-xs 0.001" is specified, all x-axis value of xpm
+            will multiply this value. x-axis 1000 will be shown as 1. 
+            Useful for converting the unit (ps) of time into (ns). Don't forget 
+            to change xlabel too after specifing -xs.
 """,
             "xpm_combine": """
 xpm_combine: combine several xpm files into one figure. 

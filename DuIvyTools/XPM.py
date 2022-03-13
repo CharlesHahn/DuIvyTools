@@ -90,8 +90,17 @@ class XPM(object):
     """
 
     def __init__(self, xpmfile:str=None, xlabel:str=None, ylabel:str=None,
-                 title:str=None):
-        """read xpm file and save infos to class xpm"""
+                 title:str=None, xshrink:float=1.0):
+        """
+        read xpm file and save infos to class xpm
+
+        :parameters:
+            xpmfile: the xpm file name
+            xlabel: specify the xlabel of figure
+            ylabel: specify the ylabel of figure
+            title: specify the title of figure
+            xshrink: specify the factor for multiplication of x-axis
+        """
 
         ## check parameters 
         if xpmfile == None:
@@ -103,6 +112,8 @@ class XPM(object):
         if xpmfile[-4:] != ".xpm":
             print("Error -> specify a xpm file with suffix xpm")
             exit()
+        if xshrink == None:
+            xshrink = 1.0
 
         self.xpmfile = xpmfile
         self.xpm_title = ""
@@ -261,6 +272,8 @@ class XPM(object):
             self.xpm_ylabel = ylabel
         if title != None:
             self.xpm_title = title
+        if xshrink != None:
+            self.xpm_xaxis = [ x * float(xshrink) for x in self.xpm_xaxis]
 
         ## the read order of pixels is from top to bottom
         ## but the y-axis is from bottom to top, so reverse() is important !
@@ -760,6 +773,8 @@ def xpm_call_functions(arguments: list = None):
     parser.add_argument("-x", "--xlabel", type=str, help="the xlabel of figure")
     parser.add_argument("-y", "--ylabel", type=str, help="the ylabel of figure")
     parser.add_argument("-t", "--title", type=str, help="the title of figure")
+    parser.add_argument("-xs", "--xshrink", type=str, 
+                        help="modify x-axis by multipling xshrink")
     parser.add_argument(
         "-ip",
         "--interpolation",
@@ -814,13 +829,14 @@ def xpm_call_functions(arguments: list = None):
     xlabel = args.xlabel
     ylabel = args.ylabel
     title = args.title
+    xshrink = args.xshrink
 
     ## call functions
     if method == "xpm_show":
         if inputxpm == None:
             print("Error -> no input file")
             exit()
-        xpm = XPM(inputxpm, xlabel, ylabel, title)
+        xpm = XPM(inputxpm, xlabel, ylabel, title, xshrink)
         if fig_3d == True:
             xpm.draw_3D(ip, output, noshow)
         if pcm == False and fig_3d == False:
@@ -833,10 +849,10 @@ def xpm_call_functions(arguments: list = None):
             exit()
         xpm_combine(xpms2combine, output, noshow)
     elif method == "xpm2csv":
-        xpm = XPM(inputxpm, xlabel, ylabel, title)
+        xpm = XPM(inputxpm, xlabel, ylabel, title, xshrink)
         xpm.xpm2csv(output)
     elif method == "xpm2gpl":
-        xpm = XPM(inputxpm, xlabel, ylabel, title)
+        xpm = XPM(inputxpm, xlabel, ylabel, title, xshrink)
         xpm.xpm2gpl(output)
     else:
         print("Error -> Wrong method you specified")
