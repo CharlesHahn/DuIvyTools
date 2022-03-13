@@ -330,6 +330,7 @@ xpm_show: vasualize the xpm file.
     dit xpm_show -f f1.xpm -pcm 
     dit xpm_show -f f1.xpm -3d
     dit xpm_show -f f1.xpm -o test.png -ns 
+    dit xpm_show -f 31.xpm -x xlabel -y ylabel -t title
 
 :parameters:
     -f, --input
@@ -345,6 +346,12 @@ xpm_show: vasualize the xpm file.
             whether to draw a 3D figure. Useful for free energy landscape figure
     -ns, --noshow (optional)
             whether not to show figure in GUI, useful when working without GUI.
+    -x, --xlabel (optional)
+            sepecify the x-label you want to show in figure.
+    -y, --ylabel (optional)
+            sepecify the y-label you want to show in figure.
+    -t, --title (optional)
+            sepecify the title you want to show in figure.
 """,
             "xpm2csv": """
 xpm2csv: convert xpm file into csv data file. 
@@ -354,24 +361,36 @@ xpm2csv: convert xpm file into csv data file.
 
 :examples:
     dit xpm2csv -f f1.xpm -o test.csv
+    dit xpm2csv -f f1.xpm -o test.csv -x xlabel -y ylabel
 
 :parameters:
     -f, --input
             specify the xpm file for input. 
     -o, --output
             specify the output csv file name.
+    -x, --xlabel (optional)
+            sepecify the x-label you want to write to csv file.
+    -y, --ylabel (optional)
+            sepecify the y-label you want to write to csv file.
 """,
             "xpm2gpl": """
-xpm2csv: convert xpm file into gnuplot script.
+xpm2gpl: convert xpm file into gnuplot script.
 
 :examples:
-    dit xpm2csv -f f1.xpm -o test.gpl
+    dit xpm2gpl -f f1.xpm -o test.gpl
+    dit xpm2gpl -f f1.xpm -o test.gpl -x xlabel -y ylabel -t title
 
 :parameters:
     -f, --input
             specify the xpm file for input. 
     -o, --output
             specify the output gnuplot script file name.
+    -x, --xlabel (optional)
+            sepecify the x-label you want to show in figure.
+    -y, --ylabel (optional)
+            sepecify the y-label you want to show in figure.
+    -t, --title (optional)
+            sepecify the title you want to show in figure.
 """,
             "xpm_combine": """
 xpm_combine: combine several xpm files into one figure. 

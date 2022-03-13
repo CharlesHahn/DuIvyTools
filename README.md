@@ -78,13 +78,13 @@ For help messages:
 
 - [x] support space in the legends
 - [x] column_select in xvg_show_stack
-- [ ] xlabel and ylabel in xpm_show
+- [x] xlabel and ylabel in xpm_show
+- [ ] support of modification of x-values in XPM and XVG
+- [ ] savefig() and noshow in XVG
 - [ ] plot control parameters
 - [ ] one item in column_select in xvg_ave_bar
 - [ ] make the calculation of moving averages faster
 - [ ] the location of ticks in xpm figure procesion
-- [ ] support of modification of x-values in XPM and XVG
-- [ ] savefig() and noshow in XVG
 - [ ] add function of prolig trjconv and center calculation
 - [ ] build a GUI maybe
 
