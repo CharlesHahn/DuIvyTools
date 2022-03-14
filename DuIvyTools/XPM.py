@@ -44,6 +44,11 @@ myparams = {
 }
 pylab.rcParams.update(myparams)
 
+style_files = [ file for file in os.listdir() if file[-9:] == ".mplstyle"]
+if len(style_files) >= 1:
+    plt.style.use(style_files[0])
+    print("Info -> using matplotlib style sheet from {}".format(style_files[0]))
+
 
 class XPM(object):
     """class XPM was defined to process xpm files
@@ -667,7 +672,7 @@ class XPM(object):
         img_new = img_new.reshape(len(x_new), len(y_new))
 
         ## show figure
-        surf = ax.plot_surface(
+        ax.plot_surface(
             x_new,
             y_new,
             img_new,

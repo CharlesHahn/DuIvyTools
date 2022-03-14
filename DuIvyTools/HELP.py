@@ -42,7 +42,7 @@ xvg_compare: comparison of xvg files, draw different data columns you selected
 :examples:
     dit xvg_compare -f f1.xvg f2.xvg -c 1,2 2,3,4 -l l1 l2 l3 l4 l5
     dit xvg_compare -f f1.xvg f2.xvg -c 1 1 -l l1 l2 -x Time(ns) -y ylabel 
-    dit xvg_compare -f f1.xvg f2.xvg -c 1,2 2 -l l1 l2 l3 -s 100 -e 1000 -t test
+    dit xvg_compare -f f1.xvg f2.xvg -c 1,2 2 -l l1 l2 l3 -s 100 -e 500 -t test
     dit xvg_compare -f f1.xvg f2.xvg -c 1,2 2,3,4 -o test.png -ns
 
 :parameters:
@@ -282,11 +282,12 @@ xvg_ave_bar: First, the average of each data column you select by -c will be
              figure.
 
 :examples:
-    dit xvg_ave_bar -f f1_1.xvg,f1_2.xvg,f1_3.xvg f2_1.xvg,f2_2.xvg,f2_3.xvg -c 1 2 
-    dit xvg_ave_bar -f f1.xvg f2.xvg -c 1 2 -l l1 l2 -s 100 -e 1000 
-    dit xvg_ave_bar -f f1.xvg f2.xvg -c 1 2 -l l1 l2 -x xlabel -y ylabel -t test
-    dit xvg_ave_bar -f f1.xvg f2.xvg f3.xvg -c 1 2 -l l1 l2 l3 -xt xt1 xt2
-    dit xvg_ave_bar -f f1.xvg f2.xvg -c 1 2 -l l1 l2 -ac average.csv -o test.png -ns
+    dit xvg_ave_bar -f f1_1.xvg,f1_2.xvg,f1_3.xvg f2_1.xvg,f2_2.xvg,f2_3.xvg -c 1 2 3
+    dit xvg_ave_bar -f f1.xvg f2.xvg -c 1 2 -l L1 L2 -s 100 -e 1000 
+    dit xvg_ave_bar -f f1.xvg f2.xvg -c 1 2 -x xlabel -y ylabel -t test
+    dit xvg_ave_bar -f f1.xvg f2.xvg f3.xvg -c 1 2 -l L1 L2 L3 -xt xt1 xt2
+    dit xvg_ave_bar -f f1.xvg f2.xvg -c 1 2 -l L1 L2 -ac average.csv
+    dit xvg_ave_bar -f f1.xvg f2.xvg -c 1 2 -l L1 L2 -o test.png -ns
 
 :parameters:
     -f, --input
@@ -336,8 +337,8 @@ xvg_box: draw the data of columns you select into box figure.
 
 :examples:
     dit xvg_box -f f1.xvg f2.xvg f3.xvg -c 1 2 -xt xt1 xt2 -s 100 -e 1000
-    dit xvg_box -f f1.xvg f2.xvg -c 1 2 3 -xt xt1 xt2 xt3 -x xlabel -y ylabel -t title
-    dit xvg_box -f f1.xvg f2.xvg f3.xvg -c 1 2 -o test.png -ns
+    dit xvg_box -f f1.xvg f2.xvg -c 1 2 3 -xt xt1 xt2 xt3 -x xlabel -y ylabel
+    dit xvg_box -f f1.xvg f2.xvg f3.xvg -c 1 2 -o test.png -ns -t title
 
 :parameters:
     -f, --input
@@ -623,10 +624,8 @@ mdp_gen: generate a template mdp file by application you specified. The mdp
             print(self.help_infos[method])
         else:
             print(
-                "Error -> unknown method {}, type `dit help` for more infos.".format(
-                    method
-                )
-            )
+                "Error -> unknown method {}, ".format(method), end="")
+            print("type `dit help` for more infos.")
             exit()
 
 
@@ -643,32 +642,57 @@ def help_call_functions(arguments: list = None) -> None:
     if arguments == None:
         arguments = [argv for argv in sys.argv]
 
-    description = "HELP method provides help infos about all methods in DuIvyTools\n"
-    description += "Type any methods below to show help messages:\n"
-    description += "like: `dit help xvg_show` or `dit xvg_show -h`\n"
-    description += "    XVG:\n"
-    description += "        xvg_show, xvg_compare, xvg_ave, xvg_mvave, "
-    description += "xvg2csv, xvg_rama\n"
-    description += "        xvg_show_distribution, xvg_show_stack, xvg_show_scatter\n"
-    description += "        xvg_energy_compute, xvg_combine, xvg_ave_bar, xvg_box\n"
-    description += "    XPM:\n"
-    description += "        xpm_show, xpm2csv, xpm2gpl, xpm_combine\n"
-    description += "    NDX:\n"
-    description += "        ndx_show, ndx_rm_dup, ndx_rm, ndx_preserve\n"
-    description += "        ndx_add, ndx_combine, ndx_rename\n"
-    description += "    MDP:\n"
-    description += "        mdp_gen\n"
+    description = """
+DuIvyTools provides about 25 commands for visualization and processing of GMX
+result files like .xvg or .xpm. 
+
+All commands are shown below:
+    XVG:
+        xvg_show, xvg_compare, xvg_ave, xvg_mvave, xvg2csv, xvg_rama
+        xvg_show_distribution, xvg_show_stack, xvg_show_scatter
+        xvg_energy_compute, xvg_combine, xvg_ave_bar, xvg_box
+    XPM:
+        xpm_show, xpm2csv, xpm2gpl, xpm_combine
+    NDX:
+        ndx_show, ndx_rm_dup, ndx_rm, ndx_preserve
+        ndx_add, ndx_combine, ndx_rename
+    MDP:
+        mdp_gen
+
+You can type `dit help <command>` or `dit <command> -h` for more help messages 
+about each command, like: `dit help xvg_show` or `dit xvg_show -h`. 
+
+And you can also modify the style of figures by adding (only) one mplstyle file
+to your working directory. DIT will apply it to custom figures. You could write
+mplstyle file by you own, or select one from style folder of DuIvyTools github 
+repo (https://github.com/CharlesHahn/DuIvyTools).
+"""
 
     if len(arguments) < 2:
-        print("DuIvyTools is a simple analysis and visualization tool ", end="")
-        print("for GROMACS result files.")
-        print("Info -> type `dit help` for more messages")
+        DIT_infos = """
+
+ *******           **                  **********               **        
+/**////**         /**          **   **/////**///               /**        
+/**    /** **   **/** **    **//** **     /**  ******   ****** /**  ******
+/**    /**/**  /**/**/**   /** //***      /** **////** **////**/** **//// 
+/**    /**/**  /**/**//** /**   /**       /**/**   /**/**   /**/**//***** 
+/**    ** /**  /**/** //****    **        /**/**   /**/**   /**/** /////**
+/*******  //******/**  //**    **         /**//****** //****** *** ****** 
+///////    ////// //    //    //          //  //////   ////// /// //////  
+
+DuIvyTools is a simple analysis and visualization tool for GROMACS result files
+written by CharlesHahn (https://github.com/CharlesHahn/DuIvyTools). 
+Type `dit help` for more informations. 
+"""
+        print(DIT_infos)
         exit()
     elif len(arguments) == 2:
         if arguments[1] in ["help", "-h", "--help"]:
             print(description)
         else:
-            print("Error -> unknown command, type `dit help` for more information")
+            print(
+                "Error -> unknown method {}, ".format(arguments[1]), end="")
+            print("type `dit help` for more infos.")
             exit()
     else:
         if arguments[1] != "help":

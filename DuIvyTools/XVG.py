@@ -14,7 +14,6 @@ This file is provided to you under GPLv2 License"""
 import os
 import sys
 import argparse
-import logging
 import numpy as np
 import scipy.stats as stats
 from cycler import cycler
@@ -23,8 +22,6 @@ from matplotlib import pylab as pylab
 from matplotlib import colors
 import matplotlib.colors as mplcolors
 
-
-logging.basicConfig(level=logging.INFO)
 
 myparams = {
     "axes.labelsize": "12",
@@ -64,6 +61,11 @@ myparams = {
     ),
 }
 pylab.rcParams.update(myparams)
+
+style_files = [ file for file in os.listdir() if file[-9:] == ".mplstyle"]
+if len(style_files) >= 1:
+    plt.style.use(style_files[0])
+    print("Info -> using matplotlib style sheet from {}".format(style_files[0]))
 
 
 class XVG(object):

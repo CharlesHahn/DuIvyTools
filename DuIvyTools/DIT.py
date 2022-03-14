@@ -16,9 +16,23 @@ from DuIvyTools.HELP import help_call_functions
 def main():
     arguments = [argv for argv in sys.argv]
     if len(sys.argv) < 2:
-        print("DuIvyTools is a simple analysis and visualization tool ", end="")
-        print("for GROMACS result files.")
-        print("Info -> type `dit help` for more messages")
+        DIT_infos = """
+
+ *******           **                  **********               **        
+/**////**         /**          **   **/////**///               /**        
+/**    /** **   **/** **    **//** **     /**  ******   ****** /**  ******
+/**    /**/**  /**/**/**   /** //***      /** **////** **////**/** **//// 
+/**    /**/**  /**/**//** /**   /**       /**/**   /**/**   /**/**//***** 
+/**    ** /**  /**/** //****    **        /**/**   /**/**   /**/** /////**
+/*******  //******/**  //**    **         /**//****** //****** *** ****** 
+///////    ////// //    //    //          //  //////   ////// /// //////  
+
+DuIvyTools is a simple analysis and visualization tool for GROMACS result files
+written by CharlesHahn (https://github.com/CharlesHahn/DuIvyTools). 
+Type `dit help` for more informations. 
+"""
+
+        print(DIT_infos)
         exit()
     elif len(sys.argv) == 2:
         if sys.argv[1] in ["help", "-h", "--help"]:
