@@ -4,6 +4,7 @@ This module is designed to provide help messages.
 
 This HELP module contains:
     - HELP class
+    - help_call_functions
 
 This file is provided to you by GPLv2 license."""
 
@@ -56,10 +57,10 @@ xvg_compare: comparison of xvg files, draw different data columns you selected
             In first example, 1,2 is paired with f1.xvg, 2,3,4 is paird with 
             f2.xvg. This means selecting the column 1 and 2 in f1.xvg, column 
             2, 3 and 4 in f2.xvg to compare. 
-    -l, --legend_list (optional)
+    -l, --legend_list (optional) 
             specify the legends to show in figure. The number of legends should
-            be equal to the number of indexs you sepecified in -c. 
-            if you want space in one legend, like "hh gg"; use "~~" for instead,
+            be equal to the number of indexs you sepecified in -c. if you want 
+            space in one legend, like "hh gg"; use "~~" for instead, 
             like "hh~~gg", ~~ will be turn into space and shown in figure.
     -s, --start (optional)
             specify row index of column data which you want to start to plot.
@@ -293,7 +294,7 @@ xvg_ave_bar: First, the average of each data column you select by -c will be
             or file name groups. 
             Several file names seperated by comma is called a file name group. 
             In first example, f1_1.xvg,f1_2.xvg,f1_3.xvg is the first file name
-            group, and f2_1.xvg,f2_2.xvg,f2_3.xvg is the second file name group. 
+            group, and f2_1.xvg,f2_2.xvg,f2_3.xvg is second file name group.
             This method will calculate averages of columns you select in each
             xvg file. Then calculate the average and standard error of column
             averages in each file group. Finally, convert the averages and 
@@ -302,14 +303,14 @@ xvg_ave_bar: First, the average of each data column you select by -c will be
             specify the index of columns you want to calculate. Index starts 
             from 0. The column indexs you select will be applied to EVERY xvg
             file in -f.
-    -l, --legend_list (optional)
+    -l, --legend_list (optional) 
             specify the legends to show in figure. The number of legends should
-            be equal to the number of files or file groups you specified in -f. 
-            if you want space in one legend, like "hh gg"; use "~~" for instead,
+            be equal to the number of files or file groups you specified in -f.
+            If you want space in legend, like "hh gg"; use "~~" for instead, 
             like "hh~~gg", ~~ will be turn into space and shown in figure.
     -xt, --xtitles (optional)
-            specity the names of x ticks in figure. The number of xtitles should
-            be equal to the number of indexs in column_select (-c).
+            specity the names of x ticks in figure. The number of xtitles 
+            should be equal to the number of indexs in column_select (-c).
     -s, --start (optional)
             specify the row index of column data which you want to start to 
             calculation.
@@ -342,11 +343,11 @@ xvg_box: draw the data of columns you select into box figure.
     -f, --input
             accept one or more than one files as input.
     -c, --column_select
-            specify the column indexs you want to plot. The indexs you specified
-            will be applied to each file you select in -f.
+            specify the column indexs you want to plot. The indexs you 
+            specified will be applied to each file you select in -f.
     -xt, --xtitles (optional)
-            specity the names of x ticks in figure. The number of xtitles should
-            be equal to the number of indexs in column_select (-c).
+            specity the names of x ticks in figure. The number of xtitles 
+            should be equal to the number of indexs in column_select (-c).
     -s, --start (optional)
             specify the row index of column data which you want to start to 
             calculation.
@@ -389,7 +390,7 @@ xpm_show: vasualize the xpm file.
     -pcm, --pcolormesh (optional)
             whether to use pcolormesh function to vasualize your xpm figure.
     -3d, --threeDimensions (optional)
-            whether to draw a 3D figure. Useful for free energy landscape figure
+            whether to draw a 3D figure. Useful for free energy landscape plot.
     -ns, --noshow (optional)
             whether not to show figure in GUI, useful when working without GUI.
     -x, --xlabel (optional)
@@ -598,8 +599,9 @@ ndx_rename: rename groups in ndx file.
             rename groups in interactive mode.
 """,
             "mdp_gen": """
-mdp_gen: generate a template mdp file by application you specified. The mdp file 
-         generated may NOT be appropriate for your system, CHECK IT YOURSELF.
+mdp_gen: generate a template mdp file by application you specified. The mdp 
+         file generated may NOT be appropriate for your system. 
+         CHECK IT YOURSELF !
 
 :examples:
     dit mdp_gen -o em.mdp -a em
