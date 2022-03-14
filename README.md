@@ -76,18 +76,9 @@ For help messages:
 
 ## still working 
 
-- [ ] log system
 - [ ] plot control parameters
 - [ ] one item in column_select in xvg_ave_bar
 - [ ] make the calculation of moving averages faster
 - [ ] the location of ticks in xpm figure procesion
 - [ ] add function of prolig trjconv and center calculation
 - [ ] build a GUI maybe
-
-Done:
-
-- [x] savefig() and noshow in XVG for high quality figure
-- [x] support space in the legends
-- [x] column_select in xvg_show_stack
-- [x] xlabel and ylabel in xpm_show
-- [x] support of modification of x-values in XPM
