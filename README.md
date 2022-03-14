@@ -77,7 +77,6 @@ For help messages:
 ## still working 
 
 - [ ] log system
-- [ ] savefig() and noshow in XVG for high quality figure
 - [ ] plot control parameters
 - [ ] one item in column_select in xvg_ave_bar
 - [ ] make the calculation of moving averages faster
@@ -87,6 +86,7 @@ For help messages:
 
 Done:
 
+- [x] savefig() and noshow in XVG for high quality figure
 - [x] support space in the legends
 - [x] column_select in xvg_show_stack
 - [x] xlabel and ylabel in xpm_show

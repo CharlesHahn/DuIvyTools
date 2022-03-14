@@ -23,10 +23,16 @@ xvg_show: draw xvg data into line figures.
 
 :examples: 
     dit xvg_show -f test.xvg
+    dit xvg_show -f test.xvg -o test.png -ns
 
 :parameters:
     -f, --input
             specify the xvg file for input.
+    -o, --output (optional)
+            specify the output figure name. Figure will be saved in 300 dpi.
+    -ns, --noshow (optional)
+            if -ns is specified, figure won't be shown on screen. Usually work
+            with -o to save figure directly.
 """,
             "xvg_compare": """
 xvg_compare: comparison of xvg files, draw different data columns you selected
@@ -36,6 +42,7 @@ xvg_compare: comparison of xvg files, draw different data columns you selected
     dit xvg_compare -f f1.xvg f2.xvg -c 1,2 2,3,4 -l l1 l2 l3 l4 l5
     dit xvg_compare -f f1.xvg f2.xvg -c 1 1 -l l1 l2 -x Time(ns) -y ylabel 
     dit xvg_compare -f f1.xvg f2.xvg -c 1,2 2 -l l1 l2 l3 -s 100 -e 1000 -t test
+    dit xvg_compare -f f1.xvg f2.xvg -c 1,2 2,3,4 -o test.png -ns
 
 :parameters:
     -f, --input
@@ -76,6 +83,11 @@ xvg_compare: comparison of xvg files, draw different data columns you selected
     -a, --alpha (optional)
             specify the transparency for plotting confidence interval. 
             default == 0.4, only valid when -smv specified. 
+    -o, --output (optional)
+            specify the output figure name. Figure will be saved in 300 dpi.
+    -ns, --noshow (optional)
+            if -ns is specified, figure won't be shown on screen. Usually work
+            with -o to save figure directly.
 """,
             "xvg_ave": """
 xvg_ave: calculate the average of each column in xvg file.
@@ -134,11 +146,17 @@ xvg_rama: draw ramachandran figure from a rama data xvg file.
 
 :examples:
     dit xvg_rama -f rama.xvg
+    dit xvg_rama -f rama.xvg -o test.png -ns
 
 :parameters:
     -f, --input
             specify the xvg file for input. 
             Only the first file is valid, others will be dropped.
+    -o, --output (optional)
+            specify the output figure name. Figure will be saved in 300 dpi.
+    -ns, --noshow (optional)
+            if -ns is specified, figure won't be shown on screen. Usually work
+            with -o to save figure directly.
 """,
             "xvg_show_distribution": """
 xvg_show_distribution: calculate distribution of each data column in xvg file 
@@ -147,6 +165,7 @@ xvg_show_distribution: calculate distribution of each data column in xvg file
 :examples:
     dit xvg_show_distribution -f f1.xvg
     dit xvg_show_distribution -f f1.xvg -bin 100
+    dit xvg_show_distribution -f f1.xvg -o test.png -ns
 
 :parameters:
     -f, --input
@@ -155,14 +174,19 @@ xvg_show_distribution: calculate distribution of each data column in xvg file
     -bin, --bin (optional)
             specify the number of bins of calculating distribution. 
             default == 100
+    -o, --output (optional)
+            specify the output figure name. Figure will be saved in 300 dpi.
+    -ns, --noshow (optional)
+            if -ns is specified, figure won't be shown on screen. Usually work
+            with -o to save figure directly.
 """,
             "xvg_show_stack": """
 xvg_show_stack: draw stack figure of column data.
 
 :examples:
-    dit xvg_show_stack -f f1.xvg
-    dit xvg_show_stack -f f1.xvg -c 2 3 4 5 6 -s 500 -e 1000
-    dit xvg_show_stack -f f1.xvg -c 2 3 4 5 6 -l A B C D E
+    dit xvg_show_stack -f f1.xvg -c 2 3 4 5 6
+    dit xvg_show_stack -f f1.xvg -c 2 3 4 5 6 -l A B C D E -s 500 -e 1000
+    dit xvg_show_stack -f f1.xvg -c 2 3 4 5 6 -o test.png -ns
 
 :parameters:
     -f, --input
@@ -182,12 +206,18 @@ xvg_show_stack: draw stack figure of column data.
     -e, --end (optional)
             specify the row index of column data which you want to stop 
             calculation.
+    -o, --output (optional)
+            specify the output figure name. Figure will be saved in 300 dpi.
+    -ns, --noshow (optional)
+            if -ns is specified, figure won't be shown on screen. Usually work
+            with -o to save figure directly.
 """,
             "xvg_show_scatter": """
 xvg_show_scatter: draw scatter figure.
 
 :examples:
     dit xvg_show_scatter -f f1.xvg -xi 0 -yi 1
+    dit xvg_show_scatter -f f1.xvg -xi 0 -yi 1 -o test.png -ns
 
 :parameters:
     -f, --input
@@ -199,6 +229,11 @@ xvg_show_scatter: draw scatter figure.
     -yi, --y_index (optional)
             specify the index of column which you want to use as y data. 
             default == 1
+    -o, --output (optional)
+            specify the output figure name. Figure will be saved in 300 dpi.
+    -ns, --noshow (optional)
+            if -ns is specified, figure won't be shown on screen. Usually work
+            with -o to save figure directly.
 """,
             "xvg_energy_compute": """
 xvg_energy_compute: calculate the interaction energy between two items.
@@ -250,7 +285,7 @@ xvg_ave_bar: First, the average of each data column you select by -c will be
     dit xvg_ave_bar -f f1.xvg f2.xvg -c 1 2 -l l1 l2 -s 100 -e 1000 
     dit xvg_ave_bar -f f1.xvg f2.xvg -c 1 2 -l l1 l2 -x xlabel -y ylabel -t test
     dit xvg_ave_bar -f f1.xvg f2.xvg f3.xvg -c 1 2 -l l1 l2 l3 -xt xt1 xt2
-    dit xvg_ave_bar -f f1.xvg f2.xvg -c 1 2 -l l1 l2 -ac -o average.csv
+    dit xvg_ave_bar -f f1.xvg f2.xvg -c 1 2 -l l1 l2 -ac average.csv -o test.png -ns
 
 :parameters:
     -f, --input
@@ -288,9 +323,12 @@ xvg_ave_bar: First, the average of each data column you select by -c will be
     -t, --title (optional)
             specify the title you want to show in figure.
     -ac, --ave2csv (optional)
-            whether save data of averages into csv file. default == False
+            the csv file name for saving data of averages into csv file.
     -o, --output (optional)
-            if -ac is specified, -o should be used to specify the csv file name.
+            specify the output figure name. Figure will be saved in 300 dpi.
+    -ns, --noshow (optional)
+            if -ns is specified, figure won't be shown on screen. Usually work
+            with -o to save figure directly.
 """,
             "xvg_box": """
 xvg_box: draw the data of columns you select into box figure.
@@ -298,6 +336,7 @@ xvg_box: draw the data of columns you select into box figure.
 :examples:
     dit xvg_box -f f1.xvg f2.xvg f3.xvg -c 1 2 -xt xt1 xt2 -s 100 -e 1000
     dit xvg_box -f f1.xvg f2.xvg -c 1 2 3 -xt xt1 xt2 xt3 -x xlabel -y ylabel -t title
+    dit xvg_box -f f1.xvg f2.xvg f3.xvg -c 1 2 -o test.png -ns
 
 :parameters:
     -f, --input
@@ -320,6 +359,11 @@ xvg_box: draw the data of columns you select into box figure.
             specify the y-label you want to show in figure.
     -t, --title (optional)
             specify the title you want to show in figure.
+    -o, --output (optional)
+            specify the output figure name. Figure will be saved in 300 dpi.
+    -ns, --noshow (optional)
+            if -ns is specified, figure won't be shown on screen. Usually work
+            with -o to save figure directly.
 """,
             "xpm_show": """
 xpm_show: vasualize the xpm file.
