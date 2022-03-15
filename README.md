@@ -67,8 +67,7 @@ For MDP files:
 
 ## Cite 
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6340263.svg)](https://doi.org/10.5281/zenodo.6340263)
-
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6359044.svg)](https://doi.org/10.5281/zenodo.6359044)
 
 ## still working 
 
