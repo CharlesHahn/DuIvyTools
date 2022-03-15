@@ -18,7 +18,7 @@ TEST_REQUIRES = [
 ]
 
 
-__version__ = "0.3.6"
+__version__ = "0.4.0"
 long_description = ""
 
 with open("README.md", "r") as fo:

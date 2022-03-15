@@ -1,4 +1,6 @@
-""" HELP module is part of DuIvyTools library, which is a tool for analysis and visualization of GROMACS result files. This module is written by CharlesHahn.
+"""
+HELP module is part of DuIvyTools library, which is a tool for analysis and 
+visualization of GROMACS result files. This module is written by CharlesHahn.
 
 This module is designed to provide help messages. 
 
@@ -6,8 +8,8 @@ This HELP module contains:
     - HELP class
     - help_call_functions
 
-This file is provided to you by GPLv2 license."""
-
+This file is provided to you by GPLv2 license.
+"""
 
 import sys
 
@@ -623,8 +625,7 @@ mdp_gen: generate a template mdp file by application you specified. The mdp
         if method in self.help_infos.keys():
             print(self.help_infos[method])
         else:
-            print(
-                "Error -> unknown method {}, ".format(method), end="")
+            print("Error -> unknown command {}, ".format(method), end="")
             print("type `dit help` for more infos.")
             exit()
 
@@ -690,8 +691,7 @@ Type `dit help` for more informations.
         if arguments[1] in ["help", "-h", "--help"]:
             print(description)
         else:
-            print(
-                "Error -> unknown method {}, ".format(arguments[1]), end="")
+            print("Error -> unknown method {}, ".format(arguments[1]), end="")
             print("type `dit help` for more infos.")
             exit()
     else:

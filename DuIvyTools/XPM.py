@@ -1,12 +1,16 @@
-"""This module is part of GMX_Simple_Analysis_Tool library. Written by CharlesHahn.
+"""
+XPM module is part of DuIvyTools library, which is a tool for analysis and 
+visualization of GROMACS result files. This module is written by CharlesHahn.
 
-XPM module process xpm files, including get information from xpm, visualization and data convertion. 
+XPM module process xpm files, including getting information from xpm, 
+visualization and data convertion. 
 
 This module requires Numpy, Scipy, Matplotlib and argparse. 
 
 This module contains:
     class XPM
     function xpm_combine
+    ......
 
 This file is provided to you under GPLv2 License"""
 
@@ -44,7 +48,7 @@ myparams = {
 }
 pylab.rcParams.update(myparams)
 
-style_files = [ file for file in os.listdir() if file[-9:] == ".mplstyle"]
+style_files = [file for file in os.listdir() if file[-9:] == ".mplstyle"]
 if len(style_files) >= 1:
     plt.style.use(style_files[0])
     print("Info -> using matplotlib style sheet from {}".format(style_files[0]))
@@ -94,8 +98,14 @@ class XPM(object):
             noshow: whether not to show figure, useful for computer without GUI
     """
 
-    def __init__(self, xpmfile:str=None, xlabel:str=None, ylabel:str=None,
-                 title:str=None, xshrink:float=1.0):
+    def __init__(
+        self,
+        xpmfile: str = None,
+        xlabel: str = None,
+        ylabel: str = None,
+        title: str = None,
+        xshrink: float = 1.0,
+    ):
         """
         read xpm file and save infos to class xpm
 
@@ -107,7 +117,7 @@ class XPM(object):
             xshrink: specify the factor for multiplication of x-axis
         """
 
-        ## check parameters 
+        ## check parameters
         if xpmfile == None:
             print("Error -> no input xpm file detected")
             exit()
@@ -137,7 +147,6 @@ class XPM(object):
         self.xpm_xaxis = []
         self.xpm_yaxis = []
         self.xpm_datalines = []
-
 
         ## read xpm file
         with open(xpmfile, "r") as fo:
@@ -278,7 +287,7 @@ class XPM(object):
         if title != None:
             self.xpm_title = title
         if xshrink != None:
-            self.xpm_xaxis = [ x * float(xshrink) for x in self.xpm_xaxis]
+            self.xpm_xaxis = [x * float(xshrink) for x in self.xpm_xaxis]
 
         ## the read order of pixels is from top to bottom
         ## but the y-axis is from bottom to top, so reverse() is important !
@@ -778,8 +787,9 @@ def xpm_call_functions(arguments: list = None):
     parser.add_argument("-x", "--xlabel", type=str, help="the xlabel of figure")
     parser.add_argument("-y", "--ylabel", type=str, help="the ylabel of figure")
     parser.add_argument("-t", "--title", type=str, help="the title of figure")
-    parser.add_argument("-xs", "--xshrink", type=str, 
-                        help="modify x-axis by multipling xshrink")
+    parser.add_argument(
+        "-xs", "--xshrink", type=str, help="modify x-axis by multipling xshrink"
+    )
     parser.add_argument(
         "-ip",
         "--interpolation",
@@ -863,7 +873,7 @@ def xpm_call_functions(arguments: list = None):
         print("Error -> Wrong method you specified")
         exit()
 
-    print("Good Day !")
+    print("Info -> good day !")
 
 
 def main():

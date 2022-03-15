@@ -1,8 +1,10 @@
-"""This module is part of DuIvyTools library. Written by CharlesHahn.
+"""
+This DIT module is part of DuIvyTools library. Written by CharlesHahn.
 
-DIT module provide some simple API and CLI commands for you to use conveniently. 
+DIT module provides simple API and CLI commands for you to use conveniently. 
 
-This file is provided to you under GPLv2 License"""
+This file is provided to you under GPLv2 License.
+"""
 
 
 import sys
@@ -38,7 +40,8 @@ Type `dit help` for more informations.
         if sys.argv[1] in ["help", "-h", "--help"]:
             help_call_functions(arguments)
         else:
-            print("Error -> unknown command, type `dit help` for more information")
+            print("Error -> unknown command {}, ".format(sys.argv[1]), end="")
+            print("type `dit help` for more information")
             exit()
     elif len(sys.argv) == 3:
         if sys.argv[1] == "help":
@@ -46,7 +49,8 @@ Type `dit help` for more informations.
         elif sys.argv[2] in ["-h", "--help", "help"]:
             help_call_functions(["dit", "help", sys.argv[1]])
         else:
-            print("Error -> unknown command, type `dit help` for more information")
+            print("Error -> wrong command, ", end="")
+            print("type `dit help` for more information")
             exit()
     elif len(sys.argv) > 3:
         method = sys.argv[1]
@@ -61,7 +65,7 @@ Type `dit help` for more informations.
         elif method.startswith("help"):
             help_call_functions(arguments)
         else:
-            print("Error -> unknown method {}".format(method))
+            print("Error -> unknown command {}".format(method))
 
 
 if __name__ == "__main__":

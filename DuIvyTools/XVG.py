@@ -1,12 +1,16 @@
-"""This module is part of GMX_Simple_Analysis_Tool library. Written by CharlesHahn.
+"""
+XVG module is part of DuIvyTools library, which is a tool for analysis and 
+visualization of GROMACS result files. This module is written by CharlesHahn.
 
-XVG module contains the code to process xvg files, including read information from xvg file, visualization, and data convertion.
+XVG module contains the code to process xvg files, including reading 
+information from xvg file, visualization, and data convertion.
 
 This module requires Numpy, Matplotlib and argparse. 
 
 This module contains:
     class XVG
     function xvg_combine, xvg_compare, energy_compute, ramachandran
+    ......
 
 This file is provided to you under GPLv2 License"""
 
@@ -62,7 +66,7 @@ myparams = {
 }
 pylab.rcParams.update(myparams)
 
-style_files = [ file for file in os.listdir() if file[-9:] == ".mplstyle"]
+style_files = [file for file in os.listdir() if file[-9:] == ".mplstyle"]
 if len(style_files) >= 1:
     plt.style.use(style_files[0])
     print("Info -> using matplotlib style sheet from {}".format(style_files[0]))
@@ -1610,6 +1614,8 @@ def xvg_call_functions(arguments: list = None):
     else:
         print("Error -> no command {} found".format(method))
         exit()
+
+    print("Info -> good day !")
 
 
 def main():

@@ -1,4 +1,6 @@
-""" MDP module is part of DuIvyTools library, which is a tool for analysis and visualization of GROMACS result files. This module is written by CharlesHahn.
+"""
+MDP module is part of DuIvyTools library, which is a tool for analysis and 
+visualization of GROMACS result files. This module is written by CharlesHahn.
 
 This module is designed to generate .mdp file templates. 
 
@@ -31,18 +33,18 @@ class MDP(object):
             "blank": os.path.join("data", "blank.mdp"),
         }
 
-        print("Info -> MDP module could init some mdp templates for you.\n", end="")
+        print("Info -> MDP module could init some mdp templates for you.")
         print("        Specify application (-a) to generate a mdp file. ")
         print("Info -> applications to choose: ions, em, nvt, npt, md, blank")
-        print("\nWARNING -> the generated mdp file may be not appropriate", end="")
-        print(" for your system, CHECK IT YOURSELF !\n")
+        print("\nWARNING -> the generated mdp file may be not appropriate")
+        print("            for your system, CHECK IT YOURSELF !\n")
 
     def gen_mdp(self, outmdp: str, application: str) -> None:
         """gen mdp template by specified application"""
 
         ## check parameters
         if outmdp == None or len(outmdp) <= 4 or outmdp[-4:] != ".mdp":
-            print("Error -> please specify an output file name with suffix .mdp")
+            print("Error -> output file name should be with suffix .mdp")
             exit()
         if os.path.exists(outmdp):
             print("Error -> {} is already in current directory".format(outmdp))
