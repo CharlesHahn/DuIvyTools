@@ -26,6 +26,7 @@ from scipy.ndimage.filters import gaussian_filter
 import matplotlib.pyplot as plt
 from matplotlib.ticker import AutoLocator, FormatStrFormatter
 from matplotlib import pylab as pylab
+from matplotlib import patches
 
 myparams = {
     "axes.labelsize": "12",
@@ -476,6 +477,16 @@ class XPM(object):
                 img.append(rgb_line)
 
             plt.imshow(img, aspect="auto")
+            
+            if self.xpm_type != "Continuous":
+                legend_patches = []
+                for ind, note in enumerate(self.notes):
+                    leg_patch = patches.Patch(color=self.colors[ind], label=note)
+                    legend_patches.append(leg_patch)
+                plt.legend(handles=legend_patches, bbox_to_anchor=(1.02,  1.00), 
+                        loc="upper left", borderaxespad=0)
+                plt.tight_layout()
+
 
         if IP == True:
             if self.xpm_type != "Continuous":
