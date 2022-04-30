@@ -56,7 +56,7 @@ For XVG files:
     xvg_show_distribution, xvg_show_stack, xvg_show_scatter
     xvg_energy_compute, xvg_combine, xvg_ave_bar, xvg_box
 For XPM files:
-    xpm_show, xpm2csv, xpm2gpl, xpm_combine
+    xpm_show, xpm2csv, xpm2gpl
 For NDX files:
     ndx_show, ndx_rm_dup, ndx_rm, ndx_preserve
     ndx_add, ndx_combine, ndx_rename
@@ -72,7 +72,7 @@ For MDP files:
 ## still working 
 
 - [ ] python test
-- [ ] one item in column_select in xvg_ave_bar
+- [ ] hbond map visualization
 - [ ] make the calculation of moving averages faster
 - [ ] the location of ticks in xpm figure procesion
 - [ ] add function of prolig trjconv and center calculation
