@@ -653,7 +653,7 @@ All commands are shown below:
         xvg_show_distribution, xvg_show_stack, xvg_show_scatter
         xvg_energy_compute, xvg_combine, xvg_ave_bar, xvg_box
     XPM:
-        xpm_show, xpm2csv, xpm2gpl, xpm_combine
+        xpm_show, xpm2csv, xpm2gpl
     NDX:
         ndx_show, ndx_rm_dup, ndx_rm, ndx_preserve
         ndx_add, ndx_combine, ndx_rename

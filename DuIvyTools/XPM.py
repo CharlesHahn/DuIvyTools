@@ -518,20 +518,16 @@ class XPM(object):
         xpm_yticks = ["{:.1f}".format(y) for y in self.xpm_yaxis]
         if self.xpm_width < 100:
             x_tick = int(self.xpm_width / 3)
-        elif self.xpm_width >= 100 and self.xpm_width < 1000:
+        elif self.xpm_width >= 100 and self.xpm_width < 500:
             x_tick = int(self.xpm_width / 5)
-        elif self.xpm_width > 500:
+        elif self.xpm_width >= 500:
             x_tick = int(self.xpm_width / 10)
         if self.xpm_height < 100:
             y_tick = int(self.xpm_height / 3)
-        elif self.xpm_height >= 100 and self.xpm_height < 1000:
+        elif self.xpm_height >= 100 and self.xpm_height < 500:
             y_tick = int(self.xpm_height / 5)
-        elif self.xpm_height > 500:
+        elif self.xpm_height >= 500:
             y_tick = int(self.xpm_height / 10)
-        if self.xpm_width / self.xpm_height > 10:
-            y_tick = int(self.xpm_height / 2)
-        if self.xpm_height / self.xpm_width > 10:
-            x_tick = int(self.xpm_width / 2)
         plt.tick_params(axis="both", which="major")
         plt.xticks(
             [0]
