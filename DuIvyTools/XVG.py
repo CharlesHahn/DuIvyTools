@@ -346,7 +346,10 @@ class XVG(object):
             ax.set_ylabel(self.data_heads[i])
             plt.xlim(int(x_min - x_space), int(x_max + x_space))
             plt.xlabel(self.data_heads[0])
-        plt.suptitle(self.xvg_title)
+        if column_num > 2:
+            plt.suptitle(self.xvg_title)
+        else:
+            plt.title(self.xvg_title)
         plt.tight_layout()
 
         if outpng != None:
