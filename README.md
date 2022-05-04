@@ -72,9 +72,8 @@ For MDP files:
 ## still working 
 
 - [ ] python test
-- [ ] hbond map visualization
+- [ ] deal with hbond information
+- [ ] find the center of a group
 - [ ] make the calculation of moving averages faster
-- [ ] the location of ticks in xpm figure procesion
-- [ ] add function of prolig trjconv and center calculation
 - [ ] build a GUI maybe
 
