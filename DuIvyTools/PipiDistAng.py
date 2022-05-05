@@ -648,7 +648,7 @@ def pipi_dist_ang(
     output_file: str = "",
     vg: bool = False,
     vec: list = [],
-    select: str = "",
+    select: list = [],
 ) -> None:
     """
     pipi_dist_ang: a list to check parameters and start init calculation
@@ -711,7 +711,7 @@ def pipi_dist_ang_call_functions(arguments: list = []):
         "-dt", default=1, type=int, help="set the time interval, default=1"
     )
     parser.add_argument(
-        "-o", default="output.xvg", help="the results data, default output.xvg"
+        "-o", "--output", default="output.xvg", help="the results data, default output.xvg"
     )
     parser.add_argument(
         "-vg", action="store_true", help="whether to get vector by index group"

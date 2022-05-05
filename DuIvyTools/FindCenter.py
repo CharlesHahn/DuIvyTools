@@ -81,7 +81,7 @@ def find_center(gro_file: str = "") -> None:
         print("--------------------------------------------")
 
 
-def others_call_functions(arguments: list = []):
+def find_center_call_functions(arguments: list = []):
     """call functions according to arguments"""
 
     if len(arguments) == 0:
@@ -115,7 +115,7 @@ def others_call_functions(arguments: list = []):
 
 
 def main():
-    others_call_functions()
+    find_center_call_functions()
 
 
 if __name__ == "__main__":

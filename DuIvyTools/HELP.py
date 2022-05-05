@@ -617,6 +617,46 @@ mdp_gen: generate a template mdp file by application you specified. The mdp
             specify the applications you want to use mdp file for. You can 
             select from: ions, em, nvt, npt, md, blank
 """,
+            "find_center": """
+find_center: find the center point and one atom which is nearest to the center
+             point from the gro file you specified. 
+
+:examples:
+    dit find_center -f test.gro 
+
+:parameters:
+    -f, --input
+            specify the gro file which only contain the molecule you want to 
+            find center point with
+""",
+            "pipi_dist_ang": """
+pipi_dist_ang: to calculate the distance and angles between two rings or between 
+               one ring and one vector defined by atom group or command line.
+
+:examples:
+    dit pipi_dist_ang -f test.gro -n test.ndx 
+    dit pipi_dist_ang -f test.gro -n test.ndx -select ring1 ring2
+    dit pipi_dist_ang -f test.gro -n test.ndx -select ring1 -vg
+    dit pipi_dist_ang -f test.gro -n test.ndx -select ring1 -vec 6 6 6 
+
+:parameters:
+    -f, --input
+            the gro file which contains frames of molecule coordinates
+    -n, --index
+            the index file which contains atom index groups of rings or vector groups
+    -b
+            the frame number to start calculation, default=0
+    -dt
+            the frame interval, default=1
+    -o, --output
+            the output filename to save results
+    -vg
+            whether to get vector from index group, default=False
+    -vec
+            specify the vector by command line, eg. -vec 6 6 6 
+    -select 
+            select the groups from command line
+""",
         }
 
     def print_help_infos(self, method: str) -> None:
@@ -659,6 +699,8 @@ All commands are shown below:
         ndx_add, ndx_combine, ndx_rename
     MDP:
         mdp_gen
+    Others:
+        find_center, pipi_dist_ang
 
 You can type `dit help <command>` or `dit <command> -h` for more help messages 
 about each command, like: `dit help xvg_show` or `dit xvg_show -h`. 
