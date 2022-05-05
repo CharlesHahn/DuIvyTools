@@ -73,7 +73,6 @@ For MDP files:
 
 - [ ] python test
 - [ ] deal with hbond information
-- [ ] find the center of a group
 - [ ] make the calculation of moving averages faster
 - [ ] build a GUI maybe
 

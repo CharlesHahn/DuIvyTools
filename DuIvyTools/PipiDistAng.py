@@ -743,7 +743,7 @@ def pipi_dist_ang_call_functions(arguments: list = []):
             args.input,
             args.b,
             args.dt,
-            args.o,
+            args.output,
             args.vg,
             args.vec,
             args.select,

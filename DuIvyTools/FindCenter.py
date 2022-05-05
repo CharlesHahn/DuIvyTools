@@ -74,6 +74,8 @@ def find_center(gro_file: str = "") -> None:
         print("Error -> no atom detected in 5 nm sphere of center point. ")
         exit()
     else:
+        print("Info -> distance from nearest atom to ", end="")
+        print("center: {:.3f} nm".format(dist))
         print("--------------------------------------------")
         print("ResID Name Atom  Num       X       Y       Z")
         print("--------------------------------------------")
