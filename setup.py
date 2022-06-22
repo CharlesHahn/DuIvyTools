@@ -18,7 +18,7 @@ TEST_REQUIRES = [
 ]
 
 
-__version__ = "0.4.0"
+__version__ = "0.4.2"
 long_description = ""
 
 with open("README.md", "r") as fo:
@@ -41,7 +41,7 @@ setup(
     extras_require={
         "test": TEST_REQUIRES + INSTALL_REQUIRES,
     },
-    package_data={"DuIvyTools":["data/*.data"]},
+    package_data={"DuIvyTools":["data/*.data", "data/*.mdp"]},
     exclude_package_data={"DuIvyTools":["test/*"]},
     entry_points={"console_scripts": ["dit = DuIvyTools.DIT:main"]},
     classifiers=[

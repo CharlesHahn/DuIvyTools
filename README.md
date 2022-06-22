@@ -71,6 +71,8 @@ For MDP files:
 
 ## still working 
 
+- [ ] legends of xpm_show
+- [ ] hbond map and occupancy calculation
 - [ ] python test
 - [ ] one item in column_select in xvg_ave_bar
 - [ ] make the calculation of moving averages faster

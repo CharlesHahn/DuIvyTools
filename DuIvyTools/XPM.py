@@ -475,7 +475,7 @@ class XPM(object):
                     )
                 img.append(rgb_line)
 
-            plt.imshow(img, aspect="auto")
+            plt.imshow(img, aspect="auto", interpolation="none")
 
         if IP == True:
             if self.xpm_type != "Continuous":
@@ -502,49 +502,52 @@ class XPM(object):
 
         ## TODO: find a better way to solve problem of ticks
         ## set the ticks
-        x_tick, y_tick = 3, 3
-        xpm_xticks = ["{:.1f}".format(x) for x in self.xpm_xaxis]
-        xpm_yticks = ["{:.1f}".format(y) for y in self.xpm_yaxis]
-        if self.xpm_width < 100:
-            x_tick = int(self.xpm_width / 3)
-        elif self.xpm_width >= 100 and self.xpm_width < 1000:
-            x_tick = int(self.xpm_width / 5)
-        elif self.xpm_width > 500:
-            x_tick = int(self.xpm_width / 10)
-        if self.xpm_height < 100:
-            y_tick = int(self.xpm_height / 3)
-        elif self.xpm_height >= 100 and self.xpm_height < 1000:
-            y_tick = int(self.xpm_height / 5)
-        elif self.xpm_height > 500:
-            y_tick = int(self.xpm_height / 10)
-        if self.xpm_width / self.xpm_height > 10:
-            y_tick = int(self.xpm_height / 2)
-        if self.xpm_height / self.xpm_width > 10:
-            x_tick = int(self.xpm_width / 2)
-        plt.tick_params(axis="both", which="major")
-        plt.xticks(
-            [0]
-            + [w for w in range(x_tick, self.xpm_width - int(x_tick / 2), x_tick)]
-            + [self.xpm_width - 1],
-            [xpm_xticks[0]]
-            + [
-                xpm_xticks[w]
-                for w in range(x_tick, self.xpm_width - int(x_tick / 2), x_tick)
-            ]
-            + [xpm_xticks[-1]],
-        )
-        plt.yticks(
-            [0]
-            + [h for h in range(y_tick, self.xpm_height - int(y_tick / 2), y_tick)]
-            + [self.xpm_height - 1],
-            [xpm_yticks[0]]
-            + [
-                xpm_yticks[h]
-                for h in range(y_tick, self.xpm_height - int(y_tick / 2), y_tick)
-            ]
-            + [xpm_yticks[-1]],
-        )
-
+        if self.xpm_height > 3 and self.xpm_width > 3:
+            x_tick, y_tick = 3, 3
+            xpm_xticks = ["{:.1f}".format(x) for x in self.xpm_xaxis]
+            xpm_yticks = ["{:.1f}".format(y) for y in self.xpm_yaxis]
+            if self.xpm_width < 100:
+                x_tick = int(self.xpm_width / 3)
+            elif self.xpm_width >= 100 and self.xpm_width < 1000:
+                x_tick = int(self.xpm_width / 5)
+            elif self.xpm_width > 500:
+                x_tick = int(self.xpm_width / 10)
+            if self.xpm_height < 100:
+                y_tick = int(self.xpm_height / 3)
+            elif self.xpm_height >= 100 and self.xpm_height < 1000:
+                y_tick = int(self.xpm_height / 5)
+            elif self.xpm_height > 500:
+                y_tick = int(self.xpm_height / 10)
+            if self.xpm_width / self.xpm_height > 10:
+                y_tick = int(self.xpm_height / 2)
+            if self.xpm_height / self.xpm_width > 10:
+                x_tick = int(self.xpm_width / 2)
+            plt.tick_params(axis="both", which="major")
+            plt.xticks(
+                [0]
+                + [w for w in range(x_tick, self.xpm_width - int(x_tick / 2), x_tick)]
+                + [self.xpm_width - 1],
+                [xpm_xticks[0]]
+                + [
+                    xpm_xticks[w]
+                    for w in range(x_tick, self.xpm_width - int(x_tick / 2), x_tick)
+                ]
+                + [xpm_xticks[-1]],
+            )
+            plt.yticks(
+                [0]
+                + [h for h in range(y_tick, self.xpm_height - int(y_tick / 2), y_tick)]
+                + [self.xpm_height - 1],
+                [xpm_yticks[0]]
+                + [
+                    xpm_yticks[h]
+                    for h in range(y_tick, self.xpm_height - int(y_tick / 2), y_tick)
+                ]
+                + [xpm_yticks[-1]],
+            )
+        else:
+            xpm_yticks = ["{:.0f}".format(y) for y in self.xpm_yaxis]
+            plt.yticks([y for y in range(self.xpm_height)], xpm_yticks)
         ## set other infos in the figure
         plt.title(self.xpm_title)
         plt.xlabel(self.xpm_xlabel)
