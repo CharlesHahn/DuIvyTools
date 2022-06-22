@@ -22,10 +22,11 @@ import math
 import argparse
 import numpy as np
 from scipy.interpolate import interp2d
-from scipy.ndimage.filters import gaussian_filter
+from scipy.ndimage import gaussian_filter
 import matplotlib.pyplot as plt
 from matplotlib.ticker import AutoLocator, FormatStrFormatter
 from matplotlib import pylab as pylab
+from matplotlib import patches
 
 myparams = {
     "axes.labelsize": "12",
@@ -475,7 +476,16 @@ class XPM(object):
                     )
                 img.append(rgb_line)
 
-            plt.imshow(img, aspect="auto", interpolation="none")
+            plt.imshow(img, aspect="auto")
+            
+            if self.xpm_type != "Continuous":
+                legend_patches = []
+                for ind, note in enumerate(self.notes):
+                    leg_patch = patches.Patch(color=self.colors[ind], label=note)
+                    legend_patches.append(leg_patch)
+                plt.legend(handles=legend_patches, bbox_to_anchor=(1.02,  1.00), 
+                        loc="upper left", borderaxespad=0)
+                plt.tight_layout()
 
         if IP == True:
             if self.xpm_type != "Continuous":
@@ -548,6 +558,7 @@ class XPM(object):
         else:
             xpm_yticks = ["{:.0f}".format(y) for y in self.xpm_yaxis]
             plt.yticks([y for y in range(self.xpm_height)], xpm_yticks)
+
         ## set other infos in the figure
         plt.title(self.xpm_title)
         plt.xlabel(self.xpm_xlabel)
@@ -756,6 +767,7 @@ def xpm_combine(
     heatmap, xedges, yedges = np.histogram2d(x_list, y_list, bins=800)
     heatmap = gaussian_filter(heatmap, sigma=16)
     extent = [xedges[0], xedges[-1], yedges[0], yedges[-1]]
+    # if you set origin="lower", no need to reverse yaxis any more
     plt.imshow(heatmap.T, origin="lower", extent=extent, cmap="jet_r")
     plt.xlim(extent[0], extent[1])
     plt.ylim(extent[2], extent[3])
