@@ -71,6 +71,7 @@ For MDP files:
 
 ## still working 
 
+- [ ] latex or format parser for matplotlib
 - [ ] legends of xpm_show
 - [ ] hbond map and occupancy calculation
 - [ ] python test
