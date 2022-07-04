@@ -71,10 +71,12 @@ For MDP files:
 
 ## still working 
 
-- [ ] legends of xpm_show
+- [x] legends of xpm_show
 - [ ] hbond map and occupancy calculation
 - [ ] python test
 - [ ] deal with hbond information
 - [ ] make the calculation of moving averages faster
+- [ ] better output (color, error ... )
+- [ ] log 
 - [ ] build a GUI maybe
 
