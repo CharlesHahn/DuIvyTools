@@ -567,7 +567,7 @@ class XPM(object):
         plt.title(self.xpm_title)
         plt.xlabel(self.xpm_xlabel)
         plt.ylabel(self.xpm_ylabel)
-        logging.info("Legend of this xpm figure -> ", self.xpm_legend)
+        logging.info("Legend of this xpm figure -> {}".format(self.xpm_legend))
 
         if outputpng != None:
             plt.savefig(outputpng, dpi=300)
@@ -634,7 +634,7 @@ class XPM(object):
         plt.title(self.xpm_title)
         plt.xlabel(self.xpm_xlabel)
         plt.ylabel(self.xpm_ylabel)
-        logging.info("Legend of this xpm figure -> ", self.xpm_legend)
+        logging.info("Legend of this xpm figure -> {}".format(self.xpm_legend))
 
         if outputpng != None:
             plt.savefig(outputpng, dpi=300)
@@ -729,7 +729,7 @@ class XPM(object):
         ax.set_xlabel(self.xpm_xlabel)
         ax.set_ylabel(self.xpm_ylabel)
         ax.set_zlabel(self.xpm_legend)
-        logging.info("Legend of this xpm figure -> ", self.xpm_legend)
+        logging.info("Legend of this xpm figure -> {}".format(self.xpm_legend))
 
         if outputpng != None:
             plt.savefig(outputpng, dpi=300)
@@ -783,7 +783,7 @@ def xpm_combine(
     plt.title(xpm_title)
     plt.xlabel(xpm_xlabel)
     plt.ylabel(xpm_ylabel)
-    logging.info("Legend of this xpm figure -> ", xpm_legend)
+    logging.info("Legend of this xpm figure -> {}".format(xpm_legend))
 
     if outputpng != None and os.path.exists(outputpng):
         logging.error("{} already in current directory".format(outputpng))

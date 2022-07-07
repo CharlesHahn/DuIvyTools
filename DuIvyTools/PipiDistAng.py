@@ -415,7 +415,7 @@ def dealTwoRings(
         logging.error("index of your ring is more than 7 or less than 5")
         logging.error("only support 5, 6 or 7 membered ring which is in a plane ")
         logging.error("please check your index file")
-        logging.error("your index : ", ring_1_id, ring_2_id)
+        logging.error("your index : {} {}".format(ring_1_id, ring_2_id))
         sys.exit()
     ## get the coordinates of two rings
     time, ring_1_frames, ring_2_frames = getCoor(gro_file, ring_1_id, ring_2_id)
@@ -428,7 +428,7 @@ def dealTwoRings(
     angles = calcAng(ring_1_frames, ring_2_frames)
     # print(len(time), len(distance), len(angles))
     ## check data and output
-    logging.info("there is ", len(time), " frames in your gro file")
+    logging.info("there is {} frames in your gro file".format(len(time)))
     if len(time) != len(distance) or len(time) != len(angles):
         logging.error("length of time, dist, ang are not equal")
         logging.info(
@@ -509,12 +509,12 @@ def dealRingVG(
         logging.error("index of your ring is more than 7 or less than 5")
         logging.error("only support 5, 6 or 7 membered ring which is in a plane ")
         logging.error("please check your index file")
-        logging.error("your index : ", ring_id)
+        logging.error("your index : {}".format(ring_id))
         sys.exit()
     if len(vg_id) < 2:
         logging.error("less than 2 atom index in vector group you input")
         logging.error("2 or more atom index are needed")
-        logging.error("check your vector index :", vg_id)
+        logging.error("check your vector index : {}".format(vg_id))
         sys.exit()
     ## get the coordinates of ring and vg
     time, ring_frames, vg_frames = getCoor(gro_file, ring_id, vg_id)
@@ -525,7 +525,7 @@ def dealRingVG(
     ## calculate the angles
     angles = calcAng_RingVec(ring_frames, vg_vec_frames)
     # save results
-    logging.info("there is ", len(time), " frames in your gro file")
+    logging.info("there is {} frames in your gro file".format(len(time)))
     if len(time) != len(angles):
         logging.error("length of time, angles are not equal")
         logging.info("time: {}; angles: {}".format(len(time), len(angles)))
@@ -596,7 +596,7 @@ def dealRingVec(
         logging.error("index of your ring is more than 7 or less than 5")
         logging.error("only support 5, 6 or 7 membered ring which is in a plane ")
         logging.error("please check your index file")
-        logging.error("your index : ", ring_id)
+        logging.error("your index : {}".format(ring_id))
         sys.exit()
     time, ring_frames, _ = getCoor(gro_file, ring_id, ring_id)
     ## modify the time sequence
@@ -610,7 +610,7 @@ def dealRingVec(
     # calculate the angles
     angles = calcAng_RingVec(ring_frames, vec_frames)
     # save results
-    logging.info("there is ", len(time), " frames in your gro file")
+    logging.info("there is {} frames in your gro file".format(len(time)))
     if len(time) != len(angles):
         logging.error("length of time, angles are not equal")
         logging.info("time: {}; angles: {}".format(len(time), len(angles)))
@@ -688,13 +688,13 @@ def pipi_dist_ang(
         logging.error("please specify output file by -o")
         sys.exit()
     if not os.path.exists(ndx_file):
-        logging.error("no ", ndx_file, " in current directory")
+        logging.error("no {} in current directory".format(ndx_file))
         sys.exit()
     if not os.path.exists(gro_file):
-        logging.error("no ", gro_file, " in current directory")
+        logging.error("no {} in current directory".format(gro_file))
         sys.exit()
     if os.path.exists(output_file):
-        logging.error("already one ", output_file, " in current directory")
+        logging.error("already one {} in current directory".format(output_file))
         sys.exit()
 
     if vec == None and vg == False:
