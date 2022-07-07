@@ -12,7 +12,6 @@ This file is provided to you by GPLv2 license."""
 
 ################################
 #### TODO:
-#### 1. savefig and save csv
 #### 2. user defination of hbond name format
 ################################
 
@@ -54,7 +53,7 @@ if len(style_files) >= 1:
     # logging.info("using matplotlib style sheet from {}".format(style_files[0]))
 
 
-def hbond(xpmfile: str = "", ndxfile: str= "", grofile: str = "", select:list=[]) -> None:
+def hbond(xpmfile: str = "", ndxfile: str= "", grofile: str = "", select:list=[], noshow:bool=False, figout:str=None, csv:str=None) -> None:
     """
     hbond: a function to figure out hbond information, occupancy and occupancy
     map, occupancy table.
@@ -71,12 +70,13 @@ def hbond(xpmfile: str = "", ndxfile: str= "", grofile: str = "", select:list=[]
     """
     
     for suffix, file in zip([".xpm", ".ndx", ".gro"], [xpmfile, ndxfile, grofile]):
+        if file == None:
+            logging.error("You have to specify the {} file for input".format(suffix))
+            sys.exit()
         if not os.path.exists(file):
             logging.error("no {} in current dirrectory. ".format(file))
             sys.exit()
         if file[-4:] != suffix:
-            print(file)
-            print(suffix)
             logging.error("only accept {} file with suffix {}".format(suffix.strip("."), suffix))
             sys.exit()
 
@@ -178,14 +178,23 @@ def hbond(xpmfile: str = "", ndxfile: str= "", grofile: str = "", select:list=[]
     if xpm.xpm_height <= 10:
         plt.yticks([i for i in range(len(select))], hbond_names)
     plt.tight_layout()
-    plt.show()
+    if figout != None:
+        plt.savefig(figout, dpi=300)
+    if not noshow:
+        plt.show()
 
     ## show table
-    print("{:<60} {}".format("donor->hydrogen...acceptor", "occupancy(%)"))
+    print("-"*79)
+    print("{:<2} {:<60} {}".format("id", "donor->hydrogen...acceptor", "occupancy(%)"))
+    print("-"*79)
     for i in range(len(hbond_names)):
-        print("{:<60} {:.2f}".format(hbond_names[i], occupancy[i]*100.0))
-
-    return
+        print("{:<2d} {:<60} {:.2f}".format(select[i], hbond_names[i], occupancy[i]*100.0))
+    print("-"*79)
+    if csv != None:
+        with open(csv, 'w') as fo:
+            fo.write("{},{},{}\n".format("id", "donor->hydrogen...acceptor", "occupancy(%)"))
+            for i in range(len(hbond_names)):
+                fo.write("{},{},{:.2f}\n".format(select[i], hbond_names[i], occupancy[i]*100.0))
 
 
 
@@ -203,18 +212,25 @@ def hbond_call_functions(arguments: list = []):
     parser.add_argument(
         "-c", "--select", nargs="+", help="to select row of data, like: 1 2-4 6"
     )
+    parser.add_argument("-o", "--output", help="figure name for output")
+    parser.add_argument("-csv", "--csv", help="store table info into csv file")
+    parser.add_argument(
+        "-ns",
+        "--noshow",
+        action="store_true",
+        help="whether not to show picture, useful on computer without gui",
+    )
 
     if len(arguments) < 2:
-        print("Error -> no input parameters, -h or --help for help messages")
+        logging.error("no input parameters, -h or --help for help messages")
         exit()
 
     method = arguments[1]
-    # print(method)
     if method in ["-h", "--help"]:
         parser.parse_args(arguments[1:])
         exit()
     if len(arguments) == 2:
-        print("Error -> no parameters, type 'dit <command> -h' for more infos.")
+        logging.error("no parameters, type 'dit <command> -h' for more infos.")
         exit()
 
     args = parser.parse_args(arguments[2:])
@@ -230,9 +246,12 @@ def hbond_call_functions(arguments: list = []):
         grofile = args.input
         ndxfile = args.index
         xpmfile = args.map
-        hbond(xpmfile, ndxfile, grofile, select)
+        noshow = args.noshow
+        figout = args.output
+        csv = args.csv
+        hbond(xpmfile, ndxfile, grofile, select, noshow, figout, csv)
     else:
-        print("Error -> unknown method {}".format(method))
+        logging.error("unknown method {}".format(method))
         exit()
 
     logging.info("May you good day !")
