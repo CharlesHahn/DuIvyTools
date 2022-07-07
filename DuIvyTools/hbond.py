@@ -107,19 +107,36 @@ def hbond(
 
     ## read the gro file and parse atom names
     if hnf == None:
-        hnf = "d_resname(d_resnum)@d_atomname(d_atomnum)->h_atomname(" + \
-        "h_atomnum)...a_resname(a_resnum)@a_atomname(a_atomnum)"
-    features = ["d_resname", "d_resnum", "d_atomname", "d_atomnum", 
-                "h_resname", "h_resnum", "h_atomname", "h_atomnum", 
-                "a_resname", "a_resnum", "a_atomname", "a_atomnum"]
+        hnf = (
+            "d_resname(d_resnum)@d_atomname(d_atomnum)->h_atomname("
+            + "h_atomnum)...a_resname(a_resnum)@a_atomname(a_atomnum)"
+        )
+    features = [
+        "d_resname",
+        "d_resnum",
+        "d_atomname",
+        "d_atomnum",
+        "h_resname",
+        "h_resnum",
+        "h_atomname",
+        "h_atomnum",
+        "a_resname",
+        "a_resnum",
+        "a_atomname",
+        "a_atomnum",
+    ]
     for feature in features:
         if feature in hnf:
             break
     else:
-        logging.warning("no key feature detected in your specified hbond name " +
-                      "format, use the default format")
-        hnf = "d_resname(d_resnum)@d_atomname(d_atomnum)->h_atomname(" + \
-        "h_atomnum)...a_resname(a_resnum)@a_atomname(a_atomnum)"
+        logging.warning(
+            "no key feature detected in your specified hbond name "
+            + "format, use the default format"
+        )
+        hnf = (
+            "d_resname(d_resnum)@d_atomname(d_atomnum)->h_atomname("
+            + "h_atomnum)...a_resname(a_resnum)@a_atomname(a_atomnum)"
+        )
 
     donor_names, hydrogen_names, acceptor_names = [], [], []
     with open(grofile, "r") as fo:
@@ -289,16 +306,19 @@ def hbond_call_functions(arguments: list = []):
         action="store_true",
         help="whether not to show picture, useful on computer without gui",
     )
-    parser.add_argument("-hnf", "--hbond_name_format", 
-            help="define the hbond name format by user! Each atom has four" +
-            " features: resname, resnum, atomname, atomnum. Distinguish " + 
-            "donor, hydrogen, acceptor by adding one prefix to each feature," +
-            " like: d_resname, a_resnum, h_atomname. \nSo you may able to " + 
-            "define hbond name style by: 'd_resname(d_resnum)@d_atomname(d_" + 
-            "atomnum)->h_atomname(h_atomnum)...a_resname(a_resnum)@a_atomn" + 
-            "ame(a_atomnum)' which is the default style,  or also you could" + 
-            " specify 'd_atomname@h_atomname...a_atomname' or some format " + 
-            "you would like. ")
+    parser.add_argument(
+        "-hnf",
+        "--hbond_name_format",
+        help="define the hbond name format by user! Each atom has four"
+        + " features: resname, resnum, atomname, atomnum. Distinguish "
+        + "donor, hydrogen, acceptor by adding one prefix to each feature,"
+        + " like: d_resname, a_resnum, h_atomname. \nSo you may able to "
+        + "define hbond name style by: 'd_resname(d_resnum)@d_atomname(d_"
+        + "atomnum)->h_atomname(h_atomnum)...a_resname(a_resnum)@a_atomn"
+        + "ame(a_atomnum)' which is the default style,  or also you could"
+        + " specify 'd_atomname@h_atomname...a_atomname' or some format "
+        + "you would like. ",
+    )
 
     if len(arguments) < 2:
         logging.error("no input parameters, -h or --help for help messages")
