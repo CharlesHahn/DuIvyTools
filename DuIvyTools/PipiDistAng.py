@@ -15,6 +15,10 @@ import os
 import sys
 import math
 import argparse
+import logging
+
+logging.basicConfig(level=logging.INFO, format='%(levelname)s -> %(message)s')
+logger = logging.getLogger(__name__)
 
 
 def calcDist(ring_1_frames: list = [], ring_2_frames: list = []) -> list:
@@ -31,8 +35,8 @@ def calcDist(ring_1_frames: list = [], ring_2_frames: list = []) -> list:
 
     ## check the frames of two ring
     if len(ring_1_frames) != len(ring_2_frames):
-        print("Error -> length of frames of coordinates isn't equal")
-        exit()
+        logging.error("length of frames of coordinates isn't equal")
+        sys.exit()
     ## calculate the distance between two ring
     distance = []
     for i in range(len(ring_1_frames)):
@@ -75,7 +79,7 @@ def calcAng(ring_1_frames: list = [], ring_2_frames: list = []) -> list:
     """
     ## check the frames of two ring
     if len(ring_1_frames) != len(ring_2_frames):
-        print("Error -> length of frames of coordinates isn't equal")
+        logging.error("length of frames of coordinates isn't equal")
         exit()
     ## calculate the angles
     angles = []
@@ -180,8 +184,8 @@ def getCoor(gro_file: str = "", ring_1_id: list = [], ring_2_id: list = []) -> t
                     [float(line[20:28]), float(line[28:36]), float(line[36:44])]
                 )
         if len(ring_1_coor) != len(ring_1_id) or len(ring_2_coor) != len(ring_2_id):
-            print("Error -> shit happens when reading coordinates of ring")
-            exit()
+            logging.error("shit happens when reading coordinates of ring")
+            sys.exit()
         ring_1_frames.append(ring_1_coor)
         ring_2_frames.append(ring_2_coor)
     ## new a time sequence
@@ -213,41 +217,41 @@ def dealNdx(ndx_file: str = "", select: list = [], vg: bool = False) -> tuple:
     for group in ndx_groups:
         items = group.split("]")
         if items[0].strip() in ndx_dic.keys():
-            print("Error -> two groups with the same name")
-            exit()
+            logging.error("two groups with the same name")
+            sys.exit()
         ndx_dic[items[0].strip()] = [
             int(n.strip()) for n in items[1].split() if n != ""
         ]
     if select == None:
         ## print to get input from user
-        print("Info -> reading your index file:")
+        logging.info("reading your index file:")
         for name, num_lis in ndx_dic.items():
             print("    {:30}   {:8} atoms".format(name, len(num_lis)))
             # print(" ".join([ str(i) for i in num_lis]))
         if vg == False:
             ring_1_name = input("Type the name of first ring -> ")
-            print("Info -> you have chosed " + ring_1_name + " as first ring.")
+            logging.info("you have chosed " + ring_1_name + " as first ring.")
             ring_2_name = input("Type the name of second ring -> ")
-            print("Info -> you have chosed " + ring_2_name + " as second ring.")
+            logging.info("you have chosed " + ring_2_name + " as second ring.")
         elif vg == True:
             ring_1_name = input("Type the name of ring group -> ")
-            print("Info -> you have chosed " + ring_1_name + " as first ring.")
+            logging.info("you have chosed " + ring_1_name + " as first ring.")
             ring_2_name = input("Type the name of vector group-> ")
-            print("Info -> you have chosed " + ring_2_name + " as vector group.")
+            logging.info("you have chosed " + ring_2_name + " as vector group.")
     elif len(select) == 2:
         if vg == False:
             ring_1_name = select[0]
-            print("Info -> you have chosed " + ring_1_name + " as first ring.")
+            logging.info("you have chosed " + ring_1_name + " as first ring.")
             ring_2_name = select[1]
-            print("Info -> you have chosed " + ring_2_name + " as second ring.")
+            logging.info("you have chosed " + ring_2_name + " as second ring.")
         elif vg == True:
             ring_1_name = select[0]
-            print("Info -> you have chosed " + ring_1_name + " as first ring.")
+            logging.info("you have chosed " + ring_1_name + " as first ring.")
             ring_2_name = select[1]
-            print("Info -> you have chosed " + ring_2_name + " as vector group.")
+            logging.info("you have chosed " + ring_2_name + " as vector group.")
     else:
-        print("Error -> Wrong parameter number of -select")
-        exit()
+        logging.error("Wrong parameter number of -select")
+        sys.exit()
 
     ## atom id of two ring groups
     ring_1_id = ndx_dic[ring_1_name]
@@ -278,25 +282,25 @@ def dealNdx_single(ndx_file: str = "", select: list = []) -> list:
     for group in ndx_groups:
         items = group.split("]")
         if items[0].strip() in ndx_dic.keys():
-            print("Error -> two groups with the same name")
-            exit()
+            logging.error("two groups with the same name")
+            sys.exit()
         ndx_dic[items[0].strip()] = [
             int(n.strip()) for n in items[1].split() if n != ""
         ]
     ## print to get input from user
-    print("Info -> reading your index file:")
+    logging.info("reading your index file:")
     for name, num_lis in ndx_dic.items():
         print("    {:30}   {:8} atoms".format(name, len(num_lis)))
     # print(" ".join([ str(i) for i in num_lis]))
     if select == None:
         ring_1_name = input("Type the name of first ring -> ")
-        print("Info -> you have chosed " + ring_1_name + " as first ring.")
+        logging.info("you have chosed " + ring_1_name + " as first ring.")
     elif len(select) == 1:
         ring_1_name = select[0]
-        print("Info -> you have chosed " + ring_1_name + " as first ring.")
+        logging.info("you have chosed " + ring_1_name + " as first ring.")
     else:
-        print("Error -> you may only need one parameter for select")
-        exit()
+        logging.error("you may only need one parameter for select")
+        sys.exit()
 
     ## atom id of two ring groups
     ring_1_id = ndx_dic[ring_1_name]
@@ -319,8 +323,8 @@ def calcAng_RingVec(ring_frames: list = [], vec_frames: list = []) -> list:
 
     ## check the frames
     if len(ring_frames) != len(vec_frames):
-        print("Error -> length of frames of ring and vector isn't equal")
-        exit()
+        logging.error("length of frames of ring and vector isn't equal")
+        sys.exit()
     ## calculate the angles
     angles = []
     for i in range(len(ring_frames)):
@@ -408,11 +412,11 @@ def dealTwoRings(
         or len(ring_2_id) < 5
         or len(ring_2_id) > 7
     ):
-        print("Error -> index of your ring is more than 7 or less than 5")
-        print("Error -> only support 5, 6 or 7 membered ring which is in a plane ")
-        print("Error -> please check your index file")
-        print("Error -> your index : ", ring_1_id, ring_2_id)
-        exit()
+        logging.error("index of your ring is more than 7 or less than 5")
+        logging.error("only support 5, 6 or 7 membered ring which is in a plane ")
+        logging.error("please check your index file")
+        logging.error("your index : ", ring_1_id, ring_2_id)
+        sys.exit()
     ## get the coordinates of two rings
     time, ring_1_frames, ring_2_frames = getCoor(gro_file, ring_1_id, ring_2_id)
     ## modify the time sequence
@@ -424,11 +428,11 @@ def dealTwoRings(
     angles = calcAng(ring_1_frames, ring_2_frames)
     # print(len(time), len(distance), len(angles))
     ## check data and output
-    print("Info -> there is ", len(time), " frames in your gro file")
+    logging.info("there is ", len(time), " frames in your gro file")
     if len(time) != len(distance) or len(time) != len(angles):
-        print("Error -> length of time, dist, ang are not equal")
-        print(len(time), len(distance), len(angles))
-        exit()
+        logging.error("length of time, dist, ang are not equal")
+        logging.info("time: {}; distance: {}; angles: {}".format(len(time), len(distance), len(angles)))
+        sys.exit()
     out_content = "# This file was created by DIT pipi_dist_ang\n"
     out_content += """@    title "Dist_Ang"\n"""
     out_content += """@    xaxis  label "Frames"\n"""
@@ -455,23 +459,22 @@ def dealTwoRings(
             ang30_60 += 1
         elif ang > 60:
             ang60_90 += 1
-    print(
-        "Info =>  0 <= angle < 30 : {}/{} = {:>6.2%}".format(
+    print("-"*79)
+    print(" =>  0 <= angle < 30 : {}/{} = {:>6.2%}".format(
             ang0_30, len(time), ang0_30 * 1.0 / len(time)
         )
     )
-    print(
-        "Info => 30 <= angle < 60 : {}/{} = {:>6.2%}".format(
+    print(" => 30 <= angle < 60 : {}/{} = {:>6.2%}".format(
             ang30_60, len(time), ang30_60 * 1.0 / len(time)
         )
     )
-    print(
-        "Info => 60 <= angle < 90 : {}/{} = {:>6.2%}".format(
+    print(" => 60 <= angle < 90 : {}/{} = {:>6.2%}".format(
             ang60_90, len(time), ang60_90 * 1.0 / len(time)
         )
     )
+    print("-"*79)
     ## calc the average distance
-    print("Info => average distance : {:>10.4f} nm".format(sum(distance) / len(time)))
+    logging.info("average distance : {:>10.4f} nm".format(sum(distance) / len(time)))
 
 
 def dealRingVG(
@@ -496,16 +499,16 @@ def dealRingVG(
 
     ring_id, vg_id = dealNdx(ndx_file, select, True)
     if len(ring_id) < 5 or len(ring_id) > 7:
-        print("Error -> index of your ring is more than 7 or less than 5")
-        print("Error -> only support 5, 6 or 7 membered ring which is in a plane ")
-        print("Error -> please check your index file")
-        print("Error -> your index : ", ring_id)
-        exit()
+        logging.error("index of your ring is more than 7 or less than 5")
+        logging.error("only support 5, 6 or 7 membered ring which is in a plane ")
+        logging.error("please check your index file")
+        logging.error("your index : ", ring_id)
+        sys.exit()
     if len(vg_id) < 2:
-        print("Error -> less than 2 atom index in vector group you input")
-        print("Error -> 2 or more atom index are needed")
-        print("Error -> check your vector index :", vg_id)
-        exit()
+        logging.error("less than 2 atom index in vector group you input")
+        logging.error("2 or more atom index are needed")
+        logging.error("check your vector index :", vg_id)
+        sys.exit()
     ## get the coordinates of ring and vg
     time, ring_frames, vg_frames = getCoor(gro_file, ring_id, vg_id)
     ## modify the time sequence
@@ -515,10 +518,10 @@ def dealRingVG(
     ## calculate the angles
     angles = calcAng_RingVec(ring_frames, vg_vec_frames)
     # save results
-    print("Info -> there is ", len(time), " frames in your gro file")
+    logging.info("there is ", len(time), " frames in your gro file")
     if len(time) != len(angles):
-        print("Error -> length of time, angles are not equal")
-        print(len(time), len(angles))
+        logging.error("length of time, angles are not equal")
+        logging.info("time: {}; angles: {}".format(len(time), len(angles)))
     out_content = "# This file was created by DIT pipi_dist_ang\n"
     out_content += """@    title "Angle of ring and vector"\n"""
     out_content += """@    xaxis  label "Frames"\n"""
@@ -540,21 +543,23 @@ def dealRingVG(
             ang30_60 += 1
         elif ang > 60:
             ang60_90 += 1
+    print("-"*79)
     print(
-        "Info =>  0 <= angle < 30 : {}/{} = {:>6.2%}".format(
+        " =>  0 <= angle < 30 : {}/{} = {:>6.2%}".format(
             ang0_30, len(time), ang0_30 * 1.0 / len(time)
         )
     )
     print(
-        "Info => 30 <= angle < 60 : {}/{} = {:>6.2%}".format(
+        " => 30 <= angle < 60 : {}/{} = {:>6.2%}".format(
             ang30_60, len(time), ang30_60 * 1.0 / len(time)
         )
     )
     print(
-        "Info => 60 <= angle < 90 : {}/{} = {:>6.2%}".format(
+        " => 60 <= angle < 90 : {}/{} = {:>6.2%}".format(
             ang60_90, len(time), ang60_90 * 1.0 / len(time)
         )
     )
+    print("-"*79)
 
 
 def dealRingVec(
@@ -581,27 +586,27 @@ def dealRingVec(
 
     ring_id = dealNdx_single(ndx_file, select)
     if len(ring_id) < 5 or len(ring_id) > 7:
-        print("Error -> index of your ring is more than 7 or less than 5")
-        print("Error -> only support 5, 6 or 7 membered ring which is in a plane ")
-        print("Error -> please check your index file")
-        print("Error -> your index : ", ring_id)
-        exit()
+        logging.error("index of your ring is more than 7 or less than 5")
+        logging.error("only support 5, 6 or 7 membered ring which is in a plane ")
+        logging.error("please check your index file")
+        logging.error("your index : ", ring_id)
+        sys.exit()
     time, ring_frames, _ = getCoor(gro_file, ring_id, ring_id)
     ## modify the time sequence
     time = [t * time_dt + time_b for t in time]
     # deal with vec
     vec = [float(i) for i in vec]
     if 0 == vec[0] == vec[1] == vec[2]:
-        print("Error -> You can't input an all zero vector")
-        exit()
+        logging.error("You can't input an all zero vector")
+        sys.exit()
     vec_frames = [vec for i in range(len(time))]
     # calculate the angles
     angles = calcAng_RingVec(ring_frames, vec_frames)
     # save results
-    print("Info -> there is ", len(time), " frames in your gro file")
+    logging.info("there is ", len(time), " frames in your gro file")
     if len(time) != len(angles):
-        print("Error -> length of time, angles are not equal")
-        print(len(time), len(angles))
+        logging.error("length of time, angles are not equal")
+        logging.info("time: {}; angles: {}".format(len(time), len(angles)))
     out_content = "# This file was created by DIT pipi_dist_ang\n"
     out_content += """@    title "Angle of ring and vector"\n"""
     out_content += """@    xaxis  label "Frames"\n"""
@@ -623,21 +628,23 @@ def dealRingVec(
             ang30_60 += 1
         elif ang > 60:
             ang60_90 += 1
+    print("-"*79)
     print(
-        "Info =>  0 <= angle < 30 : {}/{} = {:>6.2%}".format(
+        " =>  0 <= angle < 30 : {}/{} = {:>6.2%}".format(
             ang0_30, len(time), ang0_30 * 1.0 / len(time)
         )
     )
     print(
-        "Info => 30 <= angle < 60 : {}/{} = {:>6.2%}".format(
+        " => 30 <= angle < 60 : {}/{} = {:>6.2%}".format(
             ang30_60, len(time), ang30_60 * 1.0 / len(time)
         )
     )
     print(
-        "Info => 60 <= angle < 90 : {}/{} = {:>6.2%}".format(
+        " => 60 <= angle < 90 : {}/{} = {:>6.2%}".format(
             ang60_90, len(time), ang60_90 * 1.0 / len(time)
         )
     )
+    print("-"*79)
 
 
 def pipi_dist_ang(
@@ -665,23 +672,23 @@ def pipi_dist_ang(
     """
 
     if ndx_file == "":
-        print("Error -> please specify index file by -n")
-        exit()
+        logging.error("please specify index file by -n")
+        sys.exit()
     if gro_file == "":
-        print("Error -> please specify gro file by -f")
-        exit()
+        logging.error("please specify gro file by -f")
+        sys.exit()
     if output_file == "":
-        print("Error -> please specify output file by -o")
-        exit()
+        logging.error("please specify output file by -o")
+        sys.exit()
     if not os.path.exists(ndx_file):
-        print("Error -> no ", ndx_file, " in current directory")
-        exit()
+        logging.error("no ", ndx_file, " in current directory")
+        sys.exit()
     if not os.path.exists(gro_file):
-        print("Error -> no ", gro_file, " in current directory")
-        exit()
+        logging.error("no ", gro_file, " in current directory")
+        sys.exit()
     if os.path.exists(output_file):
-        print("Error -> already one ", output_file, " in current directory")
-        exit()
+        logging.error("already one ", output_file, " in current directory")
+        sys.exit()
 
     if vec == None and vg == False:
         dealTwoRings(ndx_file, gro_file, time_b, time_dt, output_file, select)
@@ -690,8 +697,8 @@ def pipi_dist_ang(
     elif vec != None and vg == False:
         dealRingVec(ndx_file, gro_file, time_b, time_dt, output_file, vec, select)
     elif vec != None and vg == True:
-        print("Error -> You can't set -vg and -vec at the same time")
-        exit()
+        logging.error("You can't set -vg and -vec at the same time")
+        sys.exit()
 
 
 def pipi_dist_ang_call_functions(arguments: list = []):
@@ -724,18 +731,18 @@ def pipi_dist_ang_call_functions(arguments: list = []):
     )
 
     if len(arguments) < 2:
-        print("Error -> no input parameters, -h or --help for help messages")
-        exit()
+        logging.error("no input parameters, -h or --help for help messages")
+        sys.exit()
 
     method = arguments[1]
     # print(method)
     if method in ["-h", "--help"]:
         parser.parse_args(arguments[1:])
-        exit()
+        sys.exit()
 
     if len(arguments) == 2:
-        print("Error -> no parameters, type 'dit pip_dist_ang -h' for more infos.")
-        exit()
+        logging.error("no parameters, type 'dit pip_dist_ang -h' for more infos.")
+        sys.exit()
     args = parser.parse_args(arguments[2:])
     if method == "pipi_dist_ang":
         pipi_dist_ang(
@@ -749,10 +756,10 @@ def pipi_dist_ang_call_functions(arguments: list = []):
             args.select,
         )
     else:
-        print("Error -> unknown method {}".format(method))
-        exit()
+        logging.error("unknown method {}".format(method))
+        sys.exit()
 
-    print("Info -> good day !")
+    logging.info("good day !")
 
 
 def main():

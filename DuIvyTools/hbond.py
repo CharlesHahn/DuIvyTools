@@ -162,7 +162,7 @@ def hbond(xpmfile: str = "", ndxfile: str= "", grofile: str = "", select:list=[]
         hbond_names = [ hbond_names[i] for i in select]
 
     ## draw map 
-    fig = plt.figure()
+    plt.figure()
     cmap = mcolors.ListedColormap(["white", "#F94C66"])
     hbond = plt.pcolormesh(xpm.xpm_xaxis, [i for i in range(len(select))], xpm_datamatrix, cmap=cmap, shading="auto")
     if len(select) == 1:

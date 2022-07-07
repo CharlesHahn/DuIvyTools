@@ -27,6 +27,10 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import AutoLocator, FormatStrFormatter
 from matplotlib import pylab as pylab
 from matplotlib import patches
+import logging
+
+logging.basicConfig(level=logging.INFO, format='%(levelname)s -> %(message)s')
+logger = logging.getLogger(__name__)
 
 myparams = {
     "axes.labelsize": "12",
@@ -52,7 +56,7 @@ pylab.rcParams.update(myparams)
 style_files = [file for file in os.listdir() if file[-9:] == ".mplstyle"]
 if len(style_files) >= 1:
     plt.style.use(style_files[0])
-    print("Info -> using matplotlib style sheet from {}".format(style_files[0]))
+    logging.info("using matplotlib style sheet from {}".format(style_files[0]))
 
 
 class XPM(object):
@@ -120,14 +124,14 @@ class XPM(object):
 
         ## check parameters
         if xpmfile == None:
-            print("Error -> no input xpm file detected")
-            exit()
+            logging.error("no input xpm file detected")
+            sys.exit()
         if not os.path.exists(xpmfile):
-            print("ERROR -> no {} in current directory".format(xpmfile))
-            exit()
+            logging.error("no {} in current directory".format(xpmfile))
+            sys.exit()
         if xpmfile[-4:] != ".xpm":
-            print("Error -> specify a xpm file with suffix xpm")
-            exit()
+            logging.error("specify a xpm file with suffix xpm")
+            sys.exit()
         if xshrink == None:
             xshrink = 1.0
 
@@ -199,7 +203,7 @@ class XPM(object):
                     self.notes.append(items[5].strip('"'))
                 ## deal with blank
                 if len(items[0].strip('"')) < self.xpm_char_per_pixel:
-                    print("Warning -> space in char of line : {}".format(line))
+                    logging.warning("space in char of line : {}".format(line))
                     char_item = items[0].strip('"')
                     self.chars.append(
                         char_item + " " * (self.xpm_char_per_pixel - len(char_item))
@@ -217,8 +221,8 @@ class XPM(object):
 
         ## check infos
         if len(self.chars) != len(self.colors) != len(self.notes) != self.xpm_color_num:
-            print("Wrong -> length of chars, colors, notes != xpm_color_num")
-            print(
+            logging.error("length of chars, colors, notes != xpm_color_num")
+            logging.info(
                 "chars : {}, colors : {}, notes : {}, xpm_color_num : {}".format(
                     len(self.chars),
                     len(self.colors),
@@ -226,51 +230,50 @@ class XPM(object):
                     self.xpm_color_num,
                 )
             )
-            exit()
+            sys.exit()
 
         if len(self.xpm_datalines) != self.xpm_height:
-            print(
-                "ERROR -> rows of data ({}) is not equal to xpm height ({}), check it !".format(
+            logging.error("rows of data ({}) is not equal to xpm height ({}), check it !".format(
                     len(self.xpm_datalines), self.xpm_height
                 )
             )
-            exit()
+            sys.exit()
         if (
             len(self.xpm_xaxis) != self.xpm_width
             and len(self.xpm_xaxis) != self.xpm_width + 1
         ):
-            print(
-                "ERROR -> length of x-axis ({}) != xpm width ({}) or xpm width +1".format(
+            logging.error(
+                "length of x-axis ({}) != xpm width ({}) or xpm width +1".format(
                     len(self.xpm_xaxis), self.xpm_width
                 )
             )
-            exit()
+            sys.exit()
         if (
             len(self.xpm_yaxis) != self.xpm_height
             and len(self.xpm_yaxis) != self.xpm_height + 1
         ):
-            print(
-                "ERROR -> length of y-axis ({}) != xpm height ({}) or xpm height +1".format(
+            logging.error(
+                "length of y-axis ({}) != xpm height ({}) or xpm height +1".format(
                     len(self.xpm_yaxis), self.xpm_height
                 )
             )
-            exit()
+            sys.exit()
 
         if len(self.xpm_xaxis) == self.xpm_width + 1:
             self.xpm_xaxis = [
                 (self.xpm_xaxis[i - 1] + self.xpm_xaxis[i]) / 2.0
                 for i in range(1, len(self.xpm_xaxis))
             ]
-            print(
-                "Warning -> length of x-axis is 1 more than xpm width, use intermediate value for instead. "
+            logging.warning(
+                "length of x-axis is 1 more than xpm width, use intermediate value for instead. "
             )
         if len(self.xpm_yaxis) == self.xpm_height + 1:
             self.xpm_yaxis = [
                 (self.xpm_yaxis[i - 1] + self.xpm_yaxis[i]) / 2.0
                 for i in range(1, len(self.xpm_yaxis))
             ]
-            print(
-                "Warning -> length of y-axis is 1 more than xpm height, use intermediate value for instead. "
+            logging.warning(
+                "length of y-axis is 1 more than xpm height, use intermediate value for instead. "
             )
 
         ## hex color to rgb values
@@ -294,7 +297,7 @@ class XPM(object):
         ## but the y-axis is from bottom to top, so reverse() is important !
         self.xpm_yaxis.reverse()
 
-        print("Info -> all data has been read from {} successfully.".format(xpmfile))
+        logging.info("all data has been read from {} successfully.".format(xpmfile))
 
     def get_scatter_data(self) -> tuple:
         """convert xpm data to scatter data"""
@@ -302,8 +305,6 @@ class XPM(object):
         ## parse xpm_data into x, y, v
         x, y, v = [], [], []
         scatter_x, scatter_y = [], []
-        # print(len(xpm_xaxis))
-        # print(len(xpm_yaxis))
         for l in range(len(self.xpm_datalines)):
             for i in range(
                 0, self.xpm_width * self.xpm_char_per_pixel, self.xpm_char_per_pixel
@@ -341,21 +342,21 @@ class XPM(object):
         if outcsv == "":
             outcsv = self.xpmfile[:-4] + ".csv"
         if outcsv[-4:] != ".csv":
-            print("ERROR -> specify a output file with suffix csv")
-            exit()
+            logging.error("specify a output file with suffix csv")
+            sys.exit()
         if os.path.exists(outcsv):
-            print("ERROR -> {} already in current directory".format(outcsv))
-            exit()
+            logging.error("{} already in current directory".format(outcsv))
+            sys.exit()
 
         if self.xpm_type != "Continuous":
-            print("ERROR -> can not extract data from xpm whose type is not Continuous")
-            exit()
+            logging.error("can not extract data from xpm whose type is not Continuous")
+            sys.exit()
 
         ## only x, y, v values are needed
         _, _, x, y, v = self.get_scatter_data()
         if len(x) != len(y) != len(v):
-            print("ERROR -> wrong in length of x, y, v")
-            exit()
+            logging.error("wrong in length of x, y, v")
+            sys.exit()
         ## write results
         with open(outcsv, "w") as fo:
             x_title = (self.xpm_xlabel, "x-axis")[len(self.xpm_xlabel) == 0]
@@ -364,8 +365,8 @@ class XPM(object):
             fo.write("{},{},{}\n".format(x_title, y_title, z_title))
             for i in range(len(x)):
                 fo.write("{:.6f},{:.6f},{:.6f}\n".format(x[i], y[i], v[i]))
-        print("Info -> extract data from {} successfully".format(self.xpmfile))
-        print("Info -> data are saved into {}".format(outcsv))
+        logging.info("extract data from {} successfully".format(self.xpmfile))
+        logging.info("data are saved into {}".format(outcsv))
 
     def xpm2gpl(self, outgpl: str = "") -> None:
         """convert xpm file to gnuplot script
@@ -378,8 +379,8 @@ class XPM(object):
         if outgpl == "":
             outgpl = self.xpmfile[:-4] + ".gpl"
         if os.path.exists(outgpl):
-            print("ERROR -> {} already in current directory".format(outgpl))
-            exit()
+            logging.error("{} already in current directory".format(outgpl))
+            sys.exit()
         outpng = self.xpmfile[:-4] + ".png"
 
         ## write gnuplot scripts
@@ -441,8 +442,7 @@ class XPM(object):
         with open(outgpl, "w") as fo:
             fo.write(gpl_lines + "\n")
 
-        print(
-            "Info -> write gnuplot scripts {} from {} successfully".format(
+        logging.info("write gnuplot scripts {} from {} successfully".format(
                 outgpl, self.xpmfile
             )
         )
@@ -458,8 +458,8 @@ class XPM(object):
 
         ## check parameters
         if outputpng != None and os.path.exists(outputpng):
-            print("ERROR -> {} already in current directory".format(outputpng))
-            exit()
+            logging.error("{} already in current directory".format(outputpng))
+            sys.exit()
 
         # visualization of xpm
         if IP == False:
@@ -489,8 +489,8 @@ class XPM(object):
 
         if IP == True:
             if self.xpm_type != "Continuous":
-                print("ERROR -> Only Continuous type xpm file can interpolation")
-                exit()
+                logging.error("Only Continuous type xpm file can interpolation")
+                sys.exit()
             ## show figure with interpolation
             imgIP = []
             for line in self.xpm_datalines:
@@ -563,7 +563,7 @@ class XPM(object):
         plt.title(self.xpm_title)
         plt.xlabel(self.xpm_xlabel)
         plt.ylabel(self.xpm_ylabel)
-        print("Legend of this xpm figure -> ", self.xpm_legend)
+        logging.info("Legend of this xpm figure -> ", self.xpm_legend)
 
         if outputpng != None:
             plt.savefig(outputpng, dpi=300)
@@ -581,12 +581,12 @@ class XPM(object):
 
         ## check parameters
         if outputpng != None and os.path.exists(outputpng):
-            print("ERROR -> {} already in current directory".format(outputpng))
-            exit()
+            logging.error("{} already in current directory".format(outputpng))
+            sys.exit()
 
         if self.xpm_type != "Continuous":
-            print("ERROR -> Only Continuous type xpm file can interpolation")
-            exit()
+            logging.error("Only Continuous type xpm file can interpolation")
+            sys.exit()
 
         ## convert xpm_data to img (values)
         img = []
@@ -630,7 +630,7 @@ class XPM(object):
         plt.title(self.xpm_title)
         plt.xlabel(self.xpm_xlabel)
         plt.ylabel(self.xpm_ylabel)
-        print("Legend of this xpm figure -> ", self.xpm_legend)
+        logging.info("Legend of this xpm figure -> ", self.xpm_legend)
 
         if outputpng != None:
             plt.savefig(outputpng, dpi=300)
@@ -648,12 +648,12 @@ class XPM(object):
 
         ## check parameters
         if outputpng != None and os.path.exists(outputpng):
-            print("ERROR -> {} already in current directory".format(outputpng))
-            exit()
+            logging.error("{} already in current directory".format(outputpng))
+            sys.exit()
 
         if self.xpm_type != "Continuous":
-            print("ERROR -> Only Continuous type xpm file can draw 3D figure")
-            exit()
+            logging.error("Only Continuous type xpm file can draw 3D figure")
+            sys.exit()
 
         ## convert xpm_data to values
         values = []
@@ -725,7 +725,7 @@ class XPM(object):
         ax.set_xlabel(self.xpm_xlabel)
         ax.set_ylabel(self.xpm_ylabel)
         ax.set_zlabel(self.xpm_legend)
-        print("Legend of this xpm figure -> ", self.xpm_legend)
+        logging.info("Legend of this xpm figure -> ", self.xpm_legend)
 
         if outputpng != None:
             plt.savefig(outputpng, dpi=300)
@@ -755,8 +755,8 @@ def xpm_combine(
         xpm_xlabel = xpm.xpm_xlabel
         xpm_ylabel = xpm.xpm_ylabel
         if xpm.xpm_type != "Continuous":
-            print("ERROR -> can not combine xpm whose type is not Continuous")
-            exit()
+            logger.error("can not combine xpm whose type is not Continuous")
+            sys.exit()
         scatter_x, scatter_y, _, _, _ = xpm.get_scatter_data()
         x_list += scatter_x
         y_list += scatter_y
@@ -779,11 +779,11 @@ def xpm_combine(
     plt.title(xpm_title)
     plt.xlabel(xpm_xlabel)
     plt.ylabel(xpm_ylabel)
-    print("Legend of this xpm figure -> ", xpm_legend)
+    logging.info("Legend of this xpm figure -> ", xpm_legend)
 
     if outputpng != None and os.path.exists(outputpng):
-        print("ERROR -> {} already in current directory".format(outputpng))
-        exit()
+        logging.error("{} already in current directory".format(outputpng))
+        sys.exit()
     if outputpng != None:
         plt.savefig(outputpng, dpi=300)
     if noshow == False:
@@ -837,17 +837,14 @@ def xpm_call_functions(arguments: list = None):
     )
 
     if len(arguments) < 2:
-        print("Error -> no input parameters, -h or --help for help messages")
-        exit()
+        logging.error("no input parameters, -h or --help for help messages")
+        sys.exit()
 
     method = arguments[1]
-    # print(method)
     if method in ["-h", "--help"]:
         parser.parse_args(arguments[1:])
-        exit()
+        sys.exit()
     args = parser.parse_args(arguments[2:])
-    # for key, value in vars(args).items():
-    #     print(key, value)
 
     inputxpm = args.input
     output = args.output
@@ -864,8 +861,8 @@ def xpm_call_functions(arguments: list = None):
     ## call functions
     if method == "xpm_show":
         if inputxpm == None:
-            print("Error -> no input file")
-            exit()
+            logging.error("no input file")
+            sys.exit()
         xpm = XPM(inputxpm, xlabel, ylabel, title, xshrink)
         if fig_3d == True:
             xpm.draw_3D(ip, output, noshow)
@@ -875,8 +872,8 @@ def xpm_call_functions(arguments: list = None):
             xpm.draw_pcm(ip, output, noshow)
     elif method == "xpm_combine":
         if xpms2combine == None:
-            print("Error -> no input xpm files for combination")
-            exit()
+            logging.error("no input xpm files for combination")
+            sys.exit()
         xpm_combine(xpms2combine, output, noshow)
     elif method == "xpm2csv":
         xpm = XPM(inputxpm, xlabel, ylabel, title, xshrink)
@@ -885,10 +882,10 @@ def xpm_call_functions(arguments: list = None):
         xpm = XPM(inputxpm, xlabel, ylabel, title, xshrink)
         xpm.xpm2gpl(output)
     else:
-        print("Error -> Wrong method you specified")
-        exit()
+        logging.error("Wrong method you specified")
+        sys.exit()
 
-    print("Info -> good day !")
+    logging.info("May you good day !")
 
 
 def main():

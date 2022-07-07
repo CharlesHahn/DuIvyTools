@@ -19,6 +19,11 @@ nstenergy   = 500       ; save energies every 1.0 ps
 nstlog      = 500       ; update log file every 1.0 ps
 energygrps  = Protein Ligand
 
+; remove rot+trans during running
+; -----------------------------------------------------------------------------
+; comm-mode   = Angular
+; comm-grps   = Protein
+
 ; Bond parameters
 ;------------------------------------------------------------------------------
 continuation    = yes           ; first dynamics run

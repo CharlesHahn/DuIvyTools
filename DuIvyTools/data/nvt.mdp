@@ -17,7 +17,12 @@ nstxout     = 500       ; save coordinates every 1.0 ps
 nstvout     = 500       ; save velocities every 1.0 ps
 nstenergy   = 500       ; save energies every 1.0 ps
 nstlog      = 500       ; update log file every 1.0 ps
-energygrps  = Protein Ligand
+; energygrps  = Protein Ligand
+
+; remove rot+trans during running
+; -----------------------------------------------------------------------------
+; comm-mode   = Angular
+; comm-grps   = Protein
 
 ; Bond parameters
 ; -----------------------------------------------------------------------------
@@ -63,5 +68,6 @@ DispCorr    = EnerPres  ; account for cut-off vdW scheme
 ; Velocity generation
 ; -----------------------------------------------------------------------------
 gen_vel     = yes       ; assign velocities from Maxwell distribution
-gen_temp    = 300       ; temperature for Maxwell distribution
+gen_temp    = 310       ; temperature for Maxwell distribution
 gen_seed    = -1        ; generate a random seed
+

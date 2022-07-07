@@ -13,6 +13,10 @@ This file is provided to you by GPLv2 license."""
 import os
 import sys
 import argparse
+import logging
+
+logging.basicConfig(level=logging.INFO, format='%(levelname)s -> %(message)s')
+logger = logging.getLogger(__name__)
 
 
 class NDX(object):
@@ -51,11 +55,11 @@ class NDX(object):
 
         ## check file
         if len(ndxfile) <= 4 or ndxfile[-4:] != ".ndx":
-            print("Error -> please specify a index file with suffix .ndx")
-            exit()
+            logging.error("please specify a index file with suffix .ndx")
+            sys.exit()
         if not os.path.exists(ndxfile):
-            print("Error -> no {} in current directory".format(ndxfile))
-            exit()
+            logging.error("no {} in current directory".format(ndxfile))
+            sys.exit()
 
         ## parse the content of ndxfile
         with open(ndxfile, "r") as fo:
@@ -72,20 +76,18 @@ class NDX(object):
                 elif len(self.group_name_list) == len(self.group_index_list):
                     self.group_index_list[-1] += [int(i) for i in line.split()]
                 else:
-                    print("Error -> check your index file, one group", end="")
-                    print("name should be followed by some index number")
-                    exit()
+                    logging.error("check your index file, one group name should be followed by some index number")
+                    sys.exit()
             else:
-                print("Error -> a weired line appears at line {}".format(line_id))
-                exit()
+                logging.error("a weired line appears at line {}".format(line_id))
+                sys.exit()
         if not (
             self.group_number == len(self.group_name_list) == len(self.group_index_list)
         ):
-            print("Error -> length of group name and group index are not equal")
-            exit()
+            logging.error("length of group name and group index are not equal")
+            sys.exit()
 
-        print(
-            "Info -> read {} groups from {} successfully".format(
+        logging.info("read {} groups from {} successfully".format(
                 self.group_number, self.ndx_filename
             )
         )
@@ -100,19 +102,19 @@ class NDX(object):
 
         ## check file
         if outndx == None:
-            print("Error -> please specify the output ndx file name")
-            exit()
+            logging.error("please specify the output ndx file name")
+            sys.exit()
         if len(outndx) <= 4 or outndx[-4:] != ".ndx":
-            print("Error -> please specify a output file with suffix .ndx")
-            exit()
+            logging.error("please specify a output file with suffix .ndx")
+            sys.exit()
         if os.path.exists(outndx):
-            print("Error -> {} is already in current directory".format(outndx))
-            exit()
+            logging.error("{} is already in current directory".format(outndx))
+            sys.exit()
 
         ## write results
         if len(self.group_name_list) != len(self.group_index_list):
-            print("Error -> shit happens sometimes, oops")
-            exit()
+            logging.error("shit happens sometimes, oops")
+            sys.exit()
         with open(outndx, "w") as fo:
             for i in range(len(self.group_name_list)):
                 fo.write("[ {} ]\n".format(self.group_name_list[i]))
@@ -124,7 +126,7 @@ class NDX(object):
                         sentence += "\n"
                         count = 0
                 fo.write(sentence.strip("\n") + "\n")
-        print("Info -> save index data to {} successfully".format(outndx))
+        logging.info("save index data to {} successfully".format(outndx))
 
     def remove_duplicate(self, outndx: str) -> None:
         """remove the duplicate groups in ndx file"""
@@ -137,16 +139,13 @@ class NDX(object):
             ):
                 out_index_list.append(index)
                 if self.group_name_list[index_id] in out_name_list:
-                    print("Warning -> two groups with the same name", end="")
-                    print(
-                        " ({}) but index numbers are different? check it".format(
+                    logging.warning("two groups with the same name ({}) but index numbers are different? check it".format(
                             self.group_name_list[index_id]
                         )
                     )
                 out_name_list.append(self.group_name_list[index_id])
             else:
-                print(
-                    "Info -> removed the group {}".format(
+                logging.info("removed the group {}".format(
                         self.group_name_list[index_id]
                     )
                 )
@@ -162,8 +161,8 @@ class NDX(object):
 
         ## check parameters
         if interactive == False and group_list == []:
-            print("Error -> please specify the names of groups you wanna remove")
-            exit()
+            logging.error("please specify the names of groups you wanna remove")
+            sys.exit()
         ## remove the groups specified in group_list
         out_name_list, out_index_list = [], []
         if interactive == False:
@@ -172,7 +171,7 @@ class NDX(object):
                     out_name_list.append(name)
                     out_index_list.append(self.group_index_list[index_id])
                 else:
-                    print("Info -> removed the group {}".format(name))
+                    logging.info("removed the group {}".format(name))
         else:
             for index_id, name in enumerate(self.group_name_list):
                 resp = input("\n  -> remove group [ {} ] ? y/N : ".format(name)).strip()
@@ -180,10 +179,10 @@ class NDX(object):
                     out_name_list.append(name)
                     out_index_list.append(self.group_index_list[index_id])
                 elif resp.lower() == "y" or resp.lower() == "yes":
-                    print("Info -> removed the group {}".format(name))
+                    logging.info("removed the group {}".format(name))
                 else:
-                    print("Error -> unknown response {}".format(resp))
-                    exit()
+                    logging.error("unknown response {}".format(resp))
+                    sys.exit()
 
         self.group_name_list = out_name_list
         self.group_index_list = out_index_list
@@ -196,8 +195,8 @@ class NDX(object):
 
         ## check parameters
         if interactive == False and group_list == []:
-            print("Error -> please specify the names of groups you wanna preserve")
-            exit()
+            logging.error("please specify the names of groups you wanna preserve")
+            sys.exit()
         ## remove the groups specified in group_list
         out_name_list, out_index_list = [], []
         if interactive == False:
@@ -206,20 +205,20 @@ class NDX(object):
                     out_name_list.append(name)
                     out_index_list.append(self.group_index_list[index_id])
                 else:
-                    print("Info -> removed the group {}".format(name))
+                    logging.info("removed the group {}".format(name))
         else:
             for index_id, name in enumerate(self.group_name_list):
                 resp = input(
                     "\n  -> preserve group [ {} ] ? y/N : ".format(name)
                 ).strip()
                 if resp.lower() == "n" or resp == "" or resp.lower() == "no":
-                    print("Info -> removed the group {}".format(name))
+                    logging.info("removed the group {}".format(name))
                 elif resp.lower() == "y" or resp.lower() == "yes":
                     out_name_list.append(name)
                     out_index_list.append(self.group_index_list[index_id])
                 else:
-                    print("Error -> unknown response {}".format(resp))
-                    exit()
+                    logging.error("unknown response {}".format(resp))
+                    sys.exit()
 
         self.group_name_list = out_name_list
         self.group_index_list = out_index_list
@@ -229,8 +228,8 @@ class NDX(object):
         """combine the groups specified into one group"""
 
         if groupname == None:
-            print("Error -> please specify the group name")
-            exit()
+            logging.error("please specify the group name")
+            sys.exit()
         ## combine the groups specified in group_list into one group
         out_name_list, out_index_list = [], []
         for index_id, name in enumerate(self.group_name_list):
@@ -242,11 +241,11 @@ class NDX(object):
                     out_name_list[0] += "_" + name
                     out_index_list[0] += self.group_index_list[index_id]
                 else:
-                    print("Error -> shit happens when combination")
-                    exit()
+                    logging.error("shit happens when combination")
+                    sys.exit()
         self.group_name_list += [groupname]
         self.group_index_list += out_index_list
-        print("Info -> combined {} into {}".format(out_name_list[0], groupname))
+        logging.info("combined {} into {}".format(out_name_list[0], groupname))
         self.write_ndx(outndx)
 
     def add_group(
@@ -256,26 +255,25 @@ class NDX(object):
 
         ## add one group
         if groupname == None:
-            print("Error -> please specify the group name")
-            exit()
+            logging.error("please specify the group name")
+            sys.exit()
         if step == None:
             step = 1
         if start == None or end == None:
-            print("Error -> start and end must be integer > 0")
-            exit()
+            logging.error("start and end must be integer > 0")
+            sys.exit()
         if start <= 0 or end <= start:
-            print("Error -> start should > 0 and end should > start")
-            exit()
+            logging.error("start should > 0 and end should > start")
+            sys.exit()
         if groupname in self.group_name_list:
-            print(
-                "Warning -> already a group {} in {}, add to the end".format(
+            logging.warning("already a group {} in {}, add to the end".format(
                     groupname, self.ndx_filename
                 )
             )
         out_index = [i for i in range(start, end, step)]
         self.group_name_list.append(groupname)
         self.group_index_list.append(out_index)
-        print("Info -> add group {} successfully".format(groupname))
+        logging.info("add group {} successfully".format(groupname))
         self.write_ndx(outndx)
 
     def rename_group(
@@ -286,29 +284,29 @@ class NDX(object):
         ## check parameters
         if interactive == False:
             if old_name == None or old_name == "":
-                print("Error -> please specify the old name you wanna change")
-                exit()
+                logging.error("please specify the old name you wanna change")
+                sys.exit()
             if new_name == None or new_name == "":
-                print("Error -> please specify the new name you wanna apply")
-                exit()
+                logging.error("please specify the new name you wanna apply")
+                sys.exit()
 
         out_name_list = []
         if interactive == False:
             for name in self.group_name_list:
                 if name == old_name:
                     out_name_list.append(new_name)
-                    print("Info -> changed {} to {}".format(name, new_name))
+                    logging.info("changed {} to {}".format(name, new_name))
                 else:
                     out_name_list.append(name)
         else:
-            print("Info -> change group names in interactive mode, type enter to pass")
+            logging.info("change group names in interactive mode, type enter to pass")
             for name in self.group_name_list:
                 name_input = input(" -> change {} to : ".format(name)).strip()
                 if name_input == "":
                     out_name_list.append(name)
                 else:
                     out_name_list.append(name_input)
-                    print("Info -> changed {} to {}".format(name, name_input))
+                    logging.info("changed {} to {}".format(name, name_input))
         self.group_name_list = out_name_list
         self.write_ndx(outndx)
 
@@ -396,13 +394,12 @@ def ndx_call_functions(arguments: list = None) -> None:
     )
 
     if len(arguments) < 2:
-        print("Error -> no input parameters, -h or --help for help messages")
-        exit()
+        logging.error("no input parameters, -h or --help for help messages")
+        sys.exit()
     method = arguments[1]
-    # print(method)
     if method in ["-h", "--help"]:
         parser.parse_args(arguments[1:])
-        exit()
+        sys.exit()
     args = parser.parse_args(arguments[2:])
 
     if method == "ndx_show":
@@ -433,10 +430,10 @@ def ndx_call_functions(arguments: list = None) -> None:
             args.interactive,
         )
     else:
-        print("Error -> unknown method {}".format(method))
-        exit()
+        logging.error("unknown method {}".format(method))
+        sys.exit()
 
-    print("Info -> good day !")
+    logging.info("May you good day !")
 
 
 def main():

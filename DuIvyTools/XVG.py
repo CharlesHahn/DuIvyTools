@@ -25,6 +25,10 @@ import matplotlib.pyplot as plt
 from matplotlib import pylab as pylab
 from matplotlib import colors
 import matplotlib.colors as mplcolors
+import logging
+
+logging.basicConfig(level=logging.INFO, format='%(levelname)s -> %(message)s')
+logger = logging.getLogger(__name__)
 
 
 myparams = {
@@ -69,7 +73,7 @@ pylab.rcParams.update(myparams)
 style_files = [file for file in os.listdir() if file[-9:] == ".mplstyle"]
 if len(style_files) >= 1:
     plt.style.use(style_files[0])
-    print("Info -> using matplotlib style sheet from {}".format(style_files[0]))
+    logging.info("using matplotlib style sheet from {}".format(style_files[0]))
 
 
 class XVG(object):
@@ -109,11 +113,11 @@ class XVG(object):
 
         ## check kand read xpm file
         if not os.path.exists(xvgfile):
-            print("ERROR -> no {} in current directory".format(xvgfile))
-            exit()
+            logging.error("no {} in current directory".format(xvgfile))
+            sys.exit()
         if xvgfile[-4:] != ".xvg":
-            print("Error -> specify a xvg file with suffix xvg")
-            exit()
+            logging.error("specify a xvg file with suffix xvg")
+            sys.exit()
         with open(xvgfile, "r") as fo:
             lines = [line.strip() for line in fo.readlines() if line.strip() != ""]
 
@@ -138,13 +142,13 @@ class XVG(object):
                     self.xvg_column_num = len(items)
                     self.xvg_row_num = 0
                 if len(items) != len(self.xvg_columns):
-                    print(
-                        "Error -> the number of columns in {} is not equal. ".format(
+                    logging.error(
+                        "the number of columns in {} is not equal. ".format(
                             self.xvg_filename
                         )
                     )
-                    print("{} -> ".format(self.xvg_row_num) + line)
-                    exit()
+                    logging.info("{} -> ".format(self.xvg_row_num) + line)
+                    sys.exit()
                 for i in range(len(items)):
                     self.xvg_columns[i].append(items[i])
                 self.xvg_row_num += 1
@@ -152,15 +156,15 @@ class XVG(object):
         ## post-process the infos
         for c in range(self.xvg_column_num):
             if len(self.xvg_columns[c]) != self.xvg_row_num:
-                print(
-                    "Error -> length of column {} if not equal to count of rows".format(
+                logging.error(
+                    "length of column {} if not equal to count of rows".format(
                         c
                     )
                 )
-                exit()
+                sys.exit()
         if self.xvg_column_num == 0 or self.xvg_row_num == 0:
-            print("Error -> no data line detected in xvg file")
-            exit()
+            logging.error("no data line detected in xvg file")
+            sys.exit()
 
         self.data_heads.append(self.xvg_xlabel)
         self.data_columns.append([float(c) for c in self.xvg_columns[0]])
@@ -181,25 +185,14 @@ class XVG(object):
                 for i in range(len(heads)):
                     heads[i] += " " + items[0]
             else:
-                print(
-                    "Warning -> failed to pair ylabel to legends, use legends in xvg file"
+                logging.warning(
+                    "failed to pair ylabel to legends, use legends in xvg file"
                 )
             self.data_heads += heads
             for i in range(len(heads)):
                 self.data_columns.append([float(c) for c in self.xvg_columns[i + 1]])
 
-        ## test
-        # print(self.xvg_title)
-        # print(self.xvg_xlabel)
-        # print(self.xvg_ylabel)
-        # print(self.xvg_legends)
-        # print(self.xvg_column_num)
-        # print(self.xvg_row_num)
-        # print(len(self.xvg_columns))
-        # print(self.data_heads)
-        # print(len(self.data_columns))
-
-        print("Info -> read {} successfully. ".format(self.xvg_filename))
+        logging.info("read {} successfully. ".format(self.xvg_filename))
 
     def calc_average(self, start: int = None, end: int = None) -> tuple:
         """
@@ -215,15 +208,15 @@ class XVG(object):
         """
 
         if (start != None and end != None) and (start >= end):
-            print("Error -> start index should be less than end index")
-            exit()
+            logging.error("start index should be less than end index")
+            sys.exit()
         if (start != None and start >= self.xvg_row_num) or (
             end != None and end >= self.xvg_row_num
         ):
-            print(
-                "Error -> start or end index should be less than the number of rows in xvg file"
+            logging.error(
+                "start or end index should be less than the number of rows in xvg file"
             )
-            exit()
+            sys.exit()
 
         column_averages = []
         column_stds = []
@@ -249,11 +242,11 @@ class XVG(object):
         """
 
         if windowsize <= 0 or windowsize > int(self.xvg_row_num / 2):
-            print("Error -> windowsize value is not proper")
-            exit()
+            logging.error("windowsize value is not proper")
+            sys.exit()
         if confidence <= 0 or confidence >= 1:
-            print("Error -> confidence value is not proper, it should be in (0,1)")
-            exit()
+            logging.error("confidence value is not proper, it should be in (0,1)")
+            sys.exit()
 
         column_mvaves, column_highs, column_lows = [], [], []
         for column in self.data_columns:
@@ -286,11 +279,11 @@ class XVG(object):
         if outcsv == "":
             outcsv = self.xvg_filename[:-4] + ".csv"
         if outcsv[-4:] != ".csv":
-            print("Error -> please specify a csv file name with suffix .csv")
-            exit()
+            logging.error("please specify a csv file name with suffix .csv")
+            sys.exit()
         if os.path.exists(outcsv):
-            print("Error -> already a {} in current directory".format(outcsv))
-            exit()
+            logging.error("already a {} in current directory".format(outcsv))
+            sys.exit()
 
         ## write csv file
         out_data = []
@@ -306,8 +299,8 @@ class XVG(object):
             for row in range(self.xvg_row_num):
                 fo.write(",".join([str(column[row]) for column in out_data]) + "\n")
 
-        print(
-            "Info -> convert {} into {} successfully.".format(self.xvg_filename, outcsv)
+        logging.info(
+            "convert {} into {} successfully.".format(self.xvg_filename, outcsv)
         )
 
     def draw(self, outpng: str = "", noshow: bool = False) -> None:
@@ -354,8 +347,8 @@ class XVG(object):
 
         if outpng != None:
             if os.path.exists(outpng):
-                print("ERROR -> {} already in current directory".format(outpng))
-                exit()
+                logging.error("{} already in current directory".format(outpng))
+                sys.exit()
             plt.savefig(outpng, dpi=300)
         if noshow == False:
             plt.show()
@@ -388,8 +381,8 @@ class XVG(object):
                         index = bin - 1
                     frequency[index] += 1
                 if sum(frequency) != self.xvg_row_num:
-                    print("Error -> wrong in calculating distribution")
-                    exit()
+                    logging.error("wrong in calculating distribution")
+                    sys.exit()
                 frequency = [f * 100.0 / self.xvg_row_num for f in frequency]
                 x_value = [column_min + bin_window * b for b in range(bin)]
             else:  # for data without fluctuation
@@ -421,8 +414,8 @@ class XVG(object):
 
         if outpng != None:
             if os.path.exists(outpng):
-                print("ERROR -> {} already in current directory".format(outpng))
-                exit()
+                logging.error("{} already in current directory".format(outpng))
+                sys.exit()
             plt.savefig(outpng, dpi=300)
         if noshow == False:
             plt.show()
@@ -448,41 +441,40 @@ class XVG(object):
 
         ## check parameters
         if column_select == None or len(column_select) == 0:
-            print("Error -> please specify column indexs you want to stack")
-            exit()
+            logging.error("please specify column indexs you want to stack")
+            sys.exit()
         if not set(column_select).issubset(
             set([i for i in range(len(self.data_columns))])
         ):
-            print("Error -> some column index you specified may not in ", end="")
-            print("range of [0:{}], check it".format(len(self.data_columns)))
-            exit()
+            logging.error("some column index you specified may not in range of [0:{}], check it".format(len(self.data_columns)))
+            sys.exit()
 
         if legend_list == None:
             legend_list = []
         if len(legend_list) != 0 and len(legend_list) != len(column_select):
-            print("Warning -> length of legends and column_select isn't equal")
-            print("Warning -> using default legends for instead")
+            logging.warning("length of legends and column_select isn't equal")
+            logging.warning("using default legends for instead")
             legend_list = []
         for legend in legend_list:
             if not isinstance(legend, str):
-                print("Error -> you are not supposed to type comma in legends here")
-                exit()
+                logging.error("you are not supposed to type comma in legends here")
+                sys.exit()
         if start == None:
             start = 0
         if start < 0 or start >= self.xvg_row_num:
-            print(
-                "Error -> start of row index not in proper range [0:{}]".format(
+            logging.error(
+                "start of row index not in proper range [0:{}]".format(
                     self.xvg_row_num
                 )
             )
-            exit()
+            sys.exit()
         if end != None and (end <= start or end >= self.xvg_row_num):
-            print(
-                "Error -> end of row index not in proper range [{}:{}]".format(
+            logging.error(
+                "end of row index not in proper range [{}:{}]".format(
                     start + 1, self.xvg_row_num
                 )
             )
-            exit()
+            sys.exit()
 
         ## draw stacked plot
         column_select.reverse()
@@ -517,8 +509,8 @@ class XVG(object):
 
         if outpng != None:
             if os.path.exists(outpng):
-                print("ERROR -> {} already in current directory".format(outpng))
-                exit()
+                logging.error("{} already in current directory".format(outpng))
+                sys.exit()
             plt.savefig(outpng, dpi=300)
         if noshow == False:
             plt.show()
@@ -542,13 +534,13 @@ class XVG(object):
 
         ## check parameters
         if x_index >= len(self.data_columns) or x_index < 0:
-            print("Warning -> x_index not in proper range, use default value.")
+            logging.warning("x_index not in proper range, use default value.")
             x_index = 0
         if y_index == None:
             y_index = (len(self.data_columns) - 1, 1)[len(self.data_columns) >= 2]
         else:
             if y_index >= len(self.data_columns) or y_index < 0:
-                print("Warning -> y_index not in proper range, use default value.")
+                logging.warning("y_index not in proper range, use default value.")
                 y_index = (len(self.data_columns) - 1, 1)[len(self.data_columns) >= 2]
 
         ## draw scatter plot
@@ -562,8 +554,8 @@ class XVG(object):
         )
         if outpng != None:
             if os.path.exists(outpng):
-                print("ERROR -> {} already in current directory".format(outpng))
-                exit()
+                logging.error("{} already in current directory".format(outpng))
+                sys.exit()
             plt.savefig(outpng, dpi=300)
         if noshow == False:
             plt.show()
@@ -585,20 +577,20 @@ def xvg_combine(
 
     ## check parameters
     if outfile == None:
-        print("Error -> please specify ouput xvg file name")
-        exit()
+        logging.error("please specify ouput xvg file name")
+        sys.exit()
     if column_select == None or len(column_select) == 0:
-        print("Error -> please specify the column indexs by -c")
-        exit()
+        logging.error("please specify the column indexs by -c")
+        sys.exit()
     if os.path.exists(outfile):
-        print("Error -> {} already in current directory".format(outfile))
-        exit()
+        logging.error("{} already in current directory".format(outfile))
+        sys.exit()
     if len(outfile) < 4 or outfile[-4:] != ".xvg":
-        print("Error -> please specify a output filename with suffix .xvg")
-        exit()
+        logging.error("please specify a output filename with suffix .xvg")
+        sys.exit()
     if not isinstance(column_select, list):
-        print("Error -> column_select must be a list")
-        exit()
+        logging.error("column_select must be a list")
+        sys.exit()
     for indexs in column_select:
         if isinstance(indexs, list):
             break
@@ -606,8 +598,8 @@ def xvg_combine(
         column_select = [[columns] for columns in column_select]
     for xvgs in xvgfiles:
         if not isinstance(xvgs, str):
-            print("Error -> item of xvgfiles should be str, do not use ,")
-            exit()
+            logging.error("item of xvgfiles should be str, do not use ,")
+            sys.exit()
 
     ## process xvg combination
     xvgs = [XVG(file) for file in xvgfiles]
@@ -615,16 +607,16 @@ def xvg_combine(
     combined_data_heads, combined_data_columns = [], []
     for id, indexs in enumerate(column_select):
         if xvgs[id].xvg_row_num != row_num:
-            print("Error -> the row number of input files are not equal")
-            exit()
+            logging.error("the row number of input files are not equal")
+            sys.exit()
         for index in indexs:
             if index >= len(xvgs[id].data_heads):
-                print(
-                    "Error -> wrong column_select index {} of {}".format(
+                logging.error(
+                    "wrong column_select index {} of {}".format(
                         index, xvgs[id].xvg_filename
                     )
                 )
-                exit()
+                sys.exit()
             combined_data_heads.append(xvgs[id].data_heads[index])
             combined_data_columns.append(xvgs[id].data_columns[index])
     combined_title = " And ".join(list(set([xvg.xvg_title for xvg in xvgs])))
@@ -660,7 +652,7 @@ def xvg_combine(
                 )
                 + "\n"
             )
-    print("Info -> xvg files combined sucessfully.")
+    logging.info("xvg files combined sucessfully.")
 
 
 def energy_compute(xvgfiles: list = [], outfile: str = None):
@@ -682,35 +674,34 @@ def energy_compute(xvgfiles: list = [], outfile: str = None):
 
     ## check parameters
     if len(xvgfiles) != 3:
-        print("Error -> wrong number of input xvg files")
-        print("         must be prolig.xvg, pro.xvg and lig.xvg by order")
-        exit()
+        logging.error("wrong number of input xvg files, must be prolig.xvg, pro.xvg and lig.xvg by order")
+        sys.exit()
     prolig_xvg = xvgfiles[0]
     pro_xvg = xvgfiles[1]
     lig_xvg = xvgfiles[2]
     for xvgfile in [prolig_xvg, pro_xvg, lig_xvg]:
         if not os.path.exists(xvgfile):
-            print("Error -> No {} in current directory".format(xvgfile))
-            exit()
+            logging.error("No {} in current directory".format(xvgfile))
+            sys.exit()
     if outfile == None:
-        print("Error -> please specify output xvg file name")
-        exit()
+        logging.error("please specify output xvg file name")
+        sys.exit()
     if os.path.exists(outfile):
-        print("Error -> {} already in current directory".format(outfile))
-        exit()
+        logging.error("{} already in current directory".format(outfile))
+        sys.exit()
     if len(outfile) < 4 or outfile[-4:] != ".xvg":
-        print("Error -> please specify a output filename with suffix .xvg")
-        exit()
+        logging.error("please specify a output filename with suffix .xvg")
+        sys.exit()
     prolig, pro, lig = XVG(prolig_xvg), XVG(pro_xvg), XVG(lig_xvg)
     if not (prolig.data_heads == pro.data_heads == lig.data_heads) or (
         len(prolig.data_heads) != 5
     ):
-        print(
-            "Error -> three xvg files should contain same number (5) of columns, "
+        logging.error(
+            "three xvg files should contain same number (5) of columns, "
             + "and the order should be: \n"
             + "    Time, LJ(SR), Disper.corr., Coulomb(SR), Coul.recip. "
         )
-        exit()
+        sys.exit()
     if not (
         ("Time" in prolig.data_heads[0])
         and ("LJ" in prolig.data_heads[1])
@@ -718,17 +709,17 @@ def energy_compute(xvgfiles: list = [], outfile: str = None):
         and ("Coulomb" in prolig.data_heads[3])
         and ("recip" in prolig.data_heads[4])
     ):
-        print(
-            "Error ->  the legend order should be: \n"
+        logging.error(
+            "the legend order should be: \n"
             + "    Time, LJ(SR), Disper.corr., Coulomb(SR), Coul.recip. "
         )
-        exit()
+        sys.exit()
     if not (prolig.xvg_row_num == pro.xvg_row_num == lig.xvg_row_num):
-        print("Error -> {}, {}, {} should contain same number of rows.")
-        exit()
+        logging.error("{}, {}, {} should contain same number of rows.")
+        sys.exit()
     if not (prolig.data_columns[0] == pro.data_columns[0] == lig.data_columns[0]):
-        print("Error -> the Time axis may not be the same, check the interval of time.")
-        exit()
+        logging.error("the Time axis may not be the same, check the interval of time.")
+        sys.exit()
 
     ## compute the bingding energy
     ## time
@@ -805,8 +796,8 @@ def energy_compute(xvgfiles: list = [], outfile: str = None):
                 + "\n"
             )
 
-    print(
-        "Info -> energy computation through {}, {} and {} sucessfully.".format(
+    logging.info(
+        "energy computation through {}, {} and {} sucessfully.".format(
             prolig_xvg, pro_xvg, lig_xvg
         )
     )
@@ -824,8 +815,8 @@ def xvg_ramachandran(xvgfile: str = "", outpng: str = "", noshow: bool = False) 
 
     ## check parameters
     if not os.path.exists(xvgfile):
-        print("Error -> No {} in current directory".format(xvgfile))
-        exit()
+        logging.error("No {} in current directory".format(xvgfile))
+        sys.exit()
 
     xvg = XVG(xvgfile)
 
@@ -835,10 +826,8 @@ def xvg_ramachandran(xvgfile: str = "", outpng: str = "", noshow: bool = False) 
         or len(xvg.data_columns) != 2
         or (xvg.data_heads[0] != "Phi" or xvg.data_heads[1] != "Psi")
     ):
-        print("Error -> Check your input xvg file !")
-        print("         It has to contains 3 columns: Phi, Psi, AA name")
-        print("         X-label should be Phi and Y-label should be Psi")
-        exit()
+        logging.error("Check your input xvg file ! It has to contains 3 columns: Phi, Psi, AA name. And x-label should be Phi and Y-label should be Psi")
+        sys.exit()
 
     ## draw background
     ## Psi and Phi data are from DOI: 10.1002/prot.10286
@@ -910,18 +899,20 @@ def xvg_ramachandran(xvgfile: str = "", outpng: str = "", noshow: bool = False) 
             normals[AA_type]["psi"].append(psi)
 
     ## print some infos
-    print("Info -> ramachandran method can draw four types of figure: ")
-    print("        Pre-PRO: the dihedrals of amino acids before prolines")
-    print("        PRO: the dihedrals of prolines")
-    print("        GLY: the dihedrals of glynine")
-    print("        General: the dihedrals of other amino acids")
-    print("\n{:<10} {:>20} {:>20}".format("", "Normal Dihedrals", "Outlier Dihedrals"))
+    logging.info("ramachandran method can draw four types of figure: "
+    + "\n        Pre-PRO: the dihedrals of amino acids before prolines"
+    + "\n        PRO: the dihedrals of prolines"
+    + "\n        GLY: the dihedrals of glynine"
+    + "\n        General: the dihedrals of other amino acids")
+    print("\n" + "-"*79)
+    print("{:<10} {:>20} {:>20}".format("", "Normal Dihedrals", "Outlier Dihedrals"))
     for key in ["General", "GLY", "Pre-PRO", "PRO"]:
         print(
             "{:<10} {:>20} {:>20}".format(
                 key, len(normals[key]["phi"]), len(outliers[key]["phi"])
             )
         )
+    print("-"*79)
 
     ## draw ramachandran plot
     for key in ["General", "GLY", "Pre-PRO", "PRO"]:
@@ -948,8 +939,8 @@ def xvg_ramachandran(xvgfile: str = "", outpng: str = "", noshow: bool = False) 
         plt.ylabel("Psi")
         if outpng != None:
             if os.path.exists(outpng):
-                print("ERROR -> {} already in current directory".format(outpng))
-                exit()
+                logging.error("{} already in current directory".format(outpng))
+                sys.exit()
             plt.savefig(outpng.split(".")[0] + "_" + key + ".png", dpi=300)
         if noshow == False:
             plt.show()
@@ -1010,18 +1001,18 @@ def xvg_compare(
     if legend_list == None:
         legend_list == []
     if len(xvgfiles) == 0:
-        print("Error -> no input xvg file to compare")
-        exit()
+        logging.error("no input xvg file to compare")
+        sys.exit()
     if len(xvgfiles) != len(column_select):
-        print("Error -> column_select must contain {} list".format(len(xvgfiles)))
-        exit()
+        logging.error("column_select must contain {} list".format(len(xvgfiles)))
+        sys.exit()
     for xvgs in xvgfiles:
         if not isinstance(xvgs, str):
-            print("Error -> item of xvgfiles should be str, do not use ,")
-            exit()
+            logging.error("item of xvgfiles should be str, do not use ,")
+            sys.exit()
     if not isinstance(column_select, list):
-        print("Error -> column_select must be a list")
-        exit()
+        logging.error("column_select must be a list")
+        sys.exit()
     for indexs in column_select:
         if isinstance(indexs, list):
             break
@@ -1030,8 +1021,8 @@ def xvg_compare(
     if len(legend_list) != 0 and len(legend_list) != sum(
         [len(column) for column in column_select]
     ):
-        print("Error -> number of legends you input can not pair to columns you select")
-        exit()
+        logging.error("number of legends you input can not pair to columns you select")
+        sys.exit()
 
     ## draw comparison
     XVGS = [XVG(xvg) for xvg in xvgfiles]
@@ -1091,8 +1082,8 @@ def xvg_compare(
     plt.title(title)
     if outpng != None:
         if os.path.exists(outpng):
-            print("ERROR -> {} already in current directory".format(outpng))
-            exit()
+            logging.error("{} already in current directory".format(outpng))
+            sys.exit()
         plt.savefig(outpng, dpi=300)
     if noshow == False:
         plt.show()
@@ -1138,11 +1129,11 @@ def xvg_bar_compare(
 
     ## check parameters
     if len(xvgfiles) == 0:
-        print("Error -> no input xvg files")
-        exit()
+        logging.error("no input xvg files")
+        sys.exit()
     if not isinstance(xvgfiles, list):
-        print("Error -> input files must be in list")
-        exit()
+        logging.error("input files must be in list")
+        sys.exit()
     for xvgs in xvgfiles:
         if isinstance(xvgs, list):
             break
@@ -1150,23 +1141,23 @@ def xvg_bar_compare(
         xvgfiles = [[xvg] for xvg in xvgfiles]
 
     if len(legend_list) != 0 and len(legend_list) != len(xvgfiles):
-        print("Error -> wrong number of legends you specified")
-        exit()
+        logging.error("wrong number of legends you specified")
+        sys.exit()
     if len(legend_list) == 0:
         for xvg_list in xvgfiles:
             legend_list.append(xvg_list[0])
     if xtitle_list == None:
         xtitle_list = []
     if len(xtitle_list) != 0 and len(xtitle_list) != len(column_list):
-        print("Error -> wrong number of legends you specified")
-        exit()
+        logging.error("wrong number of legends you specified")
+        sys.exit()
     if len(column_list) == 0:
-        print("Error -> please specify column_select")
-        exit()
+        logging.error("please specify column_select")
+        sys.exit()
     for columns in column_list:
         if not isinstance(columns, int):
-            print("Error -> the item of column_select must be int, do not use ,")
-            exit()
+            logging.error("the item of column_select must be int, do not use ,")
+            sys.exit()
 
     ## calculate averages
     final_averages, final_stds = [], []
@@ -1177,12 +1168,12 @@ def xvg_bar_compare(
             heads, averages, _ = xvg.calc_average(start, end)
             for index in column_list:
                 if index >= len(heads):
-                    print(
-                        "Error -> index {} is out of range of file {}".format(
+                    logging.error(
+                        "index {} is out of range of file {}".format(
                             index, xvg.xvg_filename
                         )
                     )
-                    exit()
+                    sys.exit()
             if len(xtitle_list) == 0:
                 xtitle_list = [heads[c] for c in column_list]
             for i, value in enumerate([averages[c] for c in column_list]):
@@ -1195,13 +1186,11 @@ def xvg_bar_compare(
         final_stds.append(column_stds)
 
     # print averages
-    print()
-    print(" ".join("{:<20}".format(item) for item in ["Average"] + xtitle_list))
+    print("\n" + " ".join("{:<20}".format(item) for item in ["Average"] + xtitle_list))
     for i in range(len(final_averages)):
         print("{:<20}".format(legend_list[i]), end=" ")
         print(" ".join(["{:<20.4f}".format(ave) for ave in final_averages[i]]))
-    print()
-    print(" ".join("{:<20}".format(item) for item in ["std"] + xtitle_list))
+    print("\n" + " ".join("{:<20}".format(item) for item in ["std"] + xtitle_list))
     for i in range(len(final_stds)):
         print("{:<20}".format(legend_list[i]), end=" ")
         print(" ".join(["{:<20.4f}".format(std) for std in final_stds[i]]))
@@ -1209,11 +1198,11 @@ def xvg_bar_compare(
     ## save average data to csv file
     if ave2csv != None:
         if len(ave2csv) < 4 or ave2csv[-4:] != ".csv":
-            print("Error -> file name for -ac should with suffix .csv")
-            exit()
+            logging.error("file name for -ac should with suffix .csv")
+            sys.exit()
         if os.path.exists(ave2csv):
-            print("Error -> {} is already in current directory".format(ave2csv))
-            exit()
+            logging.error("{} is already in current directory".format(ave2csv))
+            sys.exit()
         with open(ave2csv, "w") as fo:
             fo.write(",".join(["Average"] + xtitle_list) + "\n")
             for i in range(len(final_averages)):
@@ -1246,8 +1235,8 @@ def xvg_bar_compare(
     plt.title(title)
     if output != None:
         if os.path.exists(output):
-            print("ERROR -> {} already in current directory".format(output))
-            exit()
+            logging.error("{} already in current directory".format(output))
+            sys.exit()
         plt.savefig(output, dpi=300)
     if noshow == False:
         plt.show()
@@ -1296,18 +1285,18 @@ def xvg_box_compare(
         column_select = []
     for xvgs in xvgfiles:
         if not isinstance(xvgs, str):
-            print("Error -> item of xvgfiles should be str, do not use ,")
-            exit()
+            logging.error("item of xvgfiles should be str, do not use ,")
+            sys.exit()
     for column in column_select:
         if not isinstance(column, int):
-            print("Error -> item of column_select should be int, do not use ,")
-            exit()
+            logging.error("item of column_select should be int, do not use ,")
+            sys.exit()
     if len(xvgfiles) == 0:
-        print("Error -> no input xvg file to compare")
-        exit()
+        logging.error("no input xvg file to compare")
+        sys.exit()
     if len(xtitle_list) != 0 and len(xtitle_list) != len(column_select):
-        print("Error -> number of xtitle you input can not pair to columns you select")
-        exit()
+        logging.error("number of xtitle you input can not pair to columns you select")
+        sys.exit()
 
     ## draw bar comparison
     XVGS = [XVG(xvg) for xvg in xvgfiles]
@@ -1315,10 +1304,10 @@ def xvg_box_compare(
     width = 80 // len(xvgfiles) * 0.01
     for id, xvg in enumerate(XVGS):
         if start < 0 or start > xvg.xvg_row_num:
-            print("Warning -> start index not in proper range, set it to be 0")
+            logging.warning("start index not in proper range, set it to be 0")
             start = 0
         if end != None and (end <= start or end >= xvg.xvg_row_num):
-            print("Warning -> end index not in proper range, set it to be None")
+            logging.warning("end index not in proper range, set it to be None")
             end = None
         for index, column in enumerate(column_select):
             box_data.append(xvg.data_columns[column][start:end])
@@ -1333,8 +1322,8 @@ def xvg_box_compare(
     plt.title(title)
     if outpng != None:
         if os.path.exists(outpng):
-            print("ERROR -> {} already in current directory".format(outpng))
-            exit()
+            logging.error("{} already in current directory".format(outpng))
+            sys.exit()
         plt.savefig(outpng, dpi=300)
     if noshow == False:
         plt.show()
@@ -1343,11 +1332,11 @@ def xvg_box_compare(
 def xvg_calc_ave(file: str = None, start: int = None, end: int = None) -> None:
     """do average calculation and print results"""
     if file == None:
-        print("Error -> no input file")
-        exit()
+        logging.error("no input file")
+        sys.exit()
     xvg = XVG(file)
     heads, averages, stds = xvg.calc_average(start, end)
-    print()
+    print("\n" + "-"*79)
     print("".join(["{:>16}".format(item) for item in [" "] + heads]))
     print(
         "".join(
@@ -1364,14 +1353,14 @@ def xvg_calc_mvave2csv(
 ) -> None:
     """do moving average calculation and output data to csv"""
     if file == None:
-        print("Error -> no input file")
-        exit()
+        logging.error("no input file")
+        sys.exit()
     if outcsv == None:
-        print("Error -> specify the output csv file name")
-        exit()
+        logging.error("specify the output csv file name")
+        sys.exit()
     if os.path.exists(outcsv):
-        print("Error -> {} already in current directory".format(outcsv))
-        exit()
+        logging.error("{} already in current directory".format(outcsv))
+        sys.exit()
     if windowsize == None:
         windowsize = 50
     if confidence == None:
@@ -1383,7 +1372,7 @@ def xvg_calc_mvave2csv(
         for row in range(xvg.xvg_row_num):
             fo.write(",".join(["{}".format(column[row]) for column in mvaves]))
             fo.write("\n")
-    print("Info -> moving averages have been saved to {}".format(outcsv))
+    logging.info("moving averages have been saved to {}".format(outcsv))
 
 
 def xvg2csv(xvgfile: str = "", outcsv: str = "") -> None:
@@ -1497,21 +1486,21 @@ def xvg_call_functions(arguments: list = None):
     )
 
     if len(arguments) < 2:
-        print("Error -> no input parameters, -h or --help for help messages")
-        exit()
+        logging.error("no input parameters, -h or --help for help messages")
+        sys.exit()
     method = arguments[1]
     # print(method)
     if method in ["-h", "--help"]:
         parser.parse_args(arguments[1:])
-        exit()
+        sys.exit()
     args = parser.parse_args(arguments[2:])
     # for key, value in vars(args).items():
     #     print(key, value)
 
     ## process nargs="+"
     if args.input == None:
-        print("Error -> No input parameters")
-        exit()
+        logging.error("No input parameters")
+        sys.exit()
     xvgfiles = []
     if "," in "".join(args.input):
         for xvgs in args.input:
@@ -1615,10 +1604,10 @@ def xvg_call_functions(arguments: list = None):
             args.noshow,
         )
     else:
-        print("Error -> no command {} found".format(method))
-        exit()
+        logging.error("no command {} found".format(method))
+        sys.exit()
 
-    print("Info -> good day !")
+    logging.info("May you good day !")
 
 
 def main():

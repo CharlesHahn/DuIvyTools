@@ -13,6 +13,10 @@ This file is provided to you by GPLv2 license."""
 import os
 import sys
 import argparse
+import logging
+
+logging.basicConfig(level=logging.INFO, format='%(levelname)s -> %(message)s')
+logger = logging.getLogger(__name__)
 
 
 class MDP(object):
@@ -33,30 +37,28 @@ class MDP(object):
             "blank": os.path.join("data", "blank.mdp"),
         }
 
-        print("Info -> MDP module could init some mdp templates for you.")
-        print("        Specify application (-a) to generate a mdp file. ")
-        print("Info -> applications to choose: ions, em, nvt, npt, md, blank")
-        print("\nWARNING -> the generated mdp file may be not appropriate")
-        print("            for your system, CHECK IT YOURSELF !\n")
+        logging.info("MDP module could init some mdp templates for you. Specify application (-a) to generate a mdp file. ")
+        logging.info("Applications to choose: ions, em, nvt, npt, md, blank")
+        logging.warning("the generated mdp file may be not appropriate for your system, CHECK IT YOURSELF !")
 
     def gen_mdp(self, outmdp: str, application: str) -> None:
         """gen mdp template by specified application"""
 
         ## check parameters
         if outmdp == None or len(outmdp) <= 4 or outmdp[-4:] != ".mdp":
-            print("Error -> output file name should be with suffix .mdp")
-            exit()
+            logging.error("output file name should be with suffix .mdp")
+            sys.exit()
         if os.path.exists(outmdp):
-            print("Error -> {} is already in current directory".format(outmdp))
-            exit()
+            logging.error("{} is already in current directory".format(outmdp))
+            sys.exit()
         if application == None or application not in self.application_loc.keys():
-            print(
-                "Info -> application available:\n         {}".format(
+            logging.info(
+                "application available:\n         {}".format(
                     " ".join(self.application_loc.keys())
                 )
             )
-            print("Error -> no application {} found".format(application))
-            exit()
+            logging.error("no application {} found".format(application))
+            sys.exit()
 
         ## gen mdp
         data_file_path = os.path.realpath(
@@ -69,8 +71,8 @@ class MDP(object):
         with open(outmdp, "w") as fo:
             fo.write(content)
 
-        print(
-            "Info -> generate {}.mdp for {} application successfully".format(
+        logging.info(
+            "generate {}.mdp for {} application successfully".format(
                 outmdp, application
             )
         )
@@ -100,21 +102,20 @@ def mdp_call_functions(arguments: list = None):
     )
 
     if len(arguments) < 2:
-        print("Error -> no input parameters, -h or --help for help messages")
-        exit()
+        logging.error("no input parameters, -h or --help for help messages")
+        sys.exit()
     method = arguments[1]
-    # print(method)
     if method in ["-h", "--help"]:
         parser.parse_args(arguments[1:])
-        exit()
+        sys.exit()
     args = parser.parse_args(arguments[2:])
     if method == "mdp_gen":
         mdp_gen(args.output, args.application)
     else:
-        print("Error -> unknown method {}".format(method))
-        exit()
+        logging.error("unknown method {}".format(method))
+        sys.exit()
 
-    print("Info -> good day !")
+    logging.info("May you good day !")
 
 
 def main():

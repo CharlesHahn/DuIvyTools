@@ -21,6 +21,11 @@ nstxout-compressed  = 5000      ; write .xtc trajectory every 10.0 ps
 compressed-x-grps   = System
 ; energygrps          = Protein Ligand     ; comment it for GPU calculation
 
+; remove rot+trans during running
+; -----------------------------------------------------------------------------
+; comm-mode   = Angular
+; comm-grps   = Protein
+
 ; Bond parameters
 ;------------------------------------------------------------------------------
 continuation    = yes           ; first dynamics run
