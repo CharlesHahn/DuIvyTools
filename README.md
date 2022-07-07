@@ -71,13 +71,9 @@ For MDP files:
 
 ## still working 
 
-- [x] legends of xpm_show
 - [ ] latex or format parser for matplotlib
-- [ ] hbond map and occupancy calculation
-- [ ] deal with hbond information
 - [ ] python test
 - [ ] make the calculation of moving averages faster
 - [ ] better output (color, error ... )
-- [ ] log 
 - [ ] build a GUI maybe
 
