@@ -15,7 +15,7 @@ import sys
 import argparse
 import logging
 
-logging.basicConfig(level=logging.INFO, format='%(levelname)s -> %(message)s')
+logging.basicConfig(level=logging.INFO, format="%(levelname)s -> %(message)s")
 logger = logging.getLogger(__name__)
 
 
@@ -37,9 +37,13 @@ class MDP(object):
             "blank": os.path.join("data", "blank.mdp"),
         }
 
-        logging.info("MDP module could init some mdp templates for you. Specify application (-a) to generate a mdp file. ")
+        logging.info(
+            "MDP module could init some mdp templates for you. Specify application (-a) to generate a mdp file. "
+        )
         logging.info("Applications to choose: ions, em, nvt, npt, md, blank")
-        logging.warning("the generated mdp file may be not appropriate for your system, CHECK IT YOURSELF !")
+        logging.warning(
+            "the generated mdp file may be not appropriate for your system, CHECK IT YOURSELF !"
+        )
 
     def gen_mdp(self, outmdp: str, application: str) -> None:
         """gen mdp template by specified application"""

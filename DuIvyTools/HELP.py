@@ -14,7 +14,7 @@ This file is provided to you by GPLv2 license.
 import sys
 import logging
 
-logging.basicConfig(level=logging.INFO, format='%(levelname)s -> %(message)s')
+logging.basicConfig(level=logging.INFO, format="%(levelname)s -> %(message)s")
 logger = logging.getLogger(__name__)
 
 
@@ -669,7 +669,9 @@ pipi_dist_ang: to calculate the distance and angles between two rings or between
         if method in self.help_infos.keys():
             print(self.help_infos[method])
         else:
-            logging.error("unknown command {}, type `dit help` for more infos.".format(method))
+            logging.error(
+                "unknown command {}, type `dit help` for more infos.".format(method)
+            )
             sys.exit()
 
 
@@ -736,7 +738,11 @@ Type `dit help` for more informations.
         if arguments[1] in ["help", "-h", "--help"]:
             print(description)
         else:
-            logging.error("unknown method {}, type `dit help` for more infos.".format(arguments[1]))
+            logging.error(
+                "unknown method {}, type `dit help` for more infos.".format(
+                    arguments[1]
+                )
+            )
             sys.exit()
     else:
         if arguments[1] != "help":

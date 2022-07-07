@@ -17,7 +17,7 @@ import math
 import argparse
 import logging
 
-logging.basicConfig(level=logging.INFO, format='%(levelname)s -> %(message)s')
+logging.basicConfig(level=logging.INFO, format="%(levelname)s -> %(message)s")
 logger = logging.getLogger(__name__)
 
 
@@ -431,7 +431,11 @@ def dealTwoRings(
     logging.info("there is ", len(time), " frames in your gro file")
     if len(time) != len(distance) or len(time) != len(angles):
         logging.error("length of time, dist, ang are not equal")
-        logging.info("time: {}; distance: {}; angles: {}".format(len(time), len(distance), len(angles)))
+        logging.info(
+            "time: {}; distance: {}; angles: {}".format(
+                len(time), len(distance), len(angles)
+            )
+        )
         sys.exit()
     out_content = "# This file was created by DIT pipi_dist_ang\n"
     out_content += """@    title "Dist_Ang"\n"""
@@ -459,20 +463,23 @@ def dealTwoRings(
             ang30_60 += 1
         elif ang > 60:
             ang60_90 += 1
-    print("-"*79)
-    print(" =>  0 <= angle < 30 : {}/{} = {:>6.2%}".format(
+    print("-" * 79)
+    print(
+        " =>  0 <= angle < 30 : {}/{} = {:>6.2%}".format(
             ang0_30, len(time), ang0_30 * 1.0 / len(time)
         )
     )
-    print(" => 30 <= angle < 60 : {}/{} = {:>6.2%}".format(
+    print(
+        " => 30 <= angle < 60 : {}/{} = {:>6.2%}".format(
             ang30_60, len(time), ang30_60 * 1.0 / len(time)
         )
     )
-    print(" => 60 <= angle < 90 : {}/{} = {:>6.2%}".format(
+    print(
+        " => 60 <= angle < 90 : {}/{} = {:>6.2%}".format(
             ang60_90, len(time), ang60_90 * 1.0 / len(time)
         )
     )
-    print("-"*79)
+    print("-" * 79)
     ## calc the average distance
     logging.info("average distance : {:>10.4f} nm".format(sum(distance) / len(time)))
 
@@ -543,7 +550,7 @@ def dealRingVG(
             ang30_60 += 1
         elif ang > 60:
             ang60_90 += 1
-    print("-"*79)
+    print("-" * 79)
     print(
         " =>  0 <= angle < 30 : {}/{} = {:>6.2%}".format(
             ang0_30, len(time), ang0_30 * 1.0 / len(time)
@@ -559,7 +566,7 @@ def dealRingVG(
             ang60_90, len(time), ang60_90 * 1.0 / len(time)
         )
     )
-    print("-"*79)
+    print("-" * 79)
 
 
 def dealRingVec(
@@ -628,7 +635,7 @@ def dealRingVec(
             ang30_60 += 1
         elif ang > 60:
             ang60_90 += 1
-    print("-"*79)
+    print("-" * 79)
     print(
         " =>  0 <= angle < 30 : {}/{} = {:>6.2%}".format(
             ang0_30, len(time), ang0_30 * 1.0 / len(time)
@@ -644,7 +651,7 @@ def dealRingVec(
             ang60_90, len(time), ang60_90 * 1.0 / len(time)
         )
     )
-    print("-"*79)
+    print("-" * 79)
 
 
 def pipi_dist_ang(
@@ -718,7 +725,10 @@ def pipi_dist_ang_call_functions(arguments: list = []):
         "-dt", default=1, type=int, help="set the time interval, default=1"
     )
     parser.add_argument(
-        "-o", "--output", default="output.xvg", help="the results data, default output.xvg"
+        "-o",
+        "--output",
+        default="output.xvg",
+        help="the results data, default output.xvg",
     )
     parser.add_argument(
         "-vg", action="store_true", help="whether to get vector by index group"

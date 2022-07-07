@@ -17,8 +17,9 @@ from DuIvyTools.HELP import help_call_functions
 from DuIvyTools.PipiDistAng import pipi_dist_ang_call_functions
 from DuIvyTools.FindCenter import find_center_call_functions
 
-logging.basicConfig(level=logging.INFO, format='%(levelname)s -> %(message)s')
+logging.basicConfig(level=logging.INFO, format="%(levelname)s -> %(message)s")
 logger = logging.getLogger(__name__)
+
 
 def main():
     arguments = [argv for argv in sys.argv]

@@ -15,7 +15,7 @@ import sys
 import argparse
 import logging
 
-logging.basicConfig(level=logging.INFO, format='%(levelname)s -> %(message)s')
+logging.basicConfig(level=logging.INFO, format="%(levelname)s -> %(message)s")
 logger = logging.getLogger(__name__)
 
 
@@ -55,8 +55,11 @@ def find_center(gro_file: str = "") -> None:
     center_x = center_x / atom_count
     center_y = center_y / atom_count
     center_z = center_z / atom_count
-    logging.info("the center point is ({:.3f}, {:.3f}, {:.3f})".format(
-            center_x, center_y, center_z))
+    logging.info(
+        "the center point is ({:.3f}, {:.3f}, {:.3f})".format(
+            center_x, center_y, center_z
+        )
+    )
 
     ## find the closed atom
     atom_info = ""
@@ -75,7 +78,9 @@ def find_center(gro_file: str = "") -> None:
         logging.info("no atom detected in 5 nm sphere of center point. ")
         sys.exit()
     else:
-        logging.info("Info -> distance from nearest atom to center: {:.3f} nm".format(dist))
+        logging.info(
+            "Info -> distance from nearest atom to center: {:.3f} nm".format(dist)
+        )
         print("--------------------------------------------")
         print("ResID Name Atom  Num       X       Y       Z")
         print("--------------------------------------------")

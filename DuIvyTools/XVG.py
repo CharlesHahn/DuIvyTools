@@ -27,7 +27,7 @@ from matplotlib import colors
 import matplotlib.colors as mplcolors
 import logging
 
-logging.basicConfig(level=logging.INFO, format='%(levelname)s -> %(message)s')
+logging.basicConfig(level=logging.INFO, format="%(levelname)s -> %(message)s")
 logger = logging.getLogger(__name__)
 
 
@@ -157,9 +157,7 @@ class XVG(object):
         for c in range(self.xvg_column_num):
             if len(self.xvg_columns[c]) != self.xvg_row_num:
                 logging.error(
-                    "length of column {} if not equal to count of rows".format(
-                        c
-                    )
+                    "length of column {} if not equal to count of rows".format(c)
                 )
                 sys.exit()
         if self.xvg_column_num == 0 or self.xvg_row_num == 0:
@@ -446,7 +444,11 @@ class XVG(object):
         if not set(column_select).issubset(
             set([i for i in range(len(self.data_columns))])
         ):
-            logging.error("some column index you specified may not in range of [0:{}], check it".format(len(self.data_columns)))
+            logging.error(
+                "some column index you specified may not in range of [0:{}], check it".format(
+                    len(self.data_columns)
+                )
+            )
             sys.exit()
 
         if legend_list == None:
@@ -463,9 +465,7 @@ class XVG(object):
             start = 0
         if start < 0 or start >= self.xvg_row_num:
             logging.error(
-                "start of row index not in proper range [0:{}]".format(
-                    self.xvg_row_num
-                )
+                "start of row index not in proper range [0:{}]".format(self.xvg_row_num)
             )
             sys.exit()
         if end != None and (end <= start or end >= self.xvg_row_num):
@@ -674,7 +674,9 @@ def energy_compute(xvgfiles: list = [], outfile: str = None):
 
     ## check parameters
     if len(xvgfiles) != 3:
-        logging.error("wrong number of input xvg files, must be prolig.xvg, pro.xvg and lig.xvg by order")
+        logging.error(
+            "wrong number of input xvg files, must be prolig.xvg, pro.xvg and lig.xvg by order"
+        )
         sys.exit()
     prolig_xvg = xvgfiles[0]
     pro_xvg = xvgfiles[1]
@@ -826,7 +828,9 @@ def xvg_ramachandran(xvgfile: str = "", outpng: str = "", noshow: bool = False) 
         or len(xvg.data_columns) != 2
         or (xvg.data_heads[0] != "Phi" or xvg.data_heads[1] != "Psi")
     ):
-        logging.error("Check your input xvg file ! It has to contains 3 columns: Phi, Psi, AA name. And x-label should be Phi and Y-label should be Psi")
+        logging.error(
+            "Check your input xvg file ! It has to contains 3 columns: Phi, Psi, AA name. And x-label should be Phi and Y-label should be Psi"
+        )
         sys.exit()
 
     ## draw background
@@ -899,12 +903,14 @@ def xvg_ramachandran(xvgfile: str = "", outpng: str = "", noshow: bool = False) 
             normals[AA_type]["psi"].append(psi)
 
     ## print some infos
-    logging.info("ramachandran method can draw four types of figure: "
-    + "\n        Pre-PRO: the dihedrals of amino acids before prolines"
-    + "\n        PRO: the dihedrals of prolines"
-    + "\n        GLY: the dihedrals of glynine"
-    + "\n        General: the dihedrals of other amino acids")
-    print("\n" + "-"*79)
+    logging.info(
+        "ramachandran method can draw four types of figure: "
+        + "\n        Pre-PRO: the dihedrals of amino acids before prolines"
+        + "\n        PRO: the dihedrals of prolines"
+        + "\n        GLY: the dihedrals of glynine"
+        + "\n        General: the dihedrals of other amino acids"
+    )
+    print("\n" + "-" * 79)
     print("{:<10} {:>20} {:>20}".format("", "Normal Dihedrals", "Outlier Dihedrals"))
     for key in ["General", "GLY", "Pre-PRO", "PRO"]:
         print(
@@ -912,7 +918,7 @@ def xvg_ramachandran(xvgfile: str = "", outpng: str = "", noshow: bool = False) 
                 key, len(normals[key]["phi"]), len(outliers[key]["phi"])
             )
         )
-    print("-"*79)
+    print("-" * 79)
 
     ## draw ramachandran plot
     for key in ["General", "GLY", "Pre-PRO", "PRO"]:
@@ -1336,7 +1342,7 @@ def xvg_calc_ave(file: str = None, start: int = None, end: int = None) -> None:
         sys.exit()
     xvg = XVG(file)
     heads, averages, stds = xvg.calc_average(start, end)
-    print("\n" + "-"*79)
+    print("\n" + "-" * 79)
     print("".join(["{:>16}".format(item) for item in [" "] + heads]))
     print(
         "".join(

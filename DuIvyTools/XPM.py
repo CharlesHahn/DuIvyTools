@@ -29,7 +29,7 @@ from matplotlib import pylab as pylab
 from matplotlib import patches
 import logging
 
-logging.basicConfig(level=logging.INFO, format='%(levelname)s -> %(message)s')
+logging.basicConfig(level=logging.INFO, format="%(levelname)s -> %(message)s")
 logger = logging.getLogger(__name__)
 
 myparams = {
@@ -233,7 +233,8 @@ class XPM(object):
             sys.exit()
 
         if len(self.xpm_datalines) != self.xpm_height:
-            logging.error("rows of data ({}) is not equal to xpm height ({}), check it !".format(
+            logging.error(
+                "rows of data ({}) is not equal to xpm height ({}), check it !".format(
                     len(self.xpm_datalines), self.xpm_height
                 )
             )
@@ -442,9 +443,8 @@ class XPM(object):
         with open(outgpl, "w") as fo:
             fo.write(gpl_lines + "\n")
 
-        logging.info("write gnuplot scripts {} from {} successfully".format(
-                outgpl, self.xpmfile
-            )
+        logging.info(
+            "write gnuplot scripts {} from {} successfully".format(outgpl, self.xpmfile)
         )
 
     def draw_origin(
@@ -477,14 +477,18 @@ class XPM(object):
                 img.append(rgb_line)
 
             plt.imshow(img, aspect="auto")
-            
+
             if self.xpm_type != "Continuous":
                 legend_patches = []
                 for ind, note in enumerate(self.notes):
                     leg_patch = patches.Patch(color=self.colors[ind], label=note)
                     legend_patches.append(leg_patch)
-                plt.legend(handles=legend_patches, bbox_to_anchor=(1.02,  1.00), 
-                        loc="upper left", borderaxespad=0)
+                plt.legend(
+                    handles=legend_patches,
+                    bbox_to_anchor=(1.02, 1.00),
+                    loc="upper left",
+                    borderaxespad=0,
+                )
                 plt.tight_layout()
 
         if IP == True:

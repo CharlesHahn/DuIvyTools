@@ -15,7 +15,7 @@ import sys
 import argparse
 import logging
 
-logging.basicConfig(level=logging.INFO, format='%(levelname)s -> %(message)s')
+logging.basicConfig(level=logging.INFO, format="%(levelname)s -> %(message)s")
 logger = logging.getLogger(__name__)
 
 
@@ -76,7 +76,9 @@ class NDX(object):
                 elif len(self.group_name_list) == len(self.group_index_list):
                     self.group_index_list[-1] += [int(i) for i in line.split()]
                 else:
-                    logging.error("check your index file, one group name should be followed by some index number")
+                    logging.error(
+                        "check your index file, one group name should be followed by some index number"
+                    )
                     sys.exit()
             else:
                 logging.error("a weired line appears at line {}".format(line_id))
@@ -87,7 +89,8 @@ class NDX(object):
             logging.error("length of group name and group index are not equal")
             sys.exit()
 
-        logging.info("read {} groups from {} successfully".format(
+        logging.info(
+            "read {} groups from {} successfully".format(
                 self.group_number, self.ndx_filename
             )
         )
@@ -139,15 +142,15 @@ class NDX(object):
             ):
                 out_index_list.append(index)
                 if self.group_name_list[index_id] in out_name_list:
-                    logging.warning("two groups with the same name ({}) but index numbers are different? check it".format(
+                    logging.warning(
+                        "two groups with the same name ({}) but index numbers are different? check it".format(
                             self.group_name_list[index_id]
                         )
                     )
                 out_name_list.append(self.group_name_list[index_id])
             else:
-                logging.info("removed the group {}".format(
-                        self.group_name_list[index_id]
-                    )
+                logging.info(
+                    "removed the group {}".format(self.group_name_list[index_id])
                 )
 
         self.group_name_list = out_name_list
@@ -266,7 +269,8 @@ class NDX(object):
             logging.error("start should > 0 and end should > start")
             sys.exit()
         if groupname in self.group_name_list:
-            logging.warning("already a group {} in {}, add to the end".format(
+            logging.warning(
+                "already a group {} in {}, add to the end".format(
                     groupname, self.ndx_filename
                 )
             )
