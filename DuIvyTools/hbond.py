@@ -19,10 +19,10 @@ import os
 import sys
 import logging
 import argparse
-from XPM import XPM
 import matplotlib.pyplot as plt
 from matplotlib import pylab as pylab
 import matplotlib.colors as mcolors
+from DuIvyTools.XPM import XPM
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s -> %(message)s")
 logger = logging.getLogger(__name__)
