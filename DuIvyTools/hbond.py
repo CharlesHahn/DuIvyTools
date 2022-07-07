@@ -10,11 +10,6 @@ This module contains:
 This file is provided to you by GPLv2 license."""
 
 
-################################
-#### TODO:
-#### 2. user defination of hbond name format
-################################
-
 import os
 import sys
 import logging
@@ -61,6 +56,7 @@ def hbond(
     noshow: bool = False,
     figout: str = None,
     csv: str = None,
+    hnf: str = None,
 ) -> None:
     """
     hbond: a function to figure out hbond information, occupancy and occupancy
@@ -110,6 +106,21 @@ def hbond(
         sys.exit()
 
     ## read the gro file and parse atom names
+    if hnf == None:
+        hnf = "d_resname(d_resnum)@d_atomname(d_atomnum)->h_atomname(" + \
+        "h_atomnum)...a_resname(a_resnum)@a_atomname(a_atomnum)"
+    features = ["d_resname", "d_resnum", "d_atomname", "d_atomnum", 
+                "h_resname", "h_resnum", "h_atomname", "h_atomnum", 
+                "a_resname", "a_resnum", "a_atomname", "a_atomnum"]
+    for feature in features:
+        if feature in hnf:
+            break
+    else:
+        logging.warning("no key feature detected in your specified hbond name " +
+                      "format, use the default format")
+        hnf = "d_resname(d_resnum)@d_atomname(d_atomnum)->h_atomname(" + \
+        "h_atomnum)...a_resname(a_resnum)@a_atomname(a_atomnum)"
+
     donor_names, hydrogen_names, acceptor_names = [], [], []
     with open(grofile, "r") as fo:
         lines = fo.readlines()[2:-1]
@@ -119,24 +130,27 @@ def hbond(
         res_name = line[5:10].strip()
         atom_name = line[10:15].strip()
         atom_num = line[15:20].strip()
-        name = f"{res_name}({res_num})@{atom_name}({atom_num})"
-        donor_names.append(name)
+        # name = f"{res_name}({res_num})@{atom_name}({atom_num})"
+        # donor_names.append(name)
+        donor_names.append([res_name, res_num, atom_name, atom_num])
     for ind in hydrogen_ndxs:
         line = lines[ind - 1]
         res_num = line[:5].strip()
         res_name = line[5:10].strip()
         atom_name = line[10:15].strip()
         atom_num = line[15:20].strip()
-        name = f"{res_name}({res_num})@{atom_name}({atom_num})"
-        hydrogen_names.append(name)
+        # name = f"{res_name}({res_num})@{atom_name}({atom_num})"
+        # hydrogen_names.append(name)
+        hydrogen_names.append([res_name, res_num, atom_name, atom_num])
     for ind in acceptor_ndxs:
         line = lines[ind - 1]
         res_num = line[:5].strip()
         res_name = line[5:10].strip()
         atom_name = line[10:15].strip()
         atom_num = line[15:20].strip()
-        name = f"{res_name}({res_num})@{atom_name}({atom_num})"
-        acceptor_names.append(name)
+        # name = f"{res_name}({res_num})@{atom_name}({atom_num})"
+        # acceptor_names.append(name)
+        acceptor_names.append([res_name, res_num, atom_name, atom_num])
     if (
         len(donor_names)
         != len(hydrogen_names)
@@ -145,10 +159,24 @@ def hbond(
     ):
         logging.error("wrong length in donor, hydrogen, acceptor names")
         sys.exit()
-    hbond_names = [
-        f'{donor_names[i]}->{hydrogen_names[i].split("@")[1]}...{acceptor_names[i]}'
-        for i in range(len(donor_names))
-    ]
+    # hbond_names = [
+    #     f'{donor_names[i]}->{hydrogen_names[i].split("@")[1]}...{acceptor_names[i]}'
+    #     for i in range(len(donor_names))]
+    hbond_names = []
+    for i in range(len(donor_names)):
+        hbond_name = hnf.replace("d_resname", donor_names[i][0])
+        hbond_name = hbond_name.replace("d_resnum", donor_names[i][1])
+        hbond_name = hbond_name.replace("d_atomname", donor_names[i][2])
+        hbond_name = hbond_name.replace("d_atomnum", donor_names[i][3])
+        hbond_name = hbond_name.replace("h_resname", hydrogen_names[i][0])
+        hbond_name = hbond_name.replace("h_resnum", hydrogen_names[i][1])
+        hbond_name = hbond_name.replace("h_atomname", hydrogen_names[i][2])
+        hbond_name = hbond_name.replace("h_atomnum", hydrogen_names[i][3])
+        hbond_name = hbond_name.replace("a_resname", acceptor_names[i][0])
+        hbond_name = hbond_name.replace("a_resnum", acceptor_names[i][1])
+        hbond_name = hbond_name.replace("a_atomname", acceptor_names[i][2])
+        hbond_name = hbond_name.replace("a_atomnum", acceptor_names[i][3])
+        hbond_names.append(hbond_name)
 
     ## parse xpmfile
     xpm = XPM(xpmfile)
@@ -261,6 +289,16 @@ def hbond_call_functions(arguments: list = []):
         action="store_true",
         help="whether not to show picture, useful on computer without gui",
     )
+    parser.add_argument("-hnf", "--hbond_name_format", 
+            help="define the hbond name format by user! Each atom has four" +
+            " features: resname, resnum, atomname, atomnum. Distinguish " + 
+            "donor, hydrogen, acceptor by adding one prefix to each feature," +
+            " like: d_resname, a_resnum, h_atomname. \nSo you may able to " + 
+            "define hbond name style by: 'd_resname(d_resnum)@d_atomname(d_" + 
+            "atomnum)->h_atomname(h_atomnum)...a_resname(a_resnum)@a_atomn" + 
+            "ame(a_atomnum)' which is the default style,  or also you could" + 
+            " specify 'd_atomname@h_atomname...a_atomname' or some format " + 
+            "you would like. ")
 
     if len(arguments) < 2:
         logging.error("no input parameters, -h or --help for help messages")
@@ -290,7 +328,8 @@ def hbond_call_functions(arguments: list = []):
         noshow = args.noshow
         figout = args.output
         csv = args.csv
-        hbond(xpmfile, ndxfile, grofile, select, noshow, figout, csv)
+        hnf = args.hbond_name_format
+        hbond(xpmfile, ndxfile, grofile, select, noshow, figout, csv, hnf)
     else:
         logging.error("unknown method {}".format(method))
         exit()
