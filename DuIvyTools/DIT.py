@@ -16,7 +16,8 @@ from DuIvyTools.MDP import mdp_call_functions
 from DuIvyTools.HELP import help_call_functions
 from DuIvyTools.PipiDistAng import pipi_dist_ang_call_functions
 from DuIvyTools.FindCenter import find_center_call_functions
-from DuIvyTools.Hbond import hbond_call_functions
+from DuIvyTools.HydrogenBond import hbond_call_functions
+from DuIvyTools.MolMap import mol_map_call_functions
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s -> %(message)s")
 logger = logging.getLogger(__name__)
@@ -78,6 +79,8 @@ written by CharlesHahn (https://github.com/CharlesHahn/DuIvyTools).
             find_center_call_functions(arguments)
         elif method == "hbond":
             hbond_call_functions(arguments)
+        elif method == "mol_map":
+            mol_map_call_functions(arguments)
         else:
             logging.error("unknown command {}".format(method))
 
