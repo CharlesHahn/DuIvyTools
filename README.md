@@ -62,6 +62,8 @@ For NDX files:
     ndx_add, ndx_combine, ndx_rename
 For MDP files:
     mdp_gen
+Others:
+    find_center, pipi_dist_ang, hbond, mol_map
 ```
 
 
