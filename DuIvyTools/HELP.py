@@ -774,7 +774,7 @@ All commands are shown below:
     MDP:
         mdp_gen
     Others:
-        find_center, pipi_dist_ang, hbond
+        find_center, pipi_dist_ang, hbond, mol_map
 
 You can type `dit help <command>` or `dit <command> -h` for more help messages 
 about each command, like: `dit help xvg_show` or `dit xvg_show -h`. 
