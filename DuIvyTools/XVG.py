@@ -252,7 +252,7 @@ class XVG(object):
             high = [np.nan for _ in range(windowsize)]
             low = [np.nan for _ in range(windowsize)]
             for i in range(windowsize, self.xvg_row_num):
-                window_data = column[i - windowsize : i]
+                window_data = np.array(column[i - windowsize : i])
                 ave = np.mean(window_data)
                 std = np.std(window_data)
                 interval = stats.norm.interval(confidence, ave, std)

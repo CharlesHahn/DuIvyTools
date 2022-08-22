@@ -75,7 +75,6 @@ Others:
 
 - [ ] latex or format parser for matplotlib
 - [ ] python test
-- [ ] make the calculation of moving averages faster
 - [ ] better output (color, error ... )
 - [ ] build a GUI maybe
 
