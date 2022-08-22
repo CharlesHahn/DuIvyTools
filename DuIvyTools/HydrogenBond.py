@@ -126,7 +126,7 @@ def hbond(
         "a_atomnum",
     ]
     for feature in features:
-        if feature in hnf:
+        if feature in hnf or hnf == "number":
             break
     else:
         logging.warning(
@@ -250,7 +250,7 @@ def hbond(
     plt.title(xpm.xpm_title)
     plt.xlabel(xpm.xpm_xlabel)
     plt.ylabel(xpm.xpm_ylabel)
-    if xpm.xpm_height <= 10:
+    if xpm.xpm_height <= 20 and hnf != "number":
         plt.yticks([i for i in range(len(select))], hbond_names)
     plt.tight_layout()
     if figout != None:
@@ -317,7 +317,7 @@ def hbond_call_functions(arguments: list = []):
         + "atomnum)->h_atomname(h_atomnum)...a_resname(a_resnum)@a_atomn"
         + "ame(a_atomnum)' which is the default style,  or also you could"
         + " specify 'd_atomname@h_atomname...a_atomname' or some format "
-        + "you would like. ",
+        + "you would like. \nOr you could just set the hnf to be 'number'",
     )
 
     if len(arguments) < 2:
