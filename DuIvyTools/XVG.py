@@ -619,7 +619,7 @@ def xvg_combine(
                 sys.exit()
             combined_data_heads.append(xvgs[id].data_heads[index])
             combined_data_columns.append(xvgs[id].data_columns[index])
-    combined_title = " And ".join(list(set([xvg.xvg_title for xvg in xvgs])))
+    combined_title = " And ".join([xvg.xvg_title for xvg in xvgs])
     combined_xlabel = combined_data_heads[0]
 
     ## write combined results
