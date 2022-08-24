@@ -124,7 +124,7 @@ class NDX(object):
                 sentence, count = "", 0
                 for index in self.group_index_list[i]:
                     count += 1
-                    sentence += "{:>4d} ".format(index)
+                    sentence += "{:>5d} ".format(index)
                     if count == 15:
                         sentence += "\n"
                         count = 0
@@ -153,6 +153,7 @@ class NDX(object):
                     "removed the group {}".format(self.group_name_list[index_id])
                 )
 
+        self.group_number = len(out_name_list)
         self.group_name_list = out_name_list
         self.group_index_list = out_index_list
         self.write_ndx(outndx)
@@ -187,6 +188,7 @@ class NDX(object):
                     logging.error("unknown response {}".format(resp))
                     sys.exit()
 
+        self.group_number = len(out_name_list)
         self.group_name_list = out_name_list
         self.group_index_list = out_index_list
         self.write_ndx(outndx)
@@ -223,6 +225,7 @@ class NDX(object):
                     logging.error("unknown response {}".format(resp))
                     sys.exit()
 
+        self.group_number = len(out_name_list)
         self.group_name_list = out_name_list
         self.group_index_list = out_index_list
         self.write_ndx(outndx)
@@ -239,20 +242,24 @@ class NDX(object):
             if name in group_list:
                 if len(out_name_list) == 0:
                     out_name_list.append(name)
-                    out_index_list.append(self.group_index_list[index_id])
+                    out_index_list.append(self.group_index_list[index_id][:])
                 elif len(out_name_list) == 1:
+                    if name in out_name_list[0]:
+                        logging.info("Ignored the repeat group {}".format(name))
+                        continue
                     out_name_list[0] += "_" + name
                     out_index_list[0] += self.group_index_list[index_id]
                 else:
                     logging.error("shit happens when combination")
                     sys.exit()
+        self.group_number += 1
         self.group_name_list += [groupname]
         self.group_index_list += out_index_list
         logging.info("combined {} into {}".format(out_name_list[0], groupname))
         self.write_ndx(outndx)
 
     def add_group(
-        self, outndx: str, groupname: str, start: int, end: int, step: int
+        self, outndx: str, groupname: str, start: int, end: int, step: int=None
     ) -> None:
         """add one index group by parameters specified"""
 
@@ -275,6 +282,7 @@ class NDX(object):
                 )
             )
         out_index = [i for i in range(start, end, step)]
+        self.group_number += 1
         self.group_name_list.append(groupname)
         self.group_index_list.append(out_index)
         logging.info("add group {} successfully".format(groupname))
