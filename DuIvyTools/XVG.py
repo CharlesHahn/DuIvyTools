@@ -1307,6 +1307,7 @@ def xvg_box_compare(
         sys.exit()
 
     ## draw bar comparison
+    plt.clf()
     XVGS = [XVG(xvg) for xvg in xvgfiles]
     box_data, positions_list = [], []
     width = 80 // len(xvgfiles) * 0.01

@@ -111,7 +111,17 @@ def test_xvg_bar_compare():
 
 
 def test_xvg_box_compare():
-    pass
+    XVG.xvg_box_compare(["xvg_test/bar_0_0.xvg", "xvg_test/bar_0_1.xvg", "xvg_test/bar_1_0.xvg"], [1,2], ["Hbond", "Pairs"], ylabel="number", title="Box Comparison", noshow=True, outpng="xvg_test/test1.png")
+    assert filecmp.cmp("xvg_test/xvg_box.png", "xvg_test/test1.png")
+    assert compare_images("xvg_test/xvg_box.png", "xvg_test/test1.png", 0.001) is  None
+
+    XVG.xvg_box_compare(["xvg_test/bar_0_0.xvg", "xvg_test/bar_0_1.xvg", "xvg_test/bar_1_0.xvg"], [1,2], ["Hbond", "Pairs"], start=3000, end=4001, ylabel="number", title="Box Comparison", noshow=True, outpng="xvg_test/test2.png")
+    assert filecmp.cmp("xvg_test/xvg_box_se.png", "xvg_test/test2.png")
+    assert compare_images("xvg_test/xvg_box_se.png", "xvg_test/test2.png", 0.001) is  None
+
+    os.remove("xvg_test/test1.png")
+    os.remove("xvg_test/test2.png")
+
 
 def test_xvg_calc_ave():
     pass
