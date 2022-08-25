@@ -67,15 +67,48 @@ PRO                           0                    0
     assert compare_images("xvg_test/rama_Gly.png", "xvg_test/test_Gly.png", 0.001) is None
     os.remove("xvg_test/test_General.png")
     os.remove("xvg_test/test_Gly.png")
+    if "test_Pre-PRO.png" in os.listdir("xvg_test"):
+        os.remove("xvg_test/test_Pre-PRO.png")
+    if "test_PRO.png" in os.listdir("xvg_test"):
+        os.remove("xvg_test/test_PRO.png")
     out, err = capfd.readouterr()
     assert out == output
 
 
 def test_xvg_compare():
-    pass
+    XVG.xvg_compare(["xvg_test/gyrate.xvg", "xvg_test/rmsd.xvg"], [[1,2], [1]], ["Rg(nm)", "RgX(nm)", "RMSD(nm)"], xlabel="Time(ps)", ylabel="", title="Comparison", noshow=True, outpng="xvg_test/test1.png")
+    assert filecmp.cmp("xvg_test/xvg_compare.png", "xvg_test/test1.png")
+    assert compare_images("xvg_test/xvg_compare.png", "xvg_test/test1.png", 0.001) is None
+
+    XVG.xvg_compare(["xvg_test/gyrate.xvg", "xvg_test/rmsd.xvg"], [[1,2], [1]], ["Rg(nm)", "RgX(nm)", "RMSD(nm)"], xlabel="Time(ps)", ylabel="", title="Comparison", noshow=True, outpng="xvg_test/test2.png", showMV=True, windowsize=50, confidence=0.95)
+    assert filecmp.cmp("xvg_test/xvg_compare_mv.png", "xvg_test/test2.png")
+    assert compare_images("xvg_test/xvg_compare_mv.png", "xvg_test/test2.png", 0.001) is None
+
+    XVG.xvg_compare(["xvg_test/gyrate.xvg", "xvg_test/rmsd.xvg"], [[1,2], [1]], ["Rg(nm)", "RgX(nm)", "RMSD(nm)"], xlabel="Time(ps)", ylabel="", title="Comparison", noshow=True, outpng="xvg_test/test3.png", start=1000, end=3001)
+    assert filecmp.cmp("xvg_test/xvg_compare_se.png", "xvg_test/test3.png")
+    assert compare_images("xvg_test/xvg_compare_se.png", "xvg_test/test3.png", 0.001) is None
+
+    os.remove("xvg_test/test1.png")
+    os.remove("xvg_test/test2.png")
+    os.remove("xvg_test/test3.png")
+
 
 def test_xvg_bar_compare():
-    pass
+    XVG.xvg_bar_compare([["xvg_test/bar_0_0.xvg", "xvg_test/bar_0_1.xvg"],["xvg_test/bar_1_0.xvg", "xvg_test/bar_1_1.xvg"]], [1,2], ["bar_0", "bar_1"], ["Hbond", "Pairs"], output="xvg_test/test1.png", ylabel="number", title="hbond number comparision", noshow=True, ave2csv="xvg_test/test1.csv" )
+    assert filecmp.cmp("xvg_test/bar_ave.csv", "xvg_test/test1.csv")
+    assert filecmp.cmp("xvg_test/ave_bar.png", "xvg_test/test1.png")
+    assert compare_images("xvg_test/ave_bar.png", "xvg_test/test1.png", 0.001) is  None
+
+    XVG.xvg_bar_compare([["xvg_test/bar_0_0.xvg", "xvg_test/bar_0_1.xvg"],["xvg_test/bar_1_0.xvg", "xvg_test/bar_1_1.xvg"]], [1,2], ["bar_0", "bar_1"], ["Hbond", "Pairs"], output="xvg_test/test2.png", ylabel="number", title="hbond number comparision", noshow=True, ave2csv="xvg_test/test2.csv", start=3000, end=4001)
+    assert filecmp.cmp("xvg_test/bar_ave_se.csv", "xvg_test/test2.csv")
+    assert filecmp.cmp("xvg_test/ave_bar_se.png", "xvg_test/test2.png")
+    assert compare_images("xvg_test/ave_bar_se.png", "xvg_test/test2.png", 0.001) is None
+
+    os.remove("xvg_test/test1.png")
+    os.remove("xvg_test/test1.csv")
+    os.remove("xvg_test/test2.png")
+    os.remove("xvg_test/test2.csv")
+
 
 def test_xvg_box_compare():
     pass

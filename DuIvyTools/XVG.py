@@ -1031,6 +1031,7 @@ def xvg_compare(
         sys.exit()
 
     ## draw comparison
+    plt.clf()
     XVGS = [XVG(xvg) for xvg in xvgfiles]
     legend_count, xmin, xmax = 0, None, None
     for id, column_indexs in enumerate(column_select):
@@ -1222,6 +1223,7 @@ def xvg_bar_compare(
                 fo.write("\n")
 
     ## draw bar figure
+    plt.clf()
     width = 80 // len(xvgfiles) * 0.01
     x_loc = [x - 0.4 + width / 2.0 for x in range(len(column_list))]
     for i in range(len(final_averages)):
