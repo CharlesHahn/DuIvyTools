@@ -123,23 +123,74 @@ def test_xvg_box_compare():
     os.remove("xvg_test/test2.png")
 
 
-def test_xvg_calc_ave():
-    pass
+def test_xvg_calc_ave(capfd):
+    XVG.xvg_calc_ave("xvg_test/gyrate.xvg")
+    output = """\n-------------------------------------------------------------------------------
+                       Time (ps)              Rg         Rg\\sX\\N         Rg\\sY\\N         Rg\\sZ\\N
+             ave      20000.0000          3.8014          2.7891          2.8660          3.5743
+             std      11549.8918          0.0391          0.2391          0.2224          0.1702\n"""
+    out, err = capfd.readouterr()
+    assert out == output
+
+    XVG.xvg_calc_ave("xvg_test/gyrate.xvg", start=2000)
+    output = """\n-------------------------------------------------------------------------------
+                       Time (ps)              Rg         Rg\\sX\\N         Rg\\sY\\N         Rg\\sZ\\N
+             ave      30000.0000          3.7775          2.8920          2.8154          3.4834
+             std       5776.3887          0.0286          0.1741          0.2253          0.1884\n"""
+    out, err = capfd.readouterr()
+    assert out == output
+
+    XVG.xvg_calc_ave("xvg_test/gyrate.xvg", start=2000, end=3001)
+    output = """\n-------------------------------------------------------------------------------
+                       Time (ps)              Rg         Rg\\sX\\N         Rg\\sY\\N         Rg\\sZ\\N
+             ave      30000.0000          3.7775          2.8920          2.8154          3.4834
+             std       5776.3887          0.0286          0.1741          0.2253          0.1884\n"""
+    output = """\n-------------------------------------------------------------------------------
+                       Time (ps)              Rg         Rg\\sX\\N         Rg\\sY\\N         Rg\\sZ\\N
+             ave      25000.0000          3.7809          2.8940          2.6588          3.6148
+             std       2889.6367          0.0265          0.2011          0.1824          0.0836\n"""
+    out, err = capfd.readouterr()
+    assert out == output
+
 
 def test_xvg_calc_mvave2csv():
-    pass
+    XVG.xvg_calc_mvave2csv("xvg_test/gyrate.xvg", "xvg_test/test1.csv")
+    assert filecmp.cmp("xvg_test/xvg_mvave1.csv", "xvg_test/test1.csv")
+    XVG.xvg_calc_mvave2csv("xvg_test/gyrate.xvg", "xvg_test/test2.csv", windowsize=100, confidence=0.95)
+    assert filecmp.cmp("xvg_test/xvg_mvave2.csv", "xvg_test/test2.csv")
+
+    os.remove("xvg_test/test1.csv")
+    os.remove("xvg_test/test2.csv")
+
 
 def test_xvg2csv():
-    pass
+    XVG.xvg2csv("xvg_test/gyrate.xvg", "xvg_test/test.csv")
+    assert filecmp.cmp("xvg_test/xvg2csv.csv", "xvg_test/test.csv") 
+    os.remove("xvg_test/test.csv")
+
 
 def test_xvg_show():
-    pass
+    XVG.xvg_show("xvg_test/rmsd.xvg", "xvg_test/test.png", noshow=True)
+    assert filecmp.cmp("xvg_test/xvg_show.png", "xvg_test/test.png")
+    assert compare_images("xvg_test/xvg_show.png", "xvg_test/test.png", 0.001) is None
+    os.remove("xvg_test/test.png") 
+
 
 def test_xvg_show_distribution():
-    pass
+    XVG.xvg_show_distribution("xvg_test/rmsd.xvg", 50, "xvg_test/test.png", True) 
+    assert filecmp.cmp("xvg_test/xvg_show_distribution.png", "xvg_test/test.png")
+    assert compare_images("xvg_test/xvg_show_distribution.png", "xvg_test/test.png", 0.001) is None
+    os.remove("xvg_test/test.png")
+
 
 def test_xvg_show_stacking():
-    pass
+    XVG.xvg_show_stacking("xvg_test/dssp_sc.xvg", [2,3,4,5,6], outpng="xvg_test/test.png", noshow=True)
+    assert filecmp.cmp("xvg_test/xvg_stack.png", "xvg_test/test.png")
+    assert compare_images("xvg_test/xvg_stack.png", "xvg_test/test.png", 0.001) is None
+    os.remove("xvg_test/test.png")
 
 def test_xvg_show_scatter():
-    pass
+    XVG.xvg_show_scatter("xvg_test/xvg_combined.xvg", x_index=1, y_index=2, outpng="xvg_test/test.png", noshow=True)
+    assert filecmp.cmp("xvg_test/xvg_scatter.png", "xvg_test/test.png")
+    assert compare_images("xvg_test/xvg_scatter.png", "xvg_test/test.png", 0.001) is None
+    os.remove("xvg_test/test.png")

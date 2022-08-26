@@ -310,6 +310,7 @@ class XVG(object):
             noshow: whether not to show figure in GUI.
         """
 
+        plt.clf()
         column_num = len(self.data_columns)
         x_min = np.min(self.data_columns[0])
         x_max = np.max(self.data_columns[0])
@@ -363,6 +364,7 @@ class XVG(object):
             noshow: whether not to show figure in GUI.
         """
 
+        plt.clf()
         column_num = len(self.data_columns)
         grid = plt.GridSpec(2, int((column_num + 1) / 2))
         for i in range(column_num):
@@ -477,6 +479,7 @@ class XVG(object):
             sys.exit()
 
         ## draw stacked plot
+        plt.clf()
         column_select.reverse()
         legend_list.reverse()
         ylim_max, ylim_min = 0, 0
@@ -544,6 +547,7 @@ class XVG(object):
                 y_index = (len(self.data_columns) - 1, 1)[len(self.data_columns) >= 2]
 
         ## draw scatter plot
+        plt.clf()
         plt.scatter(self.data_columns[x_index], self.data_columns[y_index])
         plt.ylabel(self.data_heads[y_index])
         plt.xlabel(self.data_heads[x_index])
