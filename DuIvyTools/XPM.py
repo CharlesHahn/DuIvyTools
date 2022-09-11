@@ -427,12 +427,21 @@ class XPM(object):
         gpl_lines += """set xlabel "{}"; set ylabel "{}";\n""".format(
             self.xpm_xlabel, self.xpm_ylabel
         )
-        gpl_lines += """plot [{:.2f}:{:.2f}] [{:.2f}:{:.2f}] $data u 1:2:3 w imag notit, \\\n""".format(
+        if self.xpm_type == "Continuous":
+            gpl_lines += """plot [{:.2f}:{:.2f}] [{:.2f}:{:.2f}] $data u 1:2:3 w imag notit, \\\n""".format(
             math.floor(min(self.xpm_xaxis) * 10.0) / 10.0 - 0.1,
             math.ceil(max(self.xpm_xaxis) * 10.0) / 10.0 + 0.1,
             math.floor(min(self.xpm_yaxis) * 10.0) / 10.0 - 0.1,
             math.ceil(max(self.xpm_yaxis) * 10.0) / 10.0 + 0.1,
-        )
+            )
+        else:
+            gpl_lines += """plot [{:.2f}:{:.2f}] [{:.2f}:{:.2f}] $data u 1:2:3 w imag notit, \\\n""".format(
+            math.floor(min(self.xpm_xaxis) * 10.0) / 10.0 - 0.1,
+            math.ceil(max(self.xpm_xaxis) * 10.0) / 10.0 + 0.1,
+            math.floor(min(self.xpm_yaxis) * 10.0) / 10.0 - 0.6,
+            math.ceil(max(self.xpm_yaxis) * 10.0) / 10.0 + 0.6,
+            )
+
         for index, note in enumerate(self.notes):
             gpl_lines += """{} w p ps 3 pt 5 lc rgb "{}" t"{}", \\\n""".format(
                 math.floor(min(self.xpm_yaxis)) - 1, self.colors[index], note
@@ -462,6 +471,7 @@ class XPM(object):
             sys.exit()
 
         # visualization of xpm
+        plt.clf()
         if IP == False:
             img = []
             for line in self.xpm_datalines:
@@ -475,8 +485,8 @@ class XPM(object):
                         ]
                     )
                 img.append(rgb_line)
-
-            plt.imshow(img, aspect="auto")
+            ## default of interpolation is nearest, set it to be none
+            plt.imshow(img, aspect="auto", interpolation='none')
 
             if self.xpm_type != "Continuous":
                 legend_patches = []
@@ -489,7 +499,6 @@ class XPM(object):
                     loc="upper left",
                     borderaxespad=0,
                 )
-                plt.tight_layout()
 
         if IP == True:
             if self.xpm_type != "Continuous":
@@ -568,6 +577,7 @@ class XPM(object):
         plt.xlabel(self.xpm_xlabel)
         plt.ylabel(self.xpm_ylabel)
         logging.info("Legend of this xpm figure -> {}".format(self.xpm_legend))
+        plt.tight_layout()
 
         if outputpng != None:
             plt.savefig(outputpng, dpi=300)
@@ -593,6 +603,7 @@ class XPM(object):
             sys.exit()
 
         ## convert xpm_data to img (values)
+        plt.clf()
         img = []
         for line in self.xpm_datalines:
             value_line = []
@@ -660,6 +671,7 @@ class XPM(object):
             sys.exit()
 
         ## convert xpm_data to values
+        plt.clf()
         values = []
         for line in self.xpm_datalines:
             for i in range(

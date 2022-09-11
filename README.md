@@ -74,6 +74,7 @@ Others:
 ## still working 
 
 - [ ] latex or format parser for matplotlib
+- [ ] Discrete xpm to csv, convert notes to numbers
 - [ ] python test
 - [ ] better output (color, error ... )
 - [ ] build a GUI maybe
