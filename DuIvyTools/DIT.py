@@ -18,6 +18,7 @@ from DuIvyTools.PipiDistAng import pipi_dist_ang_call_functions
 from DuIvyTools.FindCenter import find_center_call_functions
 from DuIvyTools.HydrogenBond import hbond_call_functions
 from DuIvyTools.MolMap import mol_map_call_functions
+from DuIvyTools.DCCM import dccm_call_functions
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s -> %(message)s")
 logger = logging.getLogger(__name__)
@@ -81,6 +82,8 @@ written by CharlesHahn (https://github.com/CharlesHahn/DuIvyTools).
             hbond_call_functions(arguments)
         elif method == "mol_map":
             mol_map_call_functions(arguments)
+        elif method == "dccm_ascii":
+            dccm_call_functions(arguments)
         else:
             logging.error("unknown command {}".format(method))
 
