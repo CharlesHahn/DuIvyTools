@@ -671,7 +671,6 @@ class XPM(object):
             sys.exit()
 
         ## convert xpm_data to values
-        plt.clf()
         values = []
         for line in self.xpm_datalines:
             for i in range(
@@ -690,6 +689,7 @@ class XPM(object):
 
         ## draw 3d figure
         fig = plt.figure()
+        plt.clf()
         ax = fig.gca(projection="3d")
 
         ## interpolation
