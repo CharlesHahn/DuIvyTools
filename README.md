@@ -73,6 +73,7 @@ Others:
 
 ## still working 
 
+- [ ] 绘图格式互相覆盖的问题！！
 - [ ] latex or format parser for matplotlib
 - [ ] Discrete xpm to csv, convert notes to numbers
 - [ ] python test

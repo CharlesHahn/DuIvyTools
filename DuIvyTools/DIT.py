@@ -7,18 +7,23 @@ This file is provided to you under GPLv2 License.
 """
 
 
+import os
 import sys
 import logging
-from DuIvyTools.XPM import xpm_call_functions
-from DuIvyTools.XVG import xvg_call_functions
-from DuIvyTools.NDX import ndx_call_functions
-from DuIvyTools.MDP import mdp_call_functions
-from DuIvyTools.HELP import help_call_functions
-from DuIvyTools.PipiDistAng import pipi_dist_ang_call_functions
-from DuIvyTools.FindCenter import find_center_call_functions
-from DuIvyTools.HydrogenBond import hbond_call_functions
-from DuIvyTools.MolMap import mol_map_call_functions
-from DuIvyTools.DCCM import dccm_call_functions
+from pathlib import Path
+
+dit_path = Path(os.path.dirname(__file__))
+sys.path.append(dit_path)
+from XPM import xpm_call_functions
+from XVG import xvg_call_functions
+from NDX import ndx_call_functions
+from MDP import mdp_call_functions
+from HELP import help_call_functions
+from PipiDistAng import pipi_dist_ang_call_functions
+from FindCenter import find_center_call_functions
+from HydrogenBond import hbond_call_functions
+from MolMap import mol_map_call_functions
+from DCCM import dccm_call_functions
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s -> %(message)s")
 logger = logging.getLogger(__name__)
