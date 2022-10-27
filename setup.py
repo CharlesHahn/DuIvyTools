@@ -41,7 +41,7 @@ setup(
     extras_require={
         "test": TEST_REQUIRES + INSTALL_REQUIRES,
     },
-    package_data={"DuIvyTools":["data/*.data", "data/*.mdp"]},
+    package_data={"DuIvyTools":["data/*"]},
     exclude_package_data={"DuIvyTools":["test/*"]},
     entry_points={"console_scripts": ["dit = DuIvyTools.DIT:main"]},
     classifiers=[
