@@ -25,21 +25,24 @@ from FindCenter import find_center_call_functions
 from HydrogenBond import hbond_call_functions
 from MolMap import mol_map_call_functions
 from DCCM import dccm_call_functions
+from MplStyle import mplstyle_call_functions
+
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s -> %(message)s")
 logger = logging.getLogger(__name__)
 
-style_files = [file for file in os.listdir() if file[-9:] == ".mplstyle"]
-if len(style_files) >= 1:
-    plt.style.use(style_files[0])
-    logging.info("using matplotlib style sheet from {}".format(style_files[0]))
-else:
-    data_file_path = os.path.realpath(
-        os.path.join(os.getcwd(), os.path.dirname(__file__))
-    )
-    mplstyle = os.path.join(data_file_path, os.path.join("data", "DIT.mplstyle"))
-    plt.style.use(mplstyle)
-    logging.info("using default matplotlib style sheet")
+def load_style():
+    style_files = [file for file in os.listdir() if file[-9:] == ".mplstyle"]
+    if len(style_files) >= 1:
+        plt.style.use(style_files[0])
+        logging.info("using matplotlib style sheet from {}".format(style_files[0]))
+    else:
+        data_file_path = os.path.realpath(
+            os.path.join(os.getcwd(), os.path.dirname(__file__))
+        )
+        mplstyle = os.path.join(data_file_path, os.path.join("data", "DIT.mplstyle"))
+        plt.style.use(mplstyle)
+        logging.info("using default matplotlib style sheet")
 
 
 def main():
@@ -68,6 +71,8 @@ written by CharlesHahn (https://github.com/CharlesHahn/DuIvyTools).
     elif len(sys.argv) == 2:
         if sys.argv[1] in ["help", "-h", "--help"]:
             help_call_functions(arguments)
+        elif sys.argv[1] == "show_style":
+            mplstyle_call_functions(arguments)
         else:
             logging.error("unknown command {}, ".format(sys.argv[1]))
             logging.info("type `dit help` for more information")
@@ -81,6 +86,7 @@ written by CharlesHahn (https://github.com/CharlesHahn/DuIvyTools).
             logging.error("wrong command, type `dit help` for more information")
             sys.exit()
     elif len(sys.argv) > 3:
+        load_style()  # to load style here
         method = sys.argv[1]
         if method.startswith("xvg"):
             xvg_call_functions(arguments)
