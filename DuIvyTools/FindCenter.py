@@ -7,7 +7,7 @@ This module is designed to provide some useful funcitons.
 This module contains:
     - find_center function
 
-This file is provided to you by GPLv2 license."""
+This file is provided to you by GPLv3 license."""
 
 
 import os

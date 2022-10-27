@@ -8,7 +8,7 @@ specified in index file or between a ring and a vector
 This module contains:
     - pipi_dist_ang function
 
-This file is provided to you by GPLv2 license."""
+This file is provided to you by GPLv3 license."""
 
 
 import os

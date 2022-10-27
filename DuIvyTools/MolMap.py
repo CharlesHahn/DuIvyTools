@@ -8,7 +8,7 @@ with exactly same comformation.
 This module contains:
     - mol_map function
 
-This file is provided to you by GPLv2 license."""
+This file is provided to you by GPLv3 license."""
 
 
 import os

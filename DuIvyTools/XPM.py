@@ -12,7 +12,7 @@ This module contains:
     function xpm_combine
     ......
 
-This file is provided to you under GPLv2 License"""
+This file is provided to you under GPLv3 License"""
 
 ## TODO: data convertion and process in XPM class
 

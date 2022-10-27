@@ -12,7 +12,7 @@ This module contains:
     function xvg_combine, xvg_compare, energy_compute, ramachandran
     ......
 
-This file is provided to you under GPLv2 License"""
+This file is provided to you under GPLv3 License"""
 
 
 import os

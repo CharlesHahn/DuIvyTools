@@ -7,7 +7,7 @@ This module is designed to process hbond information.
 This module contains:
     - hbond function
 
-This file is provided to you by GPLv2 license."""
+This file is provided to you by GPLv3 license."""
 
 
 import os
@@ -18,9 +18,9 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 from pathlib import Path
 
-dit_path = Path(os.path.dirname(__file__))
-sys.path.append(dit_path)
-from XPM import XPM
+# dit_path = Path(os.path.dirname(__file__))
+# sys.path.append(dit_path)
+from DuIvyTools.XPM import XPM
 
 
 def hbond(

@@ -7,7 +7,7 @@ This module is designed to generate .mplstyle file templates.
 This MplStyle module contains:
     - MplStyle class
 
-This file is provided to you by GPLv2 license."""
+This file is provided to you by GPLv3 license."""
 
 
 import os
