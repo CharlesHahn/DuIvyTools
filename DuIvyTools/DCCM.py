@@ -17,14 +17,13 @@ import argparse
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from matplotlib import pylab as pylab
 from matplotlib import colors
 import logging
+from pathlib import Path
 
-from DuIvyTools.XPM import XPM
-
-logging.basicConfig(level=logging.INFO, format="%(levelname)s -> %(message)s")
-logger = logging.getLogger(__name__)
+dit_path = Path(os.path.dirname(__file__))
+sys.path.append(dit_path)
+from XPM import XPM
 
 
 class DCCM(object):
@@ -38,31 +37,6 @@ class DCCM(object):
         self.xlabel = ""
         self.ylabel = ""
         self.title = ""
-        myparams = {
-            "axes.labelsize": "12",
-            "xtick.labelsize": "12",
-            "ytick.labelsize": "12",
-            "ytick.left": False,
-            "ytick.direction": "in",
-            "xtick.bottom": False,
-            "xtick.direction": "in",
-            "lines.linewidth": "2",
-            "axes.linewidth": "1",
-            "legend.fontsize": "12",
-            "legend.loc": "upper right",
-            "legend.fancybox": False,
-            "legend.frameon": False,
-            "font.family": "Arial",
-            "font.size": 12,
-            "figure.dpi": 150,
-            "savefig.dpi": 300,
-        }
-        pylab.rcParams.update(myparams)
-
-        style_files = [file for file in os.listdir() if file[-9:] == ".mplstyle"]
-        if len(style_files) >= 1:
-            plt.style.use(style_files[0])
-            logging.info("using matplotlib style sheet from {}".format(style_files[0]))
 
     def read_acsii(self, xpmfile: str) -> np.ndarray:
         covar = pd.read_csv(xpmfile, sep=" ", header=None)
@@ -280,4 +254,6 @@ def main():
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO, format="%(levelname)s -> %(message)s")
+    logger = logging.getLogger(__name__)
     main()

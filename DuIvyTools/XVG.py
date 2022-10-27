@@ -22,14 +22,9 @@ import numpy as np
 import scipy.stats as stats
 from cycler import cycler
 import matplotlib.pyplot as plt
-from matplotlib import pylab as pylab
 from matplotlib import colors
 import matplotlib.colors as mplcolors
 import logging
-
-logging.basicConfig(level=logging.INFO, format="%(levelname)s -> %(message)s")
-logger = logging.getLogger(__name__)
-
 
 
 class XVG(object):
@@ -54,50 +49,6 @@ class XVG(object):
 
     def __init__(self, xvgfile: str = "") -> None:
         """read xvg file and extract infos"""
-
-        myparams = {
-            "axes.labelsize": "12",
-            "xtick.labelsize": "12",
-            "ytick.labelsize": "12",
-            "ytick.left": True,
-            "ytick.direction": "in",
-            "xtick.bottom": True,
-            "xtick.direction": "in",
-            "lines.linewidth": "2",
-            "axes.linewidth": "1",
-            "legend.fontsize": "12",
-            # "legend.loc": "upper right",
-            "legend.loc": "best",
-            "legend.fancybox": False,
-            "legend.frameon": False,
-            "font.family": "Arial",
-            "font.size": 12,
-            "figure.dpi": 150,
-            "savefig.dpi": 300,
-            "axes.prop_cycle": cycler(
-                "color",
-                [
-                    "#38A7D0",
-                    "#F67088",
-                    "#66C2A5",
-                    "#FC8D62",
-                    "#8DA0CB",
-                    "#E78AC3",
-                    "#A6D854",
-                    "#FFD92F",
-                    "#E5C494",
-                    "#B3B3B3",
-                    "#66C2A5",
-                    "#FC8D62",
-                ],
-            ),
-        }
-        pylab.rcParams.update(myparams)
-
-        style_files = [file for file in os.listdir() if file[-9:] == ".mplstyle"]
-        if len(style_files) >= 1:
-            plt.style.use(style_files[0])
-            logging.info("using matplotlib style sheet from {}".format(style_files[0]))
 
         self.xvg_filename = xvgfile
         self.xvg_title = ""
@@ -1628,4 +1579,6 @@ def main():
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO, format="%(levelname)s -> %(message)s")
+    logger = logging.getLogger(__name__)
     main()

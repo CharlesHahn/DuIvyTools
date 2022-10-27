@@ -16,23 +16,26 @@ import sys
 import argparse
 import logging
 
-logging.basicConfig(level=logging.INFO, format="%(levelname)s -> %(message)s")
-logger = logging.getLogger(__name__)
 
 def similarity(li_0, li_1):
     if len(li_0) != len(li_1):
-        print("Wrong"); exit()
+        print("Wrong")
+        exit()
     simi = 0
     for i in range(len(li_0)):
         if li_0[i] != li_1[i]:
-            simi += (li_0[i]-li_1[i], li_1[i]-li_0[i])[li_0[i]<li_1[i]]
+            simi += (li_0[i] - li_1[i], li_1[i] - li_0[i])[li_0[i] < li_1[i]]
     return simi
 
 
 def readpdb2dic(file):
     origin = []
-    with open(file, 'r') as fo:
-        lines = [ line for line in fo.readlines() if line.startswith("ATOM") or line.startswith("HETATM")]
+    with open(file, "r") as fo:
+        lines = [
+            line
+            for line in fo.readlines()
+            if line.startswith("ATOM") or line.startswith("HETATM")
+        ]
     for line in lines:
         atom_num = int(line[6:11])
         atom_name = line[12:16].strip()
@@ -40,7 +43,14 @@ def readpdb2dic(file):
         coor_y = float(line[38:46])
         coor_z = float(line[46:54])
         symbol = line[76:78].strip()
-        dic = {"n":atom_num, "a":atom_name, "x":coor_x, "y":coor_y, "z":coor_z, "s":symbol}
+        dic = {
+            "n": atom_num,
+            "a": atom_name,
+            "x": coor_x,
+            "y": coor_y,
+            "z": coor_z,
+            "s": symbol,
+        }
         origin.append(dic)
 
     heavy = [dic for dic in origin if dic["s"] != "H"]
@@ -51,8 +61,12 @@ def readpdb2dic(file):
     for c1 in heavy:
         dist = []
         for c2 in heavy:
-            d = ((c1["x"]-c2["x"])**2 + (c1["y"]-c2["y"])**2 + (c1["z"]-c2["z"])**2)**0.5
-            dist.append(round(d*3))
+            d = (
+                (c1["x"] - c2["x"]) ** 2
+                + (c1["y"] - c2["y"]) ** 2
+                + (c1["z"] - c2["z"]) ** 2
+            ) ** 0.5
+            dist.append(round(d * 3))
         distances.append(sorted(dist))
 
     ## deal with H
@@ -60,17 +74,21 @@ def readpdb2dic(file):
     for c1 in hydrogen:
         dist = []
         for c2 in heavy:
-            d = ((c1["x"]-c2["x"])**2 + (c1["y"]-c2["y"])**2 + (c1["z"]-c2["z"])**2)**0.5
+            d = (
+                (c1["x"] - c2["x"]) ** 2
+                + (c1["y"] - c2["y"]) ** 2
+                + (c1["z"] - c2["z"]) ** 2
+            ) ** 0.5
             dist.append(d)
         nearest.append(dist.index(min(dist)))
 
     return origin, heavy, hydrogen, distances, nearest
 
 
-def mol_map(name_file: str = "", coor_file: str="", out_file:str="") -> None:
+def mol_map(name_file: str = "", coor_file: str = "", out_file: str = "") -> None:
     """
-    mol_map: a function to map atom coordinates of one pdb file to another 
-    pdb file. The molecule in these two file should share exactly same 
+    mol_map: a function to map atom coordinates of one pdb file to another
+    pdb file. The molecule in these two file should share exactly same
     comformation.
 
     :parameters:
@@ -112,7 +130,7 @@ def mol_map(name_file: str = "", coor_file: str="", out_file:str="") -> None:
 
     origin1, heavy1, hydrogen1, distances1, nearest1 = readpdb2dic(name_file)
     origin2, heavy2, hydrogen2, distances2, nearest2 = readpdb2dic(coor_file)
-    
+
     maplist = []
     for dli1 in distances1:
         sims = []
@@ -127,21 +145,25 @@ def mol_map(name_file: str = "", coor_file: str="", out_file:str="") -> None:
                 nearest2[i2] = -1
                 break
 
-    with open(name_file, 'r') as fo:
+    with open(name_file, "r") as fo:
         lines = fo.readlines()
     heavy_count, hydrogen_count = 0, 0
-    with open(out_file, 'w') as fo:
+    with open(out_file, "w") as fo:
         for line in lines:
             if line.startswith("ATOM") or line.startswith("HETATM"):
                 symbol = line[76:78].strip()
                 if symbol == "H":
                     atom = hydrogen2[Hmaplist[hydrogen_count]]
-                    coor = "{:>8.3f}{:>8.3f}{:>8.3f}".format(atom["x"], atom["y"], atom["z"])
+                    coor = "{:>8.3f}{:>8.3f}{:>8.3f}".format(
+                        atom["x"], atom["y"], atom["z"]
+                    )
                     fo.write(line[:30] + coor + line[54:])
                     hydrogen_count += 1
                 else:
                     atom = heavy2[maplist[heavy_count]]
-                    coor = "{:>8.3f}{:>8.3f}{:>8.3f}".format(atom["x"], atom["y"], atom["z"])
+                    coor = "{:>8.3f}{:>8.3f}{:>8.3f}".format(
+                        atom["x"], atom["y"], atom["z"]
+                    )
                     fo.write(line[:30] + coor + line[54:])
                     heavy_count += 1
             else:
@@ -157,12 +179,14 @@ def mol_map_call_functions(arguments: list = []):
 
     ## parse the command parameters
     parser = argparse.ArgumentParser(
-        description="mapping coordinates of one pdb file to another pdb file")
-    parser.add_argument("-n", "--name", 
-                        help="pdb file providing infos except coordinates")
+        description="mapping coordinates of one pdb file to another pdb file"
+    )
+    parser.add_argument(
+        "-n", "--name", help="pdb file providing infos except coordinates"
+    )
     parser.add_argument("-c", "--coor", help="pdb file providing coordinates")
     parser.add_argument("-o", "--output", help="pdb file for output")
-    
+
     if len(arguments) < 2:
         logging.error("no input parameters, -h or --help for help messages")
         sys.exit()
@@ -190,4 +214,6 @@ def main():
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO, format="%(levelname)s -> %(message)s")
+    logger = logging.getLogger(__name__)
     main()

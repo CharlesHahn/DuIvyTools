@@ -5,8 +5,10 @@ axes.linewidth:     1
 xtick.labelsize:    12
 ytick.labelsize:    12
 ytick.left:         True
+ytick.right:        True
 ytick.direction:    in
 xtick.bottom:       True
+xtick.top:          True
 xtick.direction:    in
 lines.linewidth:    2
 legend.fontsize:    12

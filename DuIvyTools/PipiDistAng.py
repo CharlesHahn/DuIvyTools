@@ -17,9 +17,6 @@ import math
 import argparse
 import logging
 
-logging.basicConfig(level=logging.INFO, format="%(levelname)s -> %(message)s")
-logger = logging.getLogger(__name__)
-
 
 def calcDist(ring_1_frames: list = [], ring_2_frames: list = []) -> list:
     """
@@ -777,4 +774,6 @@ def main():
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO, format="%(levelname)s -> %(message)s")
+    logger = logging.getLogger(__name__)
     main()

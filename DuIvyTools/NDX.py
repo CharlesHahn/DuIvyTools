@@ -15,9 +15,6 @@ import sys
 import argparse
 import logging
 
-logging.basicConfig(level=logging.INFO, format="%(levelname)s -> %(message)s")
-logger = logging.getLogger(__name__)
-
 
 class NDX(object):
     """
@@ -259,7 +256,7 @@ class NDX(object):
         self.write_ndx(outndx)
 
     def add_group(
-        self, outndx: str, groupname: str, start: int, end: int, step: int=None
+        self, outndx: str, groupname: str, start: int, end: int, step: int = None
     ) -> None:
         """add one index group by parameters specified"""
 
@@ -453,4 +450,6 @@ def main():
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO, format="%(levelname)s -> %(message)s")
+    logger = logging.getLogger(__name__)
     main()

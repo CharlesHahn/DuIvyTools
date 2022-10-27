@@ -25,12 +25,8 @@ from scipy.interpolate import interp2d
 from scipy.ndimage import gaussian_filter
 import matplotlib.pyplot as plt
 from matplotlib.ticker import AutoLocator, FormatStrFormatter
-from matplotlib import pylab as pylab
 from matplotlib import patches
 import logging
-
-logging.basicConfig(level=logging.INFO, format="%(levelname)s -> %(message)s")
-logger = logging.getLogger(__name__)
 
 
 class XPM(object):
@@ -95,32 +91,6 @@ class XPM(object):
             title: specify the title of figure
             xshrink: specify the factor for multiplication of x-axis
         """
-
-        myparams = {
-            "axes.labelsize": "12",
-            "xtick.labelsize": "12",
-            "ytick.labelsize": "12",
-            "ytick.left": False,
-            "ytick.direction": "in",
-            "xtick.bottom": False,
-            "xtick.direction": "in",
-            "lines.linewidth": "2",
-            "axes.linewidth": "1",
-            "legend.fontsize": "12",
-            "legend.loc": "upper right",
-            "legend.fancybox": False,
-            "legend.frameon": False,
-            "font.family": "Arial",
-            "font.size": 12,
-            "figure.dpi": 150,
-            "savefig.dpi": 300,
-        }
-        pylab.rcParams.update(myparams)
-
-        style_files = [file for file in os.listdir() if file[-9:] == ".mplstyle"]
-        if len(style_files) >= 1:
-            plt.style.use(style_files[0])
-            logging.info("using matplotlib style sheet from {}".format(style_files[0]))
 
         ## check parameters
         if xpmfile == None:
@@ -429,17 +399,17 @@ class XPM(object):
         )
         if self.xpm_type == "Continuous":
             gpl_lines += """plot [{:.2f}:{:.2f}] [{:.2f}:{:.2f}] $data u 1:2:3 w imag notit, \\\n""".format(
-            math.floor(min(self.xpm_xaxis) * 10.0) / 10.0 - 0.1,
-            math.ceil(max(self.xpm_xaxis) * 10.0) / 10.0 + 0.1,
-            math.floor(min(self.xpm_yaxis) * 10.0) / 10.0 - 0.1,
-            math.ceil(max(self.xpm_yaxis) * 10.0) / 10.0 + 0.1,
+                math.floor(min(self.xpm_xaxis) * 10.0) / 10.0 - 0.1,
+                math.ceil(max(self.xpm_xaxis) * 10.0) / 10.0 + 0.1,
+                math.floor(min(self.xpm_yaxis) * 10.0) / 10.0 - 0.1,
+                math.ceil(max(self.xpm_yaxis) * 10.0) / 10.0 + 0.1,
             )
         else:
             gpl_lines += """plot [{:.2f}:{:.2f}] [{:.2f}:{:.2f}] $data u 1:2:3 w imag notit, \\\n""".format(
-            math.floor(min(self.xpm_xaxis) * 10.0) / 10.0 - 0.1,
-            math.ceil(max(self.xpm_xaxis) * 10.0) / 10.0 + 0.1,
-            math.floor(min(self.xpm_yaxis) * 10.0) / 10.0 - 0.6,
-            math.ceil(max(self.xpm_yaxis) * 10.0) / 10.0 + 0.6,
+                math.floor(min(self.xpm_xaxis) * 10.0) / 10.0 - 0.1,
+                math.ceil(max(self.xpm_xaxis) * 10.0) / 10.0 + 0.1,
+                math.floor(min(self.xpm_yaxis) * 10.0) / 10.0 - 0.6,
+                math.ceil(max(self.xpm_yaxis) * 10.0) / 10.0 + 0.6,
             )
 
         for index, note in enumerate(self.notes):
@@ -486,7 +456,7 @@ class XPM(object):
                     )
                 img.append(rgb_line)
             ## default of interpolation is nearest, set it to be none
-            plt.imshow(img, aspect="auto", interpolation='none')
+            plt.imshow(img, aspect="auto", interpolation="none")
 
             if self.xpm_type != "Continuous":
                 legend_patches = []
@@ -909,4 +879,6 @@ def main():
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO, format="%(levelname)s -> %(message)s")
+    logger = logging.getLogger(__name__)
     main()

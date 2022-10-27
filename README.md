@@ -73,7 +73,8 @@ Others:
 
 ## still working 
 
-- [ ] re-design the pylab.params loading procedure
+- [ ] xtick of xvg shrink
+- [ ] find_center
 - [ ] latex or format parser for matplotlib
 - [ ] Discrete xpm to csv, convert notes to numbers
 - [ ] python test

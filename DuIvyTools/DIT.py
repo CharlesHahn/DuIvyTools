@@ -11,6 +11,7 @@ import os
 import sys
 import logging
 from pathlib import Path
+import matplotlib.pyplot as plt
 
 dit_path = Path(os.path.dirname(__file__))
 sys.path.append(dit_path)
@@ -27,6 +28,18 @@ from DCCM import dccm_call_functions
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s -> %(message)s")
 logger = logging.getLogger(__name__)
+
+style_files = [file for file in os.listdir() if file[-9:] == ".mplstyle"]
+if len(style_files) >= 1:
+    plt.style.use(style_files[0])
+    logging.info("using matplotlib style sheet from {}".format(style_files[0]))
+else:
+    data_file_path = os.path.realpath(
+        os.path.join(os.getcwd(), os.path.dirname(__file__))
+    )
+    mplstyle = os.path.join(data_file_path, os.path.join("data", "DIT.mplstyle"))
+    plt.style.use(mplstyle)
+    logging.info("using default matplotlib style sheet")
 
 
 def main():
