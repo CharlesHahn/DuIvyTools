@@ -895,7 +895,7 @@ def xvg_ramachandran(xvgfile: str = "", outpng: str = "", noshow: bool = False) 
         plt.ylim([-180, 180])
         plt.xticks([-180, -120, -60, 0, 60, 120, 180])
         plt.yticks([-180, -120, -60, 0, 60, 120, 180])
-        plt.tick_params(left=False, bottom=False)
+        plt.tick_params(left=False, bottom=False, top=False, right=False)
         plt.xlabel("Phi")
         plt.ylabel("Psi")
         if outpng != None:

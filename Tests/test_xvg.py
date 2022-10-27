@@ -6,12 +6,17 @@ import sys
 import pytest
 import filecmp
 from matplotlib.testing.compare import compare_images
+from matplotlib import pyplot as plt
 
 # https://matplotlib.org/3.1.1/api/testing_api.html
 
 sys.path.append("../DuIvyTools/")
 import XVG
 
+data_file_path = os.path.realpath(
+        os.path.join(os.getcwd(), os.path.dirname(__file__)))
+mplstyle = os.path.join(data_file_path, os.path.join("..", "DuIvyTools","data", "DIT.mplstyle"))
+plt.style.use(mplstyle)
 
 def test_xvg_init():
     xvg_file = "xvg_test/gyrate.xvg"

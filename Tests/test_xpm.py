@@ -6,6 +6,7 @@ import sys
 import pytest
 import filecmp
 from matplotlib.testing.compare import compare_images
+from matplotlib import pyplot as plt
 
 # https://matplotlib.org/3.1.1/api/testing_api.html
 # assert filecmp.cmp("ndx_test/hbond.ndx", "ndx_test/test.ndx", shallow=True)
@@ -13,6 +14,10 @@ from matplotlib.testing.compare import compare_images
 sys.path.append("../DuIvyTools/")
 import XPM
 
+data_file_path = os.path.realpath(
+        os.path.join(os.getcwd(), os.path.dirname(__file__)))
+mplstyle = os.path.join(data_file_path, os.path.join("..", "DuIvyTools","data", "DIT.mplstyle"))
+plt.style.use(mplstyle)
 
 def test_xpm_init_continuous():
     xpm = XPM.XPM("xpm_test/gibbs.xpm")
