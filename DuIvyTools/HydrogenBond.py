@@ -16,8 +16,8 @@ import logging
 import argparse
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
-from pathlib import Path
 
+# from pathlib import Path
 # dit_path = Path(os.path.dirname(__file__))
 # sys.path.append(dit_path)
 from DuIvyTools.XPM import XPM

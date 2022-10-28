@@ -20,7 +20,6 @@ import sys
 import argparse
 import numpy as np
 import scipy.stats as stats
-from cycler import cycler
 import matplotlib.pyplot as plt
 from matplotlib import colors
 import matplotlib.colors as mplcolors

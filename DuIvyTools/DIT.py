@@ -10,14 +10,13 @@ This file is provided to you under GPLv3 License.
 import os
 import sys
 import logging
-from pathlib import Path
 import matplotlib.pyplot as plt
 
 from DuIvyTools.XPM import xpm_call_functions
 from DuIvyTools.XVG import xvg_call_functions
 from DuIvyTools.NDX import ndx_call_functions
 from DuIvyTools.MDP import mdp_call_functions
-from DuIvyTools.HELP import help_call_functions
+from DuIvyTools.HELP import help_call_functions, get_welcome_msg
 from DuIvyTools.PipiDistAng import pipi_dist_ang_call_functions
 from DuIvyTools.FindCenter import find_center_call_functions
 from DuIvyTools.HydrogenBond import hbond_call_functions
@@ -46,24 +45,7 @@ def load_style():
 def main():
     arguments = [argv for argv in sys.argv]
     if len(sys.argv) < 2:
-        DIT_infos = """
-
- *******           **                  **********               **        
-/**////**         /**          **   **/////**///               /**        
-/**    /** **   **/** **    **//** **     /**  ******   ****** /**  ******
-/**    /**/**  /**/**/**   /** //***      /** **////** **////**/** **//// 
-/**    /**/**  /**/**//** /**   /**       /**/**   /**/**   /**/**//***** 
-/**    ** /**  /**/** //****    **        /**/**   /**/**   /**/** /////**
-/*******  //******/**  //**    **         /**//****** //****** *** ****** 
-///////    ////// //    //    //          //  //////   ////// /// //////  
-
-DuIvyTools is a simple analysis and visualization tool for GROMACS result files
-written by CharlesHahn (https://github.com/CharlesHahn/DuIvyTools). 
-
-> Type `dit help` for more informations. 
-
-"""
-
+        DIT_infos = get_welcome_msg()
         print(DIT_infos)
         sys.exit()
     elif len(sys.argv) == 2:
