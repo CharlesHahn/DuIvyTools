@@ -781,6 +781,7 @@ def print_help_msg(method: str) -> None:
     help_class = HELP()
     help_class.print_help_infos(method)
 
+
 def get_welcome_msg() -> str:
     """return welcome messages"""
 

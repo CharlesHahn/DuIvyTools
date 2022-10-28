@@ -64,18 +64,20 @@ For MDP files:
     mdp_gen
 Others:
     find_center, pipi_dist_ang, hbond, mol_map, dccm_ascii
+Matplotlib Style:
+    show_style
 ```
 
 
 ## Cite 
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6359044.svg)](https://doi.org/10.5281/zenodo.6359044)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7261532.svg)](https://doi.org/10.5281/zenodo.7261532)
 
 ## still working 
 
+- [ ] **readthedocs**
 - [ ] xtick of xvg shrink
 - [ ] xvg_show one plot mode
-- [ ] find_center
 - [ ] latex or format parser for matplotlib
 - [ ] Discrete xpm to csv, convert notes to numbers
 - [ ] python test

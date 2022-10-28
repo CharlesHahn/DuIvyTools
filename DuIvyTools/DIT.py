@@ -28,6 +28,7 @@ from DuIvyTools.MplStyle import mplstyle_call_functions
 logging.basicConfig(level=logging.INFO, format="%(levelname)s -> %(message)s")
 logger = logging.getLogger(__name__)
 
+
 def load_style():
     style_files = [file for file in os.listdir() if file[-9:] == ".mplstyle"]
     if len(style_files) >= 1:

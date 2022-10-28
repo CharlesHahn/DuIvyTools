@@ -95,7 +95,11 @@ class NDX(object):
     def show_ndx(self) -> None:
         """print all group names"""
         for name_id, name in enumerate(self.group_name_list):
-            print(" {:>2} => {:} ({:d})".format(name_id, name, len(self.group_index_list[name_id])))
+            print(
+                " {:>2} => {:} ({:d})".format(
+                    name_id, name, len(self.group_index_list[name_id])
+                )
+            )
 
     def write_ndx(self, outndx: str) -> None:
         """write data to new ndx file"""

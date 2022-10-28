@@ -18,25 +18,31 @@ import logging
 from DuIvyTools.NDX import NDX
 
 
-def get_ndx(ndx_file: str=""):
+def get_ndx(ndx_file: str = ""):
     ndx = NDX(ndx_file)
     ndx.show_ndx()
     select = input("Select one group: ")
     if select.isnumeric() and int(select) < ndx.group_number:
         index = ndx.group_index_list[int(select)]
-        logging.info("You selected group {} which contains {} atoms".format(
-            ndx.group_name_list[int(select)], len(index)))
+        logging.info(
+            "You selected group {} which contains {} atoms".format(
+                ndx.group_name_list[int(select)], len(index)
+            )
+        )
     elif select in ndx.group_name_list:
         index = ndx.group_index_list[ndx.group_name_list.index(select)]
-        logging.info("You selected group {} which contains {} atoms".format(
-            select, len(index)))
+        logging.info(
+            "You selected group {} which contains {} atoms".format(select, len(index))
+        )
     else:
         logging.error("Wrong selection, type Int number or name of group")
         sys.exit()
     return index
 
 
-def find_center(gro_file: str = "", ndx_file: str = None, AllAtoms:bool=None) -> None:
+def find_center(
+    gro_file: str = "", ndx_file: str = None, AllAtoms: bool = None
+) -> None:
     """
     find_center: a function to figure out one atom coordinates which
     is the closest one to group center, useful for adjusting PBC
@@ -69,13 +75,13 @@ def find_center(gro_file: str = "", ndx_file: str = None, AllAtoms:bool=None) ->
     if ndx_file != None:
         index = get_ndx(ndx_file)
     else:
-        index = [i for i in range(1, atom_count+1)]
-    
+        index = [i for i in range(1, atom_count + 1)]
+
     atom_count = len(index)
     ## calculate the center point
     center_x, center_y, center_z = 0, 0, 0
     for i in index:
-        line = atom_lines[i-1]
+        line = atom_lines[i - 1]
         center_x += float(line[20:28])
         center_y += float(line[28:36])
         center_z += float(line[36:44])
@@ -92,7 +98,7 @@ def find_center(gro_file: str = "", ndx_file: str = None, AllAtoms:bool=None) ->
     atom_info = ""
     dist = 5  # nm, find closed atom in sphere of 5nm
     for i, line in enumerate(atom_lines):
-        if (not AllAtoms) and (i+1 not in index):
+        if (not AllAtoms) and (i + 1 not in index):
             continue
         x = float(line[20:28])
         y = float(line[28:36])
@@ -107,9 +113,7 @@ def find_center(gro_file: str = "", ndx_file: str = None, AllAtoms:bool=None) ->
         logging.info("no atom detected in 5 nm sphere of center point. ")
         sys.exit()
     else:
-        logging.info(
-            "distance from nearest atom to center: {:.3f} nm".format(dist)
-        )
+        logging.info("distance from nearest atom to center: {:.3f} nm".format(dist))
         print("--------------------------------------------")
         print("ResID Name Atom  Num       X       Y       Z")
         print("--------------------------------------------")
@@ -127,7 +131,12 @@ def find_center_call_functions(arguments: list = []):
     parser = argparse.ArgumentParser(description="Find the center of a group of atoms")
     parser.add_argument("-f", "--input", help="gro file for input")
     parser.add_argument("-n", "--index", help="index file for input")
-    parser.add_argument("-aa", "--AllAtoms", action="store_true", help="if to find center in all atoms of gro file")
+    parser.add_argument(
+        "-aa",
+        "--AllAtoms",
+        action="store_true",
+        help="if to find center in all atoms of gro file",
+    )
 
     if len(arguments) < 2:
         logging.error("no input parameters, -h or --help for help messages")
