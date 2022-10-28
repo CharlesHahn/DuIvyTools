@@ -44,7 +44,7 @@ def test_ndx_show_ndx(capfd):
     print(out)
     assert (
         out
-        == "   0 -> Protein\n   1 -> 1ZIN\n   2 -> 1ZIN\n   3 -> hbonds_Protein-1ZIN\n"
+        == "  0 => Protein (1125)\n  1 => 1ZIN (31)\n  2 => 1ZIN (31)\n  3 => hbonds_Protein-1ZIN (12)\n"
     )
 
 

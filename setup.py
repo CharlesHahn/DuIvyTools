@@ -18,7 +18,7 @@ TEST_REQUIRES = [
 ]
 
 
-__version__ = "0.4.6"
+__version__ = "0.4.7"
 long_description = ""
 
 with open("README.md", "r") as fo:
@@ -48,7 +48,7 @@ setup(
         # Trove classifiers
         # (https://pypi.python.org/pypi?%3Aaction=list_classifiers)
         "Development Status :: 4 - Beta",
-        "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
+        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
         "Topic :: Scientific/Engineering :: Bio-Informatics",

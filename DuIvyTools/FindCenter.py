@@ -15,8 +15,28 @@ import sys
 import argparse
 import logging
 
+from DuIvyTools.NDX import NDX
 
-def find_center(gro_file: str = "") -> None:
+
+def get_ndx(ndx_file: str=""):
+    ndx = NDX(ndx_file)
+    ndx.show_ndx()
+    select = input("Select one group: ")
+    if select.isnumeric() and int(select) < ndx.group_number:
+        index = ndx.group_index_list[int(select)]
+        logging.info("You selected group {} which contains {} atoms".format(
+            ndx.group_name_list[int(select)], len(index)))
+    elif select in ndx.group_name_list:
+        index = ndx.group_index_list[ndx.group_name_list.index(select)]
+        logging.info("You selected group {} which contains {} atoms".format(
+            select, len(index)))
+    else:
+        logging.error("Wrong selection, type Int number or name of group")
+        sys.exit()
+    return index
+
+
+def find_center(gro_file: str = "", ndx_file: str = None, AllAtoms:bool=None) -> None:
     """
     find_center: a function to figure out one atom coordinates which
     is the closest one to group center, useful for adjusting PBC
@@ -36,6 +56,9 @@ def find_center(gro_file: str = "") -> None:
     if gro_file[-4:] != ".gro":
         logging.error("find_center only accept gro file with suffix .gro")
         sys.exit()
+    if ndx_file != None and (not os.path.exists(ndx_file)):
+        logging.error("no {} in current dirrectory. ".format(ndx_file))
+        sys.exit()
 
     with open(gro_file, "r") as fo:
         lines = fo.readlines()
@@ -43,9 +66,16 @@ def find_center(gro_file: str = "") -> None:
     logging.info("{:d} atoms in {}".format(atom_count, gro_file))
     atom_lines = lines[2 : atom_count + 2]
 
+    if ndx_file != None:
+        index = get_ndx(ndx_file)
+    else:
+        index = [i for i in range(1, atom_count+1)]
+    
+    atom_count = len(index)
     ## calculate the center point
     center_x, center_y, center_z = 0, 0, 0
-    for line in atom_lines:
+    for i in index:
+        line = atom_lines[i-1]
         center_x += float(line[20:28])
         center_y += float(line[28:36])
         center_z += float(line[36:44])
@@ -61,7 +91,9 @@ def find_center(gro_file: str = "") -> None:
     ## find the closed atom
     atom_info = ""
     dist = 5  # nm, find closed atom in sphere of 5nm
-    for line in atom_lines:
+    for i, line in enumerate(atom_lines):
+        if (not AllAtoms) and (i+1 not in index):
+            continue
         x = float(line[20:28])
         y = float(line[28:36])
         z = float(line[36:44])
@@ -70,18 +102,18 @@ def find_center(gro_file: str = "") -> None:
         ) ** 0.5
         if atom_center_dist < dist:
             dist = atom_center_dist
-            atom_info = line
+            atom_info = line[:44]
     if atom_info == "":
         logging.info("no atom detected in 5 nm sphere of center point. ")
         sys.exit()
     else:
         logging.info(
-            "Info -> distance from nearest atom to center: {:.3f} nm".format(dist)
+            "distance from nearest atom to center: {:.3f} nm".format(dist)
         )
         print("--------------------------------------------")
         print("ResID Name Atom  Num       X       Y       Z")
         print("--------------------------------------------")
-        print(atom_info, end="")
+        print(atom_info)
         print("--------------------------------------------")
 
 
@@ -93,7 +125,9 @@ def find_center_call_functions(arguments: list = []):
 
     ## parse the command parameters
     parser = argparse.ArgumentParser(description="Find the center of a group of atoms")
-    parser.add_argument("-f", "--input", help="file name for input")
+    parser.add_argument("-f", "--input", help="gro file for input")
+    parser.add_argument("-n", "--index", help="index file for input")
+    parser.add_argument("-aa", "--AllAtoms", action="store_true", help="if to find center in all atoms of gro file")
 
     if len(arguments) < 2:
         logging.error("no input parameters, -h or --help for help messages")
@@ -109,7 +143,8 @@ def find_center_call_functions(arguments: list = []):
         sys.exit()
     args = parser.parse_args(arguments[2:])
     if method == "find_center":
-        find_center(args.input)
+        print(args.input, args.index, args.AllAtoms)
+        find_center(args.input, args.index, args.AllAtoms)
     else:
         logging.error("unknown method {}".format(method))
         sys.exit()
