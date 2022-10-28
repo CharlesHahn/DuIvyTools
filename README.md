@@ -74,6 +74,7 @@ Others:
 ## still working 
 
 - [ ] xtick of xvg shrink
+- [ ] xvg_show one plot mode
 - [ ] find_center
 - [ ] latex or format parser for matplotlib
 - [ ] Discrete xpm to csv, convert notes to numbers

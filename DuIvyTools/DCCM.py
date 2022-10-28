@@ -38,8 +38,14 @@ class DCCM(object):
         self.ylabel = ""
         self.title = ""
 
-    def read_acsii(self, xpmfile: str) -> np.ndarray:
-        covar = pd.read_csv(xpmfile, sep=" ", header=None)
+    def read_acsii(self, datfile: str) -> np.ndarray:
+        if not os.path.exists(datfile):
+            logging.error("no {} in current directory".format(datfile))
+            sys.exit()
+        if datfile[-4:] != ".dat":
+            logging.error("specify a xvg file with suffix dat")
+            sys.exit()
+        covar = pd.read_csv(datfile, sep=" ", header=None)
         self.resnum = int(np.sqrt((covar.shape[0]) / 3))
         results = pd.DataFrame()
         for i in range(self.resnum):
