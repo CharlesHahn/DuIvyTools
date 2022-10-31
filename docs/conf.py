@@ -66,3 +66,8 @@ source_parsers = {
 }
 source_suffix = [".rst", ".md"]
 
+latex_elements = {
+    'preamble': r'''
+    \usepackage{ctex}
+    ''',
+    }
