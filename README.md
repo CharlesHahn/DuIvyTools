@@ -2,6 +2,8 @@
 [![PyPI version](https://badge.fury.io/py/DuIvyTools.svg)](https://badge.fury.io/py/DuIvyTools)
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/DuIvyTools)
 ![PyPI - License](https://img.shields.io/pypi/l/DuIvyTools)
+[![Documentation Status](https://readthedocs.org/projects/duivytools/badge/?version=latest)](https://duivytools.readthedocs.io/zh_CN/latest/?badge=latest)
+      
 
 
 ```
