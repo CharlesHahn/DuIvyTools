@@ -5,4 +5,4 @@ dist/*
 DuIvyTools/__pycache__/*
 Tests/__pycache__/*
 .pytest_cash/*
-docs/build/*
+docs/_build/*

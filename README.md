@@ -78,6 +78,8 @@ Matplotlib Style:
 - [ ] **readthedocs**
 - [ ] xtick of xvg shrink
 - [ ] xvg_show one plot mode
+- [ ] xpm2dat(N by N)
+- [ ] mdmat dm.xpm
 - [ ] latex or format parser for matplotlib
 - [ ] Discrete xpm to csv, convert notes to numbers
 - [ ] python test
