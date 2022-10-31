@@ -3,18 +3,19 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to DuIvyTools_Docs's documentation!
+Welcome to DuIvyTools's documentation!
 ===========================================
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+
+   DIT.md
 
 
 
-Indices and tables
-==================
+.. Indices and tables
+.. ==================
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+.. * :ref:`genindex`
+.. * :ref:`modindex`
+.. * :ref:`search`

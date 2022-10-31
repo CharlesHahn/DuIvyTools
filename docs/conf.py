@@ -20,6 +20,8 @@
 project = 'DuIvyTools'
 copyright = '2022, CharlesHahn'
 author = 'CharlesHahn'
+# version = '0.0.0'
+release = '0.4.7'
 
 
 # -- General configuration ---------------------------------------------------
