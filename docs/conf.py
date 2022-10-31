@@ -45,7 +45,7 @@ language = 'zh_CN'
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = ['build', 'Thumbs.db', '.DS_Store']
+exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 
 # -- Options for HTML output -------------------------------------------------
@@ -66,3 +66,33 @@ source_parsers = {
 }
 source_suffix = [".rst", ".md"]
 
+latex_elements = {
+    #The paper size ('letterpaper' or 'a4paper').
+    
+    'papersize': 'letterpaper',
+
+    #The font size ('10pt', '11pt' or '12pt').
+    
+    'pointsize': '10pt',
+
+    #Latex figure (float) alignment
+    
+    'figure_align': 'htbp',
+    'papersize': 'a4paper',
+
+    #Additional stuff for the LaTeX preamble.
+	'preamble': '''
+	\hypersetup{unicode=true}
+	\usepackage{CJKutf8}
+	\DeclareUnicodeCharacter{00A0}{\\nobreakspace}
+	\DeclareUnicodeCharacter{2203}{\ensuremath{\exists}}
+	\DeclareUnicodeCharacter{2286}{\ensuremath{\subseteq}}
+	\DeclareUnicodeCharacter{2713}{x}
+	\DeclareUnicodeCharacter{27FA}{\ensuremath{\Longleftrightarrow}}
+	\DeclareUnicodeCharacter{221A}{\ensuremath{\sqrt{}}}
+	\DeclareUnicodeCharacter{221B}{\ensuremath{\sqrt[3]{}}}
+	\DeclareUnicodeCharacter{2295}{\ensuremath{\oplus}}
+	\DeclareUnicodeCharacter{2297}{\ensuremath{\otimes}}
+	\\begin{CJK}{UTF8}{gbsn}
+	\AtEndDocument{\end{CJK}}
+	'''
