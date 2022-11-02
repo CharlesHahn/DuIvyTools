@@ -1,4 +1,5 @@
 ## Matplotlib style for DuIvyTools
+## https://matplotlib.org/stable/tutorials/introductory/customizing.html#the-matplotlibrc-file
 
 axes.labelsize:     12
 axes.linewidth:     1
