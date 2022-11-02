@@ -265,6 +265,40 @@ class XVG(object):
         x_min = np.min(self.data_columns[0])
         x_max = np.max(self.data_columns[0])
         x_space = int((x_max - x_min) / 100)
+        if column_num == 2:
+            plt.plot(self.data_columns[0], self.data_columns[1])
+            plt.ylabel(self.data_heads[1])
+        else:
+            for i in range(1, column_num):
+                plt.plot(self.data_columns[0], self.data_columns[i], label=self.data_heads[i])
+            plt.legend()
+        plt.xlim(int(x_min - x_space), int(x_max + x_space))
+        plt.xlabel(self.data_heads[0])
+        plt.title(self.xvg_title)
+        plt.tight_layout()
+
+        if outpng != None:
+            if os.path.exists(outpng):
+                logging.error("{} already in current directory".format(outpng))
+                sys.exit()
+            plt.savefig(outpng, dpi=300)
+        if noshow == False:
+            plt.show()
+
+    def draw_subplot(self, outpng: str = "", noshow: bool = False) -> None:
+        """
+        draw xvg data into figure by subplots
+
+        :parameters:
+            outpng: the output picture file name.
+            noshow: whether not to show figure in GUI.
+        """
+
+        plt.clf()
+        column_num = len(self.data_columns)
+        x_min = np.min(self.data_columns[0])
+        x_max = np.max(self.data_columns[0])
+        x_space = int((x_max - x_min) / 100)
         grid = (plt.GridSpec(1, column_num), plt.GridSpec(2, int(column_num / 2)))[
             column_num > 2
         ]
@@ -1344,10 +1378,13 @@ def xvg2csv(xvgfile: str = "", outcsv: str = "") -> None:
     xvg.xvg2csv(outcsv)
 
 
-def xvg_show(xvgfile: str = "", outpng: str = "", noshow: bool = False) -> None:
+def xvg_show(xvgfile: str = "", outpng: str = "", noshow: bool = False, subplot=False) -> None:
     """visualization of xvg file"""
     xvg = XVG(xvgfile)
-    xvg.draw(outpng, noshow)
+    if subplot == True:
+        xvg.draw_subplot(outpng, noshow)
+    else:
+        xvg.draw(outpng, noshow)
 
 
 def xvg_show_distribution(
@@ -1447,6 +1484,9 @@ def xvg_call_functions(arguments: list = None):
     parser.add_argument(
         "-xt", "--xtitles", nargs="+", help="the x tick labels for box comparison"
     )
+    parser.add_argument(
+        "-subplot", "--subplot", action="store_true", help="whether to show in subplots"
+    )
 
     if len(arguments) < 2:
         logging.error("no input parameters, -h or --help for help messages")
@@ -1498,7 +1538,7 @@ def xvg_call_functions(arguments: list = None):
     elif method == "xvg2csv":
         xvg2csv(firstfile, args.output)
     elif method == "xvg_show":
-        xvg_show(firstfile, args.output, args.noshow)
+        xvg_show(firstfile, args.output, args.noshow, args.subplot)
     elif method == "xvg_rama":
         xvg_ramachandran(firstfile, args.output, args.noshow)
     elif method == "xvg_show_distribution":

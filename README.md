@@ -77,8 +77,6 @@ Matplotlib Style:
 
 ## still working 
 
-- [ ] readthedocs content
-- [ ] dit command to get help
 - [ ] xtick of xvg shrink
 - [ ] xvg_show one plot mode
 - [ ] xpm2dat(N by N)
