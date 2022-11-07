@@ -227,6 +227,8 @@ def hbond(
     plt.ylabel(xpm.xpm_ylabel)
     if xpm.xpm_height <= 20 and hnf != "number":
         plt.yticks([i for i in range(len(select))], hbond_names)
+    elif xpm.xpm_height > 20:
+        logging.warning("DIT can only show hbond name when hbond number <= 20 !")
     plt.tight_layout()
     if figout != None:
         plt.savefig(figout, dpi=300)

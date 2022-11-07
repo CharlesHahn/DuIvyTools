@@ -1,10 +1,15 @@
 # DuIvyTools
 [![PyPI version](https://badge.fury.io/py/DuIvyTools.svg)](https://badge.fury.io/py/DuIvyTools)
-![PyPI - Downloads](https://img.shields.io/pypi/dm/DuIvyTools)
-![PyPI - License](https://img.shields.io/pypi/l/DuIvyTools)
-[![Documentation Status](https://readthedocs.org/projects/duivytools/badge/?version=latest)](https://duivytools.readthedocs.io/zh_CN/latest/?badge=latest)
-      
 
+![PyPI - Downloads](https://img.shields.io/pypi/dm/DuIvyTools)
+
+![PyPI - License](https://img.shields.io/pypi/l/DuIvyTools)
+
+[![Documentation Status](https://readthedocs.org/projects/duivytools/badge/?version=latest)](https://duivytools.readthedocs.io/zh_CN/latest/?badge=latest)
+
+[![commits-since](https://img.shields.io/github/commits-since/CharlesHahn/DuIvyTools/v0.4.7.svg)](https://github.com/CharlesHahn/DuIvyTools/compare/v0.4.7...master)
+
+[![Python Version](https://img.shields.io/pypi/pyversions/DuIvyTools.svg)](https://pypi.org/project/DuIvyTools)
 
 ```
   *******           **                  **********               **
@@ -78,9 +83,12 @@ Matplotlib Style:
 ## still working 
 
 - [ ] xtick of xvg shrink
-- [ ] xvg_show one plot mode
+- [ ] xvg_scatter color by data
+- [ ] hbond script to calc dist and ang
+- [ ] no float number of hbmap 
+- [ ] hbond - merge, AND, OR
 - [ ] xpm2dat(N by N)
-- [ ] mdmat dm.xpm
+- [ ] mdmat dmf.xpm
 - [ ] latex or format parser for matplotlib
 - [ ] Discrete xpm to csv, convert notes to numbers
 - [ ] python test
