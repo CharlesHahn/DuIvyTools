@@ -270,7 +270,9 @@ class XVG(object):
             plt.ylabel(self.data_heads[1])
         else:
             for i in range(1, column_num):
-                plt.plot(self.data_columns[0], self.data_columns[i], label=self.data_heads[i])
+                plt.plot(
+                    self.data_columns[0], self.data_columns[i], label=self.data_heads[i]
+                )
             plt.legend()
         plt.xlim(int(x_min - x_space), int(x_max + x_space))
         plt.xlabel(self.data_heads[0])
@@ -506,6 +508,7 @@ class XVG(object):
         self,
         x_index: int = 0,
         y_index: int = None,
+        color_index: int = None,
         outpng: str = "",
         noshow: bool = False,
     ) -> None:
@@ -515,8 +518,9 @@ class XVG(object):
         :parameters:
             x_index: the column index of x values for scatter plot
             y_index: the column index of y values for scatter plot
-            outpng: the output picture file name.
-            noshow: whether not to show figure in GUI.
+            color_index: the column index for color value
+            outpng: the output picture file name
+            noshow: whether not to show figure in GUI
         """
 
         ## check parameters
@@ -532,7 +536,25 @@ class XVG(object):
 
         ## draw scatter plot
         plt.clf()
-        plt.scatter(self.data_columns[x_index], self.data_columns[y_index])
+        if color_index != None:
+            if color_index >= len(self.data_columns):
+                logging.error(
+                    "color_index you specified is out of range ({})".format(
+                        len(self.data_columns)
+                    )
+                )
+                sys.exit()
+            plt.scatter(
+                self.data_columns[x_index],
+                self.data_columns[y_index],
+                c=self.data_columns[color_index],
+                cmap="coolwarm",
+            )
+            plt.colorbar(
+                label=self.data_heads[color_index], orientation="vertical", shrink=0.8
+            )
+        else:
+            plt.scatter(self.data_columns[x_index], self.data_columns[y_index])
         plt.ylabel(self.data_heads[y_index])
         plt.xlabel(self.data_heads[x_index])
         plt.title(
@@ -1378,7 +1400,9 @@ def xvg2csv(xvgfile: str = "", outcsv: str = "") -> None:
     xvg.xvg2csv(outcsv)
 
 
-def xvg_show(xvgfile: str = "", outpng: str = "", noshow: bool = False, subplot=False) -> None:
+def xvg_show(
+    xvgfile: str = "", outpng: str = "", noshow: bool = False, subplot=False
+) -> None:
     """visualization of xvg file"""
     xvg = XVG(xvgfile)
     if subplot == True:
@@ -1415,14 +1439,21 @@ def xvg_show_scatter(
     xvgfile: str = "",
     x_index: int = 0,
     y_index: int = None,
+    column_select: list = [],
     outpng: str = "",
     noshow: bool = False,
 ) -> None:
     """visualization of scatter plot of xvg file"""
+    color_index = None
+    if len(column_select) == 1 and isinstance(column_select[-1], int):
+        color_index = int(column_select[-1])
+    else:
+        logging.error("There should be only one color index which is a number")
+        sys.exit()
     if x_index == None:
         x_index = 0
     xvg = XVG(xvgfile)
-    xvg.draw_scatter(x_index, y_index, outpng, noshow)
+    xvg.draw_scatter(x_index, y_index, color_index, outpng, noshow)
 
 
 def xvg_call_functions(arguments: list = None):
@@ -1555,7 +1586,12 @@ def xvg_call_functions(arguments: list = None):
         )
     elif method == "xvg_show_scatter":
         xvg_show_scatter(
-            firstfile, args.x_index, args.y_index, args.output, args.noshow
+            firstfile,
+            args.x_index,
+            args.y_index,
+            column_select,
+            args.output,
+            args.noshow,
         )
     elif method == "xvg_energy_compute":
         energy_compute(xvgfiles, args.output)

@@ -224,6 +224,7 @@ xvg_show_scatter: draw scatter figure.
 
 :examples:
     dit xvg_show_scatter -f f1.xvg -xi 0 -yi 1
+    dit xvg_show_scatter -f f1.xvg -xi 1 -yi 2 -c 0
     dit xvg_show_scatter -f f1.xvg -xi 0 -yi 1 -o test.png -ns
 
 :parameters:
@@ -236,6 +237,9 @@ xvg_show_scatter: draw scatter figure.
     -yi, --y_index (optional)
             specify the index of column which you want to use as y data. 
             default == 1
+    -c, --column_select (optional)
+            specify the index of column which you want to use as color 
+            mapping, select only one index
     -o, --output (optional)
             specify the output figure name. Figure will be saved in 300 dpi.
     -ns, --noshow (optional)

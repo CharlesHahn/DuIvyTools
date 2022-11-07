@@ -83,7 +83,6 @@ Matplotlib Style:
 ## still working 
 
 - [ ] xtick of xvg shrink
-- [ ] xvg_scatter color by data
 - [ ] hbond script to calc dist and ang
 - [ ] no float number of hbmap 
 - [ ] hbond - merge, AND, OR
