@@ -1447,6 +1447,8 @@ def xvg_show_scatter(
     color_index = None
     if len(column_select) == 1 and isinstance(column_select[-1], int):
         color_index = int(column_select[-1])
+    elif len(column_select) == 0:
+        pass
     else:
         logging.error("There should be only one color index which is a number")
         sys.exit()

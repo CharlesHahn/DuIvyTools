@@ -84,13 +84,14 @@ Matplotlib Style:
 
 - [ ] xtick of xvg shrink
 - [ ] hbond script to calc dist and ang
-- [ ] no float number of hbmap 
+- [ ] no float number of hbmap yticks
 - [ ] hbond - merge, AND, OR
 - [ ] xpm2dat(N by N)
 - [ ] mdmat dmf.xpm
 - [ ] latex or format parser for matplotlib
 - [ ] Discrete xpm to csv, convert notes to numbers
+- [ ] volume occupancy of ligand during MD
 - [ ] python test
 - [ ] better output (color, error ... )
-- [ ] build a GUI maybe
+- [ ] build a GUI maybe (webapp?)
 
