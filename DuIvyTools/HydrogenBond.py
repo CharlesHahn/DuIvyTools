@@ -23,6 +23,43 @@ import matplotlib.colors as mcolors
 from DuIvyTools.XPM import XPM
 
 
+def gen_distang_script(donor_ndxs, hydrogen_ndxs, acceptor_ndxs, select):
+    """generate scripts to calculate distance and angles of hbond
+
+    Args:
+        donor_ndxs (list): donor atom indexs
+        hydrogen_ndxs (list): hydrogen atom indexs
+        acceptor_ndxs (list): acceptor atom indexs
+        select (list): the selected hbond ids
+    """
+
+    ## calc distance of donor - acceptor
+    tail = -1
+    with open("hbdist.ndx", "w") as fo:
+        fo.write("[ hbdist ] \n")
+        for i in select:
+            if donor_ndxs[i] != tail:
+                fo.write("{}  {} \n".format(donor_ndxs[i], acceptor_ndxs[i]))
+                tail = acceptor_ndxs[i]
+            else:
+                fo.write("{}  {} \n".format(acceptor_ndxs[i], donor_ndxs[i]))
+                tail = donor_ndxs[i]
+
+    ## gmx distance -f xtc -s tpr -n hbdist.ndx -oall hbdistall.xvg -select '"group 0"'
+
+    ## calc angle : hydrogen - donor - acceptor
+    with open("hbang.ndx", "w") as fo:
+        fo.write("[ hbang ] \n")
+        for i in select:
+            fo.write(
+                "{} {} {} \n".format(
+                    hydrogen_ndxs[i], donor_ndxs[i], acceptor_ndxs[i]
+                )
+            )
+
+    ## gmx angle -f xtc -n hbangndx.ndx -ov hbangall.xvg -all -od angdist.xvg
+
+
 def hbond(
     xpmfile: str = "",
     ndxfile: str = "",
