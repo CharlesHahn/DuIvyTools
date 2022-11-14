@@ -84,7 +84,6 @@ Matplotlib Style:
 
 - [ ] xtick of xvg shrink
 - [ ] hbond script to calc dist and ang
-- [ ] no float number of hbmap yticks
 - [ ] hbond - merge, AND, OR
 - [ ] xpm2dat(N by N)
 - [ ] mdmat dmf.xpm
