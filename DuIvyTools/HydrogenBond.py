@@ -34,6 +34,11 @@ def gen_distang_script(donor_ndxs, hydrogen_ndxs, acceptor_ndxs, select):
     """
 
     ## calc distance of donor - acceptor
+    for ndx in ["hbdist.ndx", "hbang.ndx"]:
+        if ndx in os.listdir():
+            logging.error("{} is already in current directory!".format(ndx))
+            sys.exit()
+
     tail = -1
     with open("hbdist.ndx", "w") as fo:
         fo.write("[ hbdist ] \n")
@@ -45,7 +50,13 @@ def gen_distang_script(donor_ndxs, hydrogen_ndxs, acceptor_ndxs, select):
                 fo.write("{}  {} \n".format(acceptor_ndxs[i], donor_ndxs[i]))
                 tail = donor_ndxs[i]
 
-    ## gmx distance -f xtc -s tpr -n hbdist.ndx -oall hbdistall.xvg -select '"group 0"'
+    ## gmx distance -f xtc -s tpr -n hbdist.ndx -oall hbdistall.xvg -select '"group"'
+    hbdist_script = "run_hbdist.sh"
+    if hbdist_script in os.listdir():
+        logging.error("{} is already in current directory!".format(hbdist_script))
+        sys.exit()
+    with open(hbdist_script, 'w') as fo:
+        fo.write("""gmx distance -f xxx.xtc -s xxx.tpr -n hbdist.ndx -oall hbdistall.xvg -select '"hbdist"'""")
 
     ## calc angle : hydrogen - donor - acceptor
     with open("hbang.ndx", "w") as fo:
@@ -56,8 +67,20 @@ def gen_distang_script(donor_ndxs, hydrogen_ndxs, acceptor_ndxs, select):
                     hydrogen_ndxs[i], donor_ndxs[i], acceptor_ndxs[i]
                 )
             )
-
-    ## gmx angle -f xtc -n hbangndx.ndx -ov hbangall.xvg -all -od angdist.xvg
+    ## gmx angle -f xxx.xtc -n hbangndx.ndx -ov hbangall.xvg -all -od angdist.xvg
+    hbang_script = "run_hbang.sh"
+    if hbang_script in os.listdir():
+        logging.error("{} is already in current directory!".format(hbang_script))
+        sys.exit()
+    with open(hbang_script, 'w') as fo:
+        fo.write("""gmx angle -f xxx.xtc -n hbang.ndx -ov hbangall.xvg -all -od angdist.xvg""")
+    
+    logging.info(
+        """
+        Please notice: 
+            1. if you applied -dt, -b or -e in your command when calculating `gmx hbond`, add same parameters to scripts when calculating distance or angle of hbonds.
+            2. YOU MUST apply `-merge no` to `gmx hbond` to get correct atom ids which if critically IMPORTANT for calculating angles and distances of hbonds. 
+        """)
 
 
 def hbond(
@@ -69,6 +92,7 @@ def hbond(
     figout: str = None,
     csv: str = None,
     hnf: str = None,
+    genscript: bool = False,
 ) -> None:
     """
     hbond: a function to figure out hbond information, occupancy and occupancy
@@ -298,6 +322,9 @@ def hbond(
                         select[i], hbond_names[i], occupancy[i] * 100.0
                     )
                 )
+    
+    if genscript:
+        gen_distang_script(donor_ndxs, hydrogen_ndxs, acceptor_ndxs, select)
 
 
 def hbond_call_functions(arguments: list = []):
@@ -337,6 +364,12 @@ def hbond_call_functions(arguments: list = []):
         + " specify 'd_atomname@h_atomname...a_atomname' or some format you "
         + "would like. \nOr you could just set the hnf to be 'number' or 'id'",
     )
+    parser.add_argument(
+        "-genscript",
+        "--genscript",
+        action="store_true",
+        help="whether to generate scripts for calculating distance and angle of hbonds",
+    )
 
     if len(arguments) < 2:
         logging.error("no input parameters, -h or --help for help messages")
@@ -367,7 +400,8 @@ def hbond_call_functions(arguments: list = []):
         figout = args.output
         csv = args.csv
         hnf = args.hbond_name_format
-        hbond(xpmfile, ndxfile, grofile, select, noshow, figout, csv, hnf)
+        genscript = args.genscript
+        hbond(xpmfile, ndxfile, grofile, select, noshow, figout, csv, hnf, genscript)
     else:
         logging.error("unknown method {}".format(method))
         exit()
