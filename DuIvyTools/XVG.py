@@ -323,7 +323,8 @@ class XVG(object):
                 )
             ax.plot(self.data_columns[0], self.data_columns[i])
             ax.set_ylabel(self.data_heads[i])
-            plt.xlim(int(x_min - x_space), int(x_max + x_space))
+            if int(x_min - x_space) < int(x_max + x_space) - 1.0:
+                plt.xlim(int(x_min - x_space), int(x_max + x_space))
             plt.xlabel(self.data_heads[0])
         if column_num > 2:
             plt.suptitle(self.xvg_title)
