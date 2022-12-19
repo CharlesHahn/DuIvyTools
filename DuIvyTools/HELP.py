@@ -95,6 +95,14 @@ xvg_compare: comparison of xvg files, draw different data columns you selected
     -ns, --noshow (optional)
             if -ns is specified, figure won't be shown on screen. Usually work
             with -o to save figure directly.
+    -xs, --xshrink (optional)
+            specify a factor for multiplication of x-axis. default == 1.0
+            For instance, if "-xs 0.001" is specified, all x-axis value of xvg
+            will multiply this value. x-axis 1000 will be shown as 1. 
+            Useful for converting the unit (ps) of time into (ns). Don't forget
+            to change xlabel too after specifing -xs.
+            I advise you'd better to use -tu in gmx commands for convertion of 
+            unit of x-axis.
 """,
             "xvg_ave": """
 xvg_ave: calculate the average of each column in xvg file.
@@ -218,6 +226,18 @@ xvg_show_stack: draw stack figure of column data.
     -ns, --noshow (optional)
             if -ns is specified, figure won't be shown on screen. Usually work
             with -o to save figure directly.
+    -xs, --xshrink (optional)
+            specify a factor for multiplication of x-axis. default == 1.0
+            For instance, if "-xs 0.001" is specified, all x-axis value of xvg
+            will multiply this value. x-axis 1000 will be shown as 1. 
+            Useful for converting the unit (ps) of time into (ns). Don't forget
+            to change xlabel too after specifing -xs.
+            I advise you'd better to use -tu in gmx commands for convertion of 
+            unit of x-axis.
+    -x, --xlabel (optional)
+            specify the x-label you want to show in figure.
+    -y, --ylabel (optional)
+            specify the y-label you want to show in figure.
 """,
             "xvg_show_scatter": """
 xvg_show_scatter: draw scatter figure.

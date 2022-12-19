@@ -82,7 +82,6 @@ Matplotlib Style:
 
 ## still working 
 
-- [ ] xtick of xvg shrink
 - [ ] hbond script to calc dist and ang
 - [ ] hbond - merge, AND, OR
 - [ ] xpm2dat(N by N)

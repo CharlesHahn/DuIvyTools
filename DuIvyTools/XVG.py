@@ -46,7 +46,7 @@ class XVG(object):
     draw: draw xvg data to figure
     """
 
-    def __init__(self, xvgfile: str = "") -> None:
+    def __init__(self, xvgfile: str = "", xshrink:float=1.0) -> None:
         """read xvg file and extract infos"""
 
         self.xvg_filename = xvgfile
@@ -61,7 +61,9 @@ class XVG(object):
         self.data_heads = []
         self.data_columns = []
 
-        ## check kand read xpm file
+        ## check and read xpm file
+        if xshrink <= 0:
+            logging.warning("The parameter xshrink should be larger than zero")
         if not os.path.exists(xvgfile):
             logging.error("no {} in current directory".format(xvgfile))
             sys.exit()
@@ -115,7 +117,7 @@ class XVG(object):
             sys.exit()
 
         self.data_heads.append(self.xvg_xlabel)
-        self.data_columns.append([float(c) for c in self.xvg_columns[0]])
+        self.data_columns.append([float(c)*xshrink for c in self.xvg_columns[0]])
         if len(self.xvg_legends) == 0 and len(self.xvg_columns) > 1:
             self.data_heads.append(self.xvg_ylabel)
             self.data_columns.append([float(c) for c in self.xvg_columns[1]])
@@ -416,6 +418,8 @@ class XVG(object):
         end: int = None,
         outpng: str = "",
         noshow: bool = False,
+        xlabel: str = None,
+        ylabel: str = None,
     ) -> None:
         """
         draw xvg data into stacking figure
@@ -488,8 +492,14 @@ class XVG(object):
             ylim_max = (ylim_max, max(stack_data))[ylim_max < max(stack_data)]
             ylim_min = (ylim_min, min(stack_data))[ylim_min > min(stack_data)]
         # print(ylim_min, ylim_max)
-        plt.xlabel(self.data_heads[0])
-        plt.ylabel(self.xvg_ylabel)
+        if xlabel != None:
+            plt.xlabel(xlabel)
+        else:
+            plt.xlabel(self.data_heads[0])
+        if ylabel != None:
+            plt.ylabel(ylabel)
+        else:
+            plt.ylabel(self.xvg_ylabel)
         plt.title("Stacked plot of " + self.xvg_title)
         plt.xlim(
             np.min(self.data_columns[0][start:end]),
@@ -979,6 +989,7 @@ def xvg_compare(
     alpha: float = 0.4,
     outpng: str = "",
     noshow: bool = False,
+    xshrink: float = None
 ) -> None:
     """
     comparison of xvgfiles, draw different columns into figure.
@@ -1041,10 +1052,12 @@ def xvg_compare(
     ):
         logging.error("number of legends you input can not pair to columns you select")
         sys.exit()
+    if xshrink == None: 
+        xshrink = 1.0 
 
     ## draw comparison
     plt.clf()
-    XVGS = [XVG(xvg) for xvg in xvgfiles]
+    XVGS = [XVG(xvg, xshrink) for xvg in xvgfiles]
     legend_count, xmin, xmax = 0, None, None
     for id, column_indexs in enumerate(column_select):
         xvg = XVGS[id]
@@ -1431,10 +1444,15 @@ def xvg_show_stacking(
     end: int = None,
     outpng: str = "",
     noshow: bool = False,
+    xshrink: float = None,
+    xlabel: str = None,
+    ylabel: str = None,
 ) -> None:
     """visualization of stacked xvg data"""
-    xvg = XVG(xvgfile)
-    xvg.draw_stacking(column_select, legend_list, start, end, outpng, noshow)
+    if xshrink == None: 
+        xshrink = 1.0 
+    xvg = XVG(xvgfile, xshrink)
+    xvg.draw_stacking(column_select, legend_list, start, end, outpng, noshow, xlabel, ylabel)
 
 
 def xvg_show_scatter(
@@ -1522,6 +1540,9 @@ def xvg_call_functions(arguments: list = None):
     parser.add_argument(
         "-subplot", "--subplot", action="store_true", help="whether to show in subplots"
     )
+    parser.add_argument(
+        "-xs", "--xshrink", type=float, help="modify x-axis by multipling xshrink"
+    )
 
     if len(arguments) < 2:
         logging.error("no input parameters, -h or --help for help messages")
@@ -1587,6 +1608,9 @@ def xvg_call_functions(arguments: list = None):
             args.end,
             args.output,
             args.noshow,
+            args.xshrink,
+            args.xlabel,
+            args.ylabel,
         )
     elif method == "xvg_show_scatter":
         xvg_show_scatter(
@@ -1617,6 +1641,7 @@ def xvg_call_functions(arguments: list = None):
             args.alpha,
             args.output,
             args.noshow,
+            args.xshrink,
         )
     elif method == "xvg_ave_bar":  # [[], []], []
         xvg_bar_compare(
