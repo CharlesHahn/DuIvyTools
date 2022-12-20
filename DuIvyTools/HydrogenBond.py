@@ -14,13 +14,16 @@ import os
 import sys
 import logging
 import argparse
+import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 
-# from pathlib import Path
-# dit_path = Path(os.path.dirname(__file__))
-# sys.path.append(dit_path)
-from DuIvyTools.XPM import XPM
+from pathlib import Path
+
+dit_path = Path(os.path.dirname(__file__))
+sys.path.append(str(dit_path))
+from XPM import XPM
+from XVG import XVG
 
 
 def gen_distang_script(donor_ndxs, hydrogen_ndxs, acceptor_ndxs, select):
@@ -55,32 +58,128 @@ def gen_distang_script(donor_ndxs, hydrogen_ndxs, acceptor_ndxs, select):
     if hbdist_script in os.listdir():
         logging.error("{} is already in current directory!".format(hbdist_script))
         sys.exit()
-    with open(hbdist_script, 'w') as fo:
-        fo.write("""gmx distance -f xxx.xtc -s xxx.tpr -n hbdist.ndx -oall hbdistall.xvg -select '"hbdist"'""")
+    with open(hbdist_script, "w") as fo:
+        fo.write(
+            """gmx distance -f xxx.xtc -s xxx.tpr -n hbdist.ndx -oall hbdistall.xvg -select '"hbdist"'"""
+        )
 
     ## calc angle : hydrogen - donor - acceptor
     with open("hbang.ndx", "w") as fo:
         fo.write("[ hbang ] \n")
         for i in select:
             fo.write(
-                "{} {} {} \n".format(
-                    hydrogen_ndxs[i], donor_ndxs[i], acceptor_ndxs[i]
-                )
+                "{} {} {} \n".format(hydrogen_ndxs[i], donor_ndxs[i], acceptor_ndxs[i])
             )
     ## gmx angle -f xxx.xtc -n hbangndx.ndx -ov hbangall.xvg -all -od angdist.xvg
     hbang_script = "run_hbang.sh"
     if hbang_script in os.listdir():
         logging.error("{} is already in current directory!".format(hbang_script))
         sys.exit()
-    with open(hbang_script, 'w') as fo:
-        fo.write("""gmx angle -f xxx.xtc -n hbang.ndx -ov hbangall.xvg -all -od angdist.xvg""")
-    
+    with open(hbang_script, "w") as fo:
+        fo.write("""gmx angle -f xxx.xtc -n hbang.ndx -ov hbangall.xvg -all""")
+
     logging.info(
         """
         Please notice: 
             1. if you applied -dt, -b or -e in your command when calculating `gmx hbond`, add same parameters to scripts when calculating distance or angle of hbonds.
             2. YOU MUST apply `-merge no` to `gmx hbond` to get correct atom ids which if critically IMPORTANT for calculating angles and distances of hbonds. 
-        """)
+        """
+    )
+
+
+def calculate_distance_angle(
+    xpm_datamatrix: list,
+    hbond_names: list,
+    distfile: str,
+    angfile: str,
+    figout: str = None,
+    noshow: bool = False,
+    xshrink: float = 1,
+    xlabel: str = None,
+):
+    """calculate average distance and angle, draw figures.
+
+    Args:
+        xpm_datamatrix (list): source data
+        hbond_names (list): name of hbonds
+        distfile (str): file name of distances
+        angfile (str): file name of angles
+    """
+    if len(xpm_datamatrix) != len(hbond_names):
+        logging.error(
+            "wrong in length of datamatrix and hbond names while calculating distances and angles"
+        )
+        sys.exit()
+    if xshrink == None:
+        xshrink = 1.0
+    print(xshrink)
+    dist_xvg = XVG(distfile)
+    ang_xvg = XVG(angfile)
+    if dist_xvg.xvg_column_num != len(xpm_datamatrix) + 1:
+        logging.error("wrong in column number of distance xvg file, check select!")
+        sys.exit()
+    if ang_xvg.xvg_column_num != len(xpm_datamatrix) + 2:
+        logging.error("wrong in column number of distance xvg file, check select!")
+        sys.exit()
+    if dist_xvg.xvg_row_num != ang_xvg.xvg_row_num != len(xpm_datamatrix[0]):
+        logging.error("wrong in length of row, check time selection clearfully!")
+        sys.exit()
+
+    ## calc average distance and angle
+    dist_ave_std, ang_ave_std = [], []
+    for i, dot_line in enumerate(xpm_datamatrix):
+        dot_line = np.array(dot_line)
+        dist_line = dist_xvg.xvg_columns[i + 1]
+        ang_line = ang_xvg.xvg_columns[i + 2]
+        dist_present = np.array(dist_line)[dot_line == 1].astype(float)
+        ang_present = np.array(ang_line)[dot_line == 1].astype(float)
+        dist_ave = np.average(dist_present)
+        dist_std = np.std(dist_present, ddof=1)
+        ang_ave = np.average(ang_present)
+        ang_std = np.std(ang_present, ddof=1)
+        dist_ave_std.append((dist_ave, dist_std))
+        ang_ave_std.append((ang_ave, ang_std))
+
+    ## draw distance and angle figure
+    plt.clf()
+    dist_time = np.array(dist_xvg.xvg_columns[0]).astype(float)
+    dist_time = dist_time * xshrink
+    for i, hbond_name in enumerate(hbond_names):
+        dist_line = np.array(dist_xvg.xvg_columns[i + 1]).astype(float)
+        plt.plot(dist_time, dist_line, label=hbond_name)
+    # plt.plot(dist_time, [0.35 for d in dist_time], "grey")
+    if xlabel != None:
+        plt.xlabel(xlabel)
+    else:
+        plt.xlabel(dist_xvg.xvg_xlabel)
+    plt.ylabel(dist_xvg.xvg_ylabel)
+    plt.title(dist_xvg.xvg_title)
+    plt.legend()
+    if figout != None:
+        plt.savefig("hbond_dist_" + figout, dpi=300)
+    if not noshow:
+        plt.show()
+
+    plt.clf()
+    ang_time = np.array(ang_xvg.xvg_columns[0]).astype(float)
+    ang_time = ang_time * xshrink
+    for i, hbond_name in enumerate(hbond_names):
+        ang_line = np.array(ang_xvg.xvg_columns[i + 2]).astype(float)
+        plt.plot(ang_time, ang_line, label=hbond_name)
+    # plt.plot(ang_time, [30 for d in dist_time], "grey")
+    if xlabel != None:
+        plt.xlabel(xlabel)
+    else:
+        plt.xlabel(dist_xvg.xvg_xlabel)
+    plt.ylabel(ang_xvg.xvg_ylabel)
+    plt.title(ang_xvg.xvg_title)
+    plt.legend()
+    if figout != None:
+        plt.savefig("hbond_angle_" + figout, dpi=300)
+    if not noshow:
+        plt.show()
+
+    return dist_ave_std, ang_ave_std
 
 
 def hbond(
@@ -93,6 +192,11 @@ def hbond(
     csv: str = None,
     hnf: str = None,
     genscript: bool = False,
+    calc_distance_angle: bool = False,
+    distancefile: str = None,
+    anglefile: str = None,
+    xshrink: float = 1.0,
+    xlabel: str = None,
 ) -> None:
     """
     hbond: a function to figure out hbond information, occupancy and occupancy
@@ -264,9 +368,17 @@ def hbond(
     else:
         occupancy = [occupancy[i] for i in select]
         xpm_datamatrix = [xpm_datamatrix[i] for i in select]
+    if hnf == "number":
+        hbond_names = [str(i) for i in range(len(select))]
+    elif hnf == "id":
+        hbond_names = [str(i) for i in select]
+    else:
         hbond_names = [hbond_names[i] for i in select]
 
     ## draw map
+    if xshrink != None and xshrink != 1.0:
+        xpm.xpm_xaxis = [x * xshrink for x in xpm.xpm_xaxis]
+        xpm.xpm_xlabel = (xlabel, xpm.xpm_xlabel)[xlabel == None]
     plt.figure()
     cmap = mcolors.ListedColormap(["white", "#F94C66"])
     hbond = plt.pcolormesh(
@@ -278,6 +390,7 @@ def hbond(
     )
     if len(select) == 1:
         hbond = plt.imshow(xpm_datamatrix, cmap=cmap, aspect="auto")
+        # TODO: xticks
     cb = plt.colorbar(hbond, orientation="horizontal", fraction=0.03)
     cb.set_ticks([0.25, 0.75])
     cb.set_ticklabels(["None", "Present"])
@@ -300,31 +413,96 @@ def hbond(
     if not noshow:
         plt.show()
 
+    if genscript:
+        gen_distang_script(donor_ndxs, hydrogen_ndxs, acceptor_ndxs, select)
+    dist_ave_std, ang_ave_std = [], []
+    if calc_distance_angle and distancefile != None and anglefile != None:
+        dist_ave_std, ang_ave_std = calculate_distance_angle(
+            xpm_datamatrix,
+            hbond_names,
+            distancefile,
+            anglefile,
+            figout,
+            noshow,
+            xshrink,
+            xlabel,
+        )
+
     ## show table
-    print("-" * 79)
-    print("{:<2} {:<60} {}".format("id", "donor->hydrogen...acceptor", "occupancy(%)"))
-    print("-" * 79)
+    print("-" * 115)
+    print(
+        "{:<2} {:<50} {:>14} {:>14}".format(
+            "id", "donor->hydrogen...acceptor", "occupancy(%)", "Present/Frames"
+        ),
+        end="",
+    )
+    if len(dist_ave_std) != 0 and len(ang_ave_std) != 0:
+        print(" {:>15} {:>15}".format("Distance (nm)", "Angle (°)"))
+    else:
+        print()
+    print("-" * 115)
     for i in range(len(hbond_names)):
         print(
-            "{:<2d} {:<60} {:.2f}".format(
-                select[i], hbond_names[i], occupancy[i] * 100.0
-            )
+            "{:<2d} {:<50} {:>14.2f} {:>6d}/{:<7}".format(
+                select[i],
+                hbond_names[i],
+                occupancy[i] * 100.0,
+                np.sum(xpm_datamatrix[i]),
+                len(xpm_datamatrix[i]),
+            ),
+            end="",
         )
-    print("-" * 79)
+        if len(dist_ave_std) != 0 and len(ang_ave_std) != 0:
+            print(
+                "  {:>6.4f} ± {:<6.4f} {:>6.2f} ± {:<6.2f}".format(
+                    dist_ave_std[i][0],
+                    dist_ave_std[i][1],
+                    ang_ave_std[i][0],
+                    ang_ave_std[i][1],
+                )
+            )
+        else:
+            print()
+    print("-" * 115)
     if csv != None:
         with open(csv, "w") as fo:
             fo.write(
-                "{},{},{}\n".format("id", "donor->hydrogen...acceptor", "occupancy(%)")
+                "{},{},{},{}".format(
+                    "id", "donor->hydrogen...acceptor", "occupancy(%)", "Present/Frames"
+                )
             )
-            for i in range(len(hbond_names)):
+            if len(dist_ave_std) != 0 and len(ang_ave_std) != 0:
                 fo.write(
-                    "{},{},{:.2f}\n".format(
-                        select[i], hbond_names[i], occupancy[i] * 100.0
+                    ",{},{},{},{}\n".format(
+                        "Distance ave (nm)",
+                        "Distance std (nm)",
+                        "Angle ave (°)",
+                        "Angle std (°)",
                     )
                 )
-    
-    if genscript:
-        gen_distang_script(donor_ndxs, hydrogen_ndxs, acceptor_ndxs, select)
+            else:
+                fo.write("\n")
+            for i in range(len(hbond_names)):
+                fo.write(
+                    "{},{},{:.2f},{:>d}/{}".format(
+                        select[i],
+                        hbond_names[i],
+                        occupancy[i] * 100.0,
+                        np.sum(xpm_datamatrix[i]),
+                        len(xpm_datamatrix[i]),
+                    )
+                )
+                if len(dist_ave_std) != 0 and len(ang_ave_std) != 0:
+                    fo.write(
+                        ",{:>6.4f},{:<6.4f},{:>6.2f},{:<6.2f}\n".format(
+                            dist_ave_std[i][0],
+                            dist_ave_std[i][1],
+                            ang_ave_std[i][0],
+                            ang_ave_std[i][1],
+                        )
+                    )
+                else:
+                    fo.write("\n")
 
 
 def hbond_call_functions(arguments: list = []):
@@ -370,6 +548,22 @@ def hbond_call_functions(arguments: list = []):
         action="store_true",
         help="whether to generate scripts for calculating distance and angle of hbonds",
     )
+    parser.add_argument(
+        "-cda",
+        "--calc_distance_angle",
+        action="store_true",
+        help="whether to calculate distance and angle of hbonds from distance xvg file and angle xvg file",
+    )
+    parser.add_argument(
+        "-distancefile", "--distancefile", help="distance file of hbonds for input"
+    )
+    parser.add_argument(
+        "-anglefile", "--anglefile", help="angle file of hbonds for input"
+    )
+    parser.add_argument(
+        "-xs", "--xshrink", type=float, help="modify x-axis by multipling xshrink"
+    )
+    parser.add_argument("-x", "--xlabel", type=str, help="the xlabel of figure")
 
     if len(arguments) < 2:
         logging.error("no input parameters, -h or --help for help messages")
@@ -401,7 +595,27 @@ def hbond_call_functions(arguments: list = []):
         csv = args.csv
         hnf = args.hbond_name_format
         genscript = args.genscript
-        hbond(xpmfile, ndxfile, grofile, select, noshow, figout, csv, hnf, genscript)
+        calc_distance_angle = args.calc_distance_angle
+        distancefile = args.distancefile
+        anglefile = args.anglefile
+        xshrink = args.xshrink
+        xlabel = args.xlabel
+        hbond(
+            xpmfile,
+            ndxfile,
+            grofile,
+            select,
+            noshow,
+            figout,
+            csv,
+            hnf,
+            genscript,
+            calc_distance_angle,
+            distancefile,
+            anglefile,
+            xshrink,
+            xlabel,
+        )
     else:
         logging.error("unknown method {}".format(method))
         exit()
