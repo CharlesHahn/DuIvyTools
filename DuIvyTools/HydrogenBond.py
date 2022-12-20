@@ -414,6 +414,7 @@ def hbond(
         plt.show()
 
     if genscript:
+        logging.warning("!IMPORTANT! remember to set 'merge' option of 'gmx hbond' to 'no' if you wanna to calculate average hbond distance and angle !")
         gen_distang_script(donor_ndxs, hydrogen_ndxs, acceptor_ndxs, select)
     dist_ave_std, ang_ave_std = [], []
     if calc_distance_angle and distancefile != None and anglefile != None:

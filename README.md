@@ -82,7 +82,6 @@ Matplotlib Style:
 
 ## still working 
 
-- [ ] hbond script to calc dist and ang
 - [ ] hbond - merge, AND, OR
 - [ ] xpm2dat(N by N)
 - [ ] mdmat dmf.xpm
