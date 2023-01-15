@@ -83,7 +83,6 @@ Matplotlib Style:
 ## still working 
 
 - [ ] hbond - merge, AND, OR
-- [ ] xpm2dat(N by N)
 - [ ] mdmat dmf.xpm
 - [ ] latex or format parser for matplotlib
 - [ ] Discrete xpm to csv, convert notes to numbers

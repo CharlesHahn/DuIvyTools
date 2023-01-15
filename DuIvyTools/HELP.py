@@ -468,6 +468,35 @@ xpm2csv: convert xpm file into csv data file.
             I advise you'd better to use -tu in gmx commands for convertion of 
             unit of x-axis.
 """,
+            "xpm2dat": """
+xpm2dat: convert xpm file into N*N data file. 
+         when number of x-axis (or y-axis) is 1 more than width (or height) of
+         figure, the intermediate value of two adjacent values of x-axis (or
+         y-axis) will be calculated to suit the width (or height).
+
+:examples:
+    dit xpm2dat -f f1.xpm -o test.dat
+    dit xpm2dat -f f1.xpm -o test.dat -x xlabel -y ylabel
+    dit xpm2dat -f f1.xpm -o test.dat -x xlabel -xs 0.001
+
+:parameters:
+    -f, --input
+            specify the xpm file for input. 
+    -o, --output
+            specify the output dat file name.
+    -x, --xlabel (optional)
+            specify the x-label you want to write to csv file.
+    -y, --ylabel (optional)
+            specify the y-label you want to write to csv file.
+    -xs, --xshrink (optional)
+            specify a factor for multiplication of x-axis. default == 1.0
+            For instance, if "-xs 0.001" is specified, all x-axis value of xpm
+            will multiply this value. x-axis 1000 will be shown as 1. 
+            Useful for converting the unit (ps) of time into (ns). Don't forget
+            to change xlabel too after specifing -xs.
+            I advise you'd better to use -tu in gmx commands for convertion of 
+            unit of x-axis.
+""",
             "xpm2gpl": """
 xpm2gpl: convert xpm file into gnuplot script.
 
@@ -846,7 +875,7 @@ All commands are shown below:
         xvg_show_distribution, xvg_show_stack, xvg_show_scatter
         xvg_energy_compute, xvg_combine, xvg_ave_bar, xvg_box
     XPM:
-        xpm_show, xpm2csv, xpm2gpl
+        xpm_show, xpm2csv, xpm2dat, xpm2gpl
     NDX:
         ndx_show, ndx_rm_dup, ndx_rm, ndx_preserve
         ndx_add, ndx_combine, ndx_rename
