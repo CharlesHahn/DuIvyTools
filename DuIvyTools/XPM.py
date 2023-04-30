@@ -710,7 +710,8 @@ class XPM(object):
         ## draw 3d figure
         fig = plt.figure()
         plt.clf()
-        ax = fig.gca(projection="3d")
+        # ax = fig.gca(projection="3d")
+        ax = fig.add_subplot(projection="3d")
 
         ## interpolation
         IP_value = 1

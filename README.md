@@ -1,4 +1,5 @@
-# DuIvyTools
+DuIvyTools
+
 [![PyPI version](https://badge.fury.io/py/DuIvyTools.svg)](https://badge.fury.io/py/DuIvyTools)
 
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/DuIvyTools)
@@ -80,7 +81,7 @@ Matplotlib Style:
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7261532.svg)](https://doi.org/10.5281/zenodo.7261532)
 
-## still working 
+## still working
 
 - [ ] hbond - merge, AND, OR
 - [ ] mdmat dmf.xpm
@@ -90,4 +91,13 @@ Matplotlib Style:
 - [ ] python test
 - [ ] better output (color, error ... )
 - [ ] build a GUI maybe (webapp?)
+- [ ] DSSP: SS vs AA
+- [ ] use plotext to create plot in terminal !
 
+
+## further features in v0.5.0
+
+- [ ] the parsing of files should be isolated from figure plotting
+- [ ] plotting engines: matplotlib, plotext, gnuplot
+- [ ] Procedures
+- [ ] tidy help info and documentation

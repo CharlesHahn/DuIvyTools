@@ -197,6 +197,7 @@ def hbond(
     anglefile: str = None,
     xshrink: float = 1.0,
     xlabel: str = None,
+    set_operation: str = None,
 ) -> None:
     """
     hbond: a function to figure out hbond information, occupancy and occupancy
@@ -225,6 +226,23 @@ def hbond(
                 "only accept {} file with suffix {}".format(suffix.strip("."), suffix)
             )
             sys.exit()
+    
+    ## parse set operation list
+    if set_operation != None:
+        set_id_list = []
+        if set_operation.startswith("AND"):
+            set_flag = "AND"
+            set_strs = set_operation[3:].strip().split()
+        elif set_operation.startswith("OR"):
+            set_flag = "OR"
+            set_strs = set_operation[2:].strip().split()
+        for set_str in set_strs:
+            items = set_str.split(",")
+            for item in items:
+                if "-" in item:
+                    set_id_list += [i for i in range(int(item.split("-")[0]), int(item.split("-")[1])+1)]
+                else:
+                    set_id_list.append(int(item))
 
     ## parse ndx file to get index of hydrogen bonds
     donor_ndxs, hydrogen_ndxs, acceptor_ndxs = [], [], []
@@ -361,6 +379,25 @@ def hbond(
         xpm_datamatrix.append(dot_list)
         occupancy.append(sum(dot_list) / (1.0 * len(dot_list)))
 
+    # set operation
+    if set_operation != None:
+        set_line = []
+        for s in set_id_list:
+            if s >= len(xpm_datamatrix):
+                logging.error(f"hbond id in set_operation out of range, it should be in 0 to {len(xpm_datamatrix)}(not include)")
+                sys.exit()
+        for x in range(xpm.xpm_width):
+            res = xpm_datamatrix[set_id_list[0]][x]
+            for id in set_id_list:
+                if set_flag == "AND":
+                    res = res and xpm_datamatrix[id][x]
+                elif set_flag == "OR":
+                    res = res or xpm_datamatrix[id][x]
+                else:
+                    logging.error("Wrong set operation, only support AND and OR")
+            set_line.append(res)
+
+
     ## deal with the selection
     # select = [5]
     if select == []:
@@ -374,6 +411,12 @@ def hbond(
         hbond_names = [str(i) for i in select]
     else:
         hbond_names = [hbond_names[i] for i in select]
+    
+    if set_operation != None:
+        hbond_names.append(set_operation)
+        occupancy.append(sum(set_line) / (1.0 * len(set_line)))
+        xpm_datamatrix.append(set_line)
+        select.append(-1)
 
     ## draw map
     if xshrink != None and xshrink != 1.0:
@@ -413,6 +456,9 @@ def hbond(
     if not noshow:
         plt.show()
 
+    if set_operation != None and (genscript or calc_distance_angle):
+        logging.error("you are not surposed to specify set_operation and genscript or calc_distance_angle together, remove set_operation!")
+        sys.exit()
     if genscript:
         logging.warning("!IMPORTANT! remember to set 'merge' option of 'gmx hbond' to 'no' if you wanna to calculate average hbond distance and angle !")
         gen_distang_script(donor_ndxs, hydrogen_ndxs, acceptor_ndxs, select)
@@ -565,6 +611,7 @@ def hbond_call_functions(arguments: list = []):
         "-xs", "--xshrink", type=float, help="modify x-axis by multipling xshrink"
     )
     parser.add_argument("-x", "--xlabel", type=str, help="the xlabel of figure")
+    parser.add_argument("-so", "--set_operation", type=str, help="use AND or OR to operate different hbonds. eg. -so AND1-2,4,7  -so OR0,4,6-8")
 
     if len(arguments) < 2:
         logging.error("no input parameters, -h or --help for help messages")
@@ -601,6 +648,7 @@ def hbond_call_functions(arguments: list = []):
         anglefile = args.anglefile
         xshrink = args.xshrink
         xlabel = args.xlabel
+        set_operation = args.set_operation
         hbond(
             xpmfile,
             ndxfile,
@@ -616,6 +664,7 @@ def hbond_call_functions(arguments: list = []):
             anglefile,
             xshrink,
             xlabel,
+            set_operation,
         )
     else:
         logging.error("unknown method {}".format(method))
