@@ -1,15 +1,10 @@
 DuIvyTools
 
 [![PyPI version](https://badge.fury.io/py/DuIvyTools.svg)](https://badge.fury.io/py/DuIvyTools)
-
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/DuIvyTools)
-
 ![PyPI - License](https://img.shields.io/pypi/l/DuIvyTools)
-
 [![Documentation Status](https://readthedocs.org/projects/duivytools/badge/?version=latest)](https://duivytools.readthedocs.io/zh_CN/latest/?badge=latest)
-
 [![commits-since](https://img.shields.io/github/commits-since/CharlesHahn/DuIvyTools/v0.4.7.svg)](https://github.com/CharlesHahn/DuIvyTools/compare/v0.4.7...master)
-
 [![Python Version](https://img.shields.io/pypi/pyversions/DuIvyTools.svg)](https://pypi.org/project/DuIvyTools)
 
 ```
@@ -64,7 +59,7 @@ For XVG files:
     xvg_show_distribution, xvg_show_stack, xvg_show_scatter
     xvg_energy_compute, xvg_combine, xvg_ave_bar, xvg_box
 For XPM files:
-    xpm_show, xpm2csv, xpm2gpl
+    xpm_show, xpm2csv, xpm2dat, xpm2gpl
 For NDX files:
     ndx_show, ndx_rm_dup, ndx_rm, ndx_preserve
     ndx_add, ndx_combine, ndx_rename
@@ -74,6 +69,9 @@ Others:
     find_center, pipi_dist_ang, hbond, mol_map, dccm_ascii
 Matplotlib Style:
     show_style
+
+You can type `dit help <command>` or `dit <command> -h` for more help messages 
+about each command, like: `dit help xvg_show` or `dit xvg_show -h`. 
 ```
 
 
@@ -83,21 +81,21 @@ Matplotlib Style:
 
 ## still working
 
-- [ ] hbond - merge, AND, OR
+- [x] hbond - merge, AND, OR
 - [ ] mdmat dmf.xpm
-- [ ] latex or format parser for matplotlib
-- [ ] Discrete xpm to csv, convert notes to numbers
-- [ ] volume occupancy of ligand during MD
-- [ ] python test
-- [ ] better output (color, error ... )
-- [ ] build a GUI maybe (webapp?)
 - [ ] DSSP: SS vs AA
-- [ ] use plotext to create plot in terminal !
 
 
 ## further features in v0.5.0
 
-- [ ] the parsing of files should be isolated from figure plotting
-- [ ] plotting engines: matplotlib, plotext, gnuplot
-- [ ] Procedures
-- [ ] tidy help info and documentation
+- [ ] ! the parsing of files should be isolated from figure plotting
+- [ ] ! plotting engines: matplotlib, plotext, gnuplot
+- [ ] ! Procedures
+- [ ] ! tidy help info and documentation
+- [ ] Discrete xpm to csv, convert notes to numbers
+- [ ] better output (color, error ... )
+- [ ] use plotext to create plot in terminal !
+- [ ] python test
+- [ ] latex or format parser for matplotlib
+- [ ] volume occupancy of ligand during MD
+- [ ] build a GUI maybe (webapp?)
