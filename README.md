@@ -66,7 +66,7 @@ For NDX files:
 For MDP files:
     mdp_gen
 Others:
-    find_center, pipi_dist_ang, hbond, mol_map, dccm_ascii
+    find_center, pipi_dist_ang, hbond, mol_map, dccm_ascii, dssp
 Matplotlib Style:
     show_style
 

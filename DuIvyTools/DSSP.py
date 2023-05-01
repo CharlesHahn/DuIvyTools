@@ -52,6 +52,9 @@ def dssp(xpmfile:str=None, xlabel:str=None, ylabel:str=None, title:str=None, xsh
     labels = [k for k in residue_occupancy_dic.keys()]
     labels.reverse()
     data_columns = [residue_occupancy_dic[l] for l in labels]
+    if "residue_occupancy_data.csv" in os.listdir():
+        logging.error("residue_occupancy_data.csv already in current directory, unable to output file with same name")
+        sys.exit()
     with open("residue_occupancy_data.csv", "w") as fo:
         fo.write(",".join(labels)+"\n")
         for t in range(len(data_columns[0])):
@@ -91,6 +94,9 @@ def dssp(xpmfile:str=None, xlabel:str=None, ylabel:str=None, title:str=None, xsh
     labels = [k for k in time_occupancy_dic.keys()]
     labels.reverse()
     data_columns = [time_occupancy_dic[l] for l in labels]
+    if "time_occupancy_data.csv" in os.listdir():
+        logging.error("time_occupancy_data.csv already in current directory, unable to output file with same name")
+        sys.exit()
     with open("time_occupancy_data.csv", "w") as fo:
         fo.write(",".join(labels)+"\n")
         for t in range(len(data_columns[0])):
@@ -100,19 +106,20 @@ def dssp(xpmfile:str=None, xlabel:str=None, ylabel:str=None, title:str=None, xsh
         stack_data = [
             sum([data_columns[c][x] for c in range(index, len(labels))])
             for x in range(len(xpm.xpm_yaxis))]
-        plt.fill_between(
-            xpm.xpm_yaxis,
-            stack_data,
-            [0 for _ in range(len(stack_data))],
-            label=labels[index],
-        )
+        plt.bar(xpm.xpm_yaxis, stack_data, label=labels[index], width=1)
+        # plt.fill_between(
+        #     xpm.xpm_yaxis,
+        #     stack_data,
+        #     [0 for _ in range(len(stack_data))],
+        #     label=labels[index],
+        # )
         ylim_max = (ylim_max, max(stack_data))[ylim_max < max(stack_data)]
         ylim_min = (ylim_min, min(stack_data))[ylim_min > min(stack_data)]
 
     plt.xlabel(xpm.xpm_ylabel)
     plt.ylabel(xpm.xpm_xlabel)
     plt.title("Stacked plot of " + xpm.xpm_title)
-    plt.xlim(np.min(xpm.xpm_yaxis), np.max(xpm.xpm_yaxis),)
+    plt.xlim(np.min(xpm.xpm_yaxis)-0.5, np.max(xpm.xpm_yaxis)+0.5)
     plt.ylim(ylim_min, ylim_max)
     plt.legend(loc="upper left", bbox_to_anchor=(1,1))
     plt.tight_layout()
