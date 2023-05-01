@@ -46,7 +46,7 @@ class XVG(object):
     draw: draw xvg data to figure
     """
 
-    def __init__(self, xvgfile: str = "", xshrink:float=1.0) -> None:
+    def __init__(self, xvgfile: str = "", xshrink: float = 1.0) -> None:
         """read xvg file and extract infos"""
 
         self.xvg_filename = xvgfile
@@ -117,7 +117,7 @@ class XVG(object):
             sys.exit()
 
         self.data_heads.append(self.xvg_xlabel)
-        self.data_columns.append([float(c)*xshrink for c in self.xvg_columns[0]])
+        self.data_columns.append([float(c) * xshrink for c in self.xvg_columns[0]])
         if len(self.xvg_legends) == 0 and len(self.xvg_columns) > 1:
             self.data_heads.append(self.xvg_ylabel)
             self.data_columns.append([float(c) for c in self.xvg_columns[1]])
@@ -989,7 +989,7 @@ def xvg_compare(
     alpha: float = 0.4,
     outpng: str = "",
     noshow: bool = False,
-    xshrink: float = None
+    xshrink: float = None,
 ) -> None:
     """
     comparison of xvgfiles, draw different columns into figure.
@@ -1052,8 +1052,8 @@ def xvg_compare(
     ):
         logging.error("number of legends you input can not pair to columns you select")
         sys.exit()
-    if xshrink == None: 
-        xshrink = 1.0 
+    if xshrink == None:
+        xshrink = 1.0
 
     ## draw comparison
     plt.clf()
@@ -1449,10 +1449,12 @@ def xvg_show_stacking(
     ylabel: str = None,
 ) -> None:
     """visualization of stacked xvg data"""
-    if xshrink == None: 
-        xshrink = 1.0 
+    if xshrink == None:
+        xshrink = 1.0
     xvg = XVG(xvgfile, xshrink)
-    xvg.draw_stacking(column_select, legend_list, start, end, outpng, noshow, xlabel, ylabel)
+    xvg.draw_stacking(
+        column_select, legend_list, start, end, outpng, noshow, xlabel, ylabel
+    )
 
 
 def xvg_show_scatter(

@@ -23,8 +23,14 @@ import matplotlib.pyplot as plt
 from DuIvyTools.XPM import XPM
 
 
-def dssp(xpmfile:str=None, xlabel:str=None, ylabel:str=None, title:str=None, xshrink:float=1.0):
-    """read xpm file, generate xpm figure, stacked Residue vs time, stacked time occupancy vs residue """
+def dssp(
+    xpmfile: str = None,
+    xlabel: str = None,
+    ylabel: str = None,
+    title: str = None,
+    xshrink: float = 1.0,
+):
+    """read xpm file, generate xpm figure, stacked Residue vs time, stacked time occupancy vs residue"""
 
     xpm = XPM(xpmfile, xlabel, ylabel, title, xshrink)
     xpm.draw_origin(False, None, False)
@@ -39,9 +45,9 @@ def dssp(xpmfile:str=None, xlabel:str=None, ylabel:str=None, title:str=None, xsh
         ):
             dot_list.append(xpm.chars.index(dataline[i : i + xpm.xpm_char_per_pixel]))
         xpm_datamatrix.append(dot_list)
-    
+
     # residue_occupancy
-    residue_occupancy_dic = {k:[] for k in xpm.notes}
+    residue_occupancy_dic = {k: [] for k in xpm.notes}
     for x, xaxis in enumerate(xpm.xpm_xaxis):
         for key in residue_occupancy_dic.keys():
             residue_occupancy_dic[key].append(0)
@@ -53,17 +59,23 @@ def dssp(xpmfile:str=None, xlabel:str=None, ylabel:str=None, title:str=None, xsh
     labels.reverse()
     data_columns = [residue_occupancy_dic[l] for l in labels]
     if "residue_occupancy_data.csv" in os.listdir():
-        logging.error("residue_occupancy_data.csv already in current directory, unable to output file with same name")
+        logging.error(
+            "residue_occupancy_data.csv already in current directory, unable to output file with same name"
+        )
         sys.exit()
     with open("residue_occupancy_data.csv", "w") as fo:
-        fo.write(",".join(labels)+"\n")
+        fo.write(",".join(labels) + "\n")
         for t in range(len(data_columns[0])):
-            fo.write(",".join([str(data_columns[d][t]) for d in range(len(data_columns))])+"\n")
+            fo.write(
+                ",".join([str(data_columns[d][t]) for d in range(len(data_columns))])
+                + "\n"
+            )
     ylim_max, ylim_min = 0, 0
     for index, _ in enumerate(labels):
         stack_data = [
             sum([data_columns[c][x] for c in range(index, len(labels))])
-            for x in range(len(xpm.xpm_xaxis))]
+            for x in range(len(xpm.xpm_xaxis))
+        ]
         plt.fill_between(
             xpm.xpm_xaxis,
             stack_data,
@@ -76,14 +88,17 @@ def dssp(xpmfile:str=None, xlabel:str=None, ylabel:str=None, title:str=None, xsh
     plt.xlabel(xpm.xpm_xlabel)
     plt.ylabel(xpm.xpm_ylabel)
     plt.title("Stacked plot of " + xpm.xpm_title)
-    plt.xlim(np.min(xpm.xpm_xaxis), np.max(xpm.xpm_xaxis),)
+    plt.xlim(
+        np.min(xpm.xpm_xaxis),
+        np.max(xpm.xpm_xaxis),
+    )
     plt.ylim(ylim_min, ylim_max)
-    plt.legend(loc="upper left", bbox_to_anchor=(1,1))
+    plt.legend(loc="upper left", bbox_to_anchor=(1, 1))
     plt.tight_layout()
     plt.show()
 
     # time_occupancy
-    time_occupancy_dic = {k:[] for k in xpm.notes}
+    time_occupancy_dic = {k: [] for k in xpm.notes}
     for y, yaxis in enumerate(xpm.xpm_yaxis):
         for key in time_occupancy_dic.keys():
             time_occupancy_dic[key].append(0)
@@ -95,17 +110,23 @@ def dssp(xpmfile:str=None, xlabel:str=None, ylabel:str=None, title:str=None, xsh
     labels.reverse()
     data_columns = [time_occupancy_dic[l] for l in labels]
     if "time_occupancy_data.csv" in os.listdir():
-        logging.error("time_occupancy_data.csv already in current directory, unable to output file with same name")
+        logging.error(
+            "time_occupancy_data.csv already in current directory, unable to output file with same name"
+        )
         sys.exit()
     with open("time_occupancy_data.csv", "w") as fo:
-        fo.write(",".join(labels)+"\n")
+        fo.write(",".join(labels) + "\n")
         for t in range(len(data_columns[0])):
-            fo.write(",".join([str(data_columns[d][t]) for d in range(len(data_columns))])+"\n")
+            fo.write(
+                ",".join([str(data_columns[d][t]) for d in range(len(data_columns))])
+                + "\n"
+            )
     ylim_max, ylim_min = 0, 0
     for index, _ in enumerate(labels):
         stack_data = [
             sum([data_columns[c][x] for c in range(index, len(labels))])
-            for x in range(len(xpm.xpm_yaxis))]
+            for x in range(len(xpm.xpm_yaxis))
+        ]
         plt.bar(xpm.xpm_yaxis, stack_data, label=labels[index], width=1)
         # plt.fill_between(
         #     xpm.xpm_yaxis,
@@ -119,13 +140,11 @@ def dssp(xpmfile:str=None, xlabel:str=None, ylabel:str=None, title:str=None, xsh
     plt.xlabel(xpm.xpm_ylabel)
     plt.ylabel(xpm.xpm_xlabel)
     plt.title("Stacked plot of " + xpm.xpm_title)
-    plt.xlim(np.min(xpm.xpm_yaxis)-0.5, np.max(xpm.xpm_yaxis)+0.5)
+    plt.xlim(np.min(xpm.xpm_yaxis) - 0.5, np.max(xpm.xpm_yaxis) + 0.5)
     plt.ylim(ylim_min, ylim_max)
-    plt.legend(loc="upper left", bbox_to_anchor=(1,1))
+    plt.legend(loc="upper left", bbox_to_anchor=(1, 1))
     plt.tight_layout()
     plt.show()
-
-
 
 
 def dssp_call_functions(arguments: list = []):
@@ -140,7 +159,11 @@ def dssp_call_functions(arguments: list = []):
     )
     parser.add_argument("-f", "--input", help="the xpm file for input")
     parser.add_argument(
-        "-xs", "--xshrink", type=float, default=1.0, help="modify x-axis by multipling xshrink"
+        "-xs",
+        "--xshrink",
+        type=float,
+        default=1.0,
+        help="modify x-axis by multipling xshrink",
     )
     parser.add_argument("-x", "--xlabel", type=str, help="the xlabel of figure")
     parser.add_argument("-y", "--ylabel", type=str, help="the ylabel of figure")

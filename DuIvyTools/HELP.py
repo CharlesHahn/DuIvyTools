@@ -858,7 +858,7 @@ dssp: read in one xpm of secondary structure file, output the DSSP plot,
             will multiply this value. x-axis 1000 will be shown as 1. 
             Useful for converting the unit (ps) of time into (ns). Don't forget
             to change xlabel too after specifing -xs.
-"""
+""",
         }
 
     def print_help_infos(self, method: str) -> None:

@@ -226,7 +226,7 @@ def hbond(
                 "only accept {} file with suffix {}".format(suffix.strip("."), suffix)
             )
             sys.exit()
-    
+
     ## parse set operation list
     if set_operation != None:
         set_id_list = []
@@ -240,7 +240,12 @@ def hbond(
             items = set_str.split(",")
             for item in items:
                 if "-" in item:
-                    set_id_list += [i for i in range(int(item.split("-")[0]), int(item.split("-")[1])+1)]
+                    set_id_list += [
+                        i
+                        for i in range(
+                            int(item.split("-")[0]), int(item.split("-")[1]) + 1
+                        )
+                    ]
                 else:
                     set_id_list.append(int(item))
 
@@ -384,7 +389,9 @@ def hbond(
         set_line = []
         for s in set_id_list:
             if s >= len(xpm_datamatrix):
-                logging.error(f"hbond id in set_operation out of range, it should be in 0 to {len(xpm_datamatrix)}(not include)")
+                logging.error(
+                    f"hbond id in set_operation out of range, it should be in 0 to {len(xpm_datamatrix)}(not include)"
+                )
                 sys.exit()
         for x in range(xpm.xpm_width):
             res = xpm_datamatrix[set_id_list[0]][x]
@@ -396,7 +403,6 @@ def hbond(
                 else:
                     logging.error("Wrong set operation, only support AND and OR")
             set_line.append(res)
-
 
     ## deal with the selection
     # select = [5]
@@ -411,7 +417,7 @@ def hbond(
         hbond_names = [str(i) for i in select]
     else:
         hbond_names = [hbond_names[i] for i in select]
-    
+
     if set_operation != None:
         hbond_names.append(set_operation)
         occupancy.append(sum(set_line) / (1.0 * len(set_line)))
@@ -457,10 +463,14 @@ def hbond(
         plt.show()
 
     if set_operation != None and (genscript or calc_distance_angle):
-        logging.error("you are not surposed to specify set_operation and genscript or calc_distance_angle together, remove set_operation!")
+        logging.error(
+            "you are not surposed to specify set_operation and genscript or calc_distance_angle together, remove set_operation!"
+        )
         sys.exit()
     if genscript:
-        logging.warning("!IMPORTANT! remember to set 'merge' option of 'gmx hbond' to 'no' if you wanna to calculate average hbond distance and angle !")
+        logging.warning(
+            "!IMPORTANT! remember to set 'merge' option of 'gmx hbond' to 'no' if you wanna to calculate average hbond distance and angle !"
+        )
         gen_distang_script(donor_ndxs, hydrogen_ndxs, acceptor_ndxs, select)
     dist_ave_std, ang_ave_std = [], []
     if calc_distance_angle and distancefile != None and anglefile != None:
@@ -611,7 +621,12 @@ def hbond_call_functions(arguments: list = []):
         "-xs", "--xshrink", type=float, help="modify x-axis by multipling xshrink"
     )
     parser.add_argument("-x", "--xlabel", type=str, help="the xlabel of figure")
-    parser.add_argument("-so", "--set_operation", type=str, help="use AND or OR to operate different hbonds. eg. -so AND1-2,4,7  -so OR0,4,6-8")
+    parser.add_argument(
+        "-so",
+        "--set_operation",
+        type=str,
+        help="use AND or OR to operate different hbonds. eg. -so AND1-2,4,7  -so OR0,4,6-8",
+    )
 
     if len(arguments) < 2:
         logging.error("no input parameters, -h or --help for help messages")

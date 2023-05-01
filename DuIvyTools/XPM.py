@@ -358,13 +358,17 @@ class XPM(object):
         if self.xpm_type != "Continuous":
             logging.error("can not extract data from xpm whose type is not Continuous")
             sys.exit()
-            
+
         ## write results
         with open(outdat, "w") as fo:
             x_title = (self.xpm_xlabel, "x-axis")[len(self.xpm_xlabel) == 0]
             y_title = (self.xpm_ylabel, "y-axis")[len(self.xpm_ylabel) == 0]
             z_title = (self.xpm_legend, "value")[len(self.xpm_legend) == 0]
-            fo.write("# first line: {}; second line (bottom to top): {}; Values :{}\n".format(x_title, y_title, z_title))
+            fo.write(
+                "# first line: {}; second line (bottom to top): {}; Values :{}\n".format(
+                    x_title, y_title, z_title
+                )
+            )
             fo.write(",".join(["{:.4f}".format(item) for item in self.xpm_xaxis]))
             fo.write("\n")
             true_yaxis = ["{:.4f}".format(item) for item in self.xpm_yaxis]
@@ -376,18 +380,25 @@ class XPM(object):
                 for i in range(
                     0, self.xpm_width * self.xpm_char_per_pixel, self.xpm_char_per_pixel
                 ):
-                    value.append(float(
+                    value.append(
+                        float(
                             self.notes[
                                 self.chars.index(
-                                    self.xpm_datalines[l][i : i + self.xpm_char_per_pixel]
+                                    self.xpm_datalines[l][
+                                        i : i + self.xpm_char_per_pixel
+                                    ]
                                 )
                             ]
-                        ))
+                        )
+                    )
                 fo.write(",".join(["{:.6f}".format(v) for v in value]))
                 fo.write("\n")
         logging.info("extract data from {} successfully".format(self.xpmfile))
-        logging.info("{} * {} matrix data are saved into {}".format(self.xpm_width, self.xpm_height, outdat))
-
+        logging.info(
+            "{} * {} matrix data are saved into {}".format(
+                self.xpm_width, self.xpm_height, outdat
+            )
+        )
 
     def xpm2gpl(self, outgpl: str = "") -> None:
         """convert xpm file to gnuplot script
