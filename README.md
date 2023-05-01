@@ -82,16 +82,17 @@ about each command, like: `dit help xvg_show` or `dit xvg_show -h`.
 ## still working
 
 - [x] hbond - merge, AND, OR
-- [ ] mdmat dmf.xpm
-- [ ] DSSP: SS vs AA
+- [x] DSSP: SS vs AA
 
 
 ## further features in v0.5.0
 
 - [ ] ! the parsing of files should be isolated from figure plotting
+- [ ] ! re-design all arguments parsing part
 - [ ] ! plotting engines: matplotlib, plotext, gnuplot
 - [ ] ! Procedures
 - [ ] ! tidy help info and documentation
+- [ ] mdmat dmf.xpm
 - [ ] Discrete xpm to csv, convert notes to numbers
 - [ ] better output (color, error ... )
 - [ ] use plotext to create plot in terminal !

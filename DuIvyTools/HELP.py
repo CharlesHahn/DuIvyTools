@@ -835,6 +835,30 @@ show_style: generate matplotlib style template.
 :examples:
     dit show_style
 """,
+            "dssp": """
+dssp: read in one xpm of secondary structure file, output the DSSP plot, 
+      residue occupancy vs time figure, time occupancy vs residue figure. 
+
+:examples:
+    dit dssp -f dssp.xpm 
+    dit dssp -f dssp.xpm -xs 0.001 -x Time(ns)
+
+:parameters:
+    -f, --input 
+            input xpm of secondary structure
+    -x, --xlabel (optional)
+            specify the xlabel of xpm
+    -y, --ylabel (optional)
+            specify the ylabel of xpm
+    -t, --title (optional)
+            specify the title of xpm
+    -xs, --xshrink (optional)
+            specify a factor for multiplication of x-axis. default == 1.0
+            For instance, if "-xs 0.001" is specified, all x-axis value of xvg
+            will multiply this value. x-axis 1000 will be shown as 1. 
+            Useful for converting the unit (ps) of time into (ns). Don't forget
+            to change xlabel too after specifing -xs.
+"""
         }
 
     def print_help_infos(self, method: str) -> None:
