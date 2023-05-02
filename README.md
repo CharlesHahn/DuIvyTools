@@ -77,7 +77,7 @@ about each command, like: `dit help xvg_show` or `dit xvg_show -h`.
 
 ## Cite 
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7261532.svg)](https://doi.org/10.5281/zenodo.7261532)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6339993.svg)](https://doi.org/10.5281/zenodo.6339993)
 
 ## still working
 
