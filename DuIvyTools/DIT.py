@@ -22,9 +22,7 @@ from DuIvyTools.FindCenter import find_center_call_functions
 from DuIvyTools.HydrogenBond import hbond_call_functions
 from DuIvyTools.MolMap import mol_map_call_functions
 from DuIvyTools.DCCM import dccm_call_functions
-
-# from DuIvyTools.DSSP import dssp_call_functions
-from DSSP import dssp_call_functions
+from DuIvyTools.DSSP import dssp_call_functions
 from DuIvyTools.MplStyle import mplstyle_call_functions
 
 
