@@ -81,24 +81,24 @@ about each command, like: `dit help xvg_show` or `dit xvg_show -h`.
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6339993.svg)](https://doi.org/10.5281/zenodo.6339993)
 
 
-# To fix
-
-- [ ] hbond -g hbond.log : hbond atom names in it
-- [ ] xpm x and y precision(after dot)
 
 ## further features in v0.5.0
 
 - [ ] ! the parsing of files should be isolated from figure plotting
-- [ ] ! re-design all arguments parsing part
-- [ ] ! plotting engines: matplotlib, plotext, gnuplot
+- [ ] ! re-design all arguments parsing part, and read from file?
+- [ ] ! plotting engines: matplotlib, plotext, gnuplot, plotly
 - [ ] ! Procedures
 - [ ] ! tidy help info and documentation
 - [ ] mdmat dmf.xpm
 - [ ] Discrete xpm to csv, convert notes to numbers
 - [ ] Control over the number of digits after the decimal point
-- [ ] better output (color, error ... ),绘图质量参考desmond
 - [ ] use plotext to create plot in terminal !
 - [ ] python test
+
+# To fix
+
 - [ ] latex or format parser for matplotlib
-- [ ] volume occupancy of ligand during MD
-- [ ] build a GUI maybe (webapp?)
+- [ ] hbond -g hbond.log : hbond atom names in it
+- [ ] xpm x and y precision(after dot)
+- [ ] ylabel and figure quality of DSSP
+- [ ] better output (color, error ... ),绘图质量参考desmond
