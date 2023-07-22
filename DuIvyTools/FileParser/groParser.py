@@ -40,7 +40,7 @@ class GRO(log):
         self.atom_number: int = 0
         self.frames: list[list[Atom]] = []
         self.notes: list[str] = []
-        self.coors: list[tuple] = []
+        self.box_coors: list[tuple] = []
         with open(grofile, "r") as fo:
             lines = fo.readlines()
         try:
@@ -58,7 +58,7 @@ class GRO(log):
             self.frames.append(atom_list)
             self.notes.append(lines[f * (self.atom_number + 3)])
             coor_line = lines[(f + 1) * (self.atom_number + 3) - 1].strip().split()
-            self.coors.append(tuple([float(c) for c in coor_line]))
+            self.box_coors.append(tuple([float(c) for c in coor_line]))
 
     def get_time_info(self):
         pass
