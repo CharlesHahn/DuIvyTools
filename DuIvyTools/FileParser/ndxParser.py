@@ -37,7 +37,6 @@ class NDX(log):
                         self.name_index[name] += [int(i) for i in line.split()]
                     except:
                         self.error(f"Unable to parse line {id} of {ndxfile}, check it!")
-                        sys.exit()
         if len(self.names) != len(self.name_index.keys()):
             self.critical("wrong length in paring ndx file")
 

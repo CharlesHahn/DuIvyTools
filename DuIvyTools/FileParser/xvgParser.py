@@ -8,6 +8,154 @@ import os
 import sys
 import math
 import numpy as np
+from typing import List, Union
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from DIT import log
+
+
+class XVG(log):
+    def __init__(self, xvgfile: Union[str, List[str]], is_file: bool = True) -> None:
+        if is_file:
+            self.xvgfile: str = xvgfile
+            with open(xvgfile, "r") as fo:
+                lines = fo.readlines()
+        else:
+            lines = xvgfile
+
+        self.title: str = ""
+        self.xlabel: str = ""
+        self.ylabel: str = ""
+        self.xmin: float = None
+        self.xmax: float = None
+        self.ymin: float = None
+        self.ymax: float = None
+        self.legends: List[str] = []
+        self.column_num: int = 0
+        self.row_num: int = 0
+        self.data_heads: List[str] = []
+        self.data_columns: List[Union(float, str)] = []
+
+        ## parse data
+        for line in lines:
+            line = line.strip()
+            if line.startswith("#") or line.startswith("&"):
+                continue
+            elif line.startswith("@"):
+                if " title " in line:
+                    self.title = line.strip('"').split('"')[-1]
+                elif " xaxis " in line and " label " in line:
+                    self.xlabel = line.strip('"').split('"')[-1]
+                elif " yaxis " in line and " label " in line:
+                    self.ylabel = line.strip('"').split('"')[-1]
+                elif line.startswith("@ s") and " legend " in line:
+                    self.legends.append(line.strip('"').split('"')[-1])
+                elif " world xmin " in line:
+                    self.xmin = float(line.split()[-1])
+                elif " world xmax " in line:
+                    self.xmax = float(line.split()[-1])
+                elif " world ymin " in line:
+                    self.ymin = float(line.split()[-1])
+                elif " world ymax " in line:
+                    self.ymax = float(line.split()[-1])
+                else:
+                    pass
+            else:
+                items = line.split()
+                if self.column_num == 0:
+                    self.data_columns = [[] for _ in range(len(items))]
+                    self.column_num = len(items)
+                    self.row_num = 0
+                if len(items) != self.column_num:
+                    self.error(
+                        f"the number of columns in {self.xvgfile} is not equal at line {self.row_num}"
+                    )
+                for i in range(len(items)):
+                    self.data_columns[i].append(items[i])
+                self.row_num += 1
+
+        ## convert data
+        self.data_heads.append(self.xlabel)
+        self.data_columns[0] = [float(c) for c in self.data_columns[0]]
+        if len(self.legends) == 0 and len(self.data_columns) > 1:
+            self.data_heads.append(self.ylabel)
+            self.data_columns[1] = [float(c) for c in self.data_columns[1]]
+
+        if len(self.legends) > 0 and self.column_num > len(self.legends):
+            items = [item.strip() for item in self.ylabel.split(",")]
+            heads = [l for l in self.legends]
+            if len(items) == len(self.legends):
+                for i in range(len(items)):
+                    heads[i] += " " + items[i]
+            elif (
+                len(items) == 1
+                and items[0] != ""
+                and (items[0][0] == "(" and items[0][-1] == ")")
+            ):
+                for i in range(len(heads)):
+                    heads[i] += " " + items[0]
+            else:
+                self.warn("failed to pair ylabel to legends, use legends in xvg file")
+            self.data_heads += heads
+            for i in range(len(heads)):
+                self.data_columns[i + 1] = [float(c) for c in self.data_columns[i + 1]]
+
+        ## check infos
+        for c in range(self.column_num):
+            if len(self.data_columns[c]) != self.row_num:
+                self.error(f"length of column {c} is not equal to other columns")
+        if self.column_num == 0 or self.row_num == 0:
+            self.error(f"no data line detected in {self.xvgfile}")
+
+        if is_file:
+            self.info(f"parsing data from {xvgfile} successfully !")
+
+
+class XVGS(log):
+    def __init__(self, xvgfile: str) -> None:
+        self.xvgfile: str = xvgfile
+        self.frames: list[XVG] = []
+
+        with open(xvgfile, "r") as fo:
+            lines = fo.readlines()
+        contents: List[List[str]] = [[]]
+        for line in lines:
+            item = line.strip()
+            if item != "&" and item != "":
+                contents[-1].append(line)
+            elif item == "&":
+                contents.append([])
+
+        for content in contents:
+            if len(content) == 0:
+                continue
+            xvg = XVG(content, is_file=False)
+            self.frames.append(xvg)
+        self.info(f"parsing multi-frames data from {xvgfile} successfully !")
+
+    def __len__(self) -> int:
+        return len(self.frames)
+
+    def __getitem__(self, index: int) -> XVG:
+        return self.frames[index]
+
+
+# xvg = XVGS("../../test/pc1.xvg")[0]
+# xvg = XVGS("../../test/rama.xvg")[0]
+# xvg = XVG("../../test/gyrate.xvg")
+# xvg = XVG("../../test/dssp_sc.xvg")
+xvg = XVG("../../test/hbond.xvg")
+
+print(xvg.title)
+print(xvg.xlabel)
+print(xvg.ylabel)
+print(xvg.xmin)
+print(xvg.xmax)
+print(xvg.ymin)
+print(xvg.ymax)
+print(xvg.legends)
+print(xvg.column_num)
+print(xvg.row_num)
+print(xvg.data_heads)
+for data in xvg.data_columns:
+    print(data[:10])

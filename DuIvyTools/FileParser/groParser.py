@@ -47,7 +47,6 @@ class GRO(log):
             self.atom_number = int(lines[1].strip())
         except:
             self.error("The second line of gro file must be Int number")
-            sys.exit()
         self.frame_num = len(lines) // (self.atom_number + 3)
         for f in range(self.frame_num):
             atom_list: list[Atom] = []

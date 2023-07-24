@@ -42,10 +42,8 @@ class MDP(log):
         ## check parameters
         if outmdp == None or len(outmdp) <= 4 or outmdp[-4:] != ".mdp":
             self.error("output file name should be with suffix .mdp")
-            sys.exit()
         if os.path.exists(outmdp):
             self.error("{} is already in current directory".format(outmdp))
-            sys.exit()
         if application == None or application not in self.application_loc.keys():
             self.info(
                 "application available:\n         {}".format(
@@ -53,7 +51,6 @@ class MDP(log):
                 )
             )
             self.error("no application {} found".format(application))
-            sys.exit()
 
         ## gen mdp
         data_file_path = os.path.realpath(

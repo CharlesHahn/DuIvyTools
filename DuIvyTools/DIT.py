@@ -4,6 +4,7 @@ DIT module is part of DuIvyTools. This module provides log parent class.
 Written by DuIvy and provided to you by GPLv3 license.
 """
 
+import sys
 import logging
 from colorama import Fore, Back, Style
 
@@ -30,11 +31,13 @@ class log(object):
 
     def error(self, msg):
         self.logger.error(Fore.WHITE + Back.RED + f"Error -> {msg}" + Style.RESET_ALL)
+        sys.exit()
 
     def critical(self, msg):
         self.logger.critical(
             Fore.WHITE + Back.RED + f"CRITICAL -> {msg}" + Style.RESET_ALL
         )
+        sys.exit()
 
 
 class DIT(object):

@@ -101,28 +101,22 @@ class XPM(log):
         ## check infos
         if self.color_num != len(self.chars):
             self.error(f"length of chars != color_num")
-            sys.exit()
         if self.color_num != len(self.colors):
             self.error(f"length of colors != color_num")
-            sys.exit()
         if self.color_num != len(self.notes):
             self.error(f"length of notes != color_num")
-            sys.exit()
         if len(self.xaxis) != self.width and len(self.xaxis) != self.width + 1:
             self.error(
                 f"length of xaxis ({len(self.xaxis)}) != xpm width ({self.width}) or xpm width +1"
             )
-            sys.exit()
         if len(self.yaxis) != self.height and len(self.yaxis) != self.height + 1:
             self.error(
                 f"length of yaxis ({len(self.yaxis)}) != xpm height ({self.height}) or xpm height +1"
             )
-            sys.exit()
         if len(self.datalines) != self.height:
             self.error(
                 f"rows of data ({len(self.datalines)}) is not equal to xpm height ({self.height}), check it!"
             )
-            sys.exit()
 
         ## convert data
         if len(self.xaxis) == self.width + 1:
@@ -178,7 +172,6 @@ class XPMS(log):
             xpm = XPM(content, is_file=False)
             self.frames.append(xpm)
         self.info(f"parsing multi-frames data from {xpmfile} successfully !")
-        
 
     def __len__(self) -> int:
         return len(self.frames)
