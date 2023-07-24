@@ -62,7 +62,8 @@ class PDB(log):
             self.atom_number = len(atom_list)
 
 
-pdb = PDB("../../test/prolig/prolig.pdb")
-print(pdb.atom_number)
-print(pdb.model_num)
-print(pdb.models[0][100].__dict__)
+def main():
+    pdb = PDB("../../test/prolig/prolig.pdb")
+    print(pdb.atom_number)
+    print(pdb.model_num)
+    print(pdb.models[0][100].__dict__)

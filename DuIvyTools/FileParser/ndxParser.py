@@ -84,19 +84,20 @@ class NDX(log):
         return output
 
 
-ndx = NDX("../../test/index.ndx")
-for key, value in ndx.name_index.items():
-    print(key)
-    print(value)
+def main():
+    ndx = NDX("../../test/index.ndx")
+    for key, value in ndx.name_index.items():
+        print(key)
+        print(value)
 
-print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
-print(ndx["1ZIN"])
-print(len(ndx))
-ndx["hhhh"] = [0, 10, 20, -1]
-print(ndx["hhhh"])
-del ndx["System"]
-print(ndx.names)
+    print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+    print(ndx["1ZIN"])
+    print(len(ndx))
+    ndx["hhhh"] = [0, 10, 20, -1]
+    print(ndx["hhhh"])
+    del ndx["System"]
+    print(ndx.names)
 
-print(ndx.formatter("1ZIN", 4))
-print(ndx.formatter("2ZIN", 0))
-print(ndx.formatter("3ZIN", 1))
+    print(ndx.formatter("1ZIN", 4))
+    print(ndx.formatter("2ZIN", 0))
+    print(ndx.formatter("3ZIN", 1))

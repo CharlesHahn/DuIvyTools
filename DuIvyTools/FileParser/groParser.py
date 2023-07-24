@@ -63,8 +63,9 @@ class GRO(log):
         pass
 
 
-gro = GRO("../../test/hbond_test.gro")
-print(gro.coors)
-print(gro.notes)
-print(gro.frame_num)
-print(gro.frames[0][1].__dict__)
+def main():
+    gro = GRO("../../test/hbond_test.gro")
+    print(gro.coors)
+    print(gro.notes)
+    print(gro.frame_num)
+    print(gro.frames[0][1].__dict__)

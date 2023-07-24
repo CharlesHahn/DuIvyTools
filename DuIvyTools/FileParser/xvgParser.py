@@ -140,22 +140,23 @@ class XVGS(log):
         return self.frames[index]
 
 
-# xvg = XVGS("../../test/pc1.xvg")[0]
-# xvg = XVGS("../../test/rama.xvg")[0]
-# xvg = XVG("../../test/gyrate.xvg")
-# xvg = XVG("../../test/dssp_sc.xvg")
-xvg = XVG("../../test/hbond.xvg")
+def main():
+    # xvg = XVGS("../../test/pc1.xvg")[0]
+    # xvg = XVGS("../../test/rama.xvg")[0]
+    # xvg = XVG("../../test/gyrate.xvg")
+    # xvg = XVG("../../test/dssp_sc.xvg")
+    xvg = XVG("../../test/hbond.xvg")
 
-print(xvg.title)
-print(xvg.xlabel)
-print(xvg.ylabel)
-print(xvg.xmin)
-print(xvg.xmax)
-print(xvg.ymin)
-print(xvg.ymax)
-print(xvg.legends)
-print(xvg.column_num)
-print(xvg.row_num)
-print(xvg.data_heads)
-for data in xvg.data_columns:
-    print(data[:10])
+    print(xvg.title)
+    print(xvg.xlabel)
+    print(xvg.ylabel)
+    print(xvg.xmin)
+    print(xvg.xmax)
+    print(xvg.ymin)
+    print(xvg.ymax)
+    print(xvg.legends)
+    print(xvg.column_num)
+    print(xvg.row_num)
+    print(xvg.data_heads)
+    for data in xvg.data_columns:
+        print(data[:10])
