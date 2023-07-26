@@ -10,7 +10,7 @@ import math
 from typing import Dict, List, Union
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
-from DIT import log
+from utils import log
 
 
 class NDX(log):

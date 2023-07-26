@@ -62,9 +62,9 @@
         specify the output file
 -ns, --noshow
         not show figure
--c, --column_select
+-c, --columns  --column_select
         select column indexs for visualization
--l, --legend_list
+-l, --legends  --legend_list
         legends for visualization
 -b, --begin
         specify the index beginning
