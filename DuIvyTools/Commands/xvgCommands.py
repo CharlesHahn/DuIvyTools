@@ -15,6 +15,7 @@ from FileParser.xvgParser import XVG
 from Visualizor.Visualizer_matplotlib import LineMatplotlib
 from Visualizor.Visualizer_plotext import LinePlotext 
 from Visualizor.Visualizer_plotly import LinePlotly 
+from Visualizor.Visualizer_gnuplot import LineGnuplot 
 from utils import Parameters
 
 
@@ -58,6 +59,9 @@ class xvg_show(Command):
                 line.final(self.parm.output, self.parm.noshow)
             elif self.parm.engine == "plotext":
                 line = LinePlotext(**kwargs)
+                line.final(self.parm.output, self.parm.noshow)
+            elif self.parm.engine == "gnuplot":
+                line = LineGnuplot(**kwargs)
                 line.final(self.parm.output, self.parm.noshow)
             else:
                 pass
