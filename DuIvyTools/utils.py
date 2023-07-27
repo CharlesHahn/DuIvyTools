@@ -5,6 +5,7 @@ Written by DuIvy and provided to you by GPLv3 license.
 """
 
 import sys
+import time
 import logging
 import argparse
 from colorama import Fore, Back, Style
@@ -19,27 +20,39 @@ class log(object):
 
     logging.basicConfig(
         level=logging.INFO,
-        format="%(asctime)s - %(filename)s[line:%(lineno)d]\n%(message)s",
+        ## TODO the line number
+        ## format="%(asctime)s-%(filename)s[line:%(lineno)d]\n%(message)s",
+        format="%(message)s",
     )
     logger = logging.getLogger(__name__)
 
-    ## TODO the line number
     def debug(self, msg):
-        self.logger.debug(Fore.CYAN + Back.WHITE + f"Debug -> {msg}" + Style.RESET_ALL)
+        time_info = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        self.logger.debug(
+            Fore.CYAN + Back.WHITE + f"{time_info}\nDebug -> {msg}" + Style.RESET_ALL
+        )
 
     def info(self, msg):
-        self.logger.info(Fore.GREEN + f"Info -> {msg}" + Style.RESET_ALL)
+        time_info = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        self.logger.info(Fore.GREEN + f"{time_info}\nInfo -> {msg}" + Style.RESET_ALL)
 
     def warn(self, msg):
-        self.logger.warning(Fore.YELLOW + f"Warning -> {msg}" + Style.RESET_ALL)
+        time_info = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        self.logger.warning(
+            Fore.YELLOW + f"{time_info}\nWarning -> {msg}" + Style.RESET_ALL
+        )
 
     def error(self, msg):
-        self.logger.error(Fore.WHITE + Back.RED + f"Error -> {msg}" + Style.RESET_ALL)
+        time_info = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        self.logger.error(
+            Fore.WHITE + Back.RED + f"{time_info}\nError -> {msg}" + Style.RESET_ALL
+        )
         sys.exit()
 
     def critical(self, msg):
+        time_info = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
         self.logger.critical(
-            Fore.WHITE + Back.RED + f"CRITICAL -> {msg}" + Style.RESET_ALL
+            Fore.WHITE + Back.RED + f"{time_info}\nCRITICAL -> {msg}" + Style.RESET_ALL
         )
         sys.exit()
 
@@ -111,19 +124,16 @@ class Parameters(log):
         parser.add_argument(
             "--x_precision",
             type=int,
-            default=2,
             help="specify the precision of x values",
         )
         parser.add_argument(
             "--y_precision",
             type=int,
-            default=2,
             help="specify the precision of y values",
         )
         parser.add_argument(
             "--z_precision",
             type=int,
-            default=2,
             help="specify the precision of z values",
         )
         parser.add_argument(
@@ -299,6 +309,14 @@ class Parameters(log):
             "--colormap",
             help="specify the figure style, 'origin', 'gaussian', 'bio3d'",
         )
+        parser.add_argument(
+            "-eg",
+            "--engine",
+            type=str,
+            default="matplotlib", 
+            choices=["matplotlib", "plotext", "plotly", "gnuplot"],
+            help="specify the engine for plotting, 'matplotlib', 'plotext', 'plotly', 'gnuplot'",
+        )
 
         args = parser.parse_args()
         self.__dict__ = args.__dict__
@@ -314,7 +332,7 @@ class Parameters(log):
         if self.columns != None:
             if "," in "".join(self.columns):
                 for columns in self.columns:
-                    lis:List[int] = []
+                    lis: List[int] = []
                     for c in columns.strip(",").split(","):
                         if "-" in c.strip("-"):
                             b, e = int(c.split("-")[0]), int(c.split("-")[1])
@@ -330,6 +348,17 @@ class Parameters(log):
             self.legends = [ls.strip(",").split(",") for ls in self.legends]
 
         ## TODO: check the range of parameters
+        if self.begin and self.begin < 0:
+            self.error("parameter 'begin' should not be a minus")
+        if self.end and self.end < 0:
+            self.error("parameter 'end' should not be a minus")
+        if self.x_precision and self.x_precision < 0:
+            self.error("parameter 'x_precision' should not be a minus")
+        if self.y_precision and self.y_precision < 0:
+            self.error("parameter 'y_precision' should not be a minus")
+        if self.z_precision and self.z_precision < 0:
+            self.error("parameter 'z_precision' should not be a minus")
+
 
 
 

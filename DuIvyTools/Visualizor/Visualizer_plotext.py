@@ -1,5 +1,5 @@
 """
-Visualizer_matplotlib module is part of DuIvyTools providing basic visualization tools based on matplotlib.
+Visualizer_plotext module is part of DuIvyTools providing visualization tools based on plotext engine.
 
 Written by DuIvy and provided to you by GPLv3 license.
 """
@@ -10,45 +10,16 @@ import time
 from typing import List, Union
 
 import numpy as np
+import plotext as plt
 
-import matplotlib.pyplot as plt
-from matplotlib import colors as mplcolors
-from matplotlib.ticker import AutoLocator, FormatStrFormatter
-
-# sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from utils import log
 
 
-class ParentMatplotlib(log):
-    def __init__(self):
-        self.figure = plt.figure()
-        self.load_style()
-
-    def load_style(self):
-        style_files = [file for file in os.listdir() if file[-9:] == ".mplstyle"]
-        if len(style_files) == 1:
-            plt.style.use(style_files[0])
-            self.info(f"using matplotlib style sheet from {style_files[0]}")
-        elif len(style_files) > 1:
-            plt.style.use(style_files[0])
-            self.info(
-                f"more than one mplstyle files detected, using the {style_files[0]}"
-            )
-        else:
-            data_file_path = os.path.realpath(
-                os.path.join(os.getcwd(), os.path.dirname(__file__), "../")
-            )
-            mplstyle = os.path.join(
-                data_file_path, os.path.join("data", "DIT.mplstyle")
-            )
-            plt.style.use(mplstyle)
-            self.info(
-                "using default matplotlib style sheet, to inspect its content, use 'dit show_style'"
-            )
-
+class ParentPlotext(log):
+    def __init__(self) -> None:
+        plt.clear_figure()
+    
     def final(self, outfig: str, noshow: bool) -> None:
-
-        plt.tight_layout()
         if outfig != None:
             if os.path.exists(outfig):
                 time_info = time.strftime("%Y%m%d%H%M%S", time.localtime())
@@ -57,17 +28,18 @@ class ParentMatplotlib(log):
                     f"{outfig} is already in current directory, save to {new_outfig} for instead."
                 )
                 outfig = new_outfig
-            self.figure.savefig(outfig)
+            outfig = os.path.join(os.getcwd(), outfig)
+            plt.save_fig(outfig)
             self.info(f"save figure to {outfig} successfully")
         if noshow == False:
             plt.show()
 
 
-class LineMatplotlib(ParentMatplotlib):
-    """A matplotlib line plot class for line plots
+class LinePlotext(ParentPlotext):
+    """A plotext line plot class for line plots
 
     Args:
-        ParentMatplotlib (object): matplotlib parent class
+        ParentPlotext (object): plotext parent class
     
     Parameters:
         data_list :List[List[float]]
@@ -101,46 +73,40 @@ class LineMatplotlib(ParentMatplotlib):
         if kwargs["ymin"] != None or kwargs["ymax"] != None:
             plt.ylim(kwargs["ymin"], kwargs["ymax"])
 
-        ax = plt.gca()
-        if kwargs["x_precision"] != None:
-            x_p = kwargs["x_precision"]
-            ax.xaxis.set_major_formatter(FormatStrFormatter(f"%.{x_p}f"))
-        if kwargs["y_precision"] != None:
-            y_p = kwargs["y_precision"]
-            ax.yaxis.set_major_formatter(FormatStrFormatter(f"%.{y_p}f"))
-
-        plt.legend()
         plt.xlabel(kwargs["xlabel"])
         plt.ylabel(kwargs["ylabel"])
         plt.title(kwargs["title"])
 
+        if kwargs["x_precision"] != None:
+            self.warn("unable to apply x_precision to plotext engine")
+        if kwargs["y_precision"] != None:
+            self.warn("unable to apply y_precision to plotext engine")
 
-class DistributionMatplotlib(ParentMatplotlib):
+
+class DistributionPlotexet(ParentPlotext):
     def __init__(self, **kwargs) -> None:
         super().__init__()
 
 
-class StackMatplotlib(ParentMatplotlib):
+class StackPlotext(ParentPlotext):
     def __init__(self, **kwargs) -> None:
         super().__init__()
 
 
-class ScatterMatplotlib(ParentMatplotlib):
+class ScatterPlotext(ParentPlotext):
     def __init__(self, **kwargs) -> None:
         super().__init__()
 
 
-class BarMatplotlib(ParentMatplotlib):
+class BarPlotext(ParentPlotext):
     def __init__(self, **kwargs) -> None:
         super().__init__()
 
 
-class BoxMatplotlib(ParentMatplotlib):
+class BoxPlotext(ParentPlotext):
     def __init__(self, **kwargs) -> None:
         super().__init__()
 
-class ViolinMatplotlib(ParentMatplotlib):
+class ViolinPlotext(ParentPlotext):
     def __init__(self, **kwargs) -> None:
         super().__init__()
-
-
