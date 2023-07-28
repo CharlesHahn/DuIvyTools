@@ -157,6 +157,9 @@ class XPM(log):
 
         if is_file:
             self.info(f"parsing data from {xpmfile} successfully !")
+    
+    def __sub__(self, other:XPM) -> XPM: # diff_map
+        pass
 
 
 class XPMS(log):

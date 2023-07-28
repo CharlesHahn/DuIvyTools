@@ -61,8 +61,9 @@ class xvg_show(Command):
                 line = LinePlotext(**kwargs)
                 line.final(self.parm.output, self.parm.noshow)
             elif self.parm.engine == "gnuplot":
+                kwargs["output"] = self.parm.output
                 line = LineGnuplot(**kwargs)
-                line.final(self.parm.output, self.parm.noshow)
+                line.final()
             else:
                 pass
 

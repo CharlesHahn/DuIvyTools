@@ -6,10 +6,10 @@ Written by DuIvy and provided to you by GPLv3 license.
 
 
 from Commands.xvgCommands import *
-from utils import Parameters
+from utils import Parameters, log
 
 
-class DIT(object):
+class DIT(log):
     def __init__(self) -> None:
         self.cmds = {
             "xvg_show":xvg_show,
@@ -39,3 +39,4 @@ class DIT(object):
 if __name__ == "__main__":
     dit = DIT()
     dit.run()
+    dit.info("May you good day !")

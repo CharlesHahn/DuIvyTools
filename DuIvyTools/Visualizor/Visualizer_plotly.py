@@ -66,26 +66,20 @@ class LinePlotly(ParentPlotly):
                 go.Scatter(x=kwargs["xdata"], y=data, name=kwargs["legends"][i])
             )
         self.figure.update_layout(
-            title = kwargs["title"],
-            xaxis_title = kwargs["xlabel"],
+            title=kwargs["title"],
+            xaxis_title=kwargs["xlabel"],
             yaxis_title=kwargs["ylabel"],
             font=dict(family="Arial, Times New Roman", size=18),
             showlegend=True,
         )
         if kwargs["xmin"] != None or kwargs["xmax"] != None:
-            self.figure.update_layout(
-                xaxis_range = [kwargs["xmin"], kwargs["xmax"]]
-            )
+            self.figure.update_layout(xaxis_range=[kwargs["xmin"], kwargs["xmax"]])
         if kwargs["ymin"] != None or kwargs["ymax"] != None:
-            self.figure.update_layout(
-                yaxis_range = [kwargs["ymin"], kwargs["ymax"]]
-            )
+            self.figure.update_layout(yaxis_range=[kwargs["ymin"], kwargs["ymax"]])
         if kwargs["x_precision"] != None:
-            self.figure.update_layout(
-            xaxis_tickformat=f".{kwargs['x_precision']}f")
+            self.figure.update_layout(xaxis_tickformat=f".{kwargs['x_precision']}f")
         if kwargs["y_precision"] != None:
-            self.figure.update_layout(
-            yaxis_tickformat=f".{kwargs['y_precision']}f")
+            self.figure.update_layout(yaxis_tickformat=f".{kwargs['y_precision']}f")
 
 
 class DistributionPlotly(ParentPlotly):

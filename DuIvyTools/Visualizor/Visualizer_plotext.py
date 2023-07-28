@@ -18,7 +18,7 @@ from utils import log
 class ParentPlotext(log):
     def __init__(self) -> None:
         plt.clear_figure()
-    
+
     def final(self, outfig: str, noshow: bool) -> None:
         if outfig != None:
             if os.path.exists(outfig):
@@ -40,7 +40,7 @@ class LinePlotext(ParentPlotext):
 
     Args:
         ParentPlotext (object): plotext parent class
-    
+
     Parameters:
         data_list :List[List[float]]
         xdata :List[float]
@@ -106,6 +106,7 @@ class BarPlotext(ParentPlotext):
 class BoxPlotext(ParentPlotext):
     def __init__(self, **kwargs) -> None:
         super().__init__()
+
 
 class ViolinPlotext(ParentPlotext):
     def __init__(self, **kwargs) -> None:

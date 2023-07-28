@@ -68,7 +68,7 @@ class LineMatplotlib(ParentMatplotlib):
 
     Args:
         ParentMatplotlib (object): matplotlib parent class
-    
+
     Parameters:
         data_list :List[List[float]]
         xdata :List[float]
@@ -139,8 +139,7 @@ class BoxMatplotlib(ParentMatplotlib):
     def __init__(self, **kwargs) -> None:
         super().__init__()
 
+
 class ViolinMatplotlib(ParentMatplotlib):
     def __init__(self, **kwargs) -> None:
         super().__init__()
-
-
