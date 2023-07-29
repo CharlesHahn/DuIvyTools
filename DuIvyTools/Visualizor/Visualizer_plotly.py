@@ -7,12 +7,12 @@ Written by DuIvy and provided to you by GPLv3 license.
 import os
 import sys
 import time
-from typing import List, Union
+from typing import List, Union, Tuple
 
 import numpy as np
 import pandas as pd
 
-import plotly.express as plt
+import plotly.express as pe
 import plotly.graph_objs as go
 
 from utils import log
@@ -21,6 +21,13 @@ from utils import log
 class ParentPlotly(log):
     def __init__(self):
         self.figure = go.Figure()
+        self.style = {
+            "color_cycle": ['#38A7D0', '#F67088', '#66C2A5', '#FC8D62', '#8DA0CB', '#E78AC3', '#A6D854', '#FFD92F', '#E5C494', '#B3B3B3', '#66C2A5', '#FC8D62'],
+        }
+    
+    def hex2rgb(self, hex:str) -> Tuple[float]:
+        rgb = [int(hex.lstrip('#')[i:i+2], 16) for i in (0, 2, 4)]
+        return tuple(rgb)
 
     def final(self, outfig: str, noshow: bool) -> None:
         if outfig != None:
@@ -63,8 +70,32 @@ class LinePlotly(ParentPlotly):
 
         for i, data in enumerate(kwargs["data_list"]):
             self.figure.add_trace(
-                go.Scatter(x=kwargs["xdata"], y=data, name=kwargs["legends"][i])
+                go.Scatter(x=kwargs["xdata"], y=data, name=kwargs["legends"][i], line=dict(color=self.style["color_cycle"][i]))
             )
+            if len(kwargs["highs"]) != 0 and len(kwargs["lows"]) != 0:
+                rgb = self.hex2rgb(self.style["color_cycle"][i])
+                rgba = f"rgba({rgb[0]},{rgb[1]},{rgb[2]},{kwargs['alpha']})"
+                self.figure.add_trace(
+                    go.Scatter(
+                        name=f"""high-{kwargs["legends"][i]}""",
+                        x=kwargs["xdata"], 
+                        y=kwargs["highs"][i], 
+                        line=dict(width=0, color=rgba),
+                        showlegend=False
+                    )
+                )
+                self.figure.add_trace(
+                    go.Scatter(
+                        name=f"""low-{kwargs["legends"][i]}""",
+                        x=kwargs["xdata"],
+                        y=kwargs["lows"][i],
+                        fillcolor=rgba,
+                        fill="tonexty",
+                        line=dict(width=0, color=rgba),
+                        showlegend=False,
+                    )
+                )
+
         self.figure.update_layout(
             title=kwargs["title"],
             xaxis_title=kwargs["xlabel"],

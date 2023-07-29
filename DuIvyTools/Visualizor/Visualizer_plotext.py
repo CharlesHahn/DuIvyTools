@@ -60,6 +60,8 @@ class LinePlotext(ParentPlotext):
         super().__init__()
 
         for i, data in enumerate(kwargs["data_list"]):
+            if len(kwargs["highs"]) != 0 and len(kwargs["lows"]) != 0:
+                self.warn("unable to plot confidence intervals by plotext.")
             plt.plot(kwargs["xdata"], data, label=kwargs["legends"][i])
 
         x_min, x_max = np.min(kwargs["xdata"]), np.max(kwargs["xdata"])

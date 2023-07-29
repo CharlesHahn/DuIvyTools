@@ -36,7 +36,7 @@ class Command(log):
             return value
         return None
 
-    def deal_latex(self, ori: str, with_dollar: bool = True) -> None:
+    def deal_latex(self, ori: str, with_dollar: bool = True, ignore_slash:bool=False) -> None:
         ## deal with subscripts or superscripts
         res = ori[:]
         if "\\s" in res and "\\N" in res:
@@ -47,6 +47,8 @@ class Command(log):
             res = res.replace("\\N", "}")
         if with_dollar:
             res = f"${res}$"
+        if ignore_slash:
+            res = res.replace("\\", "/")
         return res
 
     def remove_latex(self) -> None:
@@ -60,3 +62,10 @@ class Command(log):
             ]
             self.file.xlabel = self.deal_latex(self.file.xlabel, with_dollar=False)
             self.file.ylabel = self.deal_latex(self.file.ylabel, with_dollar=False)
+
+    def remove_latex_msgs(self, msgs:List[str]) -> List[str]:
+        if self.parm.engine in ["matplotlib", "plotly"]:
+            msgs = [self.deal_latex(m, True, True) for m in msgs]
+        elif self.parm.engine == "gnuplot":
+            msgs = [self.deal_latex(m, False, True) for m in msgs]
+        return msgs

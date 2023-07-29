@@ -112,6 +112,7 @@ class xvg_compare(Command):
                 legend = xvg.data_heads[column_index] 
                 legends.append(f"{legend} - {xvg.xvgfile}")
         self.remove_latex()
+        legends = self.remove_latex_msgs(legends)
 
         kwargs = {
             "data_list": data_list,
