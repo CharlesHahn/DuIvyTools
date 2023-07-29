@@ -36,6 +36,7 @@ class xvg_show(Command):
             data_list = []
             for data in xvg.data_columns[1:]:
                 data_list.append([y*self.parm.yshrink for y in data[begin:end:dt]])
+            self.remove_latex()
 
             kwargs = {
                 "data_list": data_list,
