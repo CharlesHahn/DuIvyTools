@@ -35,8 +35,8 @@ class Command(log):
         if value != None:
             return value
         return None
-    
-    def deal_latex(self, ori:str, with_dollar:bool=True) -> None:
+
+    def deal_latex(self, ori: str, with_dollar: bool = True) -> None:
         ## deal with subscripts or superscripts
         res = ori[:]
         if "\\s" in res and "\\N" in res:
@@ -55,6 +55,8 @@ class Command(log):
             self.file.xlabel = self.deal_latex(self.file.xlabel)
             self.file.ylabel = self.deal_latex(self.file.ylabel)
         elif self.parm.engine == "gnuplot":
-            self.file.data_heads = [self.deal_latex(h, with_dollar=False) for h in self.file.data_heads]
+            self.file.data_heads = [
+                self.deal_latex(h, with_dollar=False) for h in self.file.data_heads
+            ]
             self.file.xlabel = self.deal_latex(self.file.xlabel, with_dollar=False)
             self.file.ylabel = self.deal_latex(self.file.ylabel, with_dollar=False)

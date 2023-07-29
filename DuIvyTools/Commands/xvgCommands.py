@@ -13,9 +13,9 @@ from typing import List, Union
 from Commands.Commands import Command
 from FileParser.xvgParser import XVG
 from Visualizor.Visualizer_matplotlib import LineMatplotlib
-from Visualizor.Visualizer_plotext import LinePlotext 
-from Visualizor.Visualizer_plotly import LinePlotly 
-from Visualizor.Visualizer_gnuplot import LineGnuplot 
+from Visualizor.Visualizer_plotext import LinePlotext
+from Visualizor.Visualizer_plotly import LinePlotly
+from Visualizor.Visualizer_gnuplot import LineGnuplot
 from utils import Parameters
 
 
@@ -32,10 +32,10 @@ class xvg_show(Command):
         for xvgfile in self.parm.input:
             xvg = XVG(xvgfile)
             self.file = xvg
-            xdata = [x*self.parm.xshrink for x in xvg.data_columns[0][begin:end:dt]]
+            xdata = [x * self.parm.xshrink for x in xvg.data_columns[0][begin:end:dt]]
             data_list = []
             for data in xvg.data_columns[1:]:
-                data_list.append([y*self.parm.yshrink for y in data[begin:end:dt]])
+                data_list.append([y * self.parm.yshrink for y in data[begin:end:dt]])
             self.remove_latex()
 
             kwargs = {
@@ -65,14 +65,14 @@ class xvg_show(Command):
                 line = LineGnuplot(**kwargs)
                 line.final(self.parm.output, self.parm.noshow)
             else:
-                self.error("wrong selection of plot engine") 
+                self.error("wrong selection of plot engine")
 
 
 class xvg_compare(Command):
     def __init__(self, parm: Parameters) -> None:
         self.parm = parm
 
-    def __call__(self): 
+    def __call__(self):
         self.info("in xvgCompare")
         print(self.parm.__dict__)
 
@@ -81,15 +81,16 @@ class xvg_ave(Command):
     def __init__(self, parm: Parameters) -> None:
         self.parm = parm
 
-    def __call__(self): 
+    def __call__(self):
         self.info("in xvg_ave")
         print(self.parm.__dict__)
+
 
 class xvg_mvave(Command):
     def __init__(self, parm: Parameters) -> None:
         self.parm = parm
 
-    def __call__(self): 
+    def __call__(self):
         self.info("in xvg_mvave")
         print(self.parm.__dict__)
 
@@ -98,7 +99,7 @@ class xvg2csv(Command):
     def __init__(self, parm: Parameters) -> None:
         self.parm = parm
 
-    def __call__(self): 
+    def __call__(self):
         self.info("in xvg2csv")
         print(self.parm.__dict__)
 
@@ -107,7 +108,7 @@ class xvg_rama(Command):
     def __init__(self, parm: Parameters) -> None:
         self.parm = parm
 
-    def __call__(self): 
+    def __call__(self):
         self.info("in xvg_rama")
         print(self.parm.__dict__)
 
@@ -116,7 +117,7 @@ class xvg_show_distribution(Command):
     def __init__(self, parm: Parameters) -> None:
         self.parm = parm
 
-    def __call__(self): 
+    def __call__(self):
         self.info("in xvg_show_distribution")
         print(self.parm.__dict__)
 
@@ -125,7 +126,7 @@ class xvg_show_stack(Command):
     def __init__(self, parm: Parameters) -> None:
         self.parm = parm
 
-    def __call__(self): 
+    def __call__(self):
         self.info("in xvg_show_stack")
         print(self.parm.__dict__)
 
@@ -134,7 +135,7 @@ class xvg_show_scatter(Command):
     def __init__(self, parm: Parameters) -> None:
         self.parm = parm
 
-    def __call__(self): 
+    def __call__(self):
         self.info("in xvg_show_scatter")
         print(self.parm.__dict__)
 
@@ -143,7 +144,7 @@ class xvg_energy_compute(Command):
     def __init__(self, parm: Parameters) -> None:
         self.parm = parm
 
-    def __call__(self): 
+    def __call__(self):
         self.info("in xvg_energy_compute")
         print(self.parm.__dict__)
 
@@ -152,7 +153,7 @@ class xvg_combine(Command):
     def __init__(self, parm: Parameters) -> None:
         self.parm = parm
 
-    def __call__(self): 
+    def __call__(self):
         self.info("in xvg_combine")
         print(self.parm.__dict__)
 
@@ -161,7 +162,7 @@ class xvg_ave_bar(Command):
     def __init__(self, parm: Parameters) -> None:
         self.parm = parm
 
-    def __call__(self): 
+    def __call__(self):
         self.info("in xvg_ave_bar")
         print(self.parm.__dict__)
 
@@ -170,7 +171,7 @@ class xvg_box(Command):
     def __init__(self, parm: Parameters) -> None:
         self.parm = parm
 
-    def __call__(self): 
+    def __call__(self):
         self.info("in xvg_box")
         print(self.parm.__dict__)
 
@@ -179,8 +180,6 @@ class xvg_violin(Command):
     def __init__(self, parm: Parameters) -> None:
         self.parm = parm
 
-    def __call__(self): 
+    def __call__(self):
         self.info("in xvg_biolin")
         print(self.parm.__dict__)
-
-

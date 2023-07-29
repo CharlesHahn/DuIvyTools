@@ -29,7 +29,7 @@ class xpm2csv(Command):
     def __init__(self, parm: Parameters) -> None:
         self.parm = parm
 
-    def __call__(self): 
+    def __call__(self):
         self.info("in xpm2csv")
         print(self.parm.__dict__)
 
@@ -38,7 +38,7 @@ class xpm2dat(Command):
     def __init__(self, parm: Parameters) -> None:
         self.parm = parm
 
-    def __call__(self): 
+    def __call__(self):
         self.info("in xpm2dat")
         print(self.parm.__dict__)
 
@@ -47,6 +47,6 @@ class xpm2gpl(Command):  ## need ???
     def __init__(self, parm: Parameters) -> None:
         self.parm = parm
 
-    def __call__(self): 
+    def __call__(self):
         self.info("in xpm2gpl")
         print(self.parm.__dict__)
