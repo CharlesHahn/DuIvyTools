@@ -14,71 +14,115 @@ import numpy as np
 
 from utils import log
 
-"""
-set datafile separator ','
-set term pngcairo size 20cm,20cm
-set out filename
+class Gnuplot(log):
+    def __init__(self) -> None:
+        self.style = {
+            "font":"Arial",
+            "fontsize": 14,
+            "fontscale": 1,
+            "linewidth": 2,
+            "pointscale": 1,
+            "width":1200,
+            "height": 1000,
+        }
+        self.term:str = None
+        self.outfig:str = None
+        self.title:str = None
+        self.xlabel:str = None
+        self.ylabel:str = None
+        self.zlabel:str = None
+        self.xmin:float = None
+        self.xmax:float = None
+        self.ymin:float = None
+        self.ymax:float = None
+        self.x_precision:int = None
+        self.y_precision:int = None
+        self.z_precision:int = None
+        self.legends:List[str] = None
+        self.data:List[List[float]] = None
 
-unset key
-set grid
-set border lw 1.5
+    def dump2str(self) -> str:
+        gpl:str = ""
+        if self.term:
+            gpl += f"""set term {self.term}\n"""
+        if self.outfig:
+            gpl += f"""set output "{self.outfig}"\n"""
+        if self.xlabel:
+            gpl += f"""set xlabel "{self.xlabel}"\n"""
+        if self.ylabel:
+            gpl += f"""set ylabel "{self.ylabel}"\n"""
+        if self.zlabel:
+            gpl += f"""set zlabel "{self.zlabel}"\n"""
 
-set title the_title
-set xrange [x_max-1.1*x_max:x_max*1.1]
-set yrange [-1.1*amp:1.1*amp]
+        if self.xmin == None:
+            self.xmin = ""
+        if self.xmax == None:
+            self.xmax = ""
+        gpl += f"""set xrange [{self.xmin}:{self.xmax}]\n"""
+        if self.ymin == None:
+            self.ymin = ""
+        if self.ymax == None:
+            self.ymax = ""
+        gpl += f"""set yrange [{self.ymin}:{self.ymax}]\n"""
 
-plot data u 1:2 w lp pt 7 ps 0.5 lw 2
+        if self.x_precision:
+            gpl += f"""set xtics format "%.{self.x_precision}f" \n"""
+        if self.y_precision:
+            gpl += f"""set ytics format "%.{self.y_precision}f" \n"""
+        if self.z_precision:
+            gpl += f"""set ztics format "%.{self.z_precision}f" \n"""
 
-set out
-"""
+        gpl += f"""set term pngcairo enhanced truecolor font \"{self.style["font"]},{self.style["fontsize"]}\" fontscale {self.style["fontscale"]} linewidth {self.style["linewidth"]} pointscale {self.style["pointscale"]} size {self.style["width"]},{self.style["height"]} \n"""
+
+        if self.data and self.legends:
+            gpl += "\n$data << EOD\n"
+            for r in range(len(self.data[0])):
+                for c in range(len(self.data)):
+                    gpl += str(self.data[c][r]) + " "
+                gpl += "\n"
+            gpl += "EOD\n\n"
+            gpl += "plot "
+            for i, leg in enumerate(self.legends, 2):
+                gpl += f"""$data u 1:{i} title "{leg}" with lines, \\\n """
+            gpl += "\n"
+
+        return gpl
 
 
 class ParentGnuplot(log):
     def __init__(self) -> None:
-        self.gpl: str = ""
-        self.outfig: str = "DIT_gnuplot_output.png"
-        self.file: str = "DIT_gnuplot_script_dump.gpl"
+        time_info = time.strftime("%Y%m%d%H%M%S", time.localtime())
+        self.outfig: str = f"DIT_gnuplot_output_{time_info}.png"
+        self.gpl_file: str = f"DIT_gnuplot_script_dump_{time_info}.gpl"
+        self.gnuplot = Gnuplot()
 
     def dump(self) -> None:
-        with open(self.file, "w") as fo:
-            fo.write(self.gpl + "\n")
-        self.info(f"temporarily dump gnuplot scripts to {self.file}")
+        gpl = self.gnuplot.dump2str()
+        with open(self.gpl_file, "w") as fo:
+            fo.write(gpl)
+        self.info(f"temporarily dump gnuplot scripts to {self.gpl_file}")
 
     def clean(self) -> None:
-        os.remove(self.file)
-        self.info(f"removed gnuplot scripts {self.file}")
+        os.remove(self.gpl_file)
+        self.info(f"removed gnuplot scripts {self.gpl_file}")
 
     def run(self) -> None:
-        inCmd = f"""echo load "{self.file}" | gnuplot"""
+        inCmd = f"""echo load "{self.gpl_file}" | gnuplot"""
         p = subprocess.Popen(
             inCmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
         )
-        print("pid -> ", p.pid)
+        self.info(f"running gnuplot at pid -> {p.pid}")
         output, error = p.communicate()
         p.wait()
         status = ("Fail", "Success")[p.returncode == 0]
         output, error = output.decode(), error.decode()
-        print(status, output, error)
+        self.info(f"gnuplot status -> {status}")
+        if output:
+            self.info(f"gnuplot output -> {output}")
+        if error:
+            self.error(f"gnuplot error -> {error}")
 
-    def add(self, msg: str) -> None:
-        self.gpl += f"{msg}\n"
-
-    def xlabel(self, msg: str) -> None:
-        self.gpl += f"""set xlabel "{msg}"\n"""
-
-    def ylabel(self, msg: str) -> None:
-        self.gpl += f"""set ylabel "{msg}"\n"""
-
-    def zlabel(self, msg: str) -> None:
-        self.gpl += f"""set zlabel "{msg}"\n"""
-
-    def title(self, msg: str) -> None:
-        self.gpl += f"""set title "{msg}"\n"""
-
-    def term(self, msg: str) -> None:
-        self.gpl += f"""set term {msg}\n"""
-
-    def output(self, outfig: str) -> None:
+    def final(self, outfig: str, noshow:bool) -> None:
         if outfig != None:
             if os.path.exists(outfig):
                 time_info = time.strftime("%Y%m%d%H%M%S", time.localtime())
@@ -88,54 +132,7 @@ class ParentGnuplot(log):
                 )
                 outfig = new_outfig
             self.outfig = outfig
-        self.gpl += f"""set output "{self.outfig}"\n"""
-
-    def font(
-        self,
-        font: str = "Arial",
-        fontsize: int = 12,
-        fontscale: int = 1,
-        linewidth: int = 2,
-        pointscale: int = 1,
-        width: int = 600,
-        height: int = 500,
-    ) -> None:
-        self.gpl += f"""set term pngcairo enhanced truecolor font "{font},{fontsize}" fontscale {fontscale} linewidth {linewidth} pointscale {pointscale} size {width},{height} \n"""
-
-    def xrange(self, xmin: float, xmax: float) -> None:
-        if xmin == None:
-            xmin = ""
-        if xmax == None:
-            xmax == ""
-        self.gpl += f"""set xrange [{xmin}:{xmax}]\n"""
-
-    def yrange(self, ymin: float, ymax: float) -> None:
-        if ymin == None:
-            ymin = ""
-        if ymax == None:
-            ymax == ""
-        self.gpl += f"""set yrange [{ymin}:{ymax}]\n"""
-
-    def ytics(self, precision: int) -> None:
-        self.add(f"""set ytics  format "%.{precision}f" """)
-
-    def xtics(self, precision: int) -> None:
-        self.add(f"""set xtics  format "%.{precision}f" """)
-
-    def data(
-        self, xdata: List[float], data_list: List[List[float]], legends: List[str]
-    ) -> None:
-        self.add("\n$data << EOD")
-        for data in zip(xdata, *data_list):
-            self.add(" ".join([str(d) for d in data]))
-        self.add("EOD\n")
-
-        self.gpl += "plot "
-        for i, leg in enumerate(legends, 2):
-            self.gpl += f"""$data u 1:{i} title "{leg}" with lines, """
-        self.gpl += "\n"
-
-    def final(self) -> None:
+        self.gnuplot.outfig = self.outfig
         self.dump()
         self.run()
         self.clean()
@@ -165,27 +162,32 @@ class LineGnuplot(ParentGnuplot):
     def __init__(self, **kwargs) -> None:
         super().__init__()
 
-        self.term("png")
-        self.output(kwargs["output"])
-        self.title(kwargs["title"])
-        self.xlabel(kwargs["xlabel"])
-        self.ylabel(kwargs["ylabel"])
-        self.font()
+        self.gnuplot.term = "png"
+        self.gnuplot.title = kwargs["title"]
+        self.gnuplot.xlabel = kwargs["xlabel"]
+        self.gnuplot.ylabel = kwargs["ylabel"]
+
         x_min, x_max = np.min(kwargs["xdata"]), np.max(kwargs["xdata"])
         if kwargs["xmin"] == None and kwargs["xmax"] == None:
             x_space = int((x_max - x_min) / 100)
             if int(x_min - x_space) < int(x_max + x_space) - 1.0:
-                self.xrange(int(x_min - x_space), int(x_max + x_space))
+                self.gnuplot.xmin = int(x_min - x_space)
+                self.gnuplot.xmax = int(x_max + x_space)
         else:
-            self.xrange(kwargs["xmin"], kwargs["xmax"])
+            self.gnuplot.xmin = kwargs["xmin"]
+            self.gnuplot.xmax = kwargs["xmax"]
         if kwargs["ymin"] != None or kwargs["ymax"] != None:
-            self.yrange(kwargs["ymin"], kwargs["ymax"])
+            self.gnuplot.xmin = kwargs["ymin"]
+            self.gnuplot.xmax = kwargs["ymax"]
         if kwargs["x_precision"] != None:
-            self.xtics(kwargs["x_precision"])
+            self.gnuplot.x_precision = kwargs["x_precision"]
         if kwargs["y_precision"] != None:
-            self.ytics(kwargs["y_precision"])
+            self.gnuplot.y_precision = kwargs["y_precision"]
 
-        self.data(kwargs["xdata"], kwargs["data_list"], kwargs["legends"])
+        if len(kwargs["legends"]) != len(kwargs["data_list"]):
+            self.error(f"""unable to pair {len(kwargs["legends"])} legends to {len(kwargs["data_list"])} column data.""")
+        self.gnuplot.data = [kwargs["xdata"], *kwargs["data_list"]]
+        self.gnuplot.legends = kwargs["legends"]
 
 
 class DistributionPlotexet(ParentGnuplot):

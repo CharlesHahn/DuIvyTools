@@ -61,11 +61,10 @@ class xvg_show(Command):
                 line = LinePlotext(**kwargs)
                 line.final(self.parm.output, self.parm.noshow)
             elif self.parm.engine == "gnuplot":
-                kwargs["output"] = self.parm.output
                 line = LineGnuplot(**kwargs)
-                line.final()
+                line.final(self.parm.output, self.parm.noshow)
             else:
-                pass
+                self.error("wrong selection of plot engine") 
 
 
 class xvg_compare(Command):
