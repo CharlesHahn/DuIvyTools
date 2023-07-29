@@ -6,9 +6,9 @@ Written by DuIvy and provided to you by GPLv3 license.
 
 import os
 import sys
-import math
 import numpy as np
-from typing import List, Union
+import scipy.stats as stats
+from typing import List, Union, Tuple
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from utils import log
@@ -109,6 +109,42 @@ class XVG(log):
 
         if is_file:
             self.info(f"parsing data from {xvgfile} successfully !")
+    
+    def calc_mvave(self, windowsize:int, confidence:float, column_index:int) -> Tuple[List]:
+        """
+        calculate the moving average of each column
+
+        :parameters:
+            windowsize: the window size for calculating moving average
+            confidence: the confidence to calculate interval
+            conlumn_index: the index for the column to calculate
+
+        :return:
+            mvaves: a list contains moving average
+            highs: the high value of interval of moving averages
+            lows: the low value of interval of moving averages
+        """
+
+        if windowsize <= 0 or windowsize > int(self.row_num / 2):
+            self.error("windowsize value is not proper")
+        if confidence <= 0 or confidence >= 1:
+            self.error("confidence value is not proper, it should be in (0,1)")
+
+        if column_index < 0 or column_index >= self.column_num:
+            self.error("wrong selection of column_index to calculate moving averages")
+        column_data = self.data_columns[column_index]
+        mvaves = [np.nan for _ in range(windowsize)]
+        highs = [np.nan for _ in range(windowsize)]
+        lows = [np.nan for _ in range(windowsize)]
+        for i in range(windowsize, self.row_num):
+            window_data = np.array(column_data[i - windowsize : i])
+            ave = np.mean(window_data)
+            std = np.std(window_data)
+            interval = stats.norm.interval(confidence, ave, std)
+            mvaves.append(ave)
+            lows.append(interval[0])
+            highs.append(interval[1])
+        return mvaves, highs, lows
 
 
 class XVGS(log):

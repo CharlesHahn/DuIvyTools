@@ -181,7 +181,7 @@ class Parameters(log):
             default=0.95,
             help="confidence for confidence interval calculation",
         )
-        parser.add_argument("--alpha", type=float, help="the alpha of background lines")
+        parser.add_argument("--alpha", type=float, default=0.4, help="the alpha of background lines")
         parser.add_argument(
             "-bin",
             "--bin",
@@ -344,7 +344,7 @@ class Parameters(log):
                 column_select = [int(c) for c in self.columns]
         self.columns = column_select
 
-        if self.legends != None and "," in self.legends:
+        if self.legends != None and "," in "".join(self.legends):
             self.legends = [ls.strip(",").split(",") for ls in self.legends]
 
         ## TODO: check the range of parameters

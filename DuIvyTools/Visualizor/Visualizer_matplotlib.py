@@ -82,12 +82,18 @@ class LineMatplotlib(ParentMatplotlib):
         title :str
         x_precision :int
         y_precision :int
+        # optional
+        highs :List[List[float]]
+        lows :List[List[float]]
+        alpha :float
     """
 
     def __init__(self, **kwargs) -> None:
         super().__init__()
 
         for i, data in enumerate(kwargs["data_list"]):
+            if len(kwargs["highs"]) != 0 and len(kwargs["lows"]) != 0:
+                plt.fill_between(kwargs["xdata"], kwargs["highs"][i], kwargs["lows"][i], alpha=kwargs["alpha"])
             plt.plot(kwargs["xdata"], data, label=kwargs["legends"][i])
 
         x_min, x_max = np.min(kwargs["xdata"]), np.max(kwargs["xdata"])
