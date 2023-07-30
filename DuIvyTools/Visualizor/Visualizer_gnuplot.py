@@ -24,6 +24,20 @@ class Gnuplot(log):
             "pointscale": 1,
             "width":1200,
             "height": 1000,
+            "color_cycle": [
+                "#38A7D0",
+                "#F67088",
+                "#66C2A5",
+                "#FC8D62",
+                "#8DA0CB",
+                "#E78AC3",
+                "#A6D854",
+                "#FFD92F",
+                "#E5C494",
+                "#B3B3B3",
+                "#66C2A5",
+                "#FC8D62",
+            ],
         }
         self.term:str = None
         self.outfig:str = None
@@ -39,7 +53,10 @@ class Gnuplot(log):
         self.y_precision:int = None
         self.z_precision:int = None
         self.legends:List[str] = None
+        self.xdata:List[float] = None
         self.data:List[List[float]] = None
+        self.highs:List[List[float]] = None
+        self.lows:List[List[float]] = None
 
     def dump2str(self) -> str:
         gpl:str = ""
@@ -74,16 +91,29 @@ class Gnuplot(log):
 
         gpl += f"""set term pngcairo enhanced truecolor font \"{self.style["font"]},{self.style["fontsize"]}\" fontscale {self.style["fontscale"]} linewidth {self.style["linewidth"]} pointscale {self.style["pointscale"]} size {self.style["width"]},{self.style["height"]} \n"""
 
-        if self.data and self.legends:
+        if self.data and self.legends and len(self.highs) == 0 and len(self.lows) == 0:
             gpl += "\n$data << EOD\n"
-            for r in range(len(self.data[0])):
+            for r in range(len(self.xdata)):
+                gpl += str(self.xdata[r]) + " "
                 for c in range(len(self.data)):
                     gpl += str(self.data[c][r]) + " "
                 gpl += "\n"
             gpl += "EOD\n\n"
             gpl += "plot "
             for i, leg in enumerate(self.legends, 2):
-                gpl += f"""$data u 1:{i} title "{leg}" with lines, \\\n """
+                gpl += f"""$data u 1:{i} title "{leg}" with lines lt rgb "{self.style["color_cycle"][i-2]}", \\\n """
+            gpl += "\n"
+
+        if self.data and self.legends and len(self.highs) != 0 and len(self.lows) != 0:
+            gpl += f"""set style fill transparent solid {self.style["alpha"]} noborder\n"""
+            for c in range(len(self.data)):
+                gpl += f"\n$data{c} << EOD\n"
+                for r in range(len(self.xdata)):
+                    gpl += f"""{self.xdata[r]} {self.data[c][r]} {self.highs[c][r]} {self.lows[c][r]}\n"""
+                gpl += "EOD\n\n"
+            gpl += "plot "
+            for c in range(len(self.data)):
+                gpl += f"""$data{c} using 1:3:4 with filledcurves notitle lt rgb "{self.style["color_cycle"][c]}", $data{c} u 1:2 title "{self.legends[c]}" with lines lt rgb "{self.style["color_cycle"][c]}", \\\n""" 
             gpl += "\n"
 
         return gpl
@@ -135,7 +165,8 @@ class ParentGnuplot(log):
         self.gnuplot.outfig = self.outfig
         self.dump()
         self.run()
-        self.clean()
+        if not noshow:
+            self.clean()
 
 
 class LineGnuplot(ParentGnuplot):
@@ -186,8 +217,12 @@ class LineGnuplot(ParentGnuplot):
 
         if len(kwargs["legends"]) != len(kwargs["data_list"]):
             self.error(f"""unable to pair {len(kwargs["legends"])} legends to {len(kwargs["data_list"])} column data.""")
-        self.gnuplot.data = [kwargs["xdata"], *kwargs["data_list"]]
+        self.gnuplot.xdata = kwargs["xdata"]
+        self.gnuplot.data = kwargs["data_list"]
         self.gnuplot.legends = kwargs["legends"]
+        self.gnuplot.highs = kwargs["highs"]
+        self.gnuplot.lows = kwargs["lows"]
+        self.gnuplot.style["alpha"] = kwargs["alpha"]
 
 
 class DistributionPlotexet(ParentGnuplot):
