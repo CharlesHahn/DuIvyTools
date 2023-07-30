@@ -163,12 +163,33 @@ class xvg_compare(Command):
 
 
 class xvg_ave(Command):
+    """compute averages of all data columns of specified xvg files
+    """
     def __init__(self, parm: Parameters) -> None:
         self.parm = parm
 
     def __call__(self):
         self.info("in xvg_ave")
         print(self.parm.__dict__)
+
+        begin, end, dt = self.parm.begin, self.parm.end, self.parm.dt
+        for xvgfile in self.parm.input:
+            xvg = XVG(xvgfile)
+            self.file = xvg
+            legends, aves, stderrs = [], [], []
+            for c in range(xvg.column_num):
+                legend, ave, stderr = xvg.calc_ave(begin, end, dt, c)
+                legends.append(legend)
+                aves.append(ave)
+                stderrs.append(stderr)
+            print(f">>>>>>>>>>>>>> {xvg.xvgfile:^30} <<<<<<<<<<<<<<")
+            print("-"*60)
+            print("|" + " "*18 + "|      Average      |      Std.Err      |")
+            print("-"*60)
+            for l, a, s in zip(legends, aves, stderrs):
+                print(f"|{l:^18}|{a:^19.6f}|{s:^19.6f}|")
+                print("-"*60)
+            
 
 
 class xvg_mvave(Command):

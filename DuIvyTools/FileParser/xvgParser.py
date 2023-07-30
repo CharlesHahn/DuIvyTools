@@ -146,6 +146,32 @@ class XVG(log):
             highs.append(interval[1])
         return mvaves, highs, lows
 
+    def calc_ave(self, begin:int, end:int, dt:int, column_index:int) -> Tuple[float]:
+        """calculate the average of selected column
+
+        Args:
+            begin (int): the begin index
+            end (int): the end index
+            dt (int): the index step
+            column_index (int): the selected column index
+
+        Returns:
+            Tuple[float]: legend, average, std.err
+        """
+        if (begin != None and end != None) and (begin >= end):
+            self.error("start index should be less than end index")
+        if (begin != None and begin >= self.row_num) or (
+            end != None and end >= self.row_num):
+            self.error(f"start or end index should be less than the number of rows {self.row_num} in xvg file")
+        if column_index >= self.column_num:
+            self.error(f"column index selected should be less than column number {self.column_num}")
+
+        column = self.data_columns[column_index]
+        legend = self.data_heads[column_index]
+        ave = np.average(column[begin:end:dt])
+        std = np.std(column[begin:end:dt], ddof=1)
+        return legend, ave, std
+
 
 class XVGS(log):
     def __init__(self, xvgfile: str) -> None:

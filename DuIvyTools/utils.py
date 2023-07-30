@@ -157,10 +157,6 @@ class Parameters(log):
             default=1.0,
             help="modify z values by multipling zshrink",
         )
-
-        parser.add_argument(
-            "-xt", "--xtitles", nargs="+", help="the x tick labels for box comparison"
-        )
         parser.add_argument(
             "-smv",
             "--showMV",
@@ -182,6 +178,11 @@ class Parameters(log):
             help="confidence for confidence interval calculation",
         )
         parser.add_argument("--alpha", type=float, default=0.4, help="the alpha of background lines")
+
+
+        parser.add_argument(
+            "-xt", "--xtitles", nargs="+", help="the x tick labels for box comparison"
+        )
         parser.add_argument(
             "-bin",
             "--bin",
@@ -342,7 +343,7 @@ class Parameters(log):
                     column_select.append(lis)
             else:
                 column_select = [int(c) for c in self.columns]
-        self.columns = column_select
+            self.columns = column_select
 
         if self.legends != None and "," in "".join(self.legends):
             self.legends = [ls.strip(",").split(",") for ls in self.legends]
