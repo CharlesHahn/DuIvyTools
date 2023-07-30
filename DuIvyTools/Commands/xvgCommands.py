@@ -51,6 +51,9 @@ class xvg_show(Command):
                 "title": self.get_parm("title"),
                 "x_precision": self.parm.x_precision,
                 "y_precision": self.parm.y_precision,
+                "highs": list(),
+                "lows": list(),
+                "alpha": self.parm.alpha,
             }
             if self.parm.engine == "matplotlib":
                 line = LineMatplotlib(**kwargs)
