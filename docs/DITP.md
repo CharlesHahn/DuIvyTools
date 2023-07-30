@@ -80,11 +80,11 @@
         z-label
 -t, --title
         figure title
---xlim
+--xmin, --xmax
         tuple for x value range
---ylim
+--ymin, --ymax
         tuple for y value range
---zlim
+--zmin, --zmax
         tuple for z value range
 --x_precision
         precision of x value
@@ -98,14 +98,6 @@
         factor for multiplication of y-axis
 -zs, --zshrink
         factor for multiplication of z-axis
--xi, --x_index
-        the index for x of scatter figure
--yi, --y_index
-        the index for y of scatter figure
--zi, --z_index
-        the index for z of scatter figure
--xt, --xtitles
-        the names of x ticks in figure
 -smv, --showMV
         show moving average
 -ws, --windowsize
@@ -114,6 +106,17 @@
         confidence for moving average
 --alpha
         alpha for figure transparency of moving average
+-eg, --engine
+        engine for plotting
+
+-xi, --x_index
+        the index for x of scatter figure
+-yi, --y_index
+        the index for y of scatter figure
+-zi, --z_index
+        the index for z of scatter figure
+-xt, --xtitles
+        the names of x ticks in figure
 --bin
         number of bins for calculating distribution
 --ave2csv

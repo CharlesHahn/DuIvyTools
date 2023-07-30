@@ -102,3 +102,21 @@ class Command(log):
         elif self.parm.engine == "gnuplot":
             msgs = [self.deal_latex(m, False, True) for m in msgs]
         return msgs
+
+    def check_output_exist(self, output:str) -> str:
+        """check if the output file exists in current working directory. If true, add time stamp to its name
+
+        Args:
+            output (str): the output file name
+
+        Returns:
+            str: the fine output file name
+        """
+        if os.path.exists(output):
+            time_info = time.strftime("%Y%m%d%H%M%S", time.localtime())
+            new_output = f'{".".join(output.split(".")[:-1])}_{time_info}.{output.split(".")[-1]}'
+            self.warn(
+                f"{output} is already in current directory, save to {new_output} for instead."
+            )
+            output = new_output
+        return output

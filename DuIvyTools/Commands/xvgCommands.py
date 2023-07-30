@@ -172,6 +172,7 @@ class xvg_ave(Command):
         self.info("in xvg_ave")
         print(self.parm.__dict__)
 
+        outstr:str = ""
         begin, end, dt = self.parm.begin, self.parm.end, self.parm.dt
         for xvgfile in self.parm.input:
             xvg = XVG(xvgfile)
@@ -182,14 +183,19 @@ class xvg_ave(Command):
                 legends.append(legend)
                 aves.append(ave)
                 stderrs.append(stderr)
-            print(f">>>>>>>>>>>>>> {xvg.xvgfile:^30} <<<<<<<<<<<<<<")
-            print("-"*60)
-            print("|" + " "*18 + "|      Average      |      Std.Err      |")
-            print("-"*60)
+            outstr += f"\n>>>>>>>>>>>>>> {xvg.xvgfile:^30} <<<<<<<<<<<<<<\n"
+            outstr += "-"*60 + "\n"
+            outstr += "|"+" "*18+"|      Average      |      Std.Err      |\n"
+            outstr += "-"*60 + "\n"
             for l, a, s in zip(legends, aves, stderrs):
-                print(f"|{l:^18}|{a:^19.6f}|{s:^19.6f}|")
-                print("-"*60)
-            
+                outstr += f"|{l:^18}|{a:^19.6f}|{s:^19.6f}|\n"
+                outstr += "-"*60 + "\n"
+        print(outstr)
+        if self.parm.output:
+            outfile = self.check_output_exist(self.parm.output)
+            with open(outfile, 'w') as fo:
+                fo.write(outstr)
+        self.info(f"all average data have been saved to {outfile}")
 
 
 class xvg_mvave(Command):
