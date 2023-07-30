@@ -14,15 +14,18 @@ import numpy as np
 
 from utils import log
 
+
 class Gnuplot(log):
+    """Gnuplot class for plotting with gnuplot"""
+
     def __init__(self) -> None:
         self.style = {
-            "font":"Arial",
+            "font": "Arial",
             "fontsize": 14,
             "fontscale": 1,
             "linewidth": 2,
             "pointscale": 1,
-            "width":1200,
+            "width": 1200,
             "height": 1000,
             "color_cycle": [
                 "#38A7D0",
@@ -39,27 +42,32 @@ class Gnuplot(log):
                 "#FC8D62",
             ],
         }
-        self.term:str = None
-        self.outfig:str = None
-        self.title:str = None
-        self.xlabel:str = None
-        self.ylabel:str = None
-        self.zlabel:str = None
-        self.xmin:float = None
-        self.xmax:float = None
-        self.ymin:float = None
-        self.ymax:float = None
-        self.x_precision:int = None
-        self.y_precision:int = None
-        self.z_precision:int = None
-        self.legends:List[str] = None
-        self.xdata:List[float] = None
-        self.data:List[List[float]] = None
-        self.highs:List[List[float]] = None
-        self.lows:List[List[float]] = None
+        self.term: str = None
+        self.outfig: str = None
+        self.title: str = None
+        self.xlabel: str = None
+        self.ylabel: str = None
+        self.zlabel: str = None
+        self.xmin: float = None
+        self.xmax: float = None
+        self.ymin: float = None
+        self.ymax: float = None
+        self.x_precision: int = None
+        self.y_precision: int = None
+        self.z_precision: int = None
+        self.legends: List[str] = None
+        self.xdata: List[float] = None
+        self.data: List[List[float]] = None
+        self.highs: List[List[float]] = None
+        self.lows: List[List[float]] = None
 
     def dump2str(self) -> str:
-        gpl:str = ""
+        """dump gnuplot properties to gnuplot input scripts
+
+        Returns:
+            str: result string for gnuplto input
+        """
+        gpl: str = ""
         if self.term:
             gpl += f"""set term {self.term}\n"""
         if self.outfig:
@@ -105,7 +113,9 @@ class Gnuplot(log):
             gpl += "\n"
 
         if self.data and self.legends and len(self.highs) != 0 and len(self.lows) != 0:
-            gpl += f"""set style fill transparent solid {self.style["alpha"]} noborder\n"""
+            gpl += (
+                f"""set style fill transparent solid {self.style["alpha"]} noborder\n"""
+            )
             for c in range(len(self.data)):
                 gpl += f"\n$data{c} << EOD\n"
                 for r in range(len(self.xdata)):
@@ -113,13 +123,15 @@ class Gnuplot(log):
                 gpl += "EOD\n\n"
             gpl += "plot "
             for c in range(len(self.data)):
-                gpl += f"""$data{c} using 1:3:4 with filledcurves notitle lt rgb "{self.style["color_cycle"][c]}", $data{c} u 1:2 title "{self.legends[c]}" with lines lt rgb "{self.style["color_cycle"][c]}", \\\n""" 
+                gpl += f"""$data{c} using 1:3:4 with filledcurves notitle lt rgb "{self.style["color_cycle"][c]}", $data{c} u 1:2 title "{self.legends[c]}" with lines lt rgb "{self.style["color_cycle"][c]}", \\\n"""
             gpl += "\n"
 
         return gpl
 
 
 class ParentGnuplot(log):
+    """the parent class of varieties of gnuplot figures"""
+
     def __init__(self) -> None:
         time_info = time.strftime("%Y%m%d%H%M%S", time.localtime())
         self.outfig: str = f"DIT_gnuplot_output_{time_info}.png"
@@ -127,16 +139,19 @@ class ParentGnuplot(log):
         self.gnuplot = Gnuplot()
 
     def dump(self) -> None:
+        """dump gnuplot input scripts into a input file"""
         gpl = self.gnuplot.dump2str()
         with open(self.gpl_file, "w") as fo:
             fo.write(gpl)
         self.info(f"temporarily dump gnuplot scripts to {self.gpl_file}")
 
     def clean(self) -> None:
+        """remove the gnuplot input script file"""
         os.remove(self.gpl_file)
         self.info(f"removed gnuplot scripts {self.gpl_file}")
 
     def run(self) -> None:
+        """run the gnuplot script to get figure"""
         inCmd = f"""echo load "{self.gpl_file}" | gnuplot"""
         p = subprocess.Popen(
             inCmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
@@ -152,7 +167,13 @@ class ParentGnuplot(log):
         if error:
             self.error(f"gnuplot error -> {error}")
 
-    def final(self, outfig: str, noshow:bool) -> None:
+    def final(self, outfig: str, noshow: bool) -> None:
+        """deal with final process of plotting by gnuplot
+
+        Args:
+            outfig (str): the user specified output figure name
+            noshow (bool): True for not delete the gnuplot scripts file
+        """
         if outfig != None:
             if os.path.exists(outfig):
                 time_info = time.strftime("%Y%m%d%H%M%S", time.localtime())
@@ -164,8 +185,8 @@ class ParentGnuplot(log):
             self.outfig = outfig
         self.gnuplot.outfig = self.outfig
         self.dump()
-        self.run()
         if not noshow:
+            self.run()
             self.clean()
 
 
@@ -188,6 +209,10 @@ class LineGnuplot(ParentGnuplot):
         title :str
         x_precision :int
         y_precision :int
+        # optional
+        highs :List[List[float]]
+        lows :List[List[float]]
+        alpha :float
     """
 
     def __init__(self, **kwargs) -> None:
@@ -216,7 +241,9 @@ class LineGnuplot(ParentGnuplot):
             self.gnuplot.y_precision = kwargs["y_precision"]
 
         if len(kwargs["legends"]) != len(kwargs["data_list"]):
-            self.error(f"""unable to pair {len(kwargs["legends"])} legends to {len(kwargs["data_list"])} column data.""")
+            self.error(
+                f"""unable to pair {len(kwargs["legends"])} legends to {len(kwargs["data_list"])} column data."""
+            )
         self.gnuplot.xdata = kwargs["xdata"]
         self.gnuplot.data = kwargs["data_list"]
         self.gnuplot.legends = kwargs["legends"]

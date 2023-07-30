@@ -9,7 +9,6 @@ import sys
 import time
 from typing import List, Union
 
-# sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from Commands.Commands import Command
 from FileParser.xvgParser import XVG
 from Visualizor.Visualizer_matplotlib import LineMatplotlib
@@ -20,11 +19,12 @@ from utils import Parameters
 
 
 class xvg_show(Command):
+    """a command class to show xvg data file"""
+
     def __init__(self, parm: Parameters) -> None:
         self.parm = parm
 
     def __call__(self):  ## write process code
-
         self.info("in xvgSHOW")
         print(self.parm.__dict__)
 
@@ -69,6 +69,8 @@ class xvg_show(Command):
 
 
 class xvg_compare(Command):
+    """a command class for compare xvg file data"""
+
     def __init__(self, parm: Parameters) -> None:
         self.parm = parm
 
@@ -87,7 +89,9 @@ class xvg_compare(Command):
             self.parm.columns = [[cs] for cs in self.parm.columns]
         if len(self.parm.input) != len(self.parm.columns):
             self.error(f"columns must contain {len(self.parm.input)} list")
-        if self.parm.legends != None and len(self.parm.legends) != sum([len(c) for c in self.parm.columns]):
+        if self.parm.legends != None and len(self.parm.legends) != sum(
+            [len(c) for c in self.parm.columns]
+        ):
             self.error("number of legends you input can not pair to columns you select")
         if self.parm.title == None:
             self.parm.title = "XVG Comparison"
@@ -101,15 +105,23 @@ class xvg_compare(Command):
             xvg = xvgs[id]
             for column_index in column_indexs:
                 if column_index >= xvg.column_num:
-                    self.error(f"invalid column index {column_index} which >= column number {xvg.column_num}")
+                    self.error(
+                        f"invalid column index {column_index} which >= column number {xvg.column_num}"
+                    )
                 if self.parm.showMV:
-                    aves, highs, lows = xvg.calc_mvave(self.parm.windowsize, self.parm.confidence, column_index)
-                    highs_list.append([y*self.parm.yshrink for y in highs[begin:end:dt]])
-                    lows_list.append([y*self.parm.yshrink for y in lows[begin:end:dt]])
+                    aves, highs, lows = xvg.calc_mvave(
+                        self.parm.windowsize, self.parm.confidence, column_index
+                    )
+                    highs_list.append(
+                        [y * self.parm.yshrink for y in highs[begin:end:dt]]
+                    )
+                    lows_list.append(
+                        [y * self.parm.yshrink for y in lows[begin:end:dt]]
+                    )
                 else:
                     aves = xvg.data_columns[column_index]
-                data_list.append([y*self.parm.yshrink for y in aves[begin:end:dt]])
-                legend = xvg.data_heads[column_index] 
+                data_list.append([y * self.parm.yshrink for y in aves[begin:end:dt]])
+                legend = xvg.data_heads[column_index]
                 legends.append(f"{legend} - {xvg.xvgfile}")
         self.remove_latex()
         legends = self.remove_latex_msgs(legends)
@@ -128,8 +140,8 @@ class xvg_compare(Command):
             "x_precision": self.parm.x_precision,
             "y_precision": self.parm.y_precision,
             "highs": highs_list,
-            "lows":lows_list,
-            "alpha":self.parm.alpha,
+            "lows": lows_list,
+            "alpha": self.parm.alpha,
         }
         if self.parm.engine == "matplotlib":
             line = LineMatplotlib(**kwargs)

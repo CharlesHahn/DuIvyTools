@@ -76,6 +76,10 @@ class LinePlotly(ParentPlotly):
         title :str
         x_precision :int
         y_precision :int
+        # optional
+        highs :List[List[float]]
+        lows :List[List[float]]
+        alpha :float
     """
 
     def __init__(self, **kwargs) -> None:
@@ -88,7 +92,7 @@ class LinePlotly(ParentPlotly):
                     y=data,
                     name=kwargs["legends"][i],
                     line=dict(color=self.style["color_cycle"][i]),
-                    showlegend=(kwargs["legends"][i]!="")
+                    showlegend=(kwargs["legends"][i] != ""),
                 )
             )
             if len(kwargs["highs"]) != 0 and len(kwargs["lows"]) != 0:

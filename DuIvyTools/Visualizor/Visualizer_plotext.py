@@ -7,7 +7,7 @@ Written by DuIvy and provided to you by GPLv3 license.
 import os
 import sys
 import time
-from typing import List, Union
+from typing import List, Union, Tuple
 
 import numpy as np
 import plotext as plt
@@ -18,21 +18,31 @@ from utils import log
 class ParentPlotext(log):
     def __init__(self) -> None:
         plt.clear_figure()
+        self.style = {
+            "color_cycle": [
+                "#38A7D0",
+                "#F67088",
+                "#66C2A5",
+                "#FC8D62",
+                "#8DA0CB",
+                "#E78AC3",
+                "#A6D854",
+                "#FFD92F",
+                "#E5C494",
+                "#B3B3B3",
+                "#66C2A5",
+                "#FC8D62",
+            ],
+        }
+
+    def hex2rgb(self, hex: str) -> Tuple[float]:
+        rgb = [int(hex.lstrip("#")[i : i + 2], 16) for i in (0, 2, 4)]
+        return tuple(rgb)
 
     def final(self, outfig: str, noshow: bool) -> None:
         if outfig != None:
-            if os.path.exists(outfig):
-                time_info = time.strftime("%Y%m%d%H%M%S", time.localtime())
-                new_outfig = f'{".".join(outfig.split(".")[:-1])}_{time_info}.{outfig.split(".")[-1]}'
-                self.warn(
-                    f"{outfig} is already in current directory, save to {new_outfig} for instead."
-                )
-                outfig = new_outfig
-            outfig = os.path.join(os.getcwd(), outfig)
-            plt.save_fig(outfig)
-            self.info(f"save figure to {outfig} successfully")
-        if noshow == False:
-            plt.show()
+            self.info(f"unable to save figure with plotext engine\n")
+        plt.show()
 
 
 class LinePlotext(ParentPlotext):
@@ -54,6 +64,9 @@ class LinePlotext(ParentPlotext):
         title :str
         x_precision :int
         y_precision :int
+        # optional
+        highs :List[List[float]]
+        lows :List[List[float]]
     """
 
     def __init__(self, **kwargs) -> None:
@@ -62,6 +75,7 @@ class LinePlotext(ParentPlotext):
         for i, data in enumerate(kwargs["data_list"]):
             if len(kwargs["highs"]) != 0 and len(kwargs["lows"]) != 0:
                 self.warn("unable to plot confidence intervals by plotext.")
+            # plt.plot(kwargs["xdata"], data, label=kwargs["legends"][i], color=self.hex2rgb(self.style["color_cycle"][i]))
             plt.plot(kwargs["xdata"], data, label=kwargs["legends"][i])
 
         x_min, x_max = np.min(kwargs["xdata"]), np.max(kwargs["xdata"])

@@ -7,7 +7,7 @@ Written by DuIvy and provided to you by GPLv3 license.
 import os
 import sys
 import time
-from typing import List, Union
+from typing import List, Union, Any
 
 # sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from utils import log
@@ -17,8 +17,12 @@ class Command(log):
     def __init__(self) -> None:
         pass
 
-    def sel_parm(self, *args) -> None:
+    def sel_parm(self, *args) -> Any:
+        """select the first parameters which is not None from *args, return the first item if all None
 
+        Returns:
+            Any: the first not None parm, or the first item if all None
+        """
         if len(args) < 1:
             self.critical("wrong length of parameters selcetion")
         for item in args:
@@ -27,7 +31,15 @@ class Command(log):
         else:
             return args[0]
 
-    def get_parm(self, key: str) -> None:
+    def get_parm(self, key: str) -> Any:
+        """get parm from user input (self.parm) or data file (self.file), user input with higher priority
+
+        Args:
+            key (str): properties of class
+
+        Returns:
+            Any: value of class properties
+        """
         value = self.parm.__dict__.get(key, None)
         if value != None:
             return value
@@ -36,7 +48,19 @@ class Command(log):
             return value
         return None
 
-    def deal_latex(self, ori: str, with_dollar: bool = True, ignore_slash:bool=False) -> None:
+    def deal_latex(
+        self, ori: str, with_dollar: bool = True, ignore_slash: bool = False
+    ) -> str:
+        """deal with subscripts or superscripts inside strings
+
+        Args:
+            ori (str): the string to process
+            with_dollar (bool, optional): add $ around result. Defaults to True.
+            ignore_slash (bool, optional): ture \\ into / to avoid errors. Defaults to False.
+
+        Returns:
+            str: result string
+        """
         ## deal with subscripts or superscripts
         res = ori[:]
         if "\\s" in res and "\\N" in res:
@@ -52,6 +76,7 @@ class Command(log):
         return res
 
     def remove_latex(self) -> None:
+        """remove the super-/sub-scripts in data_heads, xlabel, and ylabel of data files"""
         if self.parm.engine in ["matplotlib", "plotly"]:
             self.file.data_heads = [self.deal_latex(h) for h in self.file.data_heads]
             self.file.xlabel = self.deal_latex(self.file.xlabel)
@@ -63,7 +88,15 @@ class Command(log):
             self.file.xlabel = self.deal_latex(self.file.xlabel, with_dollar=False)
             self.file.ylabel = self.deal_latex(self.file.ylabel, with_dollar=False)
 
-    def remove_latex_msgs(self, msgs:List[str]) -> List[str]:
+    def remove_latex_msgs(self, msgs: List[str]) -> List[str]:
+        """for a list, deal with super-/sub-scripts of each item
+
+        Args:
+            msgs (List[str]): the strings to process
+
+        Returns:
+            List[str]: the results
+        """
         if self.parm.engine in ["matplotlib", "plotly"]:
             msgs = [self.deal_latex(m, True, True) for m in msgs]
         elif self.parm.engine == "gnuplot":

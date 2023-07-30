@@ -20,11 +20,14 @@ from utils import log
 
 
 class ParentMatplotlib(log):
+    """parent class for drawing figure by matplotlib"""
+
     def __init__(self):
         self.figure = plt.figure()
         self.load_style()
 
     def load_style(self):
+        """load matplotlib style file"""
         style_files = [file for file in os.listdir() if file[-9:] == ".mplstyle"]
         if len(style_files) == 1:
             plt.style.use(style_files[0])
@@ -47,7 +50,12 @@ class ParentMatplotlib(log):
             )
 
     def final(self, outfig: str, noshow: bool) -> None:
+        """do final process of drawing figure with matplotlib
 
+        Args:
+            outfig (str): the user specified output figure name
+            noshow (bool): True for no display the figure
+        """
         plt.tight_layout()
         if outfig != None:
             if os.path.exists(outfig):
@@ -93,7 +101,12 @@ class LineMatplotlib(ParentMatplotlib):
 
         for i, data in enumerate(kwargs["data_list"]):
             if len(kwargs["highs"]) != 0 and len(kwargs["lows"]) != 0:
-                plt.fill_between(kwargs["xdata"], kwargs["highs"][i], kwargs["lows"][i], alpha=kwargs["alpha"])
+                plt.fill_between(
+                    kwargs["xdata"],
+                    kwargs["highs"][i],
+                    kwargs["lows"][i],
+                    alpha=kwargs["alpha"],
+                )
             plt.plot(kwargs["xdata"], data, label=kwargs["legends"][i])
 
         x_min, x_max = np.min(kwargs["xdata"]), np.max(kwargs["xdata"])
