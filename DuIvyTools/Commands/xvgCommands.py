@@ -34,8 +34,13 @@ class xvg_show(Command):
             self.file = xvg
             xdata = [x * self.parm.xshrink for x in xvg.data_columns[0][begin:end:dt]]
             data_list = []
-            for c in range(len(xvg.data_heads[1:])): # to avoid str list
-                data_list.append([y * self.parm.yshrink for y in xvg.data_columns[c+1][begin:end:dt]])
+            for c in range(len(xvg.data_heads[1:])):  # to avoid str list
+                data_list.append(
+                    [
+                        y * self.parm.yshrink
+                        for y in xvg.data_columns[c + 1][begin:end:dt]
+                    ]
+                )
             self.remove_latex()
 
             kwargs = {
@@ -160,15 +165,15 @@ class xvg_compare(Command):
             line.final(self.parm.output, self.parm.noshow)
         else:
             self.error("wrong selection of plot engine")
-        
+
         if self.parm.csv:
             self.parm.csv = self.check_output_exist(self.parm.csv)
             self.dump2csv(kwargs)
 
     def dump2csv(self, kwargs):
-        ## merge xvg2csv and xvg_mvave functions here 
+        ## merge xvg2csv and xvg_mvave functions here
         if self.parm.showMV:
-            with open(self.parm.csv, 'w') as fo:
+            with open(self.parm.csv, "w") as fo:
                 fo.write(f"""{kwargs["xlabel"].strip("$")}""")
                 for leg in kwargs["legends"]:
                     leg = leg.strip("$")
@@ -177,7 +182,9 @@ class xvg_compare(Command):
                 for r in range(len(kwargs["xdata"])):
                     fo.write(f"""{kwargs["xdata"][r]:.8f}""")
                     for c in range(len(kwargs["data_list"])):
-                        fo.write(f""",{kwargs["data_list"][c][r]:.8f},{kwargs["highs"][c][r]:.8f},{kwargs["lows"][c][r]:.8f}""")
+                        fo.write(
+                            f""",{kwargs["data_list"][c][r]:.8f},{kwargs["highs"][c][r]:.8f},{kwargs["lows"][c][r]:.8f}"""
+                        )
                     fo.write("\n")
         else:
             with open(self.parm.csv, "w") as fo:
@@ -194,8 +201,8 @@ class xvg_compare(Command):
 
 
 class xvg_ave(Command):
-    """compute averages of all data columns of specified xvg files
-    """
+    """compute averages of all data columns of specified xvg files"""
+
     def __init__(self, parm: Parameters) -> None:
         self.parm = parm
 
@@ -203,7 +210,7 @@ class xvg_ave(Command):
         self.info("in xvg_ave")
         print(self.parm.__dict__)
 
-        outstr:str = ""
+        outstr: str = ""
         begin, end, dt = self.parm.begin, self.parm.end, self.parm.dt
         for xvgfile in self.parm.input:
             xvg = XVG(xvgfile)
@@ -215,26 +222,165 @@ class xvg_ave(Command):
                 aves.append(ave)
                 stderrs.append(stderr)
             outstr += f"\n>>>>>>>>>>>>>> {xvg.xvgfile:^30} <<<<<<<<<<<<<<\n"
-            outstr += "-"*60 + "\n"
-            outstr += "|"+" "*18+"|      Average      |      Std.Err      |\n"
-            outstr += "-"*60 + "\n"
+            outstr += "-" * 60 + "\n"
+            outstr += "|" + " " * 18 + "|      Average      |      Std.Err      |\n"
+            outstr += "-" * 60 + "\n"
             for l, a, s in zip(legends, aves, stderrs):
                 outstr += f"|{l:^18}|{a:^19.6f}|{s:^19.6f}|\n"
-                outstr += "-"*60 + "\n"
+                outstr += "-" * 60 + "\n"
         print(outstr)
         if self.parm.output:
             outfile = self.check_output_exist(self.parm.output)
-            with open(outfile, 'w') as fo:
+            with open(outfile, "w") as fo:
                 fo.write(outstr)
             self.info(f"all average data have been saved to {outfile}")
 
 
-class xvg_rama(Command):
+class xvg_energy_compute(Command):
+    """
+    compute the interaction between protein and ligand by:
+        binding energy  = prolig energy - pro energy - lig energy
+
+    :parameters::
+        xvgfiles: a list contains three xvg files
+            prolig_xvg: energy xvg file of prolig
+            pro_xvg: energy xvg file of protein
+            lig_xvg: energy xvg file of ligand
+        outfile: the output xvg file name
+
+    IMPORTANT:
+        the xvg file used here should contain and ONLY contain five columns:
+        Time, LJ(SR), Disper.corr., Coulomb(SR), Coul.recip.
+    """
+
     def __init__(self, parm: Parameters) -> None:
         self.parm = parm
 
     def __call__(self):
-        self.info("in xvg_rama")
+        self.info("in xvg_energy_compute")
+        print(self.parm.__dict__)
+
+        ## check parameters
+        if len(self.parm.input) != 3:
+            self.error(
+                "wrong number of input xvg files, must be prolig.xvg, pro.xvg and lig.xvg by order"
+            )
+        prolig_xvg = self.parm.input[0]
+        pro_xvg = self.parm.input[1]
+        lig_xvg = self.parm.input[2]
+        if self.parm.output == None:
+            self.error("please specify output xvg file name")
+        self.parm.output = self.check_output_exist(self.parm.output)
+
+        prolig, pro, lig = XVG(prolig_xvg), XVG(pro_xvg), XVG(lig_xvg)
+        if not (prolig.data_heads == pro.data_heads == lig.data_heads) or (
+            len(prolig.data_heads) != 5
+        ):
+            self.error(
+                "three xvg files should contain same number (5) of columns, "
+                + "and the order should be: \n"
+                + "    Time, LJ(SR), Disper.corr., Coulomb(SR), Coul.recip. "
+            )
+        if not (
+            ("Time" in prolig.data_heads[0])
+            and ("LJ" in prolig.data_heads[1])
+            and ("Disper" in prolig.data_heads[2])
+            and ("Coulomb" in prolig.data_heads[3])
+            and ("recip" in prolig.data_heads[4])
+        ):
+            self.error(
+                "the legend order should be: \n"
+                + "    Time, LJ(SR), Disper.corr., Coulomb(SR), Coul.recip. "
+            )
+        if not (prolig.row_num == pro.row_num == lig.row_num):
+            self.error("{}, {}, {} should contain same number of rows.")
+        if not (prolig.data_columns[0] == pro.data_columns[0] == lig.data_columns[0]):
+            self.error("the Time axis may not be the same, check the interval of time.")
+
+        ## compute the bingding energy
+        ## time
+        out_data = [prolig.data_columns[0]] + [[] for _ in range(9)]
+        out_heads = (
+            [prolig.data_heads[0]]
+            + [head for head in prolig.legends]
+            + [
+                "LJ(all)",
+                "Coulomb(all)",
+                "Short-Range(all)",
+                "Long-Range(all)",
+                "Total Energy",
+            ]
+        )
+        ## LJ(SR)
+        out_data[1] = [
+            prolig.data_columns[1][row]
+            - pro.data_columns[1][row]
+            - lig.data_columns[1][row]
+            for row in range(prolig.row_num)
+        ]
+        ## Disper.corr.
+        out_data[2] = [
+            prolig.data_columns[2][row]
+            - pro.data_columns[2][row]
+            - lig.data_columns[2][row]
+            for row in range(prolig.row_num)
+        ]
+        ## Coulomb(SR)
+        out_data[3] = [
+            prolig.data_columns[3][row]
+            - pro.data_columns[3][row]
+            - lig.data_columns[3][row]
+            for row in range(prolig.row_num)
+        ]
+        ## Coul.recip.
+        out_data[4] = [
+            prolig.data_columns[4][row]
+            - pro.data_columns[4][row]
+            - lig.data_columns[4][row]
+            for row in range(prolig.row_num)
+        ]
+        for row in range(prolig.row_num):
+            ## LJ(all)
+            out_data[5].append(out_data[1][row] + out_data[2][row])
+            ## Coulomb(all)
+            out_data[6].append(out_data[3][row] + out_data[4][row])
+            ## Short-Range(all)
+            out_data[7].append(out_data[1][row] + out_data[3][row])
+            ## Long-Range(all)
+            out_data[8].append(out_data[2][row] + out_data[4][row])
+            ## Total Energy
+            out_data[9].append(out_data[5][row] + out_data[6][row])
+
+        ## write energy computation results
+        with open(self.parm.output, "w") as fo:
+            fo.write("# this file was created by XVG.energy_compute through: \n")
+            fo.write("#    binding = prolig energy - protein energy - ligand energy\n")
+            fo.write(f"#   {self.parm.output} = {prolig_xvg} - {pro_xvg} - {lig_xvg}\n")
+            fo.write('@    title "{} computed by DIT"\n'.format(prolig.title))
+            fo.write('@    xaxis label "{}"\n'.format(out_heads[0]))
+            fo.write('@    yaxis label "{}"\n'.format("(kJ/mol)"))
+            fo.write("@TYPE xy\n@ view 0.15, 0.15, 0.75, 0.85\n")
+            fo.write("@ legend on\n@ legend box on\n@ legend loctype view\n")
+            fo.write("@ legend 0.78, 0.8\n@ legend length 9\n")
+            for s in range(1, 10):
+                fo.write('@ s{} legend "{}"\n'.format(s - 1, out_heads[s]))
+            for row in range(prolig.row_num):
+                fo.write(
+                    " ".join(["{:>16.6f}".format(out_data[i][row]) for i in range(10)])
+                    + "\n"
+                )
+
+        self.info(
+            f"energy computation through {prolig_xvg}, {pro_xvg} and {lig_xvg} sucessfully"
+        )
+
+
+class xvg_combine(Command):
+    def __init__(self, parm: Parameters) -> None:
+        self.parm = parm
+
+    def __call__(self):
+        self.info("in xvg_combine")
         print(self.parm.__dict__)
 
 
@@ -265,33 +411,6 @@ class xvg_show_scatter(Command):
         print(self.parm.__dict__)
 
 
-class xvg_energy_compute(Command):
-    def __init__(self, parm: Parameters) -> None:
-        self.parm = parm
-
-    def __call__(self):
-        self.info("in xvg_energy_compute")
-        print(self.parm.__dict__)
-
-
-class xvg_combine(Command):
-    def __init__(self, parm: Parameters) -> None:
-        self.parm = parm
-
-    def __call__(self):
-        self.info("in xvg_combine")
-        print(self.parm.__dict__)
-
-
-class xvg_ave_bar(Command):
-    def __init__(self, parm: Parameters) -> None:
-        self.parm = parm
-
-    def __call__(self):
-        self.info("in xvg_ave_bar")
-        print(self.parm.__dict__)
-
-
 class xvg_box(Command):
     def __init__(self, parm: Parameters) -> None:
         self.parm = parm
@@ -307,4 +426,22 @@ class xvg_violin(Command):
 
     def __call__(self):
         self.info("in xvg_biolin")
+        print(self.parm.__dict__)
+
+
+class xvg_ave_bar(Command):
+    def __init__(self, parm: Parameters) -> None:
+        self.parm = parm
+
+    def __call__(self):
+        self.info("in xvg_ave_bar")
+        print(self.parm.__dict__)
+
+
+class xvg_rama(Command):
+    def __init__(self, parm: Parameters) -> None:
+        self.parm = parm
+
+    def __call__(self):
+        self.info("in xvg_rama")
         print(self.parm.__dict__)
