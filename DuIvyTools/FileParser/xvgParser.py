@@ -15,16 +15,7 @@ from utils import log
 
 
 class XVG(log):
-    def __init__(self, xvgfile: Union[str, List[str]], is_file: bool = True) -> None:
-        if is_file:
-            self.xvgfile: str = xvgfile
-            if not os.path.exists(xvgfile):
-                self.error(f"No {xvgfile} detected ! check it !")
-            with open(xvgfile, "r") as fo:
-                lines = fo.readlines()
-        else:
-            lines = xvgfile
-
+    def __init__(self, xvgfile: Union[str, List[str]], is_file: bool = True, new_file:bool = False) -> None:
         self.title: str = ""
         self.xlabel: str = ""
         self.ylabel: str = ""
@@ -38,6 +29,22 @@ class XVG(log):
         self.data_heads: List[str] = []
         self.data_columns: List[Union(float, str)] = []
 
+        if new_file:
+            self.xvgfile = xvgfile
+        else:
+            if is_file:
+                self.xvgfile: str = xvgfile
+                if not os.path.exists(xvgfile):
+                    self.error(f"No {xvgfile} detected ! check it !")
+                with open(xvgfile, "r") as fo:
+                    lines = fo.readlines()
+            else:
+                lines = xvgfile
+            self.parse_xvg(lines)
+            if is_file:
+                self.info(f"parsing data from {xvgfile} successfully !")
+
+    def parse_xvg(self, lines:List[str]) -> None:
         ## parse data
         for line in lines:
             line = line.strip()
@@ -111,8 +118,6 @@ class XVG(log):
         if len(self.data_heads) < self.column_num:
             self.warn(f"string column may detected, data_heads {len(self.data_heads)} < column_num {self.column_num}")
 
-        if is_file:
-            self.info(f"parsing data from {xvgfile} successfully !")
         
     
     def calc_mvave(self, windowsize:int, confidence:float, column_index:int) -> Tuple[List]:

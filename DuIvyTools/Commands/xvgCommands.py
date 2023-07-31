@@ -221,13 +221,13 @@ class xvg_ave(Command):
                 legends.append(legend)
                 aves.append(ave)
                 stderrs.append(stderr)
-            outstr += f"\n>>>>>>>>>>>>>> {xvg.xvgfile:^30} <<<<<<<<<<<<<<\n"
-            outstr += "-" * 60 + "\n"
-            outstr += "|" + " " * 18 + "|      Average      |      Std.Err      |\n"
+            outstr += f"\n>>>>>>>>>>>>>> {xvg.xvgfile:^40} <<<<<<<<<<<<<<\n"
+            outstr += "-" * 70 + "\n"
+            outstr += "|" + " " * 28 + "|      Average      |      Std.Err      |\n"
             outstr += "-" * 60 + "\n"
             for l, a, s in zip(legends, aves, stderrs):
-                outstr += f"|{l:^18}|{a:^19.6f}|{s:^19.6f}|\n"
-                outstr += "-" * 60 + "\n"
+                outstr += f"|{l:^28}|{a:^19.6f}|{s:^19.6f}|\n"
+                outstr += "-" * 70 + "\n"
         print(outstr)
         if self.parm.output:
             outfile = self.check_output_exist(self.parm.output)
@@ -382,6 +382,9 @@ class xvg_combine(Command):
     def __call__(self):
         self.info("in xvg_combine")
         print(self.parm.__dict__)
+
+        xvg = XVG("", is_file=False, new_file=True)
+        print(xvg.__dict__)
 
 
 class xvg_show_distribution(Command):
