@@ -18,6 +18,8 @@ class XPM(log):
     def __init__(self, xpmfile: str, is_file: bool = True) -> None:
         if is_file:
             self.xpmfile: str = xpmfile
+            if not os.path.exists(xpmfile):
+                self.error(f"No {xpmfile} detected ! check it !")
             with open(xpmfile, "r") as fo:
                 content = fo.read()
         else:

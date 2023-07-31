@@ -45,6 +45,8 @@ class PDB(log):
         self.atom_number: int = 0
         self.models: list[list[Atom]] = []
 
+        if not os.path.exists(pdbfile):
+            self.error(f"No {pdbfile} detected ! check it !")
         with open(pdbfile, "r") as fo:
             lines = [l.strip() for l in fo.readlines()]
         atom_list: list[Atom] = []

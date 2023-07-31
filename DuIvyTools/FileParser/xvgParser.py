@@ -18,6 +18,8 @@ class XVG(log):
     def __init__(self, xvgfile: Union[str, List[str]], is_file: bool = True) -> None:
         if is_file:
             self.xvgfile: str = xvgfile
+            if not os.path.exists(xvgfile):
+                self.error(f"No {xvgfile} detected ! check it !")
             with open(xvgfile, "r") as fo:
                 lines = fo.readlines()
         else:

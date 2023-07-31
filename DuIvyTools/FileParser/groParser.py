@@ -41,6 +41,8 @@ class GRO(log):
         self.frames: list[list[Atom]] = []
         self.notes: list[str] = []
         self.box_coors: list[tuple] = []
+        if not os.path.exists(grofile):
+            self.error(f"No {grofile} detected ! check it !")
         with open(grofile, "r") as fo:
             lines = fo.readlines()
         try:
