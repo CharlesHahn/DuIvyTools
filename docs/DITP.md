@@ -108,6 +108,8 @@
         alpha for figure transparency of moving average
 -eg, --engine
         engine for plotting
+-csv
+        save data into csv
 
 -xi, --x_index
         the index for x of scatter figure
@@ -151,8 +153,6 @@
         find center of one group atoms in all atoms
 -m, --map
         the hbond map file
--csv
-        save data into csv
 -hnf, --hbond_name_format
         hbond name format
 -genscript

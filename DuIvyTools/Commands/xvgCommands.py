@@ -160,6 +160,37 @@ class xvg_compare(Command):
             line.final(self.parm.output, self.parm.noshow)
         else:
             self.error("wrong selection of plot engine")
+        
+        if self.parm.csv:
+            self.parm.csv = self.check_output_exist(self.parm.csv)
+            self.dump2csv(kwargs)
+
+    def dump2csv(self, kwargs):
+        ## merge xvg2csv and xvg_mvave functions here 
+        if self.parm.showMV:
+            with open(self.parm.csv, 'w') as fo:
+                fo.write(f"""{kwargs["xlabel"].strip("$")}""")
+                for leg in kwargs["legends"]:
+                    leg = leg.strip("$")
+                    fo.write(f""",mvave_{leg},high_{leg},low_{leg}""")
+                fo.write("\n")
+                for r in range(len(kwargs["xdata"])):
+                    fo.write(f"""{kwargs["xdata"][r]:.8f}""")
+                    for c in range(len(kwargs["data_list"])):
+                        fo.write(f""",{kwargs["data_list"][c][r]:.8f},{kwargs["highs"][c][r]:.8f},{kwargs["lows"][c][r]:.8f}""")
+                    fo.write("\n")
+        else:
+            with open(self.parm.csv, "w") as fo:
+                fo.write(f"""{kwargs["xlabel"].strip("$")}""")
+                for leg in kwargs["legends"]:
+                    fo.write(f""",{leg.strip("$")}""")
+                fo.write("\n")
+                for r in range(len(kwargs["xdata"])):
+                    fo.write(f"""{kwargs["xdata"][r]:.8f}""")
+                    for c in range(len(kwargs["data_list"])):
+                        fo.write(f""",{kwargs["data_list"][c][r]:.8f}""")
+                    fo.write("\n")
+        self.info(f"data has been dumped to {self.parm.csv} successfully")
 
 
 class xvg_ave(Command):
@@ -195,25 +226,7 @@ class xvg_ave(Command):
             outfile = self.check_output_exist(self.parm.output)
             with open(outfile, 'w') as fo:
                 fo.write(outstr)
-        self.info(f"all average data have been saved to {outfile}")
-
-
-class xvg_mvave(Command):
-    def __init__(self, parm: Parameters) -> None:
-        self.parm = parm
-
-    def __call__(self):
-        self.info("in xvg_mvave")
-        print(self.parm.__dict__)
-
-
-class xvg2csv(Command):
-    def __init__(self, parm: Parameters) -> None:
-        self.parm = parm
-
-    def __call__(self):
-        self.info("in xvg2csv")
-        print(self.parm.__dict__)
+            self.info(f"all average data have been saved to {outfile}")
 
 
 class xvg_rama(Command):

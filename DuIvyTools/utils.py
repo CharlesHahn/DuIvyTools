@@ -178,6 +178,15 @@ class Parameters(log):
             help="confidence for confidence interval calculation",
         )
         parser.add_argument("--alpha", type=float, default=0.4, help="the alpha of background lines")
+        parser.add_argument("-csv", "--csv", help="store data into csv file")
+        parser.add_argument(
+            "-eg",
+            "--engine",
+            type=str,
+            default="matplotlib", 
+            choices=["matplotlib", "plotext", "plotly", "gnuplot"],
+            help="specify the engine for plotting, 'matplotlib', 'plotext', 'plotly', 'gnuplot'",
+        )
 
 
         parser.add_argument(
@@ -267,7 +276,6 @@ class Parameters(log):
             help="if to find center in all atoms of gro file",
         )
         parser.add_argument("-m", "--map", help="hbond map file for input")
-        parser.add_argument("-csv", "--csv", help="store table info into csv file")
         parser.add_argument(
             "-hnf",
             "--hbond_name_format",
@@ -309,14 +317,6 @@ class Parameters(log):
             "-cm",
             "--colormap",
             help="specify the figure style, 'origin', 'gaussian', 'bio3d'",
-        )
-        parser.add_argument(
-            "-eg",
-            "--engine",
-            type=str,
-            default="matplotlib", 
-            choices=["matplotlib", "plotext", "plotly", "gnuplot"],
-            help="specify the engine for plotting, 'matplotlib', 'plotext', 'plotly', 'gnuplot'",
         )
 
         args = parser.parse_args()

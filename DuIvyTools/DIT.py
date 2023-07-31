@@ -15,8 +15,6 @@ class DIT(log):
             "xvg_show":xvg_show,
             "xvg_compare":xvg_compare,
             "xvg_ave":xvg_ave,
-            "xvg_mvave":xvg_mvave,
-            "xvg2csv":xvg2csv,
             "xvg_rama":xvg_rama,
             "xvg_show_distribution":xvg_show_distribution,
             "xvg_show_stack":xvg_show_stack,
