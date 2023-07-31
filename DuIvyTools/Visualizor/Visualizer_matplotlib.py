@@ -23,8 +23,8 @@ class ParentMatplotlib(log):
     """parent class for drawing figure by matplotlib"""
 
     def __init__(self):
-        self.figure = plt.figure()
         self.load_style()
+        self.figure = plt.figure()
 
     def load_style(self):
         """load matplotlib style file"""

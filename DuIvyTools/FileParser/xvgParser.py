@@ -106,9 +106,12 @@ class XVG(log):
                 self.error(f"length of column {c} is not equal to other columns")
         if self.column_num == 0 or self.row_num == 0:
             self.error(f"no data line detected in {self.xvgfile}")
+        if len(self.data_heads) < self.column_num:
+            self.warn(f"string column may detected, data_heads {len(self.data_heads)} < column_num {self.column_num}")
 
         if is_file:
             self.info(f"parsing data from {xvgfile} successfully !")
+        
     
     def calc_mvave(self, windowsize:int, confidence:float, column_index:int) -> Tuple[List]:
         """

@@ -34,8 +34,8 @@ class xvg_show(Command):
             self.file = xvg
             xdata = [x * self.parm.xshrink for x in xvg.data_columns[0][begin:end:dt]]
             data_list = []
-            for data in xvg.data_columns[1:]:
-                data_list.append([y * self.parm.yshrink for y in data[begin:end:dt]])
+            for c in range(len(xvg.data_heads[1:])): # to avoid str list
+                data_list.append([y * self.parm.yshrink for y in xvg.data_columns[c+1][begin:end:dt]])
             self.remove_latex()
 
             kwargs = {
@@ -209,7 +209,7 @@ class xvg_ave(Command):
             xvg = XVG(xvgfile)
             self.file = xvg
             legends, aves, stderrs = [], [], []
-            for c in range(xvg.column_num):
+            for c in range(len(xvg.data_heads)):
                 legend, ave, stderr = xvg.calc_ave(begin, end, dt, c)
                 legends.append(legend)
                 aves.append(ave)

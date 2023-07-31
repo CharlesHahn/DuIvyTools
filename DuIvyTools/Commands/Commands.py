@@ -62,14 +62,17 @@ class Command(log):
             str: result string
         """
         ## deal with subscripts or superscripts
+        latex_found_flag:bool = False
         res = ori[:]
         if "\\s" in res and "\\N" in res:
             res = res.replace("\\s", "_{")
             res = res.replace("\\N", "}")
+            latex_found_flag = True
         if "\\S" in res and "\\N" in res:
             res = res.replace("\\s", "^{")
             res = res.replace("\\N", "}")
-        if with_dollar:
+            latex_found_flag = True
+        if with_dollar and res and latex_found_flag:
             res = f"${res}$"
         if ignore_slash:
             res = res.replace("\\", "/")

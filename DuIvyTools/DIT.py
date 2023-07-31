@@ -7,11 +7,12 @@ Written by DuIvy and provided to you by GPLv3 license.
 
 from Commands.xvgCommands import *
 from utils import Parameters, log
+import inspect
 
 
 class DIT(log):
     def __init__(self) -> None:
-        self.cmds = {
+        self.cmds_by_hand = {
             "xvg_show":xvg_show,
             "xvg_compare":xvg_compare,
             "xvg_ave":xvg_ave,
@@ -25,6 +26,7 @@ class DIT(log):
             "xvg_box":xvg_box,
             "xvg_violin":xvg_violin,
         }
+        self.cmds = dict(inspect.getmembers(sys.modules[__name__], inspect.isclass))
 
     def run(self) -> None:
         ## try to run DIT

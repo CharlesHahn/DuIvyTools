@@ -15,3 +15,5 @@ class Help(Command):
             "xvg_ave":["begin", "end", "dt", "input", "output"],
         }
 
+        ## TODO: through read the commands original code to parse the used parm?
+
