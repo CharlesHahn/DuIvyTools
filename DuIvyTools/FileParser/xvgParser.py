@@ -131,20 +131,36 @@ class XVG(log):
                 f"string column may detected, data_heads {len(self.data_heads)} < column_num {self.column_num}"
             )
 
-    def dump2xvg(self, outxvg: str) -> None:
+    def dump2xvg(self, outxvg: str, check:bool=True) -> None:
         """dump xvg class to xvg file
 
         Args:
             outxvg (str): output xvg file name
         """
+        if check:
+            if len(self.data_heads) == 0:
+                self.error("unable to dump xvg with empty data_heads")
+            if len(self.data_heads) != 0 and len(self.legends) ==0:
+                self.legends = self.data_heads[1:]
+            if len(self.data_heads) != 0 and not self.xlabel:
+                self.xlabel = self.data_heads[0]
+            if len(self.data_columns) == 0 or len(self.data_columns[0]) == 0:
+                self.error("unable to dump with empty data_columns")
+            if len(self.data_columns) != 0 and self.column_num == 0:
+                self.column_num = len(self.data_columns)
+            if len(self.data_columns[0]) != 0 and self.row_num == 0:
+                self.row_num = len(self.data_columns[0])
+
         outstr: str = ""
         outstr += self.comments
-        outstr += f'@    title "{self.title} computed by DIT"\n'
-        outstr += f'@    xaxis label "{self.xlabel}"\n'
-        outstr += f'@    yaxis label "{self.ylabel}"\n'
+        outstr += f'@    title "{self.title}"\n'
+        if self.xlabel:
+            outstr += f'@    xaxis label "{self.xlabel}"\n'
+        if self.ylabel:
+            outstr += f'@    yaxis label "{self.ylabel}"\n'
         outstr += "@TYPE xy\n@ view 0.15, 0.15, 0.75, 0.85\n"
         outstr += "@ legend on\n@ legend box on\n@ legend loctype view\n"
-        outstr += "@ legend 0.78, 0.8\n@ legend length 9\n"
+        outstr += f"@ legend 0.78, 0.8\n@ legend length {len(self.legends)}\n"
         for i, leg in enumerate(self.legends):
             outstr += f'@ s{i} legend "{leg}"\n'
         for row in range(self.row_num):

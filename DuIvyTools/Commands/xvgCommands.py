@@ -378,8 +378,56 @@ class xvg_combine(Command):
         self.info("in xvg_combine")
         print(self.parm.__dict__)
 
-        xvg = XVG("", is_file=False, new_file=True)
-        print(xvg.__dict__)
+        ## check parm
+        if self.parm.output == None:
+            self.error("please specify output xvg file name")
+        self.parm.output = self.check_output_exist(self.parm.output)
+
+        for xvg in self.parm.input:
+            if not isinstance(xvg, str):
+                self.error("files should be seperated by space not ,")
+        for indexs in self.parm.columns:
+            if isinstance(indexs, list):
+                break
+        else:
+            self.parm.columns = [[cs] for cs in self.parm.columns]
+        if len(self.parm.input) != len(self.parm.columns):
+            self.error(f"columns must contain {len(self.parm.input)} list")
+        if self.parm.legends != None and len(self.parm.legends) != sum(
+            [len(c) for c in self.parm.columns]
+        )-1:
+            self.error("number of legends you input can not pair to columns you select")
+        
+        # process xvg combination
+        out_xvg = XVG(self.parm.output, is_file=False, new_file=True)
+        title_list:str = []
+        out_xvg.comments += "# this file was created by combination of:\n"
+        xvgs = [XVG(xvg) for xvg in self.parm.input]
+        for id, column_indexs in enumerate(self.parm.columns):
+            xvg = xvgs[id]
+            if xvg.title not in title_list:
+                title_list.append(xvg.title)
+            out_xvg.comments += f"# file {xvg.xvgfile}; indexs: {str(column_indexs)};\n"
+            for column_index in column_indexs:
+                if column_index >= xvg.column_num:
+                    self.error(
+                        f"invalid column index {column_index} which >= column number {xvg.column_num}"
+                    )
+                out_xvg.data_heads.append(xvg.data_heads[column_index])
+                out_xvg.data_columns.append(xvg.data_columns[column_index])
+        if self.parm.title:
+            out_xvg.title = self.parm.title
+        else:
+            out_xvg.title = " & ".join(title_list)
+        if self.parm.xlabel:
+            out_xvg.xlabel = self.parm.xlabel
+        if self.parm.ylabel:
+            out_xvg.ylabel = self.parm.ylabel
+        if self.parm.legends:
+            out_xvg.legends = self.parm.legends
+        out_xvg.dump2xvg(self.parm.output)
+        self.info("xvg files combined successfully")
+
 
 
 class xvg_show_distribution(Command):
