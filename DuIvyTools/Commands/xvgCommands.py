@@ -352,24 +352,19 @@ class xvg_energy_compute(Command):
             out_data[9].append(out_data[5][row] + out_data[6][row])
 
         ## write energy computation results
-        with open(self.parm.output, "w") as fo:
-            fo.write("# this file was created by XVG.energy_compute through: \n")
-            fo.write("#    binding = prolig energy - protein energy - ligand energy\n")
-            fo.write(f"#   {self.parm.output} = {prolig_xvg} - {pro_xvg} - {lig_xvg}\n")
-            fo.write('@    title "{} computed by DIT"\n'.format(prolig.title))
-            fo.write('@    xaxis label "{}"\n'.format(out_heads[0]))
-            fo.write('@    yaxis label "{}"\n'.format("(kJ/mol)"))
-            fo.write("@TYPE xy\n@ view 0.15, 0.15, 0.75, 0.85\n")
-            fo.write("@ legend on\n@ legend box on\n@ legend loctype view\n")
-            fo.write("@ legend 0.78, 0.8\n@ legend length 9\n")
-            for s in range(1, 10):
-                fo.write('@ s{} legend "{}"\n'.format(s - 1, out_heads[s]))
-            for row in range(prolig.row_num):
-                fo.write(
-                    " ".join(["{:>16.6f}".format(out_data[i][row]) for i in range(10)])
-                    + "\n"
-                )
-
+        xvg = XVG(self.parm.output, is_file=False, new_file=True)
+        xvg.title = prolig.title
+        xvg.comments += "# this file was created by XVG.energy_compute through: \n"
+        xvg.comments += "#    binding = prolig energy - protein energy - ligand energy\n"
+        xvg.comments += f"#    {self.parm.output} = {prolig_xvg} - {pro_xvg} - {lig_xvg}\n"
+        xvg.xlabel = out_heads[0]
+        xvg.ylabel = "(kJ/mol)"
+        xvg.legends = out_heads[1:]
+        xvg.data_columns = out_data
+        xvg.column_num = 10
+        xvg.row_num = prolig.row_num
+        xvg.data_heads = out_heads
+        xvg.dump2xvg(self.parm.output)
         self.info(
             f"energy computation through {prolig_xvg}, {pro_xvg} and {lig_xvg} sucessfully"
         )

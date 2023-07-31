@@ -15,7 +15,13 @@ from utils import log
 
 
 class XVG(log):
-    def __init__(self, xvgfile: Union[str, List[str]], is_file: bool = True, new_file:bool = False) -> None:
+    def __init__(
+        self,
+        xvgfile: Union[str, List[str]],
+        is_file: bool = True,
+        new_file: bool = False,
+    ) -> None:
+        self.comments: str = ""
         self.title: str = ""
         self.xlabel: str = ""
         self.ylabel: str = ""
@@ -44,12 +50,17 @@ class XVG(log):
             if is_file:
                 self.info(f"parsing data from {xvgfile} successfully !")
 
-    def parse_xvg(self, lines:List[str]) -> None:
+    def parse_xvg(self, lines: List[str]) -> None:
+        """parse xvg content
+
+        Args:
+            lines (List[str]): xvg file lines
+        """
         ## parse data
         for line in lines:
             line = line.strip()
             if line.startswith("#") or line.startswith("&"):
-                continue
+                self.comments += line + "\n"
             elif line.startswith("@"):
                 if " title " in line:
                     self.title = line.strip('"').split('"')[-1]
@@ -116,11 +127,37 @@ class XVG(log):
         if self.column_num == 0 or self.row_num == 0:
             self.error(f"no data line detected in {self.xvgfile}")
         if len(self.data_heads) < self.column_num:
-            self.warn(f"string column may detected, data_heads {len(self.data_heads)} < column_num {self.column_num}")
+            self.warn(
+                f"string column may detected, data_heads {len(self.data_heads)} < column_num {self.column_num}"
+            )
 
-        
-    
-    def calc_mvave(self, windowsize:int, confidence:float, column_index:int) -> Tuple[List]:
+    def dump2xvg(self, outxvg: str) -> None:
+        """dump xvg class to xvg file
+
+        Args:
+            outxvg (str): output xvg file name
+        """
+        outstr: str = ""
+        outstr += self.comments
+        outstr += f'@    title "{self.title} computed by DIT"\n'
+        outstr += f'@    xaxis label "{self.xlabel}"\n'
+        outstr += f'@    yaxis label "{self.ylabel}"\n'
+        outstr += "@TYPE xy\n@ view 0.15, 0.15, 0.75, 0.85\n"
+        outstr += "@ legend on\n@ legend box on\n@ legend loctype view\n"
+        outstr += "@ legend 0.78, 0.8\n@ legend length 9\n"
+        for i, leg in enumerate(self.legends):
+            outstr += f'@ s{i} legend "{leg}"\n'
+        for row in range(self.row_num):
+            for i in range(self.column_num):
+                outstr += f"{self.data_columns[i][row]:>16.6f} "
+            outstr += "\n"
+        with open(outxvg, "w") as fo:
+            fo.write(outstr)
+        self.info(f"dump xvg to {outxvg} successfully")
+
+    def calc_mvave(
+        self, windowsize: int, confidence: float, column_index: int
+    ) -> Tuple[List]:
         """
         calculate the moving average of each column
 
@@ -156,7 +193,9 @@ class XVG(log):
             highs.append(interval[1])
         return mvaves, highs, lows
 
-    def calc_ave(self, begin:int, end:int, dt:int, column_index:int) -> Tuple[float]:
+    def calc_ave(
+        self, begin: int, end: int, dt: int, column_index: int
+    ) -> Tuple[float]:
         """calculate the average of selected column
 
         Args:
@@ -171,10 +210,15 @@ class XVG(log):
         if (begin != None and end != None) and (begin >= end):
             self.error("start index should be less than end index")
         if (begin != None and begin >= self.row_num) or (
-            end != None and end >= self.row_num):
-            self.error(f"start or end index should be less than the number of rows {self.row_num} in xvg file")
+            end != None and end >= self.row_num
+        ):
+            self.error(
+                f"start or end index should be less than the number of rows {self.row_num} in xvg file"
+            )
         if column_index >= self.column_num:
-            self.error(f"column index selected should be less than column number {self.column_num}")
+            self.error(
+                f"column index selected should be less than column number {self.column_num}"
+            )
 
         column = self.data_columns[column_index]
         legend = self.data_heads[column_index]
