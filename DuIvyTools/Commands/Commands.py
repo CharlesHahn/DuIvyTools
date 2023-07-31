@@ -121,5 +121,3 @@ class Command(log):
             output = new_output
         return output
     
-    def check_parm_used(self) -> None:
-        pass
