@@ -241,6 +241,10 @@ class XVG(log):
         ave = np.average(column[begin:end:dt])
         std = np.std(column[begin:end:dt], ddof=1)
         return legend, ave, std
+    
+    def check_column_index(self, column_index:int) -> None:
+        if column_index >= self.column_num:
+            self.error(f"invalid column index {column_index} which >= column number {self.column_num}")
 
 
 class XVGS(log):

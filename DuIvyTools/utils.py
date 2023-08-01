@@ -196,6 +196,7 @@ class Parameters(log):
             "-bin",
             "--bin",
             type=int,
+            default=100,
             help="the bin number for distribution calculation",
         )
         parser.add_argument(

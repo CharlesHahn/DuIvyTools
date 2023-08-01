@@ -12,20 +12,6 @@ import inspect
 
 class DIT(log):
     def __init__(self) -> None:
-        self.cmds_by_hand = {
-            "xvg_show":xvg_show,
-            "xvg_compare":xvg_compare,
-            "xvg_ave":xvg_ave,
-            "xvg_rama":xvg_rama,
-            "xvg_show_distribution":xvg_show_distribution,
-            "xvg_show_stack":xvg_show_stack,
-            "xvg_show_scatter":xvg_show_scatter,
-            "xvg_energy_compute":xvg_energy_compute,
-            "xvg_combine":xvg_combine,
-            "xvg_ave_bar":xvg_ave_bar,
-            "xvg_box":xvg_box,
-            "xvg_violin":xvg_violin,
-        }
         self.cmds = dict(inspect.getmembers(sys.modules[__name__], inspect.isclass))
 
     def run(self) -> None:

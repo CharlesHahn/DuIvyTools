@@ -7,7 +7,9 @@ Written by DuIvy and provided to you by GPLv3 license.
 import os
 import sys
 import time
-from typing import List, Union
+from typing import List, Tuple, Union
+
+import numpy as np
 
 from Commands.Commands import Command
 from FileParser.xvgParser import XVG
@@ -28,6 +30,8 @@ class xvg_show(Command):
         self.info("in xvgSHOW")
         print(self.parm.__dict__)
 
+        if not self.parm.input:
+            self.error("you must specify the xvg files to show")
         begin, end, dt = self.parm.begin, self.parm.end, self.parm.dt
         for xvgfile in self.parm.input:
             xvg = XVG(xvgfile)
@@ -81,10 +85,7 @@ class xvg_compare(Command):
     def __init__(self, parm: Parameters) -> None:
         self.parm = parm
 
-    def __call__(self):
-        self.info("in xvgCompare")
-        print(self.parm.__dict__)
-
+    def check_parm(self) -> None:
         ## check and convert parm
         if not self.parm.input:
             self.error("you must specify the xvg files to compare")
@@ -104,6 +105,12 @@ class xvg_compare(Command):
             [len(c) for c in self.parm.columns]
         ):
             self.error("number of legends you input can not pair to columns you select")
+
+    def __call__(self):
+        self.info("in xvgCompare")
+        print(self.parm.__dict__)
+
+        self.check_parm()
         if self.parm.title == None:
             self.parm.title = "XVG Comparison"
 
@@ -115,10 +122,7 @@ class xvg_compare(Command):
         for id, column_indexs in enumerate(self.parm.columns):
             xvg = xvgs[id]
             for column_index in column_indexs:
-                if column_index >= xvg.column_num:
-                    self.error(
-                        f"invalid column index {column_index} which >= column number {xvg.column_num}"
-                    )
+                xvg.check_column_index(column_index)
                 if self.parm.showMV:
                     aves, highs, lows = xvg.calc_mvave(
                         self.parm.windowsize, self.parm.confidence, column_index
@@ -172,9 +176,12 @@ class xvg_compare(Command):
 
         if self.parm.csv:
             self.parm.csv = self.check_output_exist(self.parm.csv)
-            self.dump2csv(kwargs)
+            if len(self.parm.input) == 1:
+                self.dump2csv_1_input(kwargs)
+            else:
+                self.dump2csv(kwargs)
 
-    def dump2csv(self, kwargs):
+    def dump2csv_1_input(self, kwargs):
         ## merge xvg2csv and xvg_mvave functions here
         if self.parm.showMV:
             with open(self.parm.csv, "w") as fo:
@@ -183,8 +190,8 @@ class xvg_compare(Command):
                     leg = leg.strip("$")
                     fo.write(f""",mvave_{leg},high_{leg},low_{leg}""")
                 fo.write("\n")
-                for r in range(len(kwargs["xdata"])):
-                    fo.write(f"""{kwargs["xdata"][r]:.8f}""")
+                for r in range(len(kwargs["xdata"][0])):
+                    fo.write(f"""{kwargs["xdata"][0][r]:.8f}""")
                     for c in range(len(kwargs["data_list"])):
                         fo.write(
                             f""",{kwargs["data_list"][c][r]:.8f},{kwargs["highs"][c][r]:.8f},{kwargs["lows"][c][r]:.8f}"""
@@ -196,10 +203,39 @@ class xvg_compare(Command):
                 for leg in kwargs["legends"]:
                     fo.write(f""",{leg.strip("$")}""")
                 fo.write("\n")
-                for r in range(len(kwargs["xdata"])):
-                    fo.write(f"""{kwargs["xdata"][r]:.8f}""")
+                for r in range(len(kwargs["xdata"][0])):
+                    fo.write(f"""{kwargs["xdata"][0][r]:.8f}""")
                     for c in range(len(kwargs["data_list"])):
                         fo.write(f""",{kwargs["data_list"][c][r]:.8f}""")
+                    fo.write("\n")
+        self.info(f"data has been dumped to {self.parm.csv} successfully")
+
+    def dump2csv(self, kwargs):
+        ## merge xvg2csv and xvg_mvave functions here
+        if self.parm.showMV:
+            with open(self.parm.csv, "w") as fo:
+                for leg in kwargs["legends"]:
+                    fo.write(f"""{kwargs["xlabel"].strip("$")},""")
+                    leg = leg.strip("$")
+                    fo.write(f"""mvave_{leg},high_{leg},low_{leg},""")
+                fo.write("\n")
+                for r in range(len(kwargs["data_list"][0])):
+                    for c in range(len(kwargs["data_list"])):
+                        fo.write(f"""{kwargs["xdata"][c][r]:.8f},""")
+                        fo.write(
+                            f"""{kwargs["data_list"][c][r]:.8f},{kwargs["highs"][c][r]:.8f},{kwargs["lows"][c][r]:.8f},"""
+                        )
+                    fo.write("\n")
+        else:
+            with open(self.parm.csv, "w") as fo:
+                for leg in kwargs["legends"]:
+                    fo.write(f"""{kwargs["xlabel"].strip("$")},""")
+                    fo.write(f"""{leg.strip("$")},""")
+                fo.write("\n")
+                for r in range(len(kwargs["data_list"][0])):
+                    for c in range(len(kwargs["data_list"])):
+                        fo.write(f"""{kwargs["xdata"][0][r]:.8f},""")
+                        fo.write(f"""{kwargs["data_list"][c][r]:.8f},""")
                     fo.write("\n")
         self.info(f"data has been dumped to {self.parm.csv} successfully")
 
@@ -413,10 +449,7 @@ class xvg_combine(Command):
                 title_list.append(xvg.title)
             out_xvg.comments += f"# file {xvg.xvgfile}; indexs: {str(column_indexs)};\n"
             for column_index in column_indexs:
-                if column_index >= xvg.column_num:
-                    self.error(
-                        f"invalid column index {column_index} which >= column number {xvg.column_num}"
-                    )
+                xvg.check_column_index(column_index)
                 out_xvg.data_heads.append(xvg.data_heads[column_index])
                 out_xvg.data_columns.append(xvg.data_columns[column_index])
         if self.parm.title:
@@ -433,13 +466,118 @@ class xvg_combine(Command):
         self.info("xvg files combined successfully")
 
 
-
-class xvg_show_distribution(Command):
+class xvg_show_distribution(xvg_compare):
     def __init__(self, parm: Parameters) -> None:
         self.parm = parm
 
     def __call__(self):
         self.info("in xvg_show_distribution")
+        print(self.parm.__dict__)
+
+        self.check_parm()
+        begin, end, dt = self.parm.begin, self.parm.end, self.parm.dt
+        xvgs = [XVG(xvg) for xvg in self.parm.input]
+        self.file = xvgs[0]
+        legends, xdata_list, data_list = [], [], []
+        for id, column_indexs in enumerate(self.parm.columns):
+            xvg = xvgs[id]
+            for column_index in column_indexs:
+                xvg.check_column_index(column_index)
+                data = xvg.data_columns[column_index][begin:end:dt]
+                if len(data) == 0:
+                    self.error("wrong selection of begin, end, or dt, no data selected")
+                xdata, data = self.calc_distribution(data, self.parm.bin)
+                data_list.append(data)
+                xdata_list.append(xdata)
+                legend = xvg.data_heads[column_index]
+                legends.append(f"{legend} - {xvg.xvgfile}")
+        self.remove_latex()
+        legends = self.remove_latex_msgs(legends)
+
+        kwargs = {
+            "data_list": data_list,
+            "xdata": xdata_list,
+            "legends": self.sel_parm(self.parm.legends, legends),
+            "xmin": self.sel_parm(self.parm.xmin, None),
+            "xmax": self.sel_parm(self.parm.xmax, None),
+            "ymin": self.sel_parm(self.parm.ymin, None),
+            "ymax": self.sel_parm(self.parm.ymax, None),
+            "xlabel": self.sel_parm(self.parm.xlabel, "Distribution"),
+            "ylabel": self.sel_parm(self.parm.ylabel, "Frequency %"),
+            "title": self.sel_parm(self.parm.title, "XVG Distribution"),
+            "x_precision": self.parm.x_precision,
+            "y_precision": self.parm.y_precision,
+            "highs": list(),
+            "lows": list(),
+            "alpha": self.parm.alpha,
+        }
+        if self.parm.engine == "matplotlib":
+            line = LineMatplotlib(**kwargs)
+            line.final(self.parm.output, self.parm.noshow)
+        elif self.parm.engine == "plotly":
+            line = LinePlotly(**kwargs)
+            line.final(self.parm.output, self.parm.noshow)
+        elif self.parm.engine == "plotext":
+            line = LinePlotext(**kwargs)
+            line.final(self.parm.output, self.parm.noshow)
+        elif self.parm.engine == "gnuplot":
+            line = LineGnuplot(**kwargs)
+            line.final(self.parm.output, self.parm.noshow)
+        else:
+            self.error("wrong selection of plot engine")
+
+        if self.parm.csv:
+            self.parm.csv = self.check_output_exist(self.parm.csv)
+            self.dump2csv(kwargs)
+
+    def dump2csv(self, kwargs):
+        with open(self.parm.csv, "w") as fo:
+            for leg in kwargs["legends"]:
+                fo.write(f"""Distribution_of_{leg.strip("$")},Frequency(%)_of_{leg.strip("$")},""")
+            fo.write("\n")
+            for r in range(self.parm.bin):
+                for c in range(len(kwargs["data_list"])):
+                    fo.write(f"""{kwargs["xdata"][c][r]:.8f},""")
+                    fo.write(f"""{kwargs["data_list"][c][r]:.8f},""")
+                fo.write("\n")
+        self.info(f"data has been dumped to {self.parm.csv} successfully")
+    
+    def calc_distribution(self, data:List[float], bin:int) -> Tuple[List[float], List[float]]:
+        """calculate the distribution of data
+
+        Args:
+            data (List[float]): data
+            bin (int): bin number
+        
+        Returns:
+            xdata (List[float]): xdata
+            data (List[float]): distribution data
+        """
+        min, max = np.min(data), np.max(data)
+        bin_window = (max-min) / bin
+        if bin_window != 0:
+            frequency = [ 0 for _ in range(bin)]
+            for value in data:
+                index = int((value - min) / bin_window)
+                if index == bin:
+                    index = bin - 1
+                frequency[index] += 1
+            if sum(frequency) != len(data):
+                self.error("wrong in calculating distribution")
+            frequency = [f * 100.0 / len(data) for f in frequency]
+            x_value = [min + bin_window * b for b in range(bin)]
+        else:
+            frequency = [1]
+            x_value = [min]
+        return x_value, frequency
+
+
+class xvg_show_scatter(Command):
+    def __init__(self, parm: Parameters) -> None:
+        self.parm = parm
+
+    def __call__(self):
+        self.info("in xvg_show_scatter")
         print(self.parm.__dict__)
 
 
@@ -452,16 +590,7 @@ class xvg_show_stack(Command):
         print(self.parm.__dict__)
 
 
-class xvg_show_scatter(Command):
-    def __init__(self, parm: Parameters) -> None:
-        self.parm = parm
-
-    def __call__(self):
-        self.info("in xvg_show_scatter")
-        print(self.parm.__dict__)
-
-
-class xvg_box(Command):
+class xvg_box_compare(Command):
     def __init__(self, parm: Parameters) -> None:
         self.parm = parm
 
@@ -470,7 +599,7 @@ class xvg_box(Command):
         print(self.parm.__dict__)
 
 
-class xvg_violin(Command):
+class xvg_violin_compare(Command):
     def __init__(self, parm: Parameters) -> None:
         self.parm = parm
 
