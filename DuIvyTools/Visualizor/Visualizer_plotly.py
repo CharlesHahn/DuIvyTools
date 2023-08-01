@@ -65,7 +65,7 @@ class LinePlotly(ParentPlotly):
 
     Parameters:
         data_list :List[List[float]]
-        xdata :List[float]
+        xdata :List[List[float]]
         legends :List[str]
         xmin :float
         xmax :flaot
@@ -88,7 +88,7 @@ class LinePlotly(ParentPlotly):
         for i, data in enumerate(kwargs["data_list"]):
             self.figure.add_trace(
                 go.Scatter(
-                    x=kwargs["xdata"],
+                    x=kwargs["xdata"][i],
                     y=data,
                     name=kwargs["legends"][i],
                     line=dict(color=self.style["color_cycle"][i]),
@@ -101,7 +101,7 @@ class LinePlotly(ParentPlotly):
                 self.figure.add_trace(
                     go.Scatter(
                         name=f"""high-{kwargs["legends"][i]}""",
-                        x=kwargs["xdata"],
+                        x=kwargs["xdata"][i],
                         y=kwargs["highs"][i],
                         line=dict(width=0, color=rgba),
                         showlegend=False,
@@ -110,7 +110,7 @@ class LinePlotly(ParentPlotly):
                 self.figure.add_trace(
                     go.Scatter(
                         name=f"""low-{kwargs["legends"][i]}""",
-                        x=kwargs["xdata"],
+                        x=kwargs["xdata"][i],
                         y=kwargs["lows"][i],
                         fillcolor=rgba,
                         fill="tonexty",

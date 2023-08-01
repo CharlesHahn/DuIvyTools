@@ -56,7 +56,7 @@ class Gnuplot(log):
         self.y_precision: int = None
         self.z_precision: int = None
         self.legends: List[str] = None
-        self.xdata: List[float] = None
+        self.xdata: List[List[float]] = None
         self.data: List[List[float]] = None
         self.highs: List[List[float]] = None
         self.lows: List[List[float]] = None
@@ -100,16 +100,14 @@ class Gnuplot(log):
         gpl += f"""set term pngcairo enhanced truecolor font \"{self.style["font"]},{self.style["fontsize"]}\" fontscale {self.style["fontscale"]} linewidth {self.style["linewidth"]} pointscale {self.style["pointscale"]} size {self.style["width"]},{self.style["height"]} \n"""
 
         if self.data and self.legends and len(self.highs) == 0 and len(self.lows) == 0:
-            gpl += "\n$data << EOD\n"
-            for r in range(len(self.xdata)):
-                gpl += str(self.xdata[r]) + " "
-                for c in range(len(self.data)):
-                    gpl += str(self.data[c][r]) + " "
-                gpl += "\n"
-            gpl += "EOD\n\n"
+            for c in range(len(self.data)):
+                gpl += f"\n$data{c} << EOD\n"
+                for r in range(len(self.xdata[c])):
+                    gpl += f"""{self.xdata[c][r]} {self.data[c][r]}\n"""
+                gpl += "EOD\n\n"
             gpl += "plot "
-            for i, leg in enumerate(self.legends, 2):
-                gpl += f"""$data u 1:{i} title "{leg}" with lines lt rgb "{self.style["color_cycle"][i-2]}", \\\n """
+            for c in range(len(self.data)):
+                gpl += f"""$data{c} u 1:2 title "{self.legends[c]}" with lines lt rgb "{self.style["color_cycle"][c]}", \\\n"""
             gpl += "\n"
 
         if self.data and self.legends and len(self.highs) != 0 and len(self.lows) != 0:
@@ -118,8 +116,8 @@ class Gnuplot(log):
             )
             for c in range(len(self.data)):
                 gpl += f"\n$data{c} << EOD\n"
-                for r in range(len(self.xdata)):
-                    gpl += f"""{self.xdata[r]} {self.data[c][r]} {self.highs[c][r]} {self.lows[c][r]}\n"""
+                for r in range(len(self.xdata[c])):
+                    gpl += f"""{self.xdata[c][r]} {self.data[c][r]} {self.highs[c][r]} {self.lows[c][r]}\n"""
                 gpl += "EOD\n\n"
             gpl += "plot "
             for c in range(len(self.data)):
@@ -198,7 +196,7 @@ class LineGnuplot(ParentGnuplot):
 
     Parameters:
         data_list :List[List[float]]
-        xdata :List[float]
+        xdata :List[List[float]]
         legends :List[str]
         xmin :float
         xmax :flaot
@@ -223,18 +221,12 @@ class LineGnuplot(ParentGnuplot):
         self.gnuplot.xlabel = kwargs["xlabel"]
         self.gnuplot.ylabel = kwargs["ylabel"]
 
-        x_min, x_max = np.min(kwargs["xdata"]), np.max(kwargs["xdata"])
-        if kwargs["xmin"] == None and kwargs["xmax"] == None:
-            x_space = int((x_max - x_min) / 100)
-            if int(x_min - x_space) < int(x_max + x_space) - 1.0:
-                self.gnuplot.xmin = int(x_min - x_space)
-                self.gnuplot.xmax = int(x_max + x_space)
-        else:
+        if kwargs["xmin"] != None or kwargs["xmax"] != None:
             self.gnuplot.xmin = kwargs["xmin"]
             self.gnuplot.xmax = kwargs["xmax"]
         if kwargs["ymin"] != None or kwargs["ymax"] != None:
-            self.gnuplot.xmin = kwargs["ymin"]
-            self.gnuplot.xmax = kwargs["ymax"]
+            self.gnuplot.ymin = kwargs["ymin"]
+            self.gnuplot.ymax = kwargs["ymax"]
         if kwargs["x_precision"] != None:
             self.gnuplot.x_precision = kwargs["x_precision"]
         if kwargs["y_precision"] != None:

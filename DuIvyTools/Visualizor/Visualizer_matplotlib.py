@@ -79,7 +79,7 @@ class LineMatplotlib(ParentMatplotlib):
 
     Parameters:
         data_list :List[List[float]]
-        xdata :List[float]
+        xdata :List[List[float]]
         legends :List[str]
         xmin :float
         xmax :flaot
@@ -102,21 +102,15 @@ class LineMatplotlib(ParentMatplotlib):
         for i, data in enumerate(kwargs["data_list"]):
             if len(kwargs["highs"]) != 0 and len(kwargs["lows"]) != 0:
                 plt.fill_between(
-                    kwargs["xdata"],
+                    kwargs["xdata"][i],
                     kwargs["highs"][i],
                     kwargs["lows"][i],
                     alpha=kwargs["alpha"],
                 )
-            plt.plot(kwargs["xdata"], data, label=kwargs["legends"][i])
+            plt.plot(kwargs["xdata"][i], data, label=kwargs["legends"][i])
 
-        x_min, x_max = np.min(kwargs["xdata"]), np.max(kwargs["xdata"])
-        if kwargs["xmin"] == None and kwargs["xmax"] == None:
-            x_space = int((x_max - x_min) / 100)
-            if int(x_min - x_space) < int(x_max + x_space) - 1.0:
-                plt.xlim(int(x_min - x_space), int(x_max + x_space))
-        else:
+        if kwargs["xmin"] != None or kwargs["xmax"] != None:
             plt.xlim(kwargs["xmin"], kwargs["xmax"])
-
         if kwargs["ymin"] != None or kwargs["ymax"] != None:
             plt.ylim(kwargs["ymin"], kwargs["ymax"])
 

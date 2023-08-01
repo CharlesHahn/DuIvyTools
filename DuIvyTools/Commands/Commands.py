@@ -72,6 +72,8 @@ class Command(log):
             res = res.replace("\\s", "^{")
             res = res.replace("\\N", "}")
             latex_found_flag = True
+        if "^" in res:
+            latex_found_flag = True
         if with_dollar and res and latex_found_flag:
             res = f"${res}$"
         if ignore_slash:

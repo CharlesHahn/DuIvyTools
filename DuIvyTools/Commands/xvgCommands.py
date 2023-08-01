@@ -32,8 +32,7 @@ class xvg_show(Command):
         for xvgfile in self.parm.input:
             xvg = XVG(xvgfile)
             self.file = xvg
-            xdata = [x * self.parm.xshrink for x in xvg.data_columns[0][begin:end:dt]]
-            data_list = []
+            xdata, data_list = [], []
             for c in range(len(xvg.data_heads[1:])):  # to avoid str list
                 data_list.append(
                     [
@@ -41,6 +40,7 @@ class xvg_show(Command):
                         for y in xvg.data_columns[c + 1][begin:end:dt]
                     ]
                 )
+                xdata.append([x * self.parm.xshrink for x in xvg.data_columns[0][begin:end:dt]])
             self.remove_latex()
 
             kwargs = {
@@ -75,7 +75,6 @@ class xvg_show(Command):
             else:
                 self.error("wrong selection of plot engine")
 
-
 class xvg_compare(Command):
     """a command class for compare xvg file data"""
 
@@ -87,6 +86,10 @@ class xvg_compare(Command):
         print(self.parm.__dict__)
 
         ## check and convert parm
+        if not self.parm.input:
+            self.error("you must specify the xvg files to compare")
+        if not self.parm.columns:
+            self.error("you must specify the columns to select")
         for xvg in self.parm.input:
             if not isinstance(xvg, str):
                 self.error("files should be seperated by space not ,")
@@ -104,11 +107,11 @@ class xvg_compare(Command):
         if self.parm.title == None:
             self.parm.title = "XVG Comparison"
 
+        ## draw data relative to its original xdata
         begin, end, dt = self.parm.begin, self.parm.end, self.parm.dt
         xvgs = [XVG(xvg) for xvg in self.parm.input]
         self.file = xvgs[0]
-        xdata = [x * self.parm.xshrink for x in self.file.data_columns[0][begin:end:dt]]
-        legends, data_list, highs_list, lows_list = [], [], [], []
+        legends, xdata, data_list, highs_list, lows_list = [], [], [], [], []
         for id, column_indexs in enumerate(self.parm.columns):
             xvg = xvgs[id]
             for column_index in column_indexs:
@@ -129,6 +132,7 @@ class xvg_compare(Command):
                 else:
                     aves = xvg.data_columns[column_index]
                 data_list.append([y * self.parm.yshrink for y in aves[begin:end:dt]])
+                xdata.append([x * self.parm.xshrink for x in xvg.data_columns[0][begin:end:dt]])
                 legend = xvg.data_heads[column_index]
                 legends.append(f"{legend} - {xvg.xvgfile}")
         self.remove_latex()
