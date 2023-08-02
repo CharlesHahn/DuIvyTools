@@ -24,7 +24,6 @@ class DIT(log):
         cmd()
 
 
-
 if __name__ == "__main__":
     dit = DIT()
     dit.run()

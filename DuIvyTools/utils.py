@@ -199,16 +199,17 @@ class Parameters(log):
             default=100,
             help="the bin number for distribution calculation",
         )
+        parser.add_argument(
+            "--colorbar_location",
+            type=str,
+            default=None,
+            choices=[None, "left", "top", "bottom", "right"],
+            help="the location of colorbar, also determining the orientation of colorbar",
+        )
 
         ## TODO think twice
         parser.add_argument(
             "-xt", "--xtitles", nargs="+", help="the x tick labels for box comparison"
-        )
-        parser.add_argument(
-            "-ac",
-            "--ave2csv",
-            action="store_true",
-            help="whether store average data into csv file, used in xvg_bar_draw",
         )
         parser.add_argument(
             "-ip",
@@ -223,6 +224,12 @@ class Parameters(log):
             help="whether to draw 3D figure",
         )
 
+        parser.add_argument(
+            "-ac",
+            "--ave2csv",
+            action="store_true",
+            help="whether store average data into csv file, used in xvg_bar_draw",
+        )
         parser.add_argument(
             "-pcm",
             "--pcolormesh",

@@ -135,6 +135,31 @@ class StackMatplotlib(ParentMatplotlib):
 
 
 class ScatterMatplotlib(ParentMatplotlib):
+    """A matplotlib scatter plot class for scatter plots
+
+    Args:
+        ParentMatplotlib (object): matplotlib parent class
+
+    Parameters:
+        data_list :List[List[float]]
+        xdata_list :List[List[float]]
+        color_list :List[List[float]]
+        legends :List[str]
+        xmin :float
+        xmax :flaot
+        ymin :float
+        ymax :float
+        zmin :float
+        zmax :float
+        xlabel :str
+        ylabel :str
+        zlabel :str
+        title :str
+        x_precision :int
+        y_precision :int
+        z_precision :int
+        cmap :str
+    """
     def __init__(self, **kwargs) -> None:
         super().__init__()
 
@@ -142,9 +167,9 @@ class ScatterMatplotlib(ParentMatplotlib):
             plt.scatter(kwargs["xdata_list"][i], data, c=kwargs["color_list"][i], label=kwargs["legends"][i])
         if kwargs["zlabel"] != None: 
             if kwargs["z_precision"] != None:
-                plt.colorbar(label=kwargs["zlabel"], cmap=kwargs["cmap"], format=FormatStrFormatter(f"""%.{kwargs["z_precision"]}f"""))
+                plt.colorbar(label=kwargs["zlabel"], cmap=kwargs["cmap"], format=FormatStrFormatter(f"""%.{kwargs["z_precision"]}f"""), location=kwargs["colorbar_location"])
             else:
-                plt.colorbar(label=kwargs["zlabel"], cmap=kwargs["cmap"])
+                plt.colorbar(label=kwargs["zlabel"], cmap=kwargs["cmap"], location=kwargs["colorbar_location"])
 
         if kwargs["xmin"] != None or kwargs["xmax"] != None:
             plt.xlim(kwargs["xmin"], kwargs["xmax"])

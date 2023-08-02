@@ -639,6 +639,7 @@ class xvg_show_scatter(Command):
             "x_precision": self.parm.x_precision,
             "y_precision": self.parm.y_precision,
             "z_precision": self.parm.z_precision,
+            "colorbar_location": self.parm.colorbar_location,
         }
         if self.parm.engine == "matplotlib":
             line = ScatterMatplotlib(**kwargs)
@@ -656,7 +657,6 @@ class xvg_show_scatter(Command):
             self.error("wrong selection of plot engine")
 
 
-
 class xvg_show_stack(Command):
     def __init__(self, parm: Parameters) -> None:
         self.parm = parm
@@ -664,6 +664,22 @@ class xvg_show_stack(Command):
     def __call__(self):
         self.info("in xvg_show_stack")
         print(self.parm.__dict__)
+
+        ## check and convert parm
+        if not self.parm.input:
+            self.error("you must specify the xvg files to compare")
+        if not self.parm.columns:
+            self.error("you must specify the columns to select")
+        for xvg in self.parm.input:
+            if not isinstance(xvg, str):
+                self.error("files should be seperated by space not ,")
+        for indexs in self.parm.columns:
+            if not isinstance(indexs, list) or len(indexs) not in [2,3]:
+                self.error("for each file, you must specify 2 or 3 (as color) columns to draw scatter plot")
+        if len(self.parm.input) != len(self.parm.columns):
+            self.error(f"columns must contain {len(self.parm.input)} list")
+        if self.parm.legends != None and len(self.parm.legends) != len(self.parm.input):
+            self.error("for scatter plot, the number of legends must pair to the number of files")
 
 
 class xvg_box_compare(Command):
