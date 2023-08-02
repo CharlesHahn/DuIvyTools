@@ -196,7 +196,7 @@ class LineGnuplot(ParentGnuplot):
 
     Parameters:
         data_list :List[List[float]]
-        xdata :List[List[float]]
+        xdata_list :List[List[float]]
         legends :List[str]
         xmin :float
         xmax :flaot
@@ -236,17 +236,12 @@ class LineGnuplot(ParentGnuplot):
             self.error(
                 f"""unable to pair {len(kwargs["legends"])} legends to {len(kwargs["data_list"])} column data."""
             )
-        self.gnuplot.xdata = kwargs["xdata"]
+        self.gnuplot.xdata = kwargs["xdata_list"]
         self.gnuplot.data = kwargs["data_list"]
         self.gnuplot.legends = kwargs["legends"]
         self.gnuplot.highs = kwargs["highs"]
         self.gnuplot.lows = kwargs["lows"]
         self.gnuplot.style["alpha"] = kwargs["alpha"]
-
-
-class DistributionPlotexet(ParentGnuplot):
-    def __init__(self, **kwargs) -> None:
-        super().__init__()
 
 
 class StackGnuplot(ParentGnuplot):

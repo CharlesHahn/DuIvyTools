@@ -13,10 +13,10 @@ import numpy as np
 
 from Commands.Commands import Command
 from FileParser.xvgParser import XVG
-from Visualizor.Visualizer_matplotlib import LineMatplotlib
-from Visualizor.Visualizer_plotext import LinePlotext
-from Visualizor.Visualizer_plotly import LinePlotly
-from Visualizor.Visualizer_gnuplot import LineGnuplot
+from Visualizor.Visualizer_matplotlib import *
+from Visualizor.Visualizer_plotext import *
+from Visualizor.Visualizer_plotly import *
+from Visualizor.Visualizer_gnuplot import *
 from utils import Parameters
 
 
@@ -49,7 +49,7 @@ class xvg_show(Command):
 
             kwargs = {
                 "data_list": data_list,
-                "xdata": xdata,
+                "xdata_list": xdata,
                 "legends": self.sel_parm(self.parm.legends, xvg.data_heads[1:]),
                 "xmin": self.get_parm("xmin"),
                 "xmax": self.get_parm("xmax"),
@@ -144,7 +144,7 @@ class xvg_compare(Command):
 
         kwargs = {
             "data_list": data_list,
-            "xdata": xdata,
+            "xdata_list": xdata,
             "legends": self.sel_parm(self.parm.legends, legends),
             "xmin": self.get_parm("xmin"),
             "xmax": self.get_parm("xmax"),
@@ -190,8 +190,8 @@ class xvg_compare(Command):
                     leg = leg.strip("$")
                     fo.write(f""",mvave_{leg},high_{leg},low_{leg}""")
                 fo.write("\n")
-                for r in range(len(kwargs["xdata"][0])):
-                    fo.write(f"""{kwargs["xdata"][0][r]:.8f}""")
+                for r in range(len(kwargs["xdata_list"][0])):
+                    fo.write(f"""{kwargs["xdata_list"][0][r]:.8f}""")
                     for c in range(len(kwargs["data_list"])):
                         fo.write(
                             f""",{kwargs["data_list"][c][r]:.8f},{kwargs["highs"][c][r]:.8f},{kwargs["lows"][c][r]:.8f}"""
@@ -203,8 +203,8 @@ class xvg_compare(Command):
                 for leg in kwargs["legends"]:
                     fo.write(f""",{leg.strip("$")}""")
                 fo.write("\n")
-                for r in range(len(kwargs["xdata"][0])):
-                    fo.write(f"""{kwargs["xdata"][0][r]:.8f}""")
+                for r in range(len(kwargs["xdata_list"][0])):
+                    fo.write(f"""{kwargs["xdata_list"][0][r]:.8f}""")
                     for c in range(len(kwargs["data_list"])):
                         fo.write(f""",{kwargs["data_list"][c][r]:.8f}""")
                     fo.write("\n")
@@ -221,7 +221,7 @@ class xvg_compare(Command):
                 fo.write("\n")
                 for r in range(len(kwargs["data_list"][0])):
                     for c in range(len(kwargs["data_list"])):
-                        fo.write(f"""{kwargs["xdata"][c][r]:.8f},""")
+                        fo.write(f"""{kwargs["xdata_list"][c][r]:.8f},""")
                         fo.write(
                             f"""{kwargs["data_list"][c][r]:.8f},{kwargs["highs"][c][r]:.8f},{kwargs["lows"][c][r]:.8f},"""
                         )
@@ -234,7 +234,7 @@ class xvg_compare(Command):
                 fo.write("\n")
                 for r in range(len(kwargs["data_list"][0])):
                     for c in range(len(kwargs["data_list"])):
-                        fo.write(f"""{kwargs["xdata"][0][r]:.8f},""")
+                        fo.write(f"""{kwargs["xdata_list"][0][r]:.8f},""")
                         fo.write(f"""{kwargs["data_list"][c][r]:.8f},""")
                     fo.write("\n")
         self.info(f"data has been dumped to {self.parm.csv} successfully")
@@ -579,6 +579,70 @@ class xvg_show_scatter(Command):
     def __call__(self):
         self.info("in xvg_show_scatter")
         print(self.parm.__dict__)
+
+        ## check and convert parm
+        if not self.parm.input:
+            self.error("you must specify the xvg files to compare")
+        if not self.parm.columns:
+            self.error("you must specify the columns to select")
+        for xvg in self.parm.input:
+            if not isinstance(xvg, str):
+                self.error("files should be seperated by space not ,")
+        for indexs in self.parm.columns:
+            if not isinstance(indexs, list) or len(indexs) not in [2,3]:
+                self.error("for each file, you must specify 2 or 3 (as color) columns to draw scatter plot")
+        if len(self.parm.input) != len(self.parm.columns):
+            self.error(f"columns must contain {len(self.parm.input)} list")
+        if self.parm.legends != None and len(self.parm.legends) != len(self.parm.input):
+            self.error("for scatter plot, the number of legends must pair to the number of files")
+        
+        # deal with data
+        begin, end, dt = self.parm.begin, self.parm.end, self.parm.dt
+        xvgs = [XVG(xvg) for xvg in self.parm.input]
+        self.file = xvgs[0]
+        legends, xdata_list, data_list, color_list = [], [], [], [], []
+        for id, column_indexs in enumerate(self.parm.columns):
+            xvg = xvgs[id]
+            xdata_list.append(xvg.data_columns[column_indexs[0]][begin:end:dt])
+            data_list.append(xvg.data_columns[column_indexs[1]][begin:end:dt])
+            if len(column_indexs) == 3:
+                color_list.append(xvg.data_columns[column_indexs[2]][begin:end:dt])
+            else:
+                color_list.append([1 for x in data_list[-1]])
+            legends.append(xvg.title)
+        self.remove_latex()
+        legends = self.remove_latex_msgs(legends)
+
+        kwargs = {
+            "data_list": data_list,
+            "xdata_list": xdata_list,
+            "color_list": color_list,
+            "legends": self.sel_parm(self.parm.legends, legends),
+            "xmin": self.get_parm("xmin"),
+            "xmax": self.get_parm("xmax"),
+            "ymin": self.get_parm("ymin"),
+            "ymax": self.get_parm("ymax"),
+            "xlabel": self.sel_parm(self.parm.xlabel, self.file.xlabel),
+            "ylabel": self.sel_parm(self.parm.ylabel, self.file.ylabel),
+            "title": self.sel_parm(self.parm.title, self.file.title),
+            "x_precision": self.parm.x_precision,
+            "y_precision": self.parm.y_precision,
+        }
+        if self.parm.engine == "matplotlib":
+            line = ScatterMatplotlib(**kwargs)
+            line.final(self.parm.output, self.parm.noshow)
+        elif self.parm.engine == "plotly":
+            line = ScatterPlotly(**kwargs)
+            line.final(self.parm.output, self.parm.noshow)
+        elif self.parm.engine == "plotext":
+            line = ScatterPlotext(**kwargs)
+            line.final(self.parm.output, self.parm.noshow)
+        elif self.parm.engine == "gnuplot":
+            line = ScatterGnuplot(**kwargs)
+            line.final(self.parm.output, self.parm.noshow)
+        else:
+            self.error("wrong selection of plot engine")
+
 
 
 class xvg_show_stack(Command):

@@ -174,8 +174,6 @@
 - xvg_show
 - xvg_compare
 - xvg_ave
-- xvg_mvave
-- xvg2csv
 - xvg_rama
 - xvg_show_distribution
 - xvg_show_stack

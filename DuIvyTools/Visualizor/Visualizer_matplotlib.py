@@ -79,7 +79,7 @@ class LineMatplotlib(ParentMatplotlib):
 
     Parameters:
         data_list :List[List[float]]
-        xdata :List[List[float]]
+        xdata_list :List[List[float]]
         legends :List[str]
         xmin :float
         xmax :flaot
@@ -102,12 +102,12 @@ class LineMatplotlib(ParentMatplotlib):
         for i, data in enumerate(kwargs["data_list"]):
             if len(kwargs["highs"]) != 0 and len(kwargs["lows"]) != 0:
                 plt.fill_between(
-                    kwargs["xdata"][i],
+                    kwargs["xdata_list"][i],
                     kwargs["highs"][i],
                     kwargs["lows"][i],
                     alpha=kwargs["alpha"],
                 )
-            plt.plot(kwargs["xdata"][i], data, label=kwargs["legends"][i])
+            plt.plot(kwargs["xdata_list"][i], data, label=kwargs["legends"][i])
 
         if kwargs["xmin"] != None or kwargs["xmax"] != None:
             plt.xlim(kwargs["xmin"], kwargs["xmax"])
@@ -126,11 +126,6 @@ class LineMatplotlib(ParentMatplotlib):
         plt.xlabel(kwargs["xlabel"])
         plt.ylabel(kwargs["ylabel"])
         plt.title(kwargs["title"])
-
-
-class DistributionMatplotlib(ParentMatplotlib):
-    def __init__(self, **kwargs) -> None:
-        super().__init__()
 
 
 class StackMatplotlib(ParentMatplotlib):

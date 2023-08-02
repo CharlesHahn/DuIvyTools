@@ -53,7 +53,7 @@ class LinePlotext(ParentPlotext):
 
     Parameters:
         data_list :List[List[float]]
-        xdata :List[List[[float]]
+        xdata_list :List[List[[float]]
         legends :List[str]
         xmin :float
         xmax :flaot
@@ -76,7 +76,7 @@ class LinePlotext(ParentPlotext):
             if len(kwargs["highs"]) != 0 and len(kwargs["lows"]) != 0:
                 self.warn("unable to plot confidence intervals by plotext.")
             # plt.plot(kwargs["xdata"], data, label=kwargs["legends"][i], color=self.hex2rgb(self.style["color_cycle"][i]))
-            plt.plot(kwargs["xdata"][i], data, label=kwargs["legends"][i])
+            plt.plot(kwargs["xdata_list"][i], data, label=kwargs["legends"][i])
 
         if kwargs["xmin"] != None or kwargs["xmax"] != None:
             plt.xlim(kwargs["xmin"], kwargs["xmax"])
@@ -91,11 +91,6 @@ class LinePlotext(ParentPlotext):
             self.warn("unable to apply x_precision to plotext engine")
         if kwargs["y_precision"] != None:
             self.warn("unable to apply y_precision to plotext engine")
-
-
-class DistributionPlotexet(ParentPlotext):
-    def __init__(self, **kwargs) -> None:
-        super().__init__()
 
 
 class StackPlotext(ParentPlotext):
