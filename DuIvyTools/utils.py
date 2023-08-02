@@ -187,10 +187,10 @@ class Parameters(log):
             choices=["matplotlib", "plotext", "plotly", "gnuplot"],
             help="specify the engine for plotting, 'matplotlib', 'plotext', 'plotly', 'gnuplot'",
         )
-
-
         parser.add_argument(
-            "-xt", "--xtitles", nargs="+", help="the x tick labels for box comparison"
+            "-cm",
+            "--colormap",
+            help="specify the figure style, 'origin', 'gaussian', 'bio3d'",
         )
         parser.add_argument(
             "-bin",
@@ -198,6 +198,11 @@ class Parameters(log):
             type=int,
             default=100,
             help="the bin number for distribution calculation",
+        )
+
+        ## TODO think twice
+        parser.add_argument(
+            "-xt", "--xtitles", nargs="+", help="the x tick labels for box comparison"
         )
         parser.add_argument(
             "-ac",
@@ -218,24 +223,12 @@ class Parameters(log):
             help="whether to draw 3D figure",
         )
 
-        ## TODO maybe not neccessory
-        parser.add_argument(
-            "-xi", "--x_index", type=int, help="the x index of data for drawing scatter"
-        )
-        parser.add_argument(
-            "-yi", "--y_index", type=int, help="the y index of data for drawing scatter"
-        )
-        parser.add_argument(
-            "-zi", "--z_index", type=int, help="the z index of data for drawing scatter"
-        )
         parser.add_argument(
             "-pcm",
             "--pcolormesh",
             action="store_true",
             help="whether to apply pcolormesh function to draw",
         )
-
-        ## TODO think twice
         parser.add_argument(
             "-gl", "--grouplist", nargs="+", help="specify a list of group names"
         )
@@ -313,11 +306,6 @@ class Parameters(log):
             "--set_operation",
             type=str,
             help="use AND or OR to operate different hbonds. eg. -so AND1-2,4,7  -so OR0,4,6-8",
-        )
-        parser.add_argument(
-            "-cm",
-            "--colormap",
-            help="specify the figure style, 'origin', 'gaussian', 'bio3d'",
         )
 
         args = parser.parse_args()

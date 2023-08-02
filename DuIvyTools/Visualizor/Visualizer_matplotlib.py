@@ -133,9 +133,36 @@ class StackMatplotlib(ParentMatplotlib):
         super().__init__()
 
 
+
 class ScatterMatplotlib(ParentMatplotlib):
     def __init__(self, **kwargs) -> None:
         super().__init__()
+
+        for i, data in enumerate(kwargs["data_list"]):
+            plt.scatter(kwargs["xdata_list"][i], data, c=kwargs["color_list"][i], label=kwargs["legends"][i])
+        if kwargs["zlabel"] != None: 
+            if kwargs["z_precision"] != None:
+                plt.colorbar(label=kwargs["zlabel"], cmap=kwargs["cmap"], format=FormatStrFormatter(f"""%.{kwargs["z_precision"]}f"""))
+            else:
+                plt.colorbar(label=kwargs["zlabel"], cmap=kwargs["cmap"])
+
+        if kwargs["xmin"] != None or kwargs["xmax"] != None:
+            plt.xlim(kwargs["xmin"], kwargs["xmax"])
+        if kwargs["ymin"] != None or kwargs["ymax"] != None:
+            plt.ylim(kwargs["ymin"], kwargs["ymax"])
+
+        ax = plt.gca()
+        if kwargs["x_precision"] != None:
+            x_p = kwargs["x_precision"]
+            ax.xaxis.set_major_formatter(FormatStrFormatter(f"%.{x_p}f"))
+        if kwargs["y_precision"] != None:
+            y_p = kwargs["y_precision"]
+            ax.yaxis.set_major_formatter(FormatStrFormatter(f"%.{y_p}f"))
+
+        plt.legend()
+        plt.xlabel(kwargs["xlabel"])
+        plt.ylabel(kwargs["ylabel"])
+        plt.title(kwargs["title"])
 
 
 class BarMatplotlib(ParentMatplotlib):

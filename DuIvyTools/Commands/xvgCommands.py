@@ -496,7 +496,7 @@ class xvg_show_distribution(xvg_compare):
 
         kwargs = {
             "data_list": data_list,
-            "xdata": xdata_list,
+            "xdata_list": xdata_list,
             "legends": self.sel_parm(self.parm.legends, legends),
             "xmin": self.sel_parm(self.parm.xmin, None),
             "xmax": self.sel_parm(self.parm.xmax, None),
@@ -600,18 +600,25 @@ class xvg_show_scatter(Command):
         begin, end, dt = self.parm.begin, self.parm.end, self.parm.dt
         xvgs = [XVG(xvg) for xvg in self.parm.input]
         self.file = xvgs[0]
-        legends, xdata_list, data_list, color_list = [], [], [], [], []
+        legends, xdata_list, data_list, color_list = [], [], [], []
+        color_head, xlabel, ylabel = None, None, None
         for id, column_indexs in enumerate(self.parm.columns):
             xvg = xvgs[id]
-            xdata_list.append(xvg.data_columns[column_indexs[0]][begin:end:dt])
-            data_list.append(xvg.data_columns[column_indexs[1]][begin:end:dt])
+            xdata_list.append([x*self.parm.xshrink for x in xvg.data_columns[column_indexs[0]][begin:end:dt]])
+            xlabel = xvg.data_heads[column_indexs[0]]
+            data_list.append([y*self.parm.yshrink for y in xvg.data_columns[column_indexs[1]][begin:end:dt]])
+            ylabel = xvg.data_heads[column_indexs[1]]
             if len(column_indexs) == 3:
-                color_list.append(xvg.data_columns[column_indexs[2]][begin:end:dt])
+                color_list.append([z*self.parm.zshrink for z in xvg.data_columns[column_indexs[2]][begin:end:dt]])
+                color_head = xvg.data_heads[column_indexs[2]]
             else:
                 color_list.append([1 for x in data_list[-1]])
-            legends.append(xvg.title)
-        self.remove_latex()
+            legends.append(xvg.xvgfile)
         legends = self.remove_latex_msgs(legends)
+        xlabel = self.remove_latex_msgs([xlabel])[0]
+        ylabel = self.remove_latex_msgs([ylabel])[0]
+        if color_head:
+            color_head = self.remove_latex_msgs([color_head])[0]
 
         kwargs = {
             "data_list": data_list,
@@ -622,11 +629,16 @@ class xvg_show_scatter(Command):
             "xmax": self.get_parm("xmax"),
             "ymin": self.get_parm("ymin"),
             "ymax": self.get_parm("ymax"),
-            "xlabel": self.sel_parm(self.parm.xlabel, self.file.xlabel),
-            "ylabel": self.sel_parm(self.parm.ylabel, self.file.ylabel),
+            "zmin": self.get_parm("zmin"),
+            "zmax": self.get_parm("zmax"),
+            "xlabel": self.sel_parm(self.parm.xlabel, xlabel),
+            "ylabel": self.sel_parm(self.parm.ylabel, ylabel),
             "title": self.sel_parm(self.parm.title, self.file.title),
+            "zlabel": self.sel_parm(self.parm.zlabel, color_head),
+            "cmap":self.sel_parm(self.parm.colormap, None),
             "x_precision": self.parm.x_precision,
             "y_precision": self.parm.y_precision,
+            "z_precision": self.parm.z_precision,
         }
         if self.parm.engine == "matplotlib":
             line = ScatterMatplotlib(**kwargs)
