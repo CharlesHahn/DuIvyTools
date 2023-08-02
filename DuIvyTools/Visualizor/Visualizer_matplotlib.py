@@ -159,17 +159,19 @@ class ScatterMatplotlib(ParentMatplotlib):
         y_precision :int
         z_precision :int
         cmap :str
+        colorbar_location:str
     """
     def __init__(self, **kwargs) -> None:
         super().__init__()
 
+        ## TODO think again, user to define marker by scatter.marker
+        marker_list = ['o', 'v', '^', '<', '>', '8', 's', 'p', '*', 'h','.', 'H', 'D', 'd', 'P', 'X']
         for i, data in enumerate(kwargs["data_list"]):
-            plt.scatter(kwargs["xdata_list"][i], data, c=kwargs["color_list"][i], label=kwargs["legends"][i])
-        if kwargs["zlabel"] != None: 
-            if kwargs["z_precision"] != None:
-                plt.colorbar(label=kwargs["zlabel"], cmap=kwargs["cmap"], format=FormatStrFormatter(f"""%.{kwargs["z_precision"]}f"""), location=kwargs["colorbar_location"])
-            else:
-                plt.colorbar(label=kwargs["zlabel"], cmap=kwargs["cmap"], location=kwargs["colorbar_location"])
+            plt.scatter(kwargs["xdata_list"][i], data, c=kwargs["color_list"][i], label=kwargs["legends"][i], marker=marker_list[i])
+        if kwargs["z_precision"] != None:
+            plt.colorbar(label=kwargs["zlabel"], cmap=kwargs["cmap"], format=FormatStrFormatter(f"""%.{kwargs["z_precision"]}f"""), location=kwargs["colorbar_location"])
+        else:
+            plt.colorbar(label=kwargs["zlabel"], cmap=kwargs["cmap"], location=kwargs["colorbar_location"])
 
         if kwargs["xmin"] != None or kwargs["xmax"] != None:
             plt.xlim(kwargs["xmin"], kwargs["xmax"])
