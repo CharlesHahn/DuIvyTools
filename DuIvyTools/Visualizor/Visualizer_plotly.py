@@ -51,8 +51,9 @@ class ParentPlotly(log):
                     f"{outfig} is already in current directory, save to {new_outfig} for instead."
                 )
                 outfig = new_outfig
-            self.figure.savefig(outfig)
-            self.info(f"save figure to {outfig} successfully")
+            # self.figure.save_fig(outfig)
+            # self.info(f"save figure to {outfig} successfully")
+            self.warn("unable to save figure by DIT, please save figure by yourself")
         if noshow == False:
             self.figure.show()
 
@@ -120,6 +121,7 @@ class LinePlotly(ParentPlotly):
                 )
 
         self.figure.update_layout(
+            legend_orientation="h",
             title=kwargs["title"],
             xaxis_title=kwargs["xlabel"],
             yaxis_title=kwargs["ylabel"],
@@ -168,6 +170,7 @@ class ScatterPlotly(ParentPlotly):
         cmap :str
         colorbar_location:str
     """
+
     def __init__(self, **kwargs) -> None:
         super().__init__()
 
@@ -178,26 +181,33 @@ class ScatterPlotly(ParentPlotly):
                     y=data,
                     mode="markers",
                     name=kwargs["legends"][i],
-                    showlegend=(len(kwargs["legends"])>1),
+                    showlegend=(len(kwargs["legends"]) > 1),
                     marker=dict(
-                        colorbar={"title":{"text":kwargs["zlabel"],"side":"right"}, "tickformat":f".{kwargs['z_precision']}f"},
-                        color=kwargs["color_list"][i], 
+                        colorbar={
+                            "title": {"text": kwargs["zlabel"], "side": "right"},
+                            "tickformat": f".{kwargs['z_precision']}f",
+                            "lenmode": "fraction",
+                            "len": 0.50,
+                            "xanchor":"left",
+                            "yanchor":"top",
+                        },
+                        color=kwargs["color_list"][i],
                         colorscale=kwargs["cmap"],
-                        symbol = i,
+                        symbol=i,
                         showscale=True
-                        # location
-                        # legend overlap
-                    )
+                    ),
                 )
             )
-
         self.figure.update_layout(
+            legend_orientation="h",
             title=kwargs["title"],
             xaxis_title=kwargs["xlabel"],
             yaxis_title=kwargs["ylabel"],
             font=dict(family="Arial, Times New Roman", size=18),
             showlegend=True,
         )
+        if kwargs["colorbar_location"]:
+            self.warn("colorbar_location parameter is not valid for plotly")
         if kwargs["xmin"] != None or kwargs["xmax"] != None:
             self.figure.update_layout(xaxis_range=[kwargs["xmin"], kwargs["xmax"]])
         if kwargs["ymin"] != None or kwargs["ymax"] != None:

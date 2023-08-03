@@ -133,7 +133,6 @@ class StackMatplotlib(ParentMatplotlib):
         super().__init__()
 
 
-
 class ScatterMatplotlib(ParentMatplotlib):
     """A matplotlib scatter plot class for scatter plots
 
@@ -161,17 +160,50 @@ class ScatterMatplotlib(ParentMatplotlib):
         cmap :str
         colorbar_location:str
     """
+
     def __init__(self, **kwargs) -> None:
         super().__init__()
 
         ## TODO think again, user to define marker by scatter.marker
-        marker_list = ['o', 'v', '^', '<', '>', '8', 's', 'p', '*', 'h','.', 'H', 'D', 'd', 'P', 'X']
+        marker_list = [
+            "o",
+            "v",
+            "^",
+            "<",
+            ">",
+            "8",
+            "s",
+            "p",
+            "*",
+            "h",
+            ".",
+            "H",
+            "D",
+            "d",
+            "P",
+            "X",
+        ]
         for i, data in enumerate(kwargs["data_list"]):
-            plt.scatter(kwargs["xdata_list"][i], data, c=kwargs["color_list"][i], label=kwargs["legends"][i], marker=marker_list[i])
+            plt.scatter(
+                kwargs["xdata_list"][i],
+                data,
+                c=kwargs["color_list"][i],
+                label=kwargs["legends"][i],
+                marker=marker_list[i],
+            )
         if kwargs["z_precision"] != None:
-            plt.colorbar(label=kwargs["zlabel"], cmap=kwargs["cmap"], format=FormatStrFormatter(f"""%.{kwargs["z_precision"]}f"""), location=kwargs["colorbar_location"])
+            plt.colorbar(
+                label=kwargs["zlabel"],
+                cmap=kwargs["cmap"],
+                format=FormatStrFormatter(f"""%.{kwargs["z_precision"]}f"""),
+                location=kwargs["colorbar_location"],
+            )
         else:
-            plt.colorbar(label=kwargs["zlabel"], cmap=kwargs["cmap"], location=kwargs["colorbar_location"])
+            plt.colorbar(
+                label=kwargs["zlabel"],
+                cmap=kwargs["cmap"],
+                location=kwargs["colorbar_location"],
+            )
 
         if kwargs["xmin"] != None or kwargs["xmax"] != None:
             plt.xlim(kwargs["xmin"], kwargs["xmax"])
