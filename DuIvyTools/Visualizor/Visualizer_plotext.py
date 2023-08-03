@@ -99,8 +99,55 @@ class StackPlotext(ParentPlotext):
 
 
 class ScatterPlotext(ParentPlotext):
+    """A plotext scatter plot class for scatter plots
+
+    Args:
+        ParentPlotext (object): plotext parent class
+
+    Parameters:
+        data_list :List[List[float]]
+        xdata_list :List[List[float]]
+        color_list :List[List[float]]
+        legends :List[str]
+        xmin :float
+        xmax :flaot
+        ymin :float
+        ymax :float
+        zmin :float
+        zmax :float
+        xlabel :str
+        ylabel :str
+        zlabel :str
+        title :str
+        x_precision :int
+        y_precision :int
+        z_precision :int
+        cmap :str
+        colorbar_location:str
+    """
     def __init__(self, **kwargs) -> None:
         super().__init__()
+
+        for i, data in enumerate(kwargs["data_list"]):
+            plt.scatter(kwargs["xdata_list"][i], data, label=kwargs["legends"][i], color=kwargs["color_list"])
+
+        if kwargs["xmin"] != None or kwargs["xmax"] != None:
+            plt.xlim(kwargs["xmin"], kwargs["xmax"])
+        if kwargs["ymin"] != None or kwargs["ymax"] != None:
+            plt.ylim(kwargs["ymin"], kwargs["ymax"])
+
+        plt.xlabel(kwargs["xlabel"])
+        plt.ylabel(kwargs["ylabel"])
+        plt.title(kwargs["title"])
+
+        if kwargs["x_precision"] != None:
+            self.warn("unable to apply x_precision to plotext engine")
+        if kwargs["y_precision"] != None:
+            self.warn("unable to apply y_precision to plotext engine")
+        
+        for key in ["cmap", "colorbar_location", "z_precision", "zlabel", "color_list"]:
+            if kwargs[key]:
+                self.warn(f"{key} is not valid for plotext engine")
 
 
 class BarPlotext(ParentPlotext):
