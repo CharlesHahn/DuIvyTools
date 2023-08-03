@@ -52,6 +52,8 @@ class Gnuplot(log):
         self.xmax: float = None
         self.ymin: float = None
         self.ymax: float = None
+        self.zmin: float = None
+        self.zmax: float = None
         self.x_precision: int = None
         self.y_precision: int = None
         self.z_precision: int = None
@@ -60,6 +62,10 @@ class Gnuplot(log):
         self.data: List[List[float]] = None
         self.highs: List[List[float]] = None
         self.lows: List[List[float]] = None
+        self.color_list: List[List[float]] = None
+        self.colorbar_location:str = None
+        self.colormap:str = None
+        self.plot_type:str = "line"
 
     def dump2str(self) -> str:
         """dump gnuplot properties to gnuplot input scripts
@@ -70,6 +76,105 @@ class Gnuplot(log):
         gpl: str = ""
         if self.term:
             gpl += f"""set term {self.term}\n"""
+        if self.outfig:
+            gpl += f"""set output "{self.outfig}"\n"""
+        if self.title:
+            gpl += f"""set title "{self.title}"\n"""
+        if self.xlabel:
+            gpl += f"""set xlabel "{self.xlabel}"\n"""
+        if self.ylabel:
+            gpl += f"""set ylabel "{self.ylabel}"\n"""
+        if self.zlabel:
+            gpl += f"""set zlabel "{self.zlabel}"\n"""
+
+        if self.xmin == None:
+            self.xmin = ""
+        if self.xmax == None:
+            self.xmax = ""
+        gpl += f"""set xrange [{self.xmin}:{self.xmax}]\n"""
+        if self.ymin == None:
+            self.ymin = ""
+        if self.ymax == None:
+            self.ymax = ""
+        gpl += f"""set yrange [{self.ymin}:{self.ymax}]\n"""
+
+        if self.x_precision:
+            gpl += f"""set xtics format "%.{self.x_precision}f" \n"""
+        if self.y_precision:
+            gpl += f"""set ytics format "%.{self.y_precision}f" \n"""
+        if self.z_precision:
+            gpl += f"""set ztics format "%.{self.z_precision}f" \n"""
+
+        gpl += f"""set term pngcairo enhanced truecolor font \"{self.style["font"]},{self.style["fontsize"]}\" fontscale {self.style["fontscale"]} linewidth {self.style["linewidth"]} pointscale {self.style["pointscale"]} size {self.style["width"]},{self.style["height"]} \n"""
+
+        if self.plot_type == "line":
+            gpl = self.line_plot(gpl)
+        elif self.plot_type == "scatter":
+            gpl = self.scatter_plot(gpl)
+        
+        return gpl
+
+    def scatter_plot(self, gpl:str) -> str:
+        # colorbar_location 
+        # cmap
+        if self.zlabel:
+            gpl += f"""set cblabel "{self.zlabel}"\n"""
+        if self.z_precision:
+            gpl += f"""set cbtics format "%.{self.z_precision}f"\n"""
+        if self.data and self.legends:
+            for c in range(len(self.data)):
+                gpl += f"\n$data{c} << EOD\n"
+                for r in range(len(self.xdata[c])):
+                    gpl += f"""{self.xdata[c][r]} {self.data[c][r]} {self.color_list[c][r]}\n"""
+                gpl += "EOD\n\n"
+            gpl += "plot "
+            for c in range(len(self.data)):
+                gpl += f"""$data{c} u 1:2:3 title "{self.legends[c]}" with points palette, \\\n"""
+            gpl += "\n"
+
+        return gpl
+
+    def line_plot(self, gpl:str) -> str:
+        if self.data and self.legends and len(self.highs) == 0 and len(self.lows) == 0:
+            for c in range(len(self.data)):
+                gpl += f"\n$data{c} << EOD\n"
+                for r in range(len(self.xdata[c])):
+                    gpl += f"""{self.xdata[c][r]} {self.data[c][r]}\n"""
+                gpl += "EOD\n\n"
+            gpl += "plot "
+            for c in range(len(self.data)):
+                gpl += f"""$data{c} u 1:2 title "{self.legends[c]}" with lines lt rgb "{self.style["color_cycle"][c]}", \\\n"""
+            gpl += "\n"
+
+        if self.data and self.legends and len(self.highs) != 0 and len(self.lows) != 0:
+            gpl += (
+                f"""set style fill transparent solid {self.style["alpha"]} noborder\n"""
+            )
+            for c in range(len(self.data)):
+                gpl += f"\n$data{c} << EOD\n"
+                for r in range(len(self.xdata[c])):
+                    gpl += f"""{self.xdata[c][r]} {self.data[c][r]} {self.highs[c][r]} {self.lows[c][r]}\n"""
+                gpl += "EOD\n\n"
+            gpl += "plot "
+            for c in range(len(self.data)):
+                gpl += f"""$data{c} using 1:3:4 with filledcurves notitle lt rgb "{self.style["color_cycle"][c]}", $data{c} u 1:2 title "{self.legends[c]}" with lines lt rgb "{self.style["color_cycle"][c]}", \\\n"""
+            gpl += "\n"
+
+        return gpl
+
+
+
+    def dump2str_old(self) -> str:
+        """dump gnuplot properties to gnuplot input scripts
+
+        Returns:
+            str: result string for gnuplto input
+        """
+        gpl: str = ""
+        if self.term:
+            gpl += f"""set term {self.term}\n"""
+        if self.title:
+            gpl += f"""set title "{self.title}"\n"""
         if self.outfig:
             gpl += f"""set output "{self.outfig}"\n"""
         if self.xlabel:
@@ -250,8 +355,68 @@ class StackGnuplot(ParentGnuplot):
 
 
 class ScatterGnuplot(ParentGnuplot):
+    """A gnuplot scatter plot class for scatter plots
+
+    Args:
+        ParentGnuplot (object): gnuplot parent class
+
+    Parameters:
+        data_list :List[List[float]]
+        xdata_list :List[List[float]]
+        color_list :List[List[float]]
+        legends :List[str]
+        xmin :float
+        xmax :flaot
+        ymin :float
+        ymax :float
+        zmin :float
+        zmax :float
+        xlabel :str
+        ylabel :str
+        zlabel :str
+        title :str
+        x_precision :int
+        y_precision :int
+        z_precision :int
+        cmap :str
+        colorbar_location:str
+    """
     def __init__(self, **kwargs) -> None:
         super().__init__()
+
+        self.gnuplot.term = "png"
+        self.gnuplot.title = kwargs["title"]
+        self.gnuplot.xlabel = kwargs["xlabel"]
+        self.gnuplot.ylabel = kwargs["ylabel"]
+
+        if kwargs["xmin"] != None or kwargs["xmax"] != None:
+            self.gnuplot.xmin = kwargs["xmin"]
+            self.gnuplot.xmax = kwargs["xmax"]
+        if kwargs["ymin"] != None or kwargs["ymax"] != None:
+            self.gnuplot.ymin = kwargs["ymin"]
+            self.gnuplot.ymax = kwargs["ymax"]
+        if kwargs["x_precision"] != None:
+            self.gnuplot.x_precision = kwargs["x_precision"]
+        if kwargs["y_precision"] != None:
+            self.gnuplot.y_precision = kwargs["y_precision"]
+
+        if len(kwargs["legends"]) != len(kwargs["data_list"]):
+            self.error(
+                f"""unable to pair {len(kwargs["legends"])} legends to {len(kwargs["data_list"])} column data."""
+            )
+        self.gnuplot.xdata = kwargs["xdata_list"]
+        self.gnuplot.data = kwargs["data_list"]
+        self.gnuplot.legends = kwargs["legends"]
+        self.gnuplot.color_list = kwargs["color_list"]
+        self.gnuplot.zlabel = kwargs["zlabel"]
+        self.gnuplot.z_precision = kwargs["z_precision"]
+        self.gnuplot.plot_type = "scatter"
+        # self.gnuplot.colormap = kwargs["cmap"]
+        if kwargs["cmap"]:
+            self.warn("DIT is unable to set colormap for gnuplot now. The https://github.com/Gnuplotting/gnuplot-palettes may help you")
+        # self.gnuplot.colorbar_location = kwargs["colorbar_location"]
+        if kwargs["colorbar_location"]:
+            self.warn("DIT is unable to set colorbar location for gnuplot now.")
 
 
 class BarGnuplot(ParentGnuplot):
