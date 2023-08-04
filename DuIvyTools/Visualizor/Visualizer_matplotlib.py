@@ -297,6 +297,38 @@ class BoxMatplotlib(ParentMatplotlib):
     def __init__(self, **kwargs) -> None:
         super().__init__()
 
+        box_positions = [i+0.75 for i in range(len(kwargs["data_list"]))]
+        plt.boxplot(
+            kwargs["data_list"],
+            meanline=True,
+            showmeans=True,
+            patch_artist=True,
+            notch=True,
+            positions=box_positions,
+        )
+        plt.xticks([i + 1 for i in range(len(kwargs["data_list"]))], kwargs["legends"])
+        
+        ## scatter 
+        for i, data in enumerate(kwargs["data_list"]):
+            plt.scatter(np.random.normal(i + 1.25, 0.04, len(data)), data, c=kwargs["xdata_list"][i], s=6)
+
+        if kwargs["xmin"] != None or kwargs["xmax"] != None:
+            plt.xlim(kwargs["xmin"], kwargs["xmax"])
+        if kwargs["ymin"] != None or kwargs["ymax"] != None:
+            plt.ylim(kwargs["ymin"], kwargs["ymax"])
+
+        ax = plt.gca()
+        if kwargs["x_precision"] != None:
+            x_p = kwargs["x_precision"]
+            ax.xaxis.set_major_formatter(FormatStrFormatter(f"%.{x_p}f"))
+        if kwargs["y_precision"] != None:
+            y_p = kwargs["y_precision"]
+            ax.yaxis.set_major_formatter(FormatStrFormatter(f"%.{y_p}f"))
+
+        plt.xlabel(kwargs["xlabel"])
+        plt.ylabel(kwargs["ylabel"])
+        plt.title(kwargs["title"])
+
 
 class ViolinMatplotlib(ParentMatplotlib):
     def __init__(self, **kwargs) -> None:

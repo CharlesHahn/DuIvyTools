@@ -758,13 +758,60 @@ class xvg_show_stack(Command):
                 self.error("wrong selection of plot engine")
 
 
-class xvg_box_compare(Command):
+class xvg_box_compare(xvg_compare):
     def __init__(self, parm: Parameters) -> None:
         self.parm = parm
 
     def __call__(self):
         self.info("in xvg_box")
         print(self.parm.__dict__)
+
+        self.check_parm()
+        ## draw data relative to its original xdata
+        begin, end, dt = self.parm.begin, self.parm.end, self.parm.dt
+        xvgs = [XVG(xvg) for xvg in self.parm.input]
+        self.file = xvgs[0]
+        legends, xdata, data_list = [], [], []
+        for id, column_indexs in enumerate(self.parm.columns):
+            xvg = xvgs[id]
+            for column_index in column_indexs:
+                xvg.check_column_index(column_index)
+                data_list.append([y * self.parm.yshrink for y in xvg.data_columns[column_index][begin:end:dt]])
+                xdata.append([x * self.parm.xshrink for x in xvg.data_columns[0][begin:end:dt]])
+                legend = xvg.data_heads[column_index]
+                legends.append(f"{legend} - {xvg.xvgfile}")
+        self.remove_latex()
+        legends = self.remove_latex_msgs(legends)
+
+        kwargs = {
+            "data_list": data_list,
+            "xdata_list": xdata,
+            "legends": self.sel_parm(self.parm.legends, legends),
+            "xmin": self.parm.xmin,
+            "xmax": self.parm.xmax,
+            "ymin": self.parm.ymin,
+            "ymax": self.parm.ymax,
+            "xlabel": self.parm.xlabel,
+            "ylabel": self.sel_parm("ylabel"),
+            "title": self.sel_parm(self.parm.title, "XVG box comparison"),
+            "x_precision": self.parm.x_precision,
+            "y_precision": self.parm.y_precision,
+        }
+        if self.parm.engine == "matplotlib":
+            line = BoxMatplotlib(**kwargs)
+            line.final(self.parm.output, self.parm.noshow)
+        elif self.parm.engine == "plotly":
+            line = BoxPlotly(**kwargs)
+            line.final(self.parm.output, self.parm.noshow)
+        elif self.parm.engine == "plotext":
+            line = BoxPlotext(**kwargs)
+            line.final(self.parm.output, self.parm.noshow)
+        elif self.parm.engine == "gnuplot":
+            line = BoxGnuplot(**kwargs)
+            line.final(self.parm.output, self.parm.noshow)
+        else:
+            self.error("wrong selection of plot engine")
+        
 
 
 class xvg_violin_compare(Command):
