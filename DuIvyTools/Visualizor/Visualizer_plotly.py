@@ -139,8 +139,68 @@ class LinePlotly(ParentPlotly):
 
 
 class StackPlotly(ParentPlotly):
+    """A plotly line plot class for line plots
+
+    Args:
+        Parentplotly (object): plotly parent class
+
+    Parameters:
+        data_list :List[List[float]]
+        xdata_list :List[List[float]]
+        legends :List[str]
+        xmin :float
+        xmax :flaot
+        ymin :float
+        ymax :float
+        xlabel :str
+        ylabel :str
+        title :str
+        x_precision :int
+        y_precision :int
+        # optional
+        highs :List[List[float]]
+        lows :List[List[float]]
+        alpha :float
+    """
+
     def __init__(self, **kwargs) -> None:
         super().__init__()
+
+        kwargs["data_list"].reverse() # first in, show at bottom
+        kwargs["legends"].reverse() # reverse as data
+        for i, data in enumerate(kwargs["data_list"]):
+            rgb = self.hex2rgb(self.style["color_cycle"][i])
+            rgba = f"rgba({rgb[0]},{rgb[1]},{rgb[2]},{kwargs['alpha']})"
+            self.figure.add_trace(
+                go.Scatter(
+                    x=kwargs["xdata_list"][i],
+                    y=data,
+                    name=kwargs["legends"][i],
+                    # line=dict(color=self.style["color_cycle"][i]),
+                    showlegend=True,
+                    stackgroup="stack",
+                    fillcolor=rgba,
+                    fill="tonexty",
+                    line=dict(width=0, color=rgba),
+                )
+            )
+
+        self.figure.update_layout(
+            legend_orientation="h",
+            title=kwargs["title"],
+            xaxis_title=kwargs["xlabel"],
+            yaxis_title=kwargs["ylabel"],
+            font=dict(family="Arial, Times New Roman", size=18),
+            showlegend=True,
+        )
+        if kwargs["xmin"] != None or kwargs["xmax"] != None:
+            self.figure.update_layout(xaxis_range=[kwargs["xmin"], kwargs["xmax"]])
+        if kwargs["ymin"] != None or kwargs["ymax"] != None:
+            self.figure.update_layout(yaxis_range=[kwargs["ymin"], kwargs["ymax"]])
+        if kwargs["x_precision"] != None:
+            self.figure.update_layout(xaxis_tickformat=f".{kwargs['x_precision']}f")
+        if kwargs["y_precision"] != None:
+            self.figure.update_layout(yaxis_tickformat=f".{kwargs['y_precision']}f")
 
 
 class ScatterPlotly(ParentPlotly):

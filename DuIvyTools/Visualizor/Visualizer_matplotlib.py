@@ -128,11 +128,6 @@ class LineMatplotlib(ParentMatplotlib):
         plt.title(kwargs["title"])
 
 
-class StackMatplotlib(ParentMatplotlib):
-    def __init__(self, **kwargs) -> None:
-        super().__init__()
-
-
 class ScatterMatplotlib(ParentMatplotlib):
     """A matplotlib scatter plot class for scatter plots
 
@@ -203,6 +198,62 @@ class ScatterMatplotlib(ParentMatplotlib):
                 label=kwargs["zlabel"],
                 cmap=kwargs["cmap"],
                 location=kwargs["colorbar_location"],
+            )
+
+        if kwargs["xmin"] != None or kwargs["xmax"] != None:
+            plt.xlim(kwargs["xmin"], kwargs["xmax"])
+        if kwargs["ymin"] != None or kwargs["ymax"] != None:
+            plt.ylim(kwargs["ymin"], kwargs["ymax"])
+
+        ax = plt.gca()
+        if kwargs["x_precision"] != None:
+            x_p = kwargs["x_precision"]
+            ax.xaxis.set_major_formatter(FormatStrFormatter(f"%.{x_p}f"))
+        if kwargs["y_precision"] != None:
+            y_p = kwargs["y_precision"]
+            ax.yaxis.set_major_formatter(FormatStrFormatter(f"%.{y_p}f"))
+
+        plt.legend()
+        plt.xlabel(kwargs["xlabel"])
+        plt.ylabel(kwargs["ylabel"])
+        plt.title(kwargs["title"])
+
+
+class StackMatplotlib(ParentMatplotlib):
+    """A matplotlib stack line plot class for stack line plots
+
+    Args:
+        ParentMatplotlib (object): matplotlib parent class
+
+    Parameters:
+        data_list :List[List[float]]
+        xdata_list :List[List[float]]
+        legends :List[str]
+        xmin :float
+        xmax :flaot
+        ymin :float
+        ymax :float
+        xlabel :str
+        ylabel :str
+        title :str
+        x_precision :int
+        y_precision :int
+        # optional
+        highs :List[List[float]]
+        lows :List[List[float]]
+        alpha :float
+    """
+
+    def __init__(self, **kwargs) -> None:
+        super().__init__()
+
+        for i, _ in enumerate(kwargs["data_list"]):
+            plt.fill_between(
+                kwargs["xdata_list"][i],
+                kwargs["highs"][i],
+                kwargs["lows"][i],
+                alpha=kwargs["alpha"],
+                label=kwargs["legends"][i],
             )
 
         if kwargs["xmin"] != None or kwargs["xmax"] != None:

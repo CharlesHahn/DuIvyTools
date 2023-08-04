@@ -74,7 +74,7 @@ class LinePlotext(ParentPlotext):
 
         for i, data in enumerate(kwargs["data_list"]):
             if len(kwargs["highs"]) != 0 and len(kwargs["lows"]) != 0:
-                self.warn("unable to plot confidence intervals by plotext.")
+                self.warn("unable to plot intervals by plotext, turn to line plots")
             # plt.plot(kwargs["xdata"], data, label=kwargs["legends"][i], color=self.hex2rgb(self.style["color_cycle"][i]))
             plt.plot(kwargs["xdata_list"][i], data, label=kwargs["legends"][i])
 

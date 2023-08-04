@@ -604,6 +604,7 @@ class xvg_show_scatter(Command):
         color_head, xlabel, ylabel = None, None, None
         for id, column_indexs in enumerate(self.parm.columns):
             xvg = xvgs[id]
+            xvg.check_column_index(column_indexs)
             xdata_list.append([x*self.parm.xshrink for x in xvg.data_columns[column_indexs[0]][begin:end:dt]])
             xlabel = xvg.data_heads[column_indexs[0]]
             data_list.append([y*self.parm.yshrink for y in xvg.data_columns[column_indexs[1]][begin:end:dt]])
@@ -674,12 +675,83 @@ class xvg_show_stack(Command):
             if not isinstance(xvg, str):
                 self.error("files should be seperated by space not ,")
         for indexs in self.parm.columns:
-            if not isinstance(indexs, list) or len(indexs) not in [2,3]:
-                self.error("for each file, you must specify 2 or 3 (as color) columns to draw scatter plot")
+            if isinstance(indexs, list):
+                break
+        else:
+            self.parm.columns = [[cs] for cs in self.parm.columns]
         if len(self.parm.input) != len(self.parm.columns):
             self.error(f"columns must contain {len(self.parm.input)} list")
-        if self.parm.legends != None and len(self.parm.legends) != len(self.parm.input):
-            self.error("for scatter plot, the number of legends must pair to the number of files")
+        if self.parm.legends != None:
+            for id, column_indexs in enumerate(self.parm.columns):
+                if len(self.parm.legends) != len(column_indexs):
+                    self.error(f"number of legends you input can not pair to columns {column_indexs} you select")
+
+        # deal with data
+        begin, end, dt = self.parm.begin, self.parm.end, self.parm.dt
+        xvgs = [XVG(xvg) for xvg in self.parm.input]
+        for id, column_indexs in enumerate(self.parm.columns):
+            self.file = xvgs[id]
+            column_indexs.reverse() # First in, show at bottom
+            if self.parm.legends:
+                self.parm.legends.reverse() # reverse as the column_indexs
+            self.file.check_column_index(column_indexs)
+            legends, xdata_list, data_list = [], [], []
+            highs_list, lows_list = [], []
+            for i in range(len(column_indexs)):
+                legends.append(self.file.data_heads[column_indexs[i]])
+                xdata_list.append([x*self.parm.xshrink for x in self.file.data_columns[0][begin:end:dt]])
+                data_list.append([y*self.parm.yshrink for y in self.file.data_columns[column_indexs[i]][begin:end:dt]])
+                data = []
+                for r in range(self.file.row_num):
+                    data.append(sum([self.file.data_columns[column_indexs[c]][r] for c in range(i,len(column_indexs))]))
+                highs_list.append([y*self.parm.yshrink for y in data[begin:end:dt]])
+                lows_list.append([0 for _ in range(len(data_list[0]))])
+            legends = self.remove_latex_msgs(legends)
+            title = f"{self.file.title} of {self.file.xvgfile}"
+            title = self.remove_latex_msgs([title])[0]
+            xmin = np.min(xdata_list[0])
+            xmax = np.max(xdata_list[0])
+            ymin = 0
+            ymax = np.max(highs_list[0])
+            if self.parm.alpha == 0.4:
+                alpha = 1.0
+                self.warn("DIT strongly suggest use alpha==1.0 to draw stack plot. If you wanna specify alpha, don't use the default value (0.4) which would be convert to 1.0")
+            else:
+                alpha = self.parm.alpha
+
+            ## TODO: legend location
+            kwargs = {
+                "data_list": data_list,
+                "xdata_list": xdata_list,
+                "legends": self.sel_parm(self.parm.legends, legends),
+                "xmin": self.sel_parm(self.parm.xmin, xmin),
+                "xmax": self.sel_parm(self.parm.xmax, xmax),
+                "ymin": self.sel_parm(self.parm.ymin, ymin),
+                "ymax": self.sel_parm(self.parm.ymax, ymax),
+                "xlabel": self.get_parm("xlabel"),
+                "ylabel": self.get_parm("ylabel"),
+                "title": self.sel_parm(self.parm.title, title),
+                "x_precision": self.parm.x_precision,
+                "y_precision": self.parm.y_precision,
+                "highs": highs_list,
+                "lows": lows_list,
+                "alpha": alpha,
+            }
+            if self.parm.engine == "matplotlib":
+                line = StackMatplotlib(**kwargs)
+                line.final(self.parm.output, self.parm.noshow)
+            elif self.parm.engine == "plotly":
+                line = StackPlotly(**kwargs)
+                line.final(self.parm.output, self.parm.noshow)
+            elif self.parm.engine == "plotext":
+                kwargs["data_list"] = highs_list
+                line = LinePlotext(**kwargs)
+                line.final(self.parm.output, self.parm.noshow)
+            elif self.parm.engine == "gnuplot":
+                line = StackGnuplot(**kwargs)
+                line.final(self.parm.output, self.parm.noshow)
+            else:
+                self.error("wrong selection of plot engine")
 
 
 class xvg_box_compare(Command):

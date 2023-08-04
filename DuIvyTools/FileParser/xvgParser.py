@@ -242,9 +242,16 @@ class XVG(log):
         std = np.std(column[begin:end:dt], ddof=1)
         return legend, ave, std
     
-    def check_column_index(self, column_index:int) -> None:
-        if column_index >= self.column_num:
-            self.error(f"invalid column index {column_index} which >= column number {self.column_num}")
+    def check_column_index(self, column_index:Union[int, List]) -> None:
+        if isinstance(column_index, int):
+            column_index = [column_index]
+        elif isinstance(column_index, list):
+            pass
+        else:
+            self.error("wrong type specification of column_index for checking the column index range")
+        for column in column_index:
+            if column >= self.column_num:
+                self.error(f"""{self.xvgfile} only contianed {self.column_num} columns. Column index start from 0. You can't select column {column}""")
 
 
 class XVGS(log):
