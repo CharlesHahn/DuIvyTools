@@ -64,6 +64,7 @@ class Gnuplot(log):
         self.lows: List[List[float]] = None
         self.color_list: List[List[float]] = None
         self.colorbar_location:str = None
+        self.legend_location:str = "inside"
         self.colormap:str = None
         self.plot_type:str = "line"
 
@@ -86,6 +87,10 @@ class Gnuplot(log):
             gpl += f"""set ylabel "{self.ylabel}"\n"""
         if self.zlabel:
             gpl += f"""set zlabel "{self.zlabel}"\n"""
+        if self.legend_location == "inside":
+            gpl += f"""set key inside\n"""
+        elif self.legend_location == "outside":
+            gpl += f"""set key outside reverse Left\n"""
 
         if self.xmin == None:
             self.xmin = ""
@@ -111,12 +116,31 @@ class Gnuplot(log):
             gpl = self.line_plot(gpl)
         elif self.plot_type == "scatter":
             gpl = self.scatter_plot(gpl)
+        elif self.plot_type == "stack":
+            gpl = self.stack_plot(gpl)
         
         return gpl
 
+    def stack_plot(self, gpl:str) -> str:
+        gpl += (
+            f"""set style fill transparent solid {self.style["alpha"]} noborder\n"""
+        )
+        for c in range(len(self.data)):
+            gpl += f"\n$data{c} << EOD\n"
+            for r in range(len(self.xdata[c])):
+                gpl += f"""{self.xdata[c][r]} {self.data[c][r]} {self.highs[c][r]} {self.lows[c][r]}\n"""
+            gpl += "EOD\n\n"
+        gpl += "plot "
+        for c in range(len(self.data)):
+            gpl += f"""$data{c} using 1:3:4 with filledcurves lt rgb "{self.style["color_cycle"][c]}" title "{self.legends[c]}", \\\n"""
+        gpl += "\n"
+
+        return gpl
+
+
     def scatter_plot(self, gpl:str) -> str:
-        # colorbar_location 
-        # cmap
+        # TODO colorbar_location 
+        # TODO cmap
         if self.zlabel:
             gpl += f"""set cblabel "{self.zlabel}"\n"""
         if self.z_precision:
@@ -247,6 +271,7 @@ class LineGnuplot(ParentGnuplot):
         highs :List[List[float]]
         lows :List[List[float]]
         alpha :float
+        legend_location :str # {inside, outside}
     """
 
     def __init__(self, **kwargs) -> None:
@@ -278,11 +303,37 @@ class LineGnuplot(ParentGnuplot):
         self.gnuplot.highs = kwargs["highs"]
         self.gnuplot.lows = kwargs["lows"]
         self.gnuplot.style["alpha"] = kwargs["alpha"]
+        self.gnuplot.legend_location = kwargs["legend_location"]
 
 
-class StackGnuplot(ParentGnuplot):
+class StackGnuplot(LineGnuplot):
+    """A Gnuplot stack line plot class for stack line plots
+
+    Args:
+        ParentGnuplot (object): Gnuplot parent class
+
+    Parameters:
+        data_list :List[List[float]]
+        xdata_list :List[List[float]]
+        legends :List[str]
+        xmin :float
+        xmax :flaot
+        ymin :float
+        ymax :float
+        xlabel :str
+        ylabel :str
+        title :str
+        x_precision :int
+        y_precision :int
+        highs :List[List[float]]
+        lows :List[List[float]]
+        alpha :float
+        legend_location :str # {inside, outside}
+    """
+
     def __init__(self, **kwargs) -> None:
-        super().__init__()
+        super().__init__(**kwargs)
+        self.gnuplot.plot_type = "stack"
 
 
 class ScatterGnuplot(ParentGnuplot):
@@ -311,6 +362,7 @@ class ScatterGnuplot(ParentGnuplot):
         z_precision :int
         cmap :str
         colorbar_location:str
+        legend_location :str # {inside, outside}
     """
     def __init__(self, **kwargs) -> None:
         super().__init__()
@@ -342,6 +394,7 @@ class ScatterGnuplot(ParentGnuplot):
         self.gnuplot.zlabel = kwargs["zlabel"]
         self.gnuplot.z_precision = kwargs["z_precision"]
         self.gnuplot.plot_type = "scatter"
+        self.gnuplot.legend_location = kwargs["legend_location"]
         # self.gnuplot.colormap = kwargs["cmap"]
         if kwargs["cmap"]:
             self.warn("DIT is unable to set colormap for gnuplot now. The https://github.com/Gnuplotting/gnuplot-palettes may help you")
