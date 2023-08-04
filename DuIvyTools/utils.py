@@ -206,6 +206,13 @@ class Parameters(log):
             choices=[None, "left", "top", "bottom", "right"],
             help="the location of colorbar, also determining the orientation of colorbar",
         )
+        parser.add_argument(
+            "--legend_location",
+            type=str,
+            default="inside",
+            choices=["inside", "outside"],
+            help="the location of legend box",
+        )
 
         ## TODO think twice
         parser.add_argument(

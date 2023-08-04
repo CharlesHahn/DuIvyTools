@@ -63,6 +63,7 @@ class xvg_show(Command):
                 "highs": list(),
                 "lows": list(),
                 "alpha": self.parm.alpha,
+                "legend_location":self.parm.legend_location,
             }
             if self.parm.engine == "matplotlib":
                 line = LineMatplotlib(**kwargs)
@@ -158,6 +159,7 @@ class xvg_compare(Command):
             "highs": highs_list,
             "lows": lows_list,
             "alpha": self.parm.alpha,
+            "legend_location":self.parm.legend_location,
         }
         if self.parm.engine == "matplotlib":
             line = LineMatplotlib(**kwargs)
@@ -510,6 +512,7 @@ class xvg_show_distribution(xvg_compare):
             "highs": list(),
             "lows": list(),
             "alpha": self.parm.alpha,
+            "legend_location":self.parm.legend_location,
         }
         if self.parm.engine == "matplotlib":
             line = LineMatplotlib(**kwargs)
@@ -641,6 +644,7 @@ class xvg_show_scatter(Command):
             "y_precision": self.parm.y_precision,
             "z_precision": self.parm.z_precision,
             "colorbar_location": self.parm.colorbar_location,
+            "legend_location":self.parm.legend_location,
         }
         if self.parm.engine == "matplotlib":
             line = ScatterMatplotlib(**kwargs)
@@ -719,7 +723,6 @@ class xvg_show_stack(Command):
             else:
                 alpha = self.parm.alpha
 
-            ## TODO: legend location
             kwargs = {
                 "data_list": data_list,
                 "xdata_list": xdata_list,
@@ -736,6 +739,7 @@ class xvg_show_stack(Command):
                 "highs": highs_list,
                 "lows": lows_list,
                 "alpha": alpha,
+                "legend_location":self.parm.legend_location,
             }
             if self.parm.engine == "matplotlib":
                 line = StackMatplotlib(**kwargs)

@@ -176,7 +176,6 @@ class StackPlotly(ParentPlotly):
                     x=kwargs["xdata_list"][i],
                     y=data,
                     name=kwargs["legends"][i],
-                    # line=dict(color=self.style["color_cycle"][i]),
                     showlegend=True,
                     stackgroup="stack",
                     fillcolor=rgba,

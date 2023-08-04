@@ -94,6 +94,7 @@ class LineMatplotlib(ParentMatplotlib):
         highs :List[List[float]]
         lows :List[List[float]]
         alpha :float
+        legend_location:str #{inside, outside}
     """
 
     def __init__(self, **kwargs) -> None:
@@ -122,7 +123,11 @@ class LineMatplotlib(ParentMatplotlib):
             y_p = kwargs["y_precision"]
             ax.yaxis.set_major_formatter(FormatStrFormatter(f"%.{y_p}f"))
 
-        plt.legend()
+        if kwargs["legend_location"] == "outside":
+            ## TODO hard code the legend location???
+            plt.legend(bbox_to_anchor=(1.02, 1.00), loc="upper left")
+        else:
+            plt.legend()
         plt.xlabel(kwargs["xlabel"])
         plt.ylabel(kwargs["ylabel"])
         plt.title(kwargs["title"])
@@ -154,6 +159,7 @@ class ScatterMatplotlib(ParentMatplotlib):
         z_precision :int
         cmap :str
         colorbar_location:str
+        legend_location:str #{inside, outside}
     """
 
     def __init__(self, **kwargs) -> None:
@@ -213,7 +219,10 @@ class ScatterMatplotlib(ParentMatplotlib):
             y_p = kwargs["y_precision"]
             ax.yaxis.set_major_formatter(FormatStrFormatter(f"%.{y_p}f"))
 
-        plt.legend()
+        if kwargs["legend_location"] == "outside":
+            plt.legend(bbox_to_anchor=(1.02, 1.00), loc="upper left")
+        else:
+            plt.legend()
         plt.xlabel(kwargs["xlabel"])
         plt.ylabel(kwargs["ylabel"])
         plt.title(kwargs["title"])
@@ -242,6 +251,7 @@ class StackMatplotlib(ParentMatplotlib):
         highs :List[List[float]]
         lows :List[List[float]]
         alpha :float
+        legend_location:str #{inside, outside}
     """
 
     def __init__(self, **kwargs) -> None:
@@ -269,7 +279,10 @@ class StackMatplotlib(ParentMatplotlib):
             y_p = kwargs["y_precision"]
             ax.yaxis.set_major_formatter(FormatStrFormatter(f"%.{y_p}f"))
 
-        plt.legend()
+        if kwargs["legend_location"] == "outside":
+            plt.legend(bbox_to_anchor=(1.02, 1.00), loc="upper left")
+        else:
+            plt.legend()
         plt.xlabel(kwargs["xlabel"])
         plt.ylabel(kwargs["ylabel"])
         plt.title(kwargs["title"])

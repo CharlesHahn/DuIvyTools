@@ -110,6 +110,14 @@
         engine for plotting
 -csv
         save data into csv
+-cm, --colormap
+        select colormap
+--bin
+        number of bins for calculating distribution
+--colorbar_location
+        the location of colorbar
+--legend_location
+        the locatiion of legends
 
 -xi, --x_index
         the index for x of scatter figure
@@ -119,8 +127,6 @@
         the index for z of scatter figure
 -xt, --xtitles
         the names of x ticks in figure
---bin
-        number of bins for calculating distribution
 --ave2csv
         save the average data info csv
 -ip, --interpolation
@@ -165,8 +171,6 @@
         angle xvg files
 -so, --set_operation
         AND or OR operation on hbonds
--cm, --colormap
-        select colormap
 ```
 
 #### commands
