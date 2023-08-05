@@ -878,8 +878,7 @@ class xvg_box_compare(xvg_compare):
             line = BoxPlotly(**kwargs)
             line.final(self.parm.output, self.parm.noshow)
         elif self.parm.engine == "plotext":
-            line = BoxPlotext(**kwargs)
-            line.final(self.parm.output, self.parm.noshow)
+            self.error("Plotext engine do not support box plot now.")
         elif self.parm.engine == "gnuplot":
             line = BoxGnuplot(**kwargs)
             line.final(self.parm.output, self.parm.noshow)

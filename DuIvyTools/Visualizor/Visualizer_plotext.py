@@ -93,11 +93,6 @@ class LinePlotext(ParentPlotext):
             self.warn("unable to apply y_precision to plotext engine")
 
 
-class StackPlotext(ParentPlotext):
-    def __init__(self, **kwargs) -> None:
-        super().__init__()
-
-
 class ScatterPlotext(ParentPlotext):
     """A plotext scatter plot class for scatter plots
 
@@ -157,15 +152,5 @@ class ScatterPlotext(ParentPlotext):
 
 
 class BarPlotext(ParentPlotext):
-    def __init__(self, **kwargs) -> None:
-        super().__init__()
-
-
-class BoxPlotext(ParentPlotext):
-    def __init__(self, **kwargs) -> None:
-        super().__init__()
-
-
-class ViolinPlotext(ParentPlotext):
     def __init__(self, **kwargs) -> None:
         super().__init__()
