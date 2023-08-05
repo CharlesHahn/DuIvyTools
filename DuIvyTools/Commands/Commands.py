@@ -62,7 +62,7 @@ class Command(log):
             str: result string
         """
         ## deal with subscripts or superscripts
-        latex_found_flag:bool = False
+        latex_found_flag: bool = False
         res = ori[:]
         if "\\s" in res and "\\N" in res:
             res = res.replace("\\s", "_{")
@@ -108,7 +108,7 @@ class Command(log):
             msgs = [self.deal_latex(m, False, True) for m in msgs]
         return msgs
 
-    def check_output_exist(self, output:str) -> str:
+    def check_output_exist(self, output: str) -> str:
         """check if the output file exists in current working directory. If true, add time stamp to its name
 
         Args:
@@ -125,4 +125,3 @@ class Command(log):
             )
             output = new_output
         return output
-    

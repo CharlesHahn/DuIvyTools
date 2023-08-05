@@ -177,13 +177,15 @@ class Parameters(log):
             default=0.95,
             help="confidence for confidence interval calculation",
         )
-        parser.add_argument("--alpha", type=float, default=0.4, help="the alpha of background lines")
+        parser.add_argument(
+            "--alpha", type=float, default=0.4, help="the alpha of background lines"
+        )
         parser.add_argument("-csv", "--csv", help="store data into csv file")
         parser.add_argument(
             "-eg",
             "--engine",
             type=str,
-            default="matplotlib", 
+            default="matplotlib",
             choices=["matplotlib", "plotext", "plotly", "gnuplot"],
             help="specify the engine for plotting, 'matplotlib', 'plotext', 'plotly', 'gnuplot'",
         )
@@ -360,7 +362,3 @@ class Parameters(log):
             self.error("parameter 'y_precision' should not be a minus")
         if self.z_precision and self.z_precision < 0:
             self.error("parameter 'z_precision' should not be a minus")
-
-
-
-

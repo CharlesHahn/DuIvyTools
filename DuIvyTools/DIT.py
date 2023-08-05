@@ -19,7 +19,9 @@ class DIT(log):
         parm = Parameters()
         cmd = self.cmds.get(parm.cmd, None)
         if cmd == None:
-            self.error("Wrong selection of command, type 'dit help' to see all possible commands")
+            self.error(
+                "Wrong selection of command, type 'dit help' to see all possible commands"
+            )
         cmd = cmd(parm)
         cmd()
 

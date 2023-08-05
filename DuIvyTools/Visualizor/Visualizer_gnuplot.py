@@ -63,10 +63,10 @@ class Gnuplot(log):
         self.highs: List[List[float]] = None
         self.lows: List[List[float]] = None
         self.color_list: List[List[float]] = None
-        self.colorbar_location:str = None
-        self.legend_location:str = "inside"
-        self.colormap:str = None
-        self.plot_type:str = "line"
+        self.colorbar_location: str = None
+        self.legend_location: str = "inside"
+        self.colormap: str = None
+        self.plot_type: str = "line"
 
     def dump2str(self) -> str:
         """dump gnuplot properties to gnuplot input scripts
@@ -118,13 +118,11 @@ class Gnuplot(log):
             gpl = self.scatter_plot(gpl)
         elif self.plot_type == "stack":
             gpl = self.stack_plot(gpl)
-        
+
         return gpl
 
-    def stack_plot(self, gpl:str) -> str:
-        gpl += (
-            f"""set style fill transparent solid {self.style["alpha"]} noborder\n"""
-        )
+    def stack_plot(self, gpl: str) -> str:
+        gpl += f"""set style fill transparent solid {self.style["alpha"]} noborder\n"""
         for c in range(len(self.data)):
             gpl += f"\n$data{c} << EOD\n"
             for r in range(len(self.xdata[c])):
@@ -137,9 +135,8 @@ class Gnuplot(log):
 
         return gpl
 
-
-    def scatter_plot(self, gpl:str) -> str:
-        # TODO colorbar_location 
+    def scatter_plot(self, gpl: str) -> str:
+        # TODO colorbar_location
         # TODO cmap
         if self.zlabel:
             gpl += f"""set cblabel "{self.zlabel}"\n"""
@@ -158,7 +155,7 @@ class Gnuplot(log):
 
         return gpl
 
-    def line_plot(self, gpl:str) -> str:
+    def line_plot(self, gpl: str) -> str:
         if self.data and self.legends and len(self.highs) == 0 and len(self.lows) == 0:
             for c in range(len(self.data)):
                 gpl += f"\n$data{c} << EOD\n"
@@ -364,6 +361,7 @@ class ScatterGnuplot(ParentGnuplot):
         colorbar_location:str
         legend_location :str # {inside, outside}
     """
+
     def __init__(self, **kwargs) -> None:
         super().__init__()
 
@@ -397,7 +395,9 @@ class ScatterGnuplot(ParentGnuplot):
         self.gnuplot.legend_location = kwargs["legend_location"]
         # self.gnuplot.colormap = kwargs["cmap"]
         if kwargs["cmap"]:
-            self.warn("DIT is unable to set colormap for gnuplot now. The https://github.com/Gnuplotting/gnuplot-palettes may help you")
+            self.warn(
+                "DIT is unable to set colormap for gnuplot now. The https://github.com/Gnuplotting/gnuplot-palettes may help you"
+            )
         # self.gnuplot.colorbar_location = kwargs["colorbar_location"]
         if kwargs["colorbar_location"]:
             self.warn("DIT is unable to set colorbar location for gnuplot now.")

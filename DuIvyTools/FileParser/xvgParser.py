@@ -131,7 +131,7 @@ class XVG(log):
                 f"string column may detected, data_heads {len(self.data_heads)} < column_num {self.column_num}"
             )
 
-    def dump2xvg(self, outxvg: str, check:bool=True) -> None:
+    def dump2xvg(self, outxvg: str, check: bool = True) -> None:
         """dump xvg class to xvg file
 
         Args:
@@ -140,7 +140,7 @@ class XVG(log):
         if check:
             if len(self.data_heads) == 0:
                 self.error("unable to dump xvg with empty data_heads")
-            if len(self.data_heads) != 0 and len(self.legends) ==0:
+            if len(self.data_heads) != 0 and len(self.legends) == 0:
                 self.legends = self.data_heads[1:]
             if len(self.data_heads) != 0 and not self.xlabel:
                 self.xlabel = self.data_heads[0]
@@ -241,17 +241,21 @@ class XVG(log):
         ave = np.average(column[begin:end:dt])
         std = np.std(column[begin:end:dt], ddof=1)
         return legend, ave, std
-    
-    def check_column_index(self, column_index:Union[int, List]) -> None:
+
+    def check_column_index(self, column_index: Union[int, List]) -> None:
         if isinstance(column_index, int):
             column_index = [column_index]
         elif isinstance(column_index, list):
             pass
         else:
-            self.error("wrong type specification of column_index for checking the column index range")
+            self.error(
+                "wrong type specification of column_index for checking the column index range"
+            )
         for column in column_index:
             if column >= self.column_num:
-                self.error(f"""{self.xvgfile} only contianed {self.column_num} columns. Column index start from 0. You can't select column {column}""")
+                self.error(
+                    f"""{self.xvgfile} only contianed {self.column_num} columns. Column index start from 0. You can't select column {column}"""
+                )
 
 
 class XVGS(log):

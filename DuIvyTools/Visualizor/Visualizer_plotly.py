@@ -166,8 +166,8 @@ class StackPlotly(ParentPlotly):
     def __init__(self, **kwargs) -> None:
         super().__init__()
 
-        kwargs["data_list"].reverse() # first in, show at bottom
-        kwargs["legends"].reverse() # reverse as data
+        kwargs["data_list"].reverse()  # first in, show at bottom
+        kwargs["legends"].reverse()  # reverse as data
         for i, data in enumerate(kwargs["data_list"]):
             rgb = self.hex2rgb(self.style["color_cycle"][i])
             rgba = f"rgba({rgb[0]},{rgb[1]},{rgb[2]},{kwargs['alpha']})"
@@ -247,13 +247,13 @@ class ScatterPlotly(ParentPlotly):
                             "tickformat": f".{kwargs['z_precision']}f",
                             "lenmode": "fraction",
                             "len": 0.50,
-                            "xanchor":"left",
-                            "yanchor":"top",
+                            "xanchor": "left",
+                            "yanchor": "top",
                         },
                         color=kwargs["color_list"][i],
                         colorscale=kwargs["cmap"],
                         symbol=i,
-                        showscale=True
+                        showscale=True,
                     ),
                 )
             )

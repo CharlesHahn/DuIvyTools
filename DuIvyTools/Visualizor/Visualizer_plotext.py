@@ -125,11 +125,17 @@ class ScatterPlotext(ParentPlotext):
         cmap :str
         colorbar_location:str
     """
+
     def __init__(self, **kwargs) -> None:
         super().__init__()
 
         for i, data in enumerate(kwargs["data_list"]):
-            plt.scatter(kwargs["xdata_list"][i], data, label=kwargs["legends"][i], color=kwargs["color_list"])
+            plt.scatter(
+                kwargs["xdata_list"][i],
+                data,
+                label=kwargs["legends"][i],
+                color=kwargs["color_list"],
+            )
 
         if kwargs["xmin"] != None or kwargs["xmax"] != None:
             plt.xlim(kwargs["xmin"], kwargs["xmax"])
@@ -144,7 +150,7 @@ class ScatterPlotext(ParentPlotext):
             self.warn("unable to apply x_precision to plotext engine")
         if kwargs["y_precision"] != None:
             self.warn("unable to apply y_precision to plotext engine")
-        
+
         for key in ["cmap", "colorbar_location", "z_precision", "zlabel", "color_list"]:
             if kwargs[key]:
                 self.warn(f"{key} is not valid for plotext engine")

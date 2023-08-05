@@ -44,7 +44,9 @@ class xvg_show(Command):
                         for y in xvg.data_columns[c + 1][begin:end:dt]
                     ]
                 )
-                xdata.append([x * self.parm.xshrink for x in xvg.data_columns[0][begin:end:dt]])
+                xdata.append(
+                    [x * self.parm.xshrink for x in xvg.data_columns[0][begin:end:dt]]
+                )
             self.remove_latex()
 
             kwargs = {
@@ -63,7 +65,7 @@ class xvg_show(Command):
                 "highs": list(),
                 "lows": list(),
                 "alpha": self.parm.alpha,
-                "legend_location":self.parm.legend_location,
+                "legend_location": self.parm.legend_location,
             }
             if self.parm.engine == "matplotlib":
                 line = LineMatplotlib(**kwargs)
@@ -79,6 +81,7 @@ class xvg_show(Command):
                 line.final(self.parm.output, self.parm.noshow)
             else:
                 self.error("wrong selection of plot engine")
+
 
 class xvg_compare(Command):
     """a command class for compare xvg file data"""
@@ -137,7 +140,9 @@ class xvg_compare(Command):
                 else:
                     aves = xvg.data_columns[column_index]
                 data_list.append([y * self.parm.yshrink for y in aves[begin:end:dt]])
-                xdata.append([x * self.parm.xshrink for x in xvg.data_columns[0][begin:end:dt]])
+                xdata.append(
+                    [x * self.parm.xshrink for x in xvg.data_columns[0][begin:end:dt]]
+                )
                 legend = xvg.data_heads[column_index]
                 legends.append(f"{legend} - {xvg.xvgfile}")
         self.remove_latex()
@@ -159,7 +164,7 @@ class xvg_compare(Command):
             "highs": highs_list,
             "lows": lows_list,
             "alpha": self.parm.alpha,
-            "legend_location":self.parm.legend_location,
+            "legend_location": self.parm.legend_location,
         }
         if self.parm.engine == "matplotlib":
             line = LineMatplotlib(**kwargs)
@@ -397,8 +402,12 @@ class xvg_energy_compute(Command):
         xvg = XVG(self.parm.output, is_file=False, new_file=True)
         xvg.title = prolig.title
         xvg.comments += "# this file was created by XVG.energy_compute through: \n"
-        xvg.comments += "#    binding = prolig energy - protein energy - ligand energy\n"
-        xvg.comments += f"#    {self.parm.output} = {prolig_xvg} - {pro_xvg} - {lig_xvg}\n"
+        xvg.comments += (
+            "#    binding = prolig energy - protein energy - ligand energy\n"
+        )
+        xvg.comments += (
+            f"#    {self.parm.output} = {prolig_xvg} - {pro_xvg} - {lig_xvg}\n"
+        )
         xvg.xlabel = out_heads[0]
         xvg.ylabel = "(kJ/mol)"
         xvg.legends = out_heads[1:]
@@ -435,14 +444,15 @@ class xvg_combine(Command):
             self.parm.columns = [[cs] for cs in self.parm.columns]
         if len(self.parm.input) != len(self.parm.columns):
             self.error(f"columns must contain {len(self.parm.input)} list")
-        if self.parm.legends != None and len(self.parm.legends) != sum(
-            [len(c) for c in self.parm.columns]
-        )-1:
+        if (
+            self.parm.legends != None
+            and len(self.parm.legends) != sum([len(c) for c in self.parm.columns]) - 1
+        ):
             self.error("number of legends you input can not pair to columns you select")
-        
+
         # process xvg combination
         out_xvg = XVG(self.parm.output, is_file=False, new_file=True)
-        title_list:str = []
+        title_list: str = []
         out_xvg.comments += "# this file was created by combination of:\n"
         xvgs = [XVG(xvg) for xvg in self.parm.input]
         for id, column_indexs in enumerate(self.parm.columns):
@@ -512,7 +522,7 @@ class xvg_show_distribution(xvg_compare):
             "highs": list(),
             "lows": list(),
             "alpha": self.parm.alpha,
-            "legend_location":self.parm.legend_location,
+            "legend_location": self.parm.legend_location,
         }
         if self.parm.engine == "matplotlib":
             line = LineMatplotlib(**kwargs)
@@ -536,7 +546,9 @@ class xvg_show_distribution(xvg_compare):
     def dump2csv(self, kwargs):
         with open(self.parm.csv, "w") as fo:
             for leg in kwargs["legends"]:
-                fo.write(f"""Distribution_of_{leg.strip("$")},Frequency(%)_of_{leg.strip("$")},""")
+                fo.write(
+                    f"""Distribution_of_{leg.strip("$")},Frequency(%)_of_{leg.strip("$")},"""
+                )
             fo.write("\n")
             for r in range(self.parm.bin):
                 for c in range(len(kwargs["data_list"])):
@@ -544,22 +556,24 @@ class xvg_show_distribution(xvg_compare):
                     fo.write(f"""{kwargs["data_list"][c][r]:.8f},""")
                 fo.write("\n")
         self.info(f"data has been dumped to {self.parm.csv} successfully")
-    
-    def calc_distribution(self, data:List[float], bin:int) -> Tuple[List[float], List[float]]:
+
+    def calc_distribution(
+        self, data: List[float], bin: int
+    ) -> Tuple[List[float], List[float]]:
         """calculate the distribution of data
 
         Args:
             data (List[float]): data
             bin (int): bin number
-        
+
         Returns:
             xdata (List[float]): xdata
             data (List[float]): distribution data
         """
         min, max = np.min(data), np.max(data)
-        bin_window = (max-min) / bin
+        bin_window = (max - min) / bin
         if bin_window != 0:
-            frequency = [ 0 for _ in range(bin)]
+            frequency = [0 for _ in range(bin)]
             for value in data:
                 index = int((value - min) / bin_window)
                 if index == bin:
@@ -592,13 +606,17 @@ class xvg_show_scatter(Command):
             if not isinstance(xvg, str):
                 self.error("files should be seperated by space not ,")
         for indexs in self.parm.columns:
-            if not isinstance(indexs, list) or len(indexs) not in [2,3]:
-                self.error("for each file, you must specify 2 or 3 (as color) columns to draw scatter plot")
+            if not isinstance(indexs, list) or len(indexs) not in [2, 3]:
+                self.error(
+                    "for each file, you must specify 2 or 3 (as color) columns to draw scatter plot"
+                )
         if len(self.parm.input) != len(self.parm.columns):
             self.error(f"columns must contain {len(self.parm.input)} list")
         if self.parm.legends != None and len(self.parm.legends) != len(self.parm.input):
-            self.error("for scatter plot, the number of legends must pair to the number of files")
-        
+            self.error(
+                "for scatter plot, the number of legends must pair to the number of files"
+            )
+
         # deal with data
         begin, end, dt = self.parm.begin, self.parm.end, self.parm.dt
         xvgs = [XVG(xvg) for xvg in self.parm.input]
@@ -608,12 +626,27 @@ class xvg_show_scatter(Command):
         for id, column_indexs in enumerate(self.parm.columns):
             xvg = xvgs[id]
             xvg.check_column_index(column_indexs)
-            xdata_list.append([x*self.parm.xshrink for x in xvg.data_columns[column_indexs[0]][begin:end:dt]])
+            xdata_list.append(
+                [
+                    x * self.parm.xshrink
+                    for x in xvg.data_columns[column_indexs[0]][begin:end:dt]
+                ]
+            )
             xlabel = xvg.data_heads[column_indexs[0]]
-            data_list.append([y*self.parm.yshrink for y in xvg.data_columns[column_indexs[1]][begin:end:dt]])
+            data_list.append(
+                [
+                    y * self.parm.yshrink
+                    for y in xvg.data_columns[column_indexs[1]][begin:end:dt]
+                ]
+            )
             ylabel = xvg.data_heads[column_indexs[1]]
             if len(column_indexs) == 3:
-                color_list.append([z*self.parm.zshrink for z in xvg.data_columns[column_indexs[2]][begin:end:dt]])
+                color_list.append(
+                    [
+                        z * self.parm.zshrink
+                        for z in xvg.data_columns[column_indexs[2]][begin:end:dt]
+                    ]
+                )
                 color_head = xvg.data_heads[column_indexs[2]]
             else:
                 color_list.append([1 for x in data_list[-1]])
@@ -639,12 +672,12 @@ class xvg_show_scatter(Command):
             "ylabel": self.sel_parm(self.parm.ylabel, ylabel),
             "title": self.sel_parm(self.parm.title, self.file.title),
             "zlabel": self.sel_parm(self.parm.zlabel, color_head),
-            "cmap":self.sel_parm(self.parm.colormap, None),
+            "cmap": self.sel_parm(self.parm.colormap, None),
             "x_precision": self.parm.x_precision,
             "y_precision": self.parm.y_precision,
             "z_precision": self.parm.z_precision,
             "colorbar_location": self.parm.colorbar_location,
-            "legend_location":self.parm.legend_location,
+            "legend_location": self.parm.legend_location,
         }
         if self.parm.engine == "matplotlib":
             line = ScatterMatplotlib(**kwargs)
@@ -688,27 +721,46 @@ class xvg_show_stack(Command):
         if self.parm.legends != None:
             for id, column_indexs in enumerate(self.parm.columns):
                 if len(self.parm.legends) != len(column_indexs):
-                    self.error(f"number of legends you input can not pair to columns {column_indexs} you select")
+                    self.error(
+                        f"number of legends you input can not pair to columns {column_indexs} you select"
+                    )
 
         # deal with data
         begin, end, dt = self.parm.begin, self.parm.end, self.parm.dt
         xvgs = [XVG(xvg) for xvg in self.parm.input]
         for id, column_indexs in enumerate(self.parm.columns):
             self.file = xvgs[id]
-            column_indexs.reverse() # First in, show at bottom
+            column_indexs.reverse()  # First in, show at bottom
             if self.parm.legends:
-                self.parm.legends.reverse() # reverse as the column_indexs
+                self.parm.legends.reverse()  # reverse as the column_indexs
             self.file.check_column_index(column_indexs)
             legends, xdata_list, data_list = [], [], []
             highs_list, lows_list = [], []
             for i in range(len(column_indexs)):
                 legends.append(self.file.data_heads[column_indexs[i]])
-                xdata_list.append([x*self.parm.xshrink for x in self.file.data_columns[0][begin:end:dt]])
-                data_list.append([y*self.parm.yshrink for y in self.file.data_columns[column_indexs[i]][begin:end:dt]])
+                xdata_list.append(
+                    [
+                        x * self.parm.xshrink
+                        for x in self.file.data_columns[0][begin:end:dt]
+                    ]
+                )
+                data_list.append(
+                    [
+                        y * self.parm.yshrink
+                        for y in self.file.data_columns[column_indexs[i]][begin:end:dt]
+                    ]
+                )
                 data = []
                 for r in range(self.file.row_num):
-                    data.append(sum([self.file.data_columns[column_indexs[c]][r] for c in range(i,len(column_indexs))]))
-                highs_list.append([y*self.parm.yshrink for y in data[begin:end:dt]])
+                    data.append(
+                        sum(
+                            [
+                                self.file.data_columns[column_indexs[c]][r]
+                                for c in range(i, len(column_indexs))
+                            ]
+                        )
+                    )
+                highs_list.append([y * self.parm.yshrink for y in data[begin:end:dt]])
                 lows_list.append([0 for _ in range(len(data_list[0]))])
             legends = self.remove_latex_msgs(legends)
             title = f"{self.file.title} of {self.file.xvgfile}"
@@ -719,7 +771,9 @@ class xvg_show_stack(Command):
             ymax = np.max(highs_list[0])
             if self.parm.alpha == 0.4:
                 alpha = 1.0
-                self.warn("DIT strongly suggest use alpha==1.0 to draw stack plot. If you wanna specify alpha, don't use the default value (0.4) which would be convert to 1.0")
+                self.warn(
+                    "DIT strongly suggest use alpha==1.0 to draw stack plot. If you wanna specify alpha, don't use the default value (0.4) which would be convert to 1.0"
+                )
             else:
                 alpha = self.parm.alpha
 
@@ -739,7 +793,7 @@ class xvg_show_stack(Command):
                 "highs": highs_list,
                 "lows": lows_list,
                 "alpha": alpha,
-                "legend_location":self.parm.legend_location,
+                "legend_location": self.parm.legend_location,
             }
             if self.parm.engine == "matplotlib":
                 line = StackMatplotlib(**kwargs)
@@ -776,15 +830,24 @@ class xvg_box_compare(xvg_compare):
             xvg = xvgs[id]
             for column_index in column_indexs:
                 xvg.check_column_index(column_index)
-                data_list.append([y * self.parm.yshrink for y in xvg.data_columns[column_index][begin:end:dt]])
-                color_list.append([x * self.parm.zshrink for x in xvg.data_columns[0][begin:end:dt]]) # zshrink for third data
+                data_list.append(
+                    [
+                        y * self.parm.yshrink
+                        for y in xvg.data_columns[column_index][begin:end:dt]
+                    ]
+                )
+                color_list.append(
+                    [x * self.parm.zshrink for x in xvg.data_columns[0][begin:end:dt]]
+                )  # zshrink for third data
                 zlabel = xvg.data_heads[0]
                 legend = xvg.data_heads[column_index]
                 legends.append(f"{legend} - {xvg.xvgfile}")
         self.remove_latex()
         legends = self.remove_latex_msgs(legends)
         if self.parm.mode != "withoutScatter":
-            self.info("the scatter dots will be colored by the first column data of corresponding file")
+            self.info(
+                "the scatter dots will be colored by the first column data of corresponding file"
+            )
 
         kwargs = {
             "data_list": data_list,
@@ -803,7 +866,7 @@ class xvg_box_compare(xvg_compare):
             "z_precision": self.parm.z_precision,
             "alpha": self.parm.alpha,
             "mode": self.parm.mode,
-            "cmap":self.sel_parm(self.parm.colormap, None),
+            "cmap": self.sel_parm(self.parm.colormap, None),
             "colorbar_location": self.parm.colorbar_location,
         }
         if self.parm.engine == "matplotlib":
@@ -820,7 +883,6 @@ class xvg_box_compare(xvg_compare):
             line.final(self.parm.output, self.parm.noshow)
         else:
             self.error("wrong selection of plot engine")
-        
 
 
 class xvg_violin_compare(Command):

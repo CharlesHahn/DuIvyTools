@@ -190,8 +190,8 @@ class ScatterMatplotlib(ParentMatplotlib):
                 data,
                 c=kwargs["color_list"][i],
                 label=kwargs["legends"][i],
-                marker=marker_list[i], 
-                cmap=kwargs["cmap"]
+                marker=marker_list[i],
+                cmap=kwargs["cmap"],
             )
         if kwargs["z_precision"] != None:
             plt.colorbar(
@@ -316,17 +316,24 @@ class BoxMatplotlib(ParentMatplotlib):
         alpha :float
         cmap :str
         colorbar_location:str
-        mode :str 
+        mode :str
     """
+
     def __init__(self, **kwargs) -> None:
         super().__init__()
 
-        ## scatter 
+        ## scatter
         loc = 1.0
         if kwargs["mode"] != "withoutScatter":
             loc = 0.8
             for i, data in enumerate(kwargs["data_list"]):
-                plt.scatter(np.random.normal(i + 1.20, 0.04, len(data)), data, alpha=kwargs["alpha"], c=kwargs["color_list"][i], cmap=kwargs["cmap"])
+                plt.scatter(
+                    np.random.normal(i + 1.20, 0.04, len(data)),
+                    data,
+                    alpha=kwargs["alpha"],
+                    c=kwargs["color_list"][i],
+                    cmap=kwargs["cmap"],
+                )
             if kwargs["z_precision"] != None:
                 plt.colorbar(
                     label=kwargs["zlabel"],
@@ -338,7 +345,7 @@ class BoxMatplotlib(ParentMatplotlib):
                     label=kwargs["zlabel"],
                     location=kwargs["colorbar_location"],
                 )
-            
+
         box_positions = [i + loc for i in range(len(kwargs["data_list"]))]
         plt.boxplot(
             kwargs["data_list"],
