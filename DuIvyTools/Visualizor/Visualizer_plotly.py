@@ -283,10 +283,92 @@ class BarPlotly(ParentPlotly):
 
 
 class BoxPlotly(ParentPlotly):
+    """A plotly box plot class for box plots
+
+    Args:
+        ParentPlotly (object): Plotly parent class
+
+    Parameters:
+        data_list :List[List[float]]
+        color_list :List[List[float]]
+        legends :List[str]
+        xmin :float
+        xmax :flaot
+        ymin :float
+        ymax :float
+        xlabel :str
+        ylabel :str
+        zlabel :str
+        title :str
+        x_precision :int
+        y_precision :int
+        z_precision :int
+        alpha :float
+        cmap :str
+        colorbar_location:str
+        mode :str
+    """
     def __init__(self, **kwargs) -> None:
         super().__init__()
 
+        loc = 1.0
+        if kwargs["mode"] != "withoutScatter":
+            loc = 0.75
+            for i, data in enumerate(kwargs["data_list"]):
+                self.figure.add_trace(
+                    go.Scatter(
+                        x=np.random.normal(i+1.25, 0.04, len(data)),
+                        y=data,
+                        mode="markers",
+                        name=kwargs["legends"][i],
+                        showlegend=(len(kwargs["legends"]) > 1),
+                        marker=dict(
+                            colorbar={
+                                "title": {"text": kwargs["zlabel"], "side": "right"},
+                                "tickformat": f".{kwargs['z_precision']}f",
+                                "lenmode": "fraction",
+                                "len": 0.50,
+                                "xanchor": "left",
+                                "yanchor": "top",
+                            },
+                            color=kwargs["color_list"][i],
+                            colorscale=kwargs["cmap"],
+                            symbol=i,
+                            showscale=True,
+                        ),
+                    )
+                )
 
-class ViolinPlotly(ParentPlotly):
-    def __init__(self, **kwargs) -> None:
-        super().__init__()
+        for i, data in enumerate(kwargs["data_list"]):
+            self.figure.add_trace(
+                go.Violin(
+                    x=[i+loc for _ in data],
+                    y=data,
+                    x0=kwargs["legends"][i],
+                    box_visible = True,
+                    meanline_visible = True,
+                )
+            )
+        self.figure.update_xaxes(
+            tickvals = [i+1 for i in range(len(kwargs["data_list"]))],
+            ticktext = kwargs["legends"]
+        )
+        self.figure.update_layout(
+            legend_orientation="h",
+            title=kwargs["title"],
+            xaxis_title=kwargs["xlabel"],
+            yaxis_title=kwargs["ylabel"],
+            font=dict(family="Arial, Times New Roman", size=18),
+            showlegend=False,
+        )
+        if kwargs["colorbar_location"]:
+            self.warn("colorbar_location parameter is not valid for plotly")
+        if kwargs["xmin"] != None or kwargs["xmax"] != None:
+            self.figure.update_layout(xaxis_range=[kwargs["xmin"], kwargs["xmax"]])
+        if kwargs["ymin"] != None or kwargs["ymax"] != None:
+            self.figure.update_layout(yaxis_range=[kwargs["ymin"], kwargs["ymax"]])
+        if kwargs["x_precision"] != None:
+            self.figure.update_layout(xaxis_tickformat=f".{kwargs['x_precision']}f")
+        if kwargs["y_precision"] != None:
+            self.figure.update_layout(yaxis_tickformat=f".{kwargs['y_precision']}f")
+
