@@ -188,7 +188,7 @@ class Parameters(log):
             help="specify the engine for plotting, 'matplotlib', 'plotext', 'plotly', 'gnuplot'",
         )
         parser.add_argument(
-            "-cm",
+            "-cmap",
             "--colormap",
             help="specify the figure style, 'origin', 'gaussian', 'bio3d'",
         )
@@ -213,11 +213,14 @@ class Parameters(log):
             choices=["inside", "outside"],
             help="the location of legend box",
         )
+        parser.add_argument(
+            "--mode",
+            type=str,
+            choices=[None, "withoutScatter"],
+            help="additional parameter, withoutScatter will NOT show scatter plot for xvg_box_compare and xvg_violin_compare",
+        )
 
         ## TODO think twice
-        parser.add_argument(
-            "-xt", "--xtitles", nargs="+", help="the x tick labels for box comparison"
-        )
         parser.add_argument(
             "-ip",
             "--interpolation",
@@ -232,17 +235,12 @@ class Parameters(log):
         )
 
         parser.add_argument(
-            "-ac",
-            "--ave2csv",
-            action="store_true",
-            help="whether store average data into csv file, used in xvg_bar_draw",
-        )
-        parser.add_argument(
             "-pcm",
             "--pcolormesh",
             action="store_true",
             help="whether to apply pcolormesh function to draw",
         )
+
         parser.add_argument(
             "-gl", "--grouplist", nargs="+", help="specify a list of group names"
         )
