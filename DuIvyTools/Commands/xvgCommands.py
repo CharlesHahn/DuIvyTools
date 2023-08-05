@@ -486,6 +486,7 @@ class xvg_show_distribution(xvg_compare):
         self.info("in xvg_show_distribution")
         print(self.parm.__dict__)
 
+        ## TODO: fill the curve to zero, KDE density map
         self.check_parm()
         begin, end, dt = self.parm.begin, self.parm.end, self.parm.dt
         xvgs = [XVG(xvg) for xvg in self.parm.input]
@@ -617,6 +618,7 @@ class xvg_show_scatter(Command):
                 "for scatter plot, the number of legends must pair to the number of files"
             )
 
+        # TODO: scatter density map
         # deal with data
         begin, end, dt = self.parm.begin, self.parm.end, self.parm.dt
         xvgs = [XVG(xvg) for xvg in self.parm.input]
@@ -883,15 +885,6 @@ class xvg_box_compare(xvg_compare):
             line.final(self.parm.output, self.parm.noshow)
         else:
             self.error("wrong selection of plot engine")
-
-
-class xvg_violin_compare(Command):
-    def __init__(self, parm: Parameters) -> None:
-        self.parm = parm
-
-    def __call__(self):
-        self.info("in xvg_biolin")
-        print(self.parm.__dict__)
 
 
 class xvg_ave_bar(Command):

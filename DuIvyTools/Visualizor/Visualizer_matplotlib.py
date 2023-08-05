@@ -325,10 +325,10 @@ class BoxMatplotlib(ParentMatplotlib):
         ## scatter
         loc = 1.0
         if kwargs["mode"] != "withoutScatter":
-            loc = 0.8
+            loc = 0.75
             for i, data in enumerate(kwargs["data_list"]):
                 plt.scatter(
-                    np.random.normal(i + 1.20, 0.04, len(data)),
+                    np.random.normal(i + 1.25, 0.04, len(data)),
                     data,
                     alpha=kwargs["alpha"],
                     c=kwargs["color_list"][i],
@@ -347,13 +347,21 @@ class BoxMatplotlib(ParentMatplotlib):
                 )
 
         box_positions = [i + loc for i in range(len(kwargs["data_list"]))]
+        plt.violinplot(
+            kwargs["data_list"],
+            showmeans=False,
+            showmedians=False,
+            showextrema=False,
+            positions=box_positions,
+        )
         plt.boxplot(
             kwargs["data_list"],
             sym=".",
             meanline=True,
             showmeans=True,
-            patch_artist=True,
+            # patch_artist=True,
             notch=True,
+            widths=0.1,
             positions=box_positions,
         )
         plt.xticks([i + 1 for i in range(len(kwargs["data_list"]))], kwargs["legends"])
@@ -374,8 +382,3 @@ class BoxMatplotlib(ParentMatplotlib):
         plt.xlabel(kwargs["xlabel"])
         plt.ylabel(kwargs["ylabel"])
         plt.title(kwargs["title"])
-
-
-class ViolinMatplotlib(ParentMatplotlib):
-    def __init__(self, **kwargs) -> None:
-        super().__init__()
