@@ -67,6 +67,7 @@ class Gnuplot(log):
         self.legend_location: str = "inside"
         self.colormap: str = None
         self.plot_type: str = "line"
+        self.mode: str = None
 
     def dump2str(self) -> str:
         """dump gnuplot properties to gnuplot input scripts
@@ -75,17 +76,17 @@ class Gnuplot(log):
             str: result string for gnuplto input
         """
         gpl: str = ""
-        if self.term:
+        if self.term != None:
             gpl += f"""set term {self.term}\n"""
-        if self.outfig:
+        if self.outfig != None:
             gpl += f"""set output "{self.outfig}"\n"""
-        if self.title:
+        if self.title != None:
             gpl += f"""set title "{self.title}"\n"""
-        if self.xlabel:
+        if self.xlabel != None:
             gpl += f"""set xlabel "{self.xlabel}"\n"""
-        if self.ylabel:
+        if self.ylabel != None:
             gpl += f"""set ylabel "{self.ylabel}"\n"""
-        if self.zlabel:
+        if self.zlabel != None:
             gpl += f"""set zlabel "{self.zlabel}"\n"""
         if self.legend_location == "inside":
             gpl += f"""set key inside\n"""
@@ -103,11 +104,11 @@ class Gnuplot(log):
             self.ymax = ""
         gpl += f"""set yrange [{self.ymin}:{self.ymax}]\n"""
 
-        if self.x_precision:
+        if self.x_precision != None:
             gpl += f"""set xtics format "%.{self.x_precision}f" \n"""
-        if self.y_precision:
+        if self.y_precision != None:
             gpl += f"""set ytics format "%.{self.y_precision}f" \n"""
-        if self.z_precision:
+        if self.z_precision != None:
             gpl += f"""set ztics format "%.{self.z_precision}f" \n"""
 
         gpl += f"""set term pngcairo enhanced truecolor font \"{self.style["font"]},{self.style["fontsize"]}\" fontscale {self.style["fontscale"]} linewidth {self.style["linewidth"]} pointscale {self.style["pointscale"]} size {self.style["width"]},{self.style["height"]} \n"""
@@ -118,6 +119,8 @@ class Gnuplot(log):
             gpl = self.scatter_plot(gpl)
         elif self.plot_type == "stack":
             gpl = self.stack_plot(gpl)
+        elif self.plot_type == "violin":
+            gpl = self.violin_plot(gpl)
 
         return gpl
 
@@ -135,12 +138,71 @@ class Gnuplot(log):
 
         return gpl
 
+    def violin_plot(self, gpl: str) -> str:
+        if self.data and self.legends:
+            for c in range(len(self.data)):
+                gpl += f"\n$data{c} << EOD\n"
+                for r in range(len(self.data[c])):
+                    gpl += f"""{self.data[c][r]} {self.color_list[c][r]}\n"""
+                gpl += "EOD\n\n"
+
+            gpl += """set errorbars front 1.000000  lt black linewidth 1.000 dashtype solid
+set boxwidth 0.075 absolute
+set style fill solid 1.00 border lt -1
+set style data filledcurves below 
+set colorbox vertical origin screen 0.9, 0.2 size screen 0.05, 0.6 front  noinvert bdefault\n"""
+            gpl += """set xtics ("""
+            gpl += ",".join(
+                [f""""{leg}" {i}+1""" for i, leg in enumerate(self.legends)]
+            )
+            gpl += """)\n"""
+            for c in range(len(self.data)):
+                gpl += f"""set table $kdedata{c}\n"""
+                gpl += f"""plot $data{c} using 1:(1) smooth kdensity with filledcurves above y lt {c+1} title "{self.legends[c]}"\n"""
+            gpl += "unset table\n"
+            gpl += "unset key\n"
+            for c in range(len(self.data)):
+                gpl += (
+                    f"""stats $kdedata{c} using 2 nooutput name "kdedata{c}_stats" \n"""
+                )
+            ## scatter plot
+            loc = 1.0
+            if self.mode != "withoutScatter":
+                loc = 0.75
+                if self.zlabel != None:
+                    gpl += f"""set cblabel "{self.zlabel}"\n"""
+                if self.z_precision != None:
+                    gpl += f"""set cbtics format "%.{self.z_precision}f"\n"""
+                gpl += "plot "
+                for c in range(len(self.data)):
+                    gpl += f"""$data{c} u ({c+1.25}+0.06*invnorm(rand(0))):1:2 title "{self.legends[c]}" with points palette, \\\n"""
+
+            if self.mode == "withoutScatter":
+                gpl += "\nplot "
+            for c in range(len(self.data)):
+                gpl += f"""$kdedata{c} using ({c+loc}+$2/(4.2*kdedata{c}_stats_max)):1 with filledcurve x={c+loc} lt {c+1},\\\n"""
+                gpl += f"""$kdedata{c} using ({c+loc}-$2/(4.2*kdedata{c}_stats_max)):1 with filledcurve x={c+loc} lt {c+1},\\\n"""
+                gpl += f"""$data{c} u ({c+loc}):1 with boxplot fc "white" lw 1 ,\\\n"""
+            gpl += "\n"
+
+        """ # violin plot code
+        set table $mydata
+        plot $data0 using 1:(1) smooth kdensity with filledcurves above y lt 9 title 'Mydata'
+        unset table
+        unset key
+        stats $mydata using 2 nooutput name "A"
+        plot $mydata using (1+$2/(4.1*A_max)):1 with filledcurve x=1 lt 9,\
+                '' using (1-$2/(4.1*A_max)):1 with filledcurve x=1 lt 9,\
+                $data0 using (1):1 with boxplot fc "white" lw 2
+        """
+        return gpl
+
     def scatter_plot(self, gpl: str) -> str:
         # TODO colorbar_location
         # TODO cmap
-        if self.zlabel:
+        if self.zlabel != None:
             gpl += f"""set cblabel "{self.zlabel}"\n"""
-        if self.z_precision:
+        if self.z_precision != None:
             gpl += f"""set cbtics format "%.{self.z_precision}f"\n"""
         if self.data and self.legends:
             for c in range(len(self.data)):
@@ -376,10 +438,9 @@ class ScatterGnuplot(ParentGnuplot):
         if kwargs["ymin"] != None or kwargs["ymax"] != None:
             self.gnuplot.ymin = kwargs["ymin"]
             self.gnuplot.ymax = kwargs["ymax"]
-        if kwargs["x_precision"] != None:
-            self.gnuplot.x_precision = kwargs["x_precision"]
-        if kwargs["y_precision"] != None:
-            self.gnuplot.y_precision = kwargs["y_precision"]
+        self.gnuplot.x_precision = kwargs["x_precision"]
+        self.gnuplot.y_precision = kwargs["y_precision"]
+        self.gnuplot.z_precision = kwargs["z_precision"]
 
         if len(kwargs["legends"]) != len(kwargs["data_list"]):
             self.error(
@@ -390,7 +451,6 @@ class ScatterGnuplot(ParentGnuplot):
         self.gnuplot.legends = kwargs["legends"]
         self.gnuplot.color_list = kwargs["color_list"]
         self.gnuplot.zlabel = kwargs["zlabel"]
-        self.gnuplot.z_precision = kwargs["z_precision"]
         self.gnuplot.plot_type = "scatter"
         self.gnuplot.legend_location = kwargs["legend_location"]
         # self.gnuplot.colormap = kwargs["cmap"]
@@ -409,10 +469,66 @@ class BarGnuplot(ParentGnuplot):
 
 
 class BoxGnuplot(ParentGnuplot):
+    """A gnuplot box plot class for box plots
+
+    Args:
+        ParentGnuplot (object): gnuplot parent class
+
+    Parameters:
+        data_list :List[List[float]]
+        color_list :List[List[float]]
+        legends :List[str]
+        xmin :float
+        xmax :flaot
+        ymin :float
+        ymax :float
+        xlabel :str
+        ylabel :str
+        zlabel :str
+        title :str
+        x_precision :int
+        y_precision :int
+        z_precision :int
+        alpha :float
+        cmap :str
+        colorbar_location:str
+        mode :str
+    """
+
     def __init__(self, **kwargs) -> None:
         super().__init__()
 
+        self.gnuplot.term = "png"
+        self.gnuplot.title = kwargs["title"]
+        self.gnuplot.xlabel = kwargs["xlabel"]
+        self.gnuplot.ylabel = kwargs["ylabel"]
 
-class ViolinGnuplot(ParentGnuplot):
-    def __init__(self, **kwargs) -> None:
-        super().__init__()
+        if kwargs["xmin"] != None or kwargs["xmax"] != None:
+            self.gnuplot.xmin = kwargs["xmin"]
+            self.gnuplot.xmax = kwargs["xmax"]
+        if kwargs["ymin"] != None or kwargs["ymax"] != None:
+            self.gnuplot.ymin = kwargs["ymin"]
+            self.gnuplot.ymax = kwargs["ymax"]
+        self.gnuplot.x_precision = kwargs["x_precision"]
+        self.gnuplot.y_precision = kwargs["y_precision"]
+        self.gnuplot.z_precision = kwargs["z_precision"]
+
+        if len(kwargs["legends"]) != len(kwargs["data_list"]):
+            self.error(
+                f"""unable to pair {len(kwargs["legends"])} legends to {len(kwargs["data_list"])} column data."""
+            )
+
+        self.gnuplot.data = kwargs["data_list"]
+        self.gnuplot.legends = kwargs["legends"]
+        self.gnuplot.color_list = kwargs["color_list"]
+        self.gnuplot.zlabel = kwargs["zlabel"]
+        self.gnuplot.plot_type = "violin"
+        self.gnuplot.mode = kwargs["mode"]
+        # self.gnuplot.colormap = kwargs["cmap"]
+        if kwargs["cmap"]:
+            self.warn(
+                "DIT is unable to set colormap for gnuplot now. The https://github.com/Gnuplotting/gnuplot-palettes may help you"
+            )
+        # self.gnuplot.colorbar_location = kwargs["colorbar_location"]
+        if kwargs["colorbar_location"]:
+            self.warn("DIT is unable to set colorbar location for gnuplot now.")
