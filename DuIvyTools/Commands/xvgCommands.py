@@ -978,6 +978,7 @@ class xvg_ave_bar(Command):
             "x_precision": self.parm.x_precision,
             "y_precision": self.parm.y_precision,
             "alpha": self.parm.alpha,
+            "legend_location": self.parm.legend_location,
         }
         if self.parm.engine == "matplotlib":
             line = BarMatplotlib(**kwargs)

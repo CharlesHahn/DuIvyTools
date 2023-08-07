@@ -288,8 +288,69 @@ class StackMatplotlib(ParentMatplotlib):
 
 
 class BarMatplotlib(ParentMatplotlib):
+    """A matplotlib bar plot class for bar plots
+
+    Args:
+        ParentMatplotlib (object): matplotlib parent class
+
+    Parameters:
+        data_list :List[List[float]]
+        stds_list :List[List[float]]
+        xtitles :List[str]
+        legends :List[str]
+        xmin :float
+        xmax :flaot
+        ymin :float
+        ymax :float
+        xlabel :str
+        ylabel :str
+        title :str
+        x_precision :int
+        y_precision :int
+        alpha :float
+        legend_location :str
+    """
+
     def __init__(self, **kwargs) -> None:
         super().__init__()
+
+        width = 84 // len(kwargs["data_list"]) * 0.01
+        x_loc = [x - 0.42 + width / 2.0 for x in range(len(kwargs["data_list"]))]
+        for i, data in enumerate(kwargs["data_list"]):
+            plt.bar(
+                [x + width * i for x in x_loc],
+                data,
+                width,
+                yerr=kwargs["stds_list"][i],
+                capsize=4,
+                label=kwargs["legends"][i],
+            )
+        plt.xticks(
+            [x for x in range(len(kwargs["data_list"]))], labels=kwargs["xtitles"]
+        )
+        plt.axhline(0, color="k", linewidth=1)
+
+        if kwargs["xmin"] != None or kwargs["xmax"] != None:
+            plt.xlim(kwargs["xmin"], kwargs["xmax"])
+        if kwargs["ymin"] != None or kwargs["ymax"] != None:
+            plt.ylim(kwargs["ymin"], kwargs["ymax"])
+
+        ax = plt.gca()
+        if kwargs["x_precision"] != None:
+            x_p = kwargs["x_precision"]
+            ax.xaxis.set_major_formatter(FormatStrFormatter(f"%.{x_p}f"))
+        if kwargs["y_precision"] != None:
+            y_p = kwargs["y_precision"]
+            ax.yaxis.set_major_formatter(FormatStrFormatter(f"%.{y_p}f"))
+
+        if kwargs["legend_location"] == "outside":
+            ## TODO hard code the legend location???
+            plt.legend(bbox_to_anchor=(1.02, 1.00), loc="upper left")
+        else:
+            plt.legend()
+        plt.xlabel(kwargs["xlabel"])
+        plt.ylabel(kwargs["ylabel"])
+        plt.title(kwargs["title"])
 
 
 class BoxMatplotlib(ParentMatplotlib):
