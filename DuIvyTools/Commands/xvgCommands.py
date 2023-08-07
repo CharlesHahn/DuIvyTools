@@ -894,6 +894,106 @@ class xvg_ave_bar(Command):
         self.info("in xvg_ave_bar")
         print(self.parm.__dict__)
 
+        ## check and convert parm
+        if not self.parm.input:
+            self.error("you must specify the xvg files to compare")
+        if not self.parm.columns:
+            self.error("you must specify the columns to select")
+        for xvgs in self.parm.input:
+            if isinstance(xvgs, list):
+                break
+        else:
+            self.parm.input = [[xvg] for xvg in self.parm.input]
+        for columns in self.parm.columns:
+            if not isinstance(columns, int):
+                self.error("the item of column_select must be int, do not use ,")
+        if self.parm.legends != None and len(self.parm.legends) != len(self.parm.input):
+            self.error(f"number of legends ({len(self.parm.legends)}) you input can not pair to the number of file groups ({len(self.parm.input)})")
+        if self.parm.additional_list != None and len(self.parm.additional_list) != len(self.parm.columns):
+            self.error(f"the number of xtitles ({len(self.parm.additional_list)}) you specified through 'additional_list' must pair to the number of columns {len(self.parm.columns)}")
+        
+        ## deal with data
+        begin, end, dt = self.parm.begin, self.parm.end, self.parm.dt
+        final_aves, final_stds = [], []
+        xtitles, legends = ["" for _ in self.parm.columns], []
+        for xvgfiles in self.parm.input:
+            legends.append(xvgfiles[0])
+            column_averages_matrix = [[] for _ in self.parm.columns]
+            for xvgfile in xvgfiles:
+                xvg = XVG(xvgfile)
+                xvg.check_column_index(self.parm.columns)
+                print(f"xvgfile, legend, average, std.err")
+                for i, c in enumerate(self.parm.columns):
+                    head, ave, std = xvg.calc_ave(begin, end, dt, c)
+                    print(f"{xvgfile}, {head}, {ave}, {std}")
+                    xtitles[i] = head
+                    column_averages_matrix[i].append(ave)
+            column_aves, column_stds = [], []
+            for lis in column_averages_matrix:
+                column_aves.append(np.average(lis))
+                column_stds.append(np.std(lis, ddof=1))
+            final_aves.append(column_aves)
+            final_stds.append(column_stds)
+        
+        xtitles = self.remove_latex_msgs(xtitles)
+        legends = self.remove_latex_msgs(legends)
+        xtitles = self.sel_parm(self.parm.additional_list, xtitles)
+        legends = self.sel_parm(self.parm.legends, legends)
+        # print averages
+        print("\n" + " ".join("{:<20}".format(item) for item in ["Average"] + xtitles))
+        for i in range(len(final_aves)):
+            print("{:<20}".format(legends[i]), end=" ")
+            print(" ".join(["{:<20.4f}".format(ave) for ave in final_aves[i]]))
+        print("\n" + " ".join("{:<20}".format(item) for item in ["std.err"] + xtitles))
+        for i in range(len(final_stds)):
+            print("{:<20}".format(legends[i]), end=" ")
+            print(" ".join(["{:<20.4f}".format(std) for std in final_stds[i]]))
+
+        if self.parm.csv:
+            self.parm.csv = self.check_output_exist(self.parm.csv)
+            with open(self.parm.csv, "w") as fo:
+                fo.write(",".join(["Average"] + xtitles) + "\n")
+                for i in range(len(final_aves)):
+                    fo.write(legends[i] + ",")
+                    fo.write(",".join(["{:.4f}".format(ave) for ave in final_aves[i]]))
+                    fo.write("\n")
+                fo.write(",".join(["std.err"] + xtitles) + "\n")
+                for i in range(len(final_stds)):
+                    fo.write(legends[i] + ",")
+                    fo.write(",".join(["{:.4f}".format(std) for std in final_stds[i]]))
+                    fo.write("\n")
+
+        kwargs = {
+            "data_list": final_aves,
+            "stds_list": final_stds,
+            "xtitles": xtitles,
+            "legends": legends,
+            "xmin": self.parm.xmin,
+            "xmax": self.parm.xmax,
+            "ymin": self.parm.ymin,
+            "ymax": self.parm.ymax,
+            "xlabel": self.parm.xlabel,
+            "ylabel": self.parm.ylabel,
+            "title": self.sel_parm(self.parm.title, "XVG ave bar comparison"),
+            "x_precision": self.parm.x_precision,
+            "y_precision": self.parm.y_precision,
+            "alpha": self.parm.alpha,
+        }
+        if self.parm.engine == "matplotlib":
+            line = BarMatplotlib(**kwargs)
+            line.final(self.parm.output, self.parm.noshow)
+        elif self.parm.engine == "plotly":
+            line = BarPlotly(**kwargs)
+            line.final(self.parm.output, self.parm.noshow)
+        elif self.parm.engine == "plotext":
+            line = BarPlotly(**kwargs)
+            line.final(self.parm.output, self.parm.noshow)
+        elif self.parm.engine == "gnuplot":
+            line = BarGnuplot(**kwargs)
+            line.final(self.parm.output, self.parm.noshow)
+        else:
+            self.error("wrong selection of plot engine")
+
 
 class xvg_rama(Command):
     def __init__(self, parm: Parameters) -> None:

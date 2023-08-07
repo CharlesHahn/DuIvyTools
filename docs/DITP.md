@@ -178,20 +178,18 @@
 - xvg_show
 - xvg_compare
 - xvg_ave
-- xvg_rama
 - xvg_show_distribution
 - xvg_show_stack
 - xvg_show_scatter
 - xvg_energy_compute
+- xvg_box_compare
 - xvg_combine
 - xvg_ave_bar
-- xvg_box
-- xvg_violin
+- xvg_rama
 
 - xpm_show
 - xpm2csv
 - xpm2dat
-- xpm2gpl
 
 - ndx_show
 - ndx_rm_dup

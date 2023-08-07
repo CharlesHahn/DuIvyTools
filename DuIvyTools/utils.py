@@ -221,8 +221,10 @@ class Parameters(log):
             choices=[None, "withoutScatter"],
             help="additional parameter, withoutScatter will NOT show scatter plot for xvg_box_compare and xvg_violin_compare",
         )
+        parser.add_argument(
+            "-al", "--additional_list", nargs="+", help="additional parameters"
+        )
 
-        ## TODO think twice
         parser.add_argument(
             "-ip",
             "--interpolation",
@@ -236,6 +238,7 @@ class Parameters(log):
             help="whether to draw 3D figure",
         )
 
+        ## TODO think twice
         parser.add_argument(
             "-pcm",
             "--pcolormesh",
