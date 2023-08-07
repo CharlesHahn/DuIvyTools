@@ -97,12 +97,12 @@ class Gnuplot(log):
             self.xmin = ""
         if self.xmax == None:
             self.xmax = ""
-        gpl += f"""set xrange [{self.xmin}:{self.xmax}]\n"""
+        # gpl += f"""set xrange [{self.xmin}:{self.xmax}]\n"""
         if self.ymin == None:
             self.ymin = ""
         if self.ymax == None:
             self.ymax = ""
-        gpl += f"""set yrange [{self.ymin}:{self.ymax}]\n"""
+        # gpl += f"""set yrange [{self.ymin}:{self.ymax}]\n"""
 
         if self.x_precision != None:
             gpl += f"""set xtics format "%.{self.x_precision}f" \n"""
@@ -131,7 +131,7 @@ class Gnuplot(log):
             for r in range(len(self.xdata[c])):
                 gpl += f"""{self.xdata[c][r]} {self.data[c][r]} {self.highs[c][r]} {self.lows[c][r]}\n"""
             gpl += "EOD\n\n"
-        gpl += "plot "
+        gpl += f"plot [{self.xmin}:{self.xmax}][{self.ymin}:{self.ymax}] "
         for c in range(len(self.data)):
             gpl += f"""$data{c} using 1:3:4 with filledcurves lt rgb "{self.style["color_cycle"][c]}" title "{self.legends[c]}", \\\n"""
         gpl += "\n"
@@ -173,28 +173,18 @@ set colorbox vertical origin screen 0.9, 0.2 size screen 0.05, 0.6 front  noinve
                     gpl += f"""set cblabel "{self.zlabel}"\n"""
                 if self.z_precision != None:
                     gpl += f"""set cbtics format "%.{self.z_precision}f"\n"""
-                gpl += "plot "
+                gpl += f"plot [{self.xmin}:{self.xmax}][{self.ymin}:{self.ymax}] "
                 for c in range(len(self.data)):
-                    gpl += f"""$data{c} u ({c+1.25}+0.06*invnorm(rand(0))):1:2 title "{self.legends[c]}" with points palette, \\\n"""
+                    gpl += f"""$data{c} u ({c+1.25}+0.04*invnorm(rand(0))):1:2 title "{self.legends[c]}" with points palette, \\\n"""
 
             if self.mode == "withoutScatter":
-                gpl += "\nplot "
+                gpl += f"\nplot [{self.xmin}:{self.xmax}][{self.ymin}:{self.ymax}] "
             for c in range(len(self.data)):
                 gpl += f"""$kdedata{c} using ({c+loc}+$2/(4.2*kdedata{c}_stats_max)):1 with filledcurve x={c+loc} lt {c+1},\\\n"""
                 gpl += f"""$kdedata{c} using ({c+loc}-$2/(4.2*kdedata{c}_stats_max)):1 with filledcurve x={c+loc} lt {c+1},\\\n"""
                 gpl += f"""$data{c} u ({c+loc}):1 with boxplot fc "white" lw 1 ,\\\n"""
             gpl += "\n"
 
-        """ # violin plot code
-        set table $mydata
-        plot $data0 using 1:(1) smooth kdensity with filledcurves above y lt 9 title 'Mydata'
-        unset table
-        unset key
-        stats $mydata using 2 nooutput name "A"
-        plot $mydata using (1+$2/(4.1*A_max)):1 with filledcurve x=1 lt 9,\
-                '' using (1-$2/(4.1*A_max)):1 with filledcurve x=1 lt 9,\
-                $data0 using (1):1 with boxplot fc "white" lw 2
-        """
         return gpl
 
     def scatter_plot(self, gpl: str) -> str:
@@ -210,7 +200,7 @@ set colorbox vertical origin screen 0.9, 0.2 size screen 0.05, 0.6 front  noinve
                 for r in range(len(self.xdata[c])):
                     gpl += f"""{self.xdata[c][r]} {self.data[c][r]} {self.color_list[c][r]}\n"""
                 gpl += "EOD\n\n"
-            gpl += "plot "
+            gpl += f"plot [{self.xmin}:{self.xmax}][{self.ymin}:{self.ymax}] "
             for c in range(len(self.data)):
                 gpl += f"""$data{c} u 1:2:3 title "{self.legends[c]}" with points palette, \\\n"""
             gpl += "\n"
@@ -224,7 +214,7 @@ set colorbox vertical origin screen 0.9, 0.2 size screen 0.05, 0.6 front  noinve
                 for r in range(len(self.xdata[c])):
                     gpl += f"""{self.xdata[c][r]} {self.data[c][r]}\n"""
                 gpl += "EOD\n\n"
-            gpl += "plot "
+            gpl += f"plot [{self.xmin}:{self.xmax}][{self.ymin}:{self.ymax}] "
             for c in range(len(self.data)):
                 gpl += f"""$data{c} u 1:2 title "{self.legends[c]}" with lines lt rgb "{self.style["color_cycle"][c]}", \\\n"""
             gpl += "\n"
@@ -238,7 +228,7 @@ set colorbox vertical origin screen 0.9, 0.2 size screen 0.05, 0.6 front  noinve
                 for r in range(len(self.xdata[c])):
                     gpl += f"""{self.xdata[c][r]} {self.data[c][r]} {self.highs[c][r]} {self.lows[c][r]}\n"""
                 gpl += "EOD\n\n"
-            gpl += "plot "
+            gpl += f"plot [{self.xmin}:{self.xmax}][{self.ymin}:{self.ymax}] "
             for c in range(len(self.data)):
                 gpl += f"""$data{c} using 1:3:4 with filledcurves notitle lt rgb "{self.style["color_cycle"][c]}", $data{c} u 1:2 title "{self.legends[c]}" with lines lt rgb "{self.style["color_cycle"][c]}", \\\n"""
             gpl += "\n"
