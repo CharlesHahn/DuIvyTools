@@ -278,8 +278,65 @@ class ScatterPlotly(ParentPlotly):
 
 
 class BarPlotly(ParentPlotly):
+    """A plotly bar plot class for bar plots
+
+    Args:
+        ParentPlotly (object): matplotlib parent class
+
+    Parameters:
+        data_list :List[List[float]]
+        stds_list :List[List[float]]
+        xtitles :List[str]
+        legends :List[str]
+        xmin :float
+        xmax :flaot
+        ymin :float
+        ymax :float
+        xlabel :str
+        ylabel :str
+        title :str
+        x_precision :int
+        y_precision :int
+        alpha :float
+        legend_location :str
+    """
+
     def __init__(self, **kwargs) -> None:
         super().__init__()
+
+        for i, data in enumerate(kwargs["data_list"]):
+            self.figure.add_trace(
+                go.Bar(
+                    x=[x for x in range(len(kwargs["data_list"]))],
+                    y=data,
+                    name=kwargs["legends"][i],
+                    error_y=dict(
+                        type="data", array=kwargs["stds_list"][i], visible=True
+                    ),
+                )
+            )
+        self.figure.update_xaxes(
+            tickvals=[i for i in range(len(kwargs["data_list"]))],
+            ticktext=kwargs["xtitles"],
+        )
+
+        self.figure.update_layout(
+            barmode="group",
+            legend_orientation="h",
+            title=kwargs["title"],
+            xaxis_title=kwargs["xlabel"],
+            yaxis_title=kwargs["ylabel"],
+            font=dict(family="Arial, Times New Roman", size=18),
+            showlegend=True,
+        )
+        if kwargs["xmin"] != None or kwargs["xmax"] != None:
+            self.figure.update_layout(xaxis_range=[kwargs["xmin"], kwargs["xmax"]])
+        if kwargs["ymin"] != None or kwargs["ymax"] != None:
+            self.figure.update_layout(yaxis_range=[kwargs["ymin"], kwargs["ymax"]])
+        if kwargs["x_precision"] != None:
+            self.figure.update_layout(xaxis_tickformat=f".{kwargs['x_precision']}f")
+        if kwargs["y_precision"] != None:
+            self.figure.update_layout(yaxis_tickformat=f".{kwargs['y_precision']}f")
 
 
 class BoxPlotly(ParentPlotly):
@@ -308,6 +365,7 @@ class BoxPlotly(ParentPlotly):
         colorbar_location:str
         mode :str
     """
+
     def __init__(self, **kwargs) -> None:
         super().__init__()
 
@@ -317,7 +375,7 @@ class BoxPlotly(ParentPlotly):
             for i, data in enumerate(kwargs["data_list"]):
                 self.figure.add_trace(
                     go.Scatter(
-                        x=np.random.normal(i+1.25, 0.04, len(data)),
+                        x=np.random.normal(i + 1.25, 0.04, len(data)),
                         y=data,
                         mode="markers",
                         name=kwargs["legends"][i],
@@ -342,16 +400,16 @@ class BoxPlotly(ParentPlotly):
         for i, data in enumerate(kwargs["data_list"]):
             self.figure.add_trace(
                 go.Violin(
-                    x=[i+loc for _ in data],
+                    x=[i + loc for _ in data],
                     y=data,
                     x0=kwargs["legends"][i],
-                    box_visible = True,
-                    meanline_visible = True,
+                    box_visible=True,
+                    meanline_visible=True,
                 )
             )
         self.figure.update_xaxes(
-            tickvals = [i+1 for i in range(len(kwargs["data_list"]))],
-            ticktext = kwargs["legends"]
+            tickvals=[i + 1 for i in range(len(kwargs["data_list"]))],
+            ticktext=kwargs["legends"],
         )
         self.figure.update_layout(
             legend_orientation="h",
@@ -371,4 +429,3 @@ class BoxPlotly(ParentPlotly):
             self.figure.update_layout(xaxis_tickformat=f".{kwargs['x_precision']}f")
         if kwargs["y_precision"] != None:
             self.figure.update_layout(yaxis_tickformat=f".{kwargs['y_precision']}f")
-
