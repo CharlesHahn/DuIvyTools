@@ -68,6 +68,8 @@ class Gnuplot(log):
         self.colormap: str = None
         self.plot_type: str = "line"
         self.mode: str = None
+        self.xtitles :List[str] = None
+        self.stds_list :List[List[str]] = None
 
     def dump2str(self) -> str:
         """dump gnuplot properties to gnuplot input scripts
@@ -121,6 +123,8 @@ class Gnuplot(log):
             gpl = self.stack_plot(gpl)
         elif self.plot_type == "violin":
             gpl = self.violin_plot(gpl)
+        elif self.plot_type == "bar":
+            gpl = self.bar_plot(gpl)
 
         return gpl
 
@@ -153,7 +157,7 @@ set style data filledcurves below
 set colorbox vertical origin screen 0.9, 0.2 size screen 0.05, 0.6 front  noinvert bdefault\n"""
             gpl += """set xtics ("""
             gpl += ",".join(
-                [f""""{leg}" {i}+1""" for i, leg in enumerate(self.legends)]
+                [f""""{leg}" {i+1}""" for i, leg in enumerate(self.legends)]
             )
             gpl += """)\n"""
             for c in range(len(self.data)):
@@ -231,6 +235,28 @@ set colorbox vertical origin screen 0.9, 0.2 size screen 0.05, 0.6 front  noinve
             gpl += f"plot [{self.xmin}:{self.xmax}][{self.ymin}:{self.ymax}] "
             for c in range(len(self.data)):
                 gpl += f"""$data{c} using 1:3:4 with filledcurves notitle lt rgb "{self.style["color_cycle"][c]}", $data{c} u 1:2 title "{self.legends[c]}" with lines lt rgb "{self.style["color_cycle"][c]}", \\\n"""
+            gpl += "\n"
+
+        return gpl
+
+    def bar_plot(self, gpl: str) -> str:
+        if self.data and self.legends:
+            for c in range(len(self.data)):
+                gpl += f"\n$data{c} << EOD\n"
+                xdata = [x for x in range(len(self.data[c]))]
+                for x, d, s in zip(xdata, self.data[c], self.stds_list[c]):
+                    gpl += f"""{x} {d} {s}\n"""
+                gpl += "EOD\n\n"
+            gpl += """set xtics ("""
+            gpl += ",".join(
+                [f""""{xt}" {i}""" for i, xt in enumerate(self.xtitles)]
+            )
+            gpl += """)\n"""
+            gpl += """set style histogram errorbars lw 2\n"""
+            gpl += """set style fill solid border -1\n"""
+            gpl += f"plot [{self.xmin}:{self.xmax}][{self.ymin}:{self.ymax}] "
+            for c in range(len(self.data)):
+                gpl += f"""$data{c} u 2:3 title "{self.legends[c]}" with histogram lt rgb "{self.style["color_cycle"][c]}", \\\n"""
             gpl += "\n"
 
         return gpl
@@ -454,8 +480,56 @@ class ScatterGnuplot(ParentGnuplot):
 
 
 class BarGnuplot(ParentGnuplot):
+    """A Gnuplot bar plot class for bar plots
+
+    Args:
+        ParentGnuplot (object): gnuplot parent class
+
+    Parameters:
+        data_list :List[List[float]]
+        stds_list :List[List[float]]
+        xtitles :List[str]
+        legends :List[str]
+        xmin :float
+        xmax :flaot
+        ymin :float
+        ymax :float
+        xlabel :str
+        ylabel :str
+        title :str
+        x_precision :int
+        y_precision :int
+        legend_location :str
+    """
     def __init__(self, **kwargs) -> None:
         super().__init__()
+
+        self.gnuplot.term = "png"
+        self.gnuplot.title = kwargs["title"]
+        self.gnuplot.xlabel = kwargs["xlabel"]
+        self.gnuplot.ylabel = kwargs["ylabel"]
+
+        if kwargs["xmin"] != None or kwargs["xmax"] != None:
+            self.gnuplot.xmin = kwargs["xmin"]
+            self.gnuplot.xmax = kwargs["xmax"]
+        if kwargs["ymin"] != None or kwargs["ymax"] != None:
+            self.gnuplot.ymin = kwargs["ymin"]
+            self.gnuplot.ymax = kwargs["ymax"]
+        if kwargs["x_precision"] != None:
+            self.gnuplot.x_precision = kwargs["x_precision"]
+        if kwargs["y_precision"] != None:
+            self.gnuplot.y_precision = kwargs["y_precision"]
+
+        if len(kwargs["legends"]) != len(kwargs["data_list"]):
+            self.error(
+                f"""unable to pair {len(kwargs["legends"])} legends to {len(kwargs["data_list"])} column data."""
+            )
+        self.gnuplot.data = kwargs["data_list"]
+        self.gnuplot.legends = kwargs["legends"]
+        self.gnuplot.legend_location = kwargs["legend_location"]
+        self.gnuplot.xtitles = kwargs["xtitles"]
+        self.gnuplot.stds_list = kwargs["stds_list"]
+        self.gnuplot.plot_type = "bar"
 
 
 class BoxGnuplot(ParentGnuplot):

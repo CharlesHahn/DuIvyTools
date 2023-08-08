@@ -306,7 +306,7 @@ class BarPlotly(ParentPlotly):
         for i, data in enumerate(kwargs["data_list"]):
             self.figure.add_trace(
                 go.Bar(
-                    x=[x for x in range(len(kwargs["data_list"]))],
+                    x=[x for x in range(len(data))],
                     y=data,
                     name=kwargs["legends"][i],
                     error_y=dict(

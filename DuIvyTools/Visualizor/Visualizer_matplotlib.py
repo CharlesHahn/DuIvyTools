@@ -314,8 +314,11 @@ class BarMatplotlib(ParentMatplotlib):
         super().__init__()
 
         width = 84 // len(kwargs["data_list"]) * 0.01
-        x_loc = [x - 0.42 + width / 2.0 for x in range(len(kwargs["data_list"]))]
+        x_loc = [x - 0.42 + width / 2.0 for x in range(len(kwargs["data_list"][0]))]
         for i, data in enumerate(kwargs["data_list"]):
+            print(data)
+            print([x + width * i for x in x_loc])
+            print(kwargs["stds_list"][i])
             plt.bar(
                 [x + width * i for x in x_loc],
                 data,
@@ -325,7 +328,7 @@ class BarMatplotlib(ParentMatplotlib):
                 label=kwargs["legends"][i],
             )
         plt.xticks(
-            [x for x in range(len(kwargs["data_list"]))], labels=kwargs["xtitles"]
+            [x for x in range(len(kwargs["data_list"][0]))], labels=kwargs["xtitles"]
         )
         plt.axhline(0, color="k", linewidth=1)
 

@@ -986,7 +986,7 @@ class xvg_ave_bar(Command):
             line = BarPlotly(**kwargs)
             line.final(self.parm.output, self.parm.noshow)
         elif self.parm.engine == "plotext":
-            line = BarPlotly(**kwargs)
+            line = BarPlotext(**kwargs)
             line.final(self.parm.output, self.parm.noshow)
         elif self.parm.engine == "gnuplot":
             line = BarGnuplot(**kwargs)
