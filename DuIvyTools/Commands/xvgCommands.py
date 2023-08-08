@@ -600,7 +600,7 @@ class xvg_show_scatter(Command):
 
         ## check and convert parm
         if not self.parm.input:
-            self.error("you must specify the xvg files to compare")
+            self.error("you must specify the xvg files to show")
         if not self.parm.columns:
             self.error("you must specify the columns to select")
         for xvg in self.parm.input:
@@ -707,7 +707,7 @@ class xvg_show_stack(Command):
 
         ## check and convert parm
         if not self.parm.input:
-            self.error("you must specify the xvg files to compare")
+            self.error("you must specify the xvg files to show")
         if not self.parm.columns:
             self.error("you must specify the columns to select")
         for xvg in self.parm.input:
@@ -896,7 +896,7 @@ class xvg_ave_bar(Command):
 
         ## check and convert parm
         if not self.parm.input:
-            self.error("you must specify the xvg files to compare")
+            self.error("you must specify the xvg files to show")
         if not self.parm.columns:
             self.error("you must specify the columns to select")
         for xvgs in self.parm.input:
@@ -1002,3 +1002,122 @@ class xvg_rama(Command):
     def __call__(self):
         self.info("in xvg_rama")
         print(self.parm.__dict__)
+
+        ## check parameters
+        if not self.parm.input:
+            self.error("you must specify the xvg files to draw")
+        for xvg in self.parm.input:
+            if not isinstance(xvg, str):
+                self.error("files should be seperated by space not ,")
+        if len(self.parm.input) > 1:
+            self.warn(f"only the first file {self.parm.input[0]} you specified will be used to draw ramachandran")
+
+        xvg = XVG(self.parm.input[0])
+
+        ## check column number
+        if (
+            xvg.column_num != 3
+            or len(xvg.data_columns) != 3
+            or (xvg.data_heads[0] != "Phi" or xvg.data_heads[1] != "Psi")
+        ):
+            self.error(
+                "Check your input xvg file ! It has to contains 3 columns: Phi, Psi, AA name. And x-label should be Phi and Y-label should be Psi"
+            )
+
+        ## draw background
+        ## Psi and Phi data are from DOI: 10.1002/prot.10286
+        ## reference : pyrama
+        rama_preferences = {
+            "General": {
+                "file": os.path.join("../", "data", "pref_general.data"),
+                "cmap": mplcolors.ListedColormap(["#FFFFFF", "#B3E8FF", "#7FD9FF"]),
+                "bounds": [0, 0.0005, 0.02, 1],
+            },
+            "GLY": {
+                "file": os.path.join("../", "data", "pref_glycine.data"),
+                "cmap": mplcolors.ListedColormap(["#FFFFFF", "#FFE8C5", "#FFCC7F"]),
+                "bounds": [0, 0.002, 0.02, 1],
+            },
+            "PRO": {
+                "file": os.path.join("../", "data", "pref_proline.data"),
+                "cmap": mplcolors.ListedColormap(["#FFFFFF", "#D0FFC5", "#7FFF8C"]),
+                "bounds": [0, 0.002, 0.02, 1],
+            },
+            "Pre-PRO": {
+                "file": os.path.join("../", "data", "pref_preproline.data"),
+                "cmap": mplcolors.ListedColormap(["#FFFFFF", "#B3E8FF", "#7FD9FF"]),
+                "bounds": [0, 0.002, 0.02, 1],
+            },
+        }
+
+        rama_pref_values = {}
+        for key, val in rama_preferences.items():
+            data_file_path = os.path.realpath(
+                os.path.join(os.getcwd(), os.path.dirname(__file__))
+            )
+            rama_pref_values[key] = [[0 for _ in range(361)] for _ in range(361)]
+            with open(os.path.join(data_file_path, val["file"]), "r") as fn:
+                for line in fn:
+                    if line.startswith("#"):
+                        continue
+                    else:
+                        phi = int(float(line.split()[0]))
+                        psi = int(float(line.split()[1]))
+                        ## plt.imshow show transpose of img
+                        rama_pref_values[key][psi + 180][phi + 180] = float(line.split()[2])
+                        rama_pref_values[key][psi + 179][phi + 180] = float(line.split()[2])
+                        rama_pref_values[key][psi + 180][phi + 179] = float(line.split()[2])
+                        rama_pref_values[key][psi + 179][phi + 179] = float(line.split()[2])
+
+        normals, outliers = {}, {}
+        for key in rama_preferences.keys():
+            normals[key] = {"phi": [], "psi": []}
+            outliers[key] = {"phi": [], "psi": []}
+        for row in range(xvg.row_num):
+            if row < xvg.row_num - 1 and "PRO" in xvg.data_columns[2][row + 1]:
+                AA_type = "Pre-PRO"
+            elif "PRO" in xvg.data_columns[2][row]:
+                AA_type = "PRO"
+            elif "GLY" in xvg.data_columns[2][row]:
+                AA_type = "GLY"
+            else:
+                AA_type = "General"
+            phi, psi = xvg.data_columns[0][row], xvg.data_columns[1][row]
+            if (
+                rama_pref_values[AA_type][int(psi) + 180][int(phi) + 180]
+                < rama_preferences[AA_type]["bounds"][1]
+            ):
+                outliers[AA_type]["phi"].append(phi)
+                outliers[AA_type]["psi"].append(psi)
+            else:
+                normals[AA_type]["phi"].append(phi)
+                normals[AA_type]["psi"].append(psi)
+
+        ## print some infos
+        print(
+            "ramachandran method can draw four types of figure: "
+            + "\n        Pre-PRO: the dihedrals of amino acids before prolines"
+            + "\n        PRO: the dihedrals of prolines"
+            + "\n        GLY: the dihedrals of glynine"
+            + "\n        General: the dihedrals of other amino acids"
+        )
+        print("\n" + "-" * 79)
+        print("{:<10} {:>20} {:>20}".format("", "Normal Dihedrals", "Outlier Dihedrals"))
+        for key in ["General", "GLY", "Pre-PRO", "PRO"]:
+            print(
+                "{:<10} {:>20} {:>20}".format(
+                    key, len(normals[key]["phi"]), len(outliers[key]["phi"])
+                )
+            )
+        print("-" * 79)
+
+        kwargs = {
+            "normals": normals,
+            "outliers": outliers,
+            "rama_pref_values": rama_pref_values,
+            "rama_preferences": rama_preferences,
+            "outfig": self.parm.output,
+            "noshow": self.parm.noshow,
+        }
+        if self.parm.engine == "matplotlib":
+            line = RamachandranMatplotlib(**kwargs)

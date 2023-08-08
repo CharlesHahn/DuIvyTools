@@ -442,3 +442,73 @@ class BoxMatplotlib(ParentMatplotlib):
         plt.xlabel(kwargs["xlabel"])
         plt.ylabel(kwargs["ylabel"])
         plt.title(kwargs["title"])
+
+
+class RamachandranMatplotlib(ParentMatplotlib):
+    """A matplotlib ramachandran plot class for ramachandran plots
+
+    Args:
+        ParentMatplotlib (object): matplotlib parent class
+
+    Parameters:
+        data_list :List[List[float]]
+        xdata_list :List[List[float]]
+        color_list :List[List[float]]
+        legends :List[str]
+        xlabel :str
+        ylabel :str
+        zlabel :str
+        title :str
+        x_precision :int
+        y_precision :int
+        z_precision :int
+        cmap :str
+    """
+
+    def __init__(self, **kwargs) -> None:
+        super().__init__()
+
+        ## draw ramachandran plot
+        normals = kwargs["normals"]
+        outliers = kwargs["outliers"]
+        rama_pref_values = kwargs["rama_pref_values"]
+        rama_preferences = kwargs["rama_preferences"]
+        outfig  = kwargs["outfig"]
+        noshow = kwargs["noshow"]
+        for key in ["General", "GLY", "Pre-PRO", "PRO"]:
+            if len(normals[key]["phi"]) + len(outliers[key]["phi"]) == 0:
+                continue
+            plt.clf()
+            plt.title(key)
+            plt.imshow(
+                rama_pref_values[key],
+                cmap=rama_preferences[key]["cmap"],
+                norm=mplcolors.BoundaryNorm(
+                    rama_preferences[key]["bounds"], rama_preferences[key]["cmap"].N
+                ),
+                extent=(-180, 180, 180, -180),
+            )
+            plt.scatter(normals[key]["phi"], normals[key]["psi"], s=8)
+            plt.scatter(outliers[key]["phi"], outliers[key]["psi"], s=8)
+            plt.xlim([-180, 180])
+            plt.ylim([-180, 180])
+            plt.xticks([-180, -120, -60, 0, 60, 120, 180])
+            plt.yticks([-180, -120, -60, 0, 60, 120, 180])
+            plt.tick_params(left=False, bottom=False, top=False, right=False)
+            plt.xlabel("$Phi$")
+            plt.ylabel("$Psi$")
+
+            plt.tight_layout()
+            if outfig != None:
+                if os.path.exists(outfig):
+                    time_info = time.strftime("%Y%m%d%H%M%S", time.localtime())
+                    new_outfig = f'{".".join(outfig.split(".")[:-1])}_{time_info}.{outfig.split(".")[-1]}'
+                    self.warn(
+                        f"{outfig} is already in current directory, save to {new_outfig} for instead."
+                    )
+                    outfig = new_outfig
+                outfig = outfig.split(".")[0] + "_" + key + ".png"
+                self.figure.savefig(outfig)
+                self.info(f"save figure to {outfig} successfully")
+            if noshow == False:
+                plt.show()
