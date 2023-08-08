@@ -977,7 +977,6 @@ class xvg_ave_bar(Command):
             "title": self.sel_parm(self.parm.title, "XVG ave bar comparison"),
             "x_precision": self.parm.x_precision,
             "y_precision": self.parm.y_precision,
-            "alpha": self.parm.alpha,
             "legend_location": self.parm.legend_location,
         }
         if self.parm.engine == "matplotlib":

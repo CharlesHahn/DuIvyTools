@@ -297,7 +297,6 @@ class BarPlotly(ParentPlotly):
         title :str
         x_precision :int
         y_precision :int
-        alpha :float
         legend_location :str
     """
 
@@ -311,7 +310,8 @@ class BarPlotly(ParentPlotly):
                     y=data,
                     name=kwargs["legends"][i],
                     error_y=dict(
-                        type="data", array=kwargs["stds_list"][i], visible=True
+                        type="data", array=kwargs["stds_list"][i], 
+                        width=10, visible=True
                     ),
                 )
             )

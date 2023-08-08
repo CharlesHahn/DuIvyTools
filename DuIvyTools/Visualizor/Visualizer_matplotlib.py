@@ -307,7 +307,6 @@ class BarMatplotlib(ParentMatplotlib):
         title :str
         x_precision :int
         y_precision :int
-        alpha :float
         legend_location :str
     """
 
