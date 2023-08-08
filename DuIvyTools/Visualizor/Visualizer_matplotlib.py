@@ -316,9 +316,6 @@ class BarMatplotlib(ParentMatplotlib):
         width = 84 // len(kwargs["data_list"]) * 0.01
         x_loc = [x - 0.42 + width / 2.0 for x in range(len(kwargs["data_list"][0]))]
         for i, data in enumerate(kwargs["data_list"]):
-            print(data)
-            print([x + width * i for x in x_loc])
-            print(kwargs["stds_list"][i])
             plt.bar(
                 [x + width * i for x in x_loc],
                 data,

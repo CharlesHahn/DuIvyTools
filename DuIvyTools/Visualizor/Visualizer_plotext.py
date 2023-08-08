@@ -152,5 +152,22 @@ class ScatterPlotext(ParentPlotext):
 
 
 class BarPlotext(ParentPlotext):
+    """A plotext bar plot class for bar plots
+
+    Args:
+        ParentPlotext (object): matplotlib parent class
+
+    Parameters:
+        data_list :List[List[float]]
+        stds_list :List[List[float]]
+        xtitles :List[str]
+        legends :List[str]
+        title :str
+    """
+
     def __init__(self, **kwargs) -> None:
         super().__init__()
+
+        plt.simple_multiple_bar(kwargs["xtitles"], kwargs["data_list"], width=70, labels=kwargs["legends"], title=kwargs["title"])
+        if len(kwargs["stds_list"]) != 0:
+            self.warn("plotext engine do not support error bar")
