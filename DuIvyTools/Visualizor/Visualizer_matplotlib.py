@@ -451,18 +451,15 @@ class RamachandranMatplotlib(ParentMatplotlib):
         ParentMatplotlib (object): matplotlib parent class
 
     Parameters:
-        data_list :List[List[float]]
-        xdata_list :List[List[float]]
-        color_list :List[List[float]]
-        legends :List[str]
+        normals :Dict[Dict[List[float|str]]]
+        outliers :Dict[Dict[List[float|str]]]
+        rama_pref_values :List[List[float]]
+        rama_preferences :Dict[Dict[str:str|List]]
         xlabel :str
         ylabel :str
-        zlabel :str
         title :str
-        x_precision :int
-        y_precision :int
-        z_precision :int
-        cmap :str
+        outfig :str
+        noshow :bool
     """
 
     def __init__(self, **kwargs) -> None:
@@ -479,12 +476,11 @@ class RamachandranMatplotlib(ParentMatplotlib):
             if len(normals[key]["phi"]) + len(outliers[key]["phi"]) == 0:
                 continue
             plt.clf()
-            plt.title(key)
             plt.imshow(
                 rama_pref_values[key],
-                cmap=rama_preferences[key]["cmap"],
+                cmap=mplcolors.ListedColormap(rama_preferences[key]["cmap"]),
                 norm=mplcolors.BoundaryNorm(
-                    rama_preferences[key]["bounds"], rama_preferences[key]["cmap"].N
+                    rama_preferences[key]["bounds"], mplcolors.ListedColormap(rama_preferences[key]["cmap"]).N
                 ),
                 extent=(-180, 180, 180, -180),
             )
@@ -495,8 +491,13 @@ class RamachandranMatplotlib(ParentMatplotlib):
             plt.xticks([-180, -120, -60, 0, 60, 120, 180])
             plt.yticks([-180, -120, -60, 0, 60, 120, 180])
             plt.tick_params(left=False, bottom=False, top=False, right=False)
-            plt.xlabel("$Phi$")
-            plt.ylabel("$Psi$")
+            if kwargs["title"] != None:
+                title = kwargs["title"]
+            else:
+                title = key
+            plt.title(title)
+            plt.xlabel(kwargs["xlabel"])
+            plt.ylabel(kwargs["ylabel"])
 
             plt.tight_layout()
             if outfig != None:

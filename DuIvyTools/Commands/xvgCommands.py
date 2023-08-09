@@ -1040,22 +1040,22 @@ class xvg_rama(Command):
         rama_preferences = {
             "General": {
                 "file": os.path.join("../", "data", "pref_general.data"),
-                "cmap": mplcolors.ListedColormap(["#FFFFFF", "#B3E8FF", "#7FD9FF"]),
+                "cmap": ["#FFFFFF", "#B3E8FF", "#7FD9FF"],
                 "bounds": [0, 0.0005, 0.02, 1],
             },
             "GLY": {
                 "file": os.path.join("../", "data", "pref_glycine.data"),
-                "cmap": mplcolors.ListedColormap(["#FFFFFF", "#FFE8C5", "#FFCC7F"]),
+                "cmap": ["#FFFFFF", "#FFE8C5", "#FFCC7F"],
                 "bounds": [0, 0.002, 0.02, 1],
             },
             "PRO": {
                 "file": os.path.join("../", "data", "pref_proline.data"),
-                "cmap": mplcolors.ListedColormap(["#FFFFFF", "#D0FFC5", "#7FFF8C"]),
+                "cmap": ["#FFFFFF", "#D0FFC5", "#7FFF8C"],
                 "bounds": [0, 0.002, 0.02, 1],
             },
             "Pre-PRO": {
                 "file": os.path.join("../", "data", "pref_preproline.data"),
-                "cmap": mplcolors.ListedColormap(["#FFFFFF", "#B3E8FF", "#7FD9FF"]),
+                "cmap": ["#FFFFFF", "#B3E8FF", "#7FD9FF"],
                 "bounds": [0, 0.002, 0.02, 1],
             },
         }
@@ -1081,8 +1081,8 @@ class xvg_rama(Command):
 
         normals, outliers = {}, {}
         for key in rama_preferences.keys():
-            normals[key] = {"phi": [], "psi": []}
-            outliers[key] = {"phi": [], "psi": []}
+            normals[key] = {"phi": [], "psi": [], "res": []}
+            outliers[key] = {"phi": [], "psi": [], "res": []}
         for row in range(xvg.row_num):
             if row < xvg.row_num - 1 and "PRO" in xvg.data_columns[2][row + 1]:
                 AA_type = "Pre-PRO"
@@ -1092,16 +1092,20 @@ class xvg_rama(Command):
                 AA_type = "GLY"
             else:
                 AA_type = "General"
-            phi, psi = xvg.data_columns[0][row], xvg.data_columns[1][row]
+            phi = xvg.data_columns[0][row]
+            psi = xvg.data_columns[1][row]
+            res = xvg.data_columns[2][row]
             if (
                 rama_pref_values[AA_type][int(psi) + 180][int(phi) + 180]
                 < rama_preferences[AA_type]["bounds"][1]
             ):
                 outliers[AA_type]["phi"].append(phi)
                 outliers[AA_type]["psi"].append(psi)
+                outliers[AA_type]["res"].append(f"row index {row} : {res}")
             else:
                 normals[AA_type]["phi"].append(phi)
                 normals[AA_type]["psi"].append(psi)
+                normals[AA_type]["res"].append(f"row index {row} : {res}")
 
         ## print some infos
         print(
@@ -1111,7 +1115,7 @@ class xvg_rama(Command):
             + "\n        GLY: the dihedrals of glynine"
             + "\n        General: the dihedrals of other amino acids"
         )
-        print("\n" + "-" * 79)
+        print("\n" + "-" * 70)
         print("{:<10} {:>20} {:>20}".format("", "Normal Dihedrals", "Outlier Dihedrals"))
         for key in ["General", "GLY", "Pre-PRO", "PRO"]:
             print(
@@ -1119,15 +1123,22 @@ class xvg_rama(Command):
                     key, len(normals[key]["phi"]), len(outliers[key]["phi"])
                 )
             )
-        print("-" * 79)
+        print("-" * 70)
 
         kwargs = {
             "normals": normals,
             "outliers": outliers,
             "rama_pref_values": rama_pref_values,
             "rama_preferences": rama_preferences,
+            "xlabel":self.sel_parm(self.parm.xlabel, "$phi$"),
+            "ylabel":self.sel_parm(self.parm.ylabel, "$psi$"),
+            "title":self.parm.title,
             "outfig": self.parm.output,
             "noshow": self.parm.noshow,
         }
         if self.parm.engine == "matplotlib":
             line = RamachandranMatplotlib(**kwargs)
+        elif self.parm.engine == "plotly":
+            line = RamachandranPlotly(**kwargs)
+        else:
+            self.error("Ramachandran plot only supported by matplotlib and plotly engine")

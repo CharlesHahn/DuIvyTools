@@ -429,3 +429,104 @@ class BoxPlotly(ParentPlotly):
             self.figure.update_layout(xaxis_tickformat=f".{kwargs['x_precision']}f")
         if kwargs["y_precision"] != None:
             self.figure.update_layout(yaxis_tickformat=f".{kwargs['y_precision']}f")
+
+
+class RamachandranPlotly(ParentPlotly):
+    """A Plotly ramachandran plot class for ramachandran plots
+
+    Args:
+        ParentPlotly (object): plotly parent class
+
+    Parameters:
+        normals :Dict[Dict[List[float|str]]]
+        outliers :Dict[Dict[List[float|str]]]
+        rama_pref_values :List[List[float]]
+        rama_preferences :Dict[Dict[str:str|List]]
+        xlabel :str
+        ylabel :str
+        title :str
+        outfig :str
+        noshow :bool
+    """
+
+    def __init__(self, **kwargs) -> None:
+
+        ## draw ramachandran plot
+        normals = kwargs["normals"]
+        outliers = kwargs["outliers"]
+        rama_pref_values = kwargs["rama_pref_values"]
+        rama_preferences = kwargs["rama_preferences"]
+        outfig  = kwargs["outfig"]
+        noshow = kwargs["noshow"]
+        for key in ["General", "GLY", "Pre-PRO", "PRO"]:
+            self.figure = go.Figure()
+            if len(normals[key]["phi"]) + len(outliers[key]["phi"]) == 0:
+                continue
+            bounds = rama_preferences[key]["bounds"]
+            cmap = rama_preferences[key]["cmap"]
+            colorscale = [[b, c] for b, c in zip(bounds, cmap)]
+            colorscale += [[bounds[-1], cmap[-1]]]
+            self.figure.add_trace(
+                go.Heatmap(
+                    x=[x-180 for x in range(361)],
+                    y=[y-180 for y in range(361)],
+                    z=rama_pref_values[key],
+                    colorscale=colorscale,
+                    showscale=False,
+                    name="Probability"
+                )
+            )
+            self.figure.add_trace(
+                go.Scatter(
+                    x=normals[key]["phi"],
+                    y=normals[key]["psi"],
+                    mode="markers",
+                    name=f"normals (>{bounds[1]})",
+                    hovertext = normals[key]["res"],
+                    hoverinfo="text",
+                    marker=dict(
+                        color="#38A7D0",
+                    ),
+                )
+            )
+            self.figure.add_trace(
+                go.Scatter(
+                    x=outliers[key]["phi"],
+                    y=outliers[key]["psi"],
+                    mode="markers",
+                    name=f"outliers (<{bounds[1]})",
+                    hovertext = outliers[key]["res"],
+                    hoverinfo="text",
+                    marker=dict(
+                        color="#F67088",
+                    ),
+                )
+            )
+            if kwargs["title"] != None:
+                title = kwargs["title"]
+            else:
+                title = key
+            self.figure.update_layout(
+                legend_orientation="h",
+                title=title,
+                xaxis_title=kwargs["xlabel"],
+                yaxis_title=kwargs["ylabel"],
+                font=dict(family="Arial, Times New Roman", size=18),
+                xaxis_range = [-180, 180],
+                yaxis_range = [-180, 180],
+                showlegend=True,
+            )
+
+            if outfig != None:
+                if os.path.exists(outfig):
+                    time_info = time.strftime("%Y%m%d%H%M%S", time.localtime())
+                    new_outfig = f'{".".join(outfig.split(".")[:-1])}_{time_info}.{outfig.split(".")[-1]}'
+                    self.warn(
+                        f"{outfig} is already in current directory, save to {new_outfig} for instead."
+                    )
+                    outfig = new_outfig
+                # self.figure.save_fig(outfig)
+                # self.info(f"save figure to {outfig} successfully")
+                self.warn("unable to save figure by DIT, please save figure by yourself")
+            if noshow == False:
+                self.figure.show()
