@@ -43,6 +43,11 @@ class xpm2csv(Command):
 
         xpm = XPM(self.parm.input[0])
         with open(self.parm.output, "w") as fo:
+            if xpm.type != "Continuous":
+                fo.write("#### DIT: it's not a Continuous type xpm file\n")
+                fo.write("#### labels of values were recorded below: \n")
+                for index, label in enumerate(xpm.notes):
+                    fo.write(f"#### {index} : {label}\n")
             x_title = (xpm.xlabel, "x-axis")[len(xpm.xlabel) == 0]
             y_title = (xpm.ylabel, "y-axis")[len(xpm.ylabel) == 0]
             z_title = (xpm.legend, "value")[len(xpm.legend) == 0]
