@@ -915,6 +915,8 @@ class xvg_ave_bar(Command):
         ## deal with data
         begin, end, dt = self.parm.begin, self.parm.end, self.parm.dt
         final_aves, final_stds = [], []
+        all_out = "\n" + ">"*26 + "  detailed data  " + "<"*26 + "\n"
+        all_out += "XVGFILE                 , LEGEND                  ,   AVERAGE   ,   STD.ERR\n"
         xtitles, legends = ["" for _ in self.parm.columns], []
         for xvgfiles in self.parm.input:
             legends.append(xvgfiles[0])
@@ -922,10 +924,9 @@ class xvg_ave_bar(Command):
             for xvgfile in xvgfiles:
                 xvg = XVG(xvgfile)
                 xvg.check_column_index(self.parm.columns)
-                print(f"xvgfile, legend, average, std.err")
                 for i, c in enumerate(self.parm.columns):
                     head, ave, std = xvg.calc_ave(begin, end, dt, c)
-                    print(f"{xvgfile}, {head}, {ave}, {std}")
+                    all_out += f"{xvgfile:<24}, {head:<24}, {ave:^12.6f}, {std:^12.6f}\n"
                     xtitles[i] = head
                     column_averages_matrix[i].append(ave)
             column_aves, column_stds = [], []
@@ -939,15 +940,24 @@ class xvg_ave_bar(Command):
         legends = self.remove_latex_msgs(legends)
         xtitles = self.sel_parm(self.parm.additional_list, xtitles)
         legends = self.sel_parm(self.parm.legends, legends)
+
         # print averages
-        print("\n" + " ".join("{:<20}".format(item) for item in ["Average"] + xtitles))
+        print(all_out)
+        outstr = "\n" + ">"*28 + "  final data  " + "<"*28 
+        outstr += "\n" + "-"*70 + "\n"
+        outstr += "| Average " + " "*20 + "|" + "|".join(f"{t:^19}" for t in xtitles) + "|\n"
         for i in range(len(final_aves)):
-            print("{:<20}".format(legends[i]), end=" ")
-            print(" ".join(["{:<20.4f}".format(ave) for ave in final_aves[i]]))
-        print("\n" + " ".join("{:<20}".format(item) for item in ["std.err"] + xtitles))
+            outstr += f"|{legends[i]:<28} |"
+            outstr += "|".join([f"{ave:^19.6}" for ave in final_aves[i]])
+            outstr += "|\n"
+        outstr += "-"*70 + "\n"
+        outstr += "| std.err " + " "*20 + "|" + "|".join(f"{t:^19}" for t in xtitles) + "|\n"
         for i in range(len(final_stds)):
-            print("{:<20}".format(legends[i]), end=" ")
-            print(" ".join(["{:<20.4f}".format(std) for std in final_stds[i]]))
+            outstr += f"|{legends[i]:<28} |"
+            outstr += "|".join([f"{std:^19.6}" for std in final_stds[i]])
+            outstr += "|\n"
+        outstr += "-"*70 + "\n"
+        print(outstr)
 
         if self.parm.csv:
             self.parm.csv = self.check_output_exist(self.parm.csv)
