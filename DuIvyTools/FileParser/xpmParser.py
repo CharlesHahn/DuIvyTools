@@ -154,13 +154,16 @@ class XPM(log):
                     # for Discrete, value store the index of chars|notes|colors
                     value = self.chars.index(dot)
                 value_list.append(value)
-                self.dot_matrix.append(dot_list)
-                self.value_matrix.append(value_list)
+            self.dot_matrix.append(dot_list)
+            self.value_matrix.append(value_list)
+        
+        if len(self.dot_matrix) != self.height or len(self.value_matrix) != self.height or len(self.dot_matrix[0]) != self.width or len(self.value_matrix[0]) != self.width:
+            self.error("Dimension error while parsing xpm file")
 
         if is_file:
             self.info(f"parsing data from {xpmfile} successfully !")
 
-    def __sub__(self, other: XPM) -> XPM:  # diff_map
+    def __sub__(self, other):  # diff_map
         pass
 
 

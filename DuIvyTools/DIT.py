@@ -6,6 +6,7 @@ Written by DuIvy and provided to you by GPLv3 license.
 
 
 from Commands.xvgCommands import *
+from Commands.xpmCommands import *
 from utils import Parameters, log
 import inspect
 
