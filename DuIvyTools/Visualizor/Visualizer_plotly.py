@@ -301,8 +301,10 @@ class BarPlotly(ParentPlotly):
                     y=data,
                     name=kwargs["legends"][i],
                     error_y=dict(
-                        type="data", array=kwargs["stds_list"][i], 
-                        width=10, visible=True
+                        type="data",
+                        array=kwargs["stds_list"][i],
+                        width=10,
+                        visible=True,
                     ),
                 )
             )
@@ -447,7 +449,7 @@ class RamachandranPlotly(ParentPlotly):
         outliers = kwargs["outliers"]
         rama_pref_values = kwargs["rama_pref_values"]
         rama_preferences = kwargs["rama_preferences"]
-        outfig  = kwargs["outfig"]
+        outfig = kwargs["outfig"]
         noshow = kwargs["noshow"]
         for key in ["General", "GLY", "Pre-PRO", "PRO"]:
             self.figure = go.Figure()
@@ -459,12 +461,12 @@ class RamachandranPlotly(ParentPlotly):
             colorscale += [[bounds[-1], cmap[-1]]]
             self.figure.add_trace(
                 go.Heatmap(
-                    x=[x-180 for x in range(361)],
-                    y=[y-180 for y in range(361)],
+                    x=[x - 180 for x in range(361)],
+                    y=[y - 180 for y in range(361)],
                     z=rama_pref_values[key],
                     colorscale=colorscale,
                     showscale=False,
-                    name="Probability"
+                    name="Probability",
                 )
             )
             self.figure.add_trace(
@@ -473,7 +475,7 @@ class RamachandranPlotly(ParentPlotly):
                     y=normals[key]["psi"],
                     mode="markers",
                     name=f"normals (>{bounds[1]})",
-                    hovertext = normals[key]["res"],
+                    hovertext=normals[key]["res"],
                     hoverinfo="text",
                     marker=dict(
                         color="#38A7D0",
@@ -486,7 +488,7 @@ class RamachandranPlotly(ParentPlotly):
                     y=outliers[key]["psi"],
                     mode="markers",
                     name=f"outliers (<{bounds[1]})",
-                    hovertext = outliers[key]["res"],
+                    hovertext=outliers[key]["res"],
                     hoverinfo="text",
                     marker=dict(
                         color="#F67088",
@@ -503,12 +505,14 @@ class RamachandranPlotly(ParentPlotly):
                 xaxis_title=kwargs["xlabel"],
                 yaxis_title=kwargs["ylabel"],
                 font=dict(family="Arial, Times New Roman", size=18),
-                xaxis_range = [-180, 180],
-                yaxis_range = [-180, 180],
+                xaxis_range=[-180, 180],
+                yaxis_range=[-180, 180],
                 showlegend=True,
             )
 
             if outfig != None:
-                self.warn("unable to save figure by DIT, please save figure by yourself")
+                self.warn(
+                    "unable to save figure by DIT, please save figure by yourself"
+                )
             if noshow == False:
                 self.figure.show()

@@ -68,8 +68,8 @@ class Gnuplot(log):
         self.colormap: str = None
         self.plot_type: str = "line"
         self.mode: str = None
-        self.xtitles :List[str] = None
-        self.stds_list :List[List[str]] = None
+        self.xtitles: List[str] = None
+        self.stds_list: List[List[str]] = None
 
     def dump2str(self) -> str:
         """dump gnuplot properties to gnuplot input scripts
@@ -248,9 +248,7 @@ set colorbox vertical origin screen 0.9, 0.2 size screen 0.05, 0.6 front  noinve
                     gpl += f"""{x} {d} {s}\n"""
                 gpl += "EOD\n\n"
             gpl += """set xtics ("""
-            gpl += ",".join(
-                [f""""{xt}" {i}""" for i, xt in enumerate(self.xtitles)]
-            )
+            gpl += ",".join([f""""{xt}" {i}""" for i, xt in enumerate(self.xtitles)])
             gpl += """)\n"""
             gpl += """set style histogram errorbars lw 2\n"""
             gpl += """set style fill solid border -1\n"""
@@ -501,6 +499,7 @@ class BarGnuplot(ParentGnuplot):
         y_precision :int
         legend_location :str
     """
+
     def __init__(self, **kwargs) -> None:
         super().__init__()
 

@@ -908,14 +908,20 @@ class xvg_ave_bar(Command):
             if not isinstance(columns, int):
                 self.error("the item of column_select must be int, do not use ,")
         if self.parm.legends != None and len(self.parm.legends) != len(self.parm.input):
-            self.error(f"number of legends ({len(self.parm.legends)}) you input can not pair to the number of file groups ({len(self.parm.input)})")
-        if self.parm.additional_list != None and len(self.parm.additional_list) != len(self.parm.columns):
-            self.error(f"the number of xtitles ({len(self.parm.additional_list)}) you specified through 'additional_list' must pair to the number of columns {len(self.parm.columns)}")
-        
+            self.error(
+                f"number of legends ({len(self.parm.legends)}) you input can not pair to the number of file groups ({len(self.parm.input)})"
+            )
+        if self.parm.additional_list != None and len(self.parm.additional_list) != len(
+            self.parm.columns
+        ):
+            self.error(
+                f"the number of xtitles ({len(self.parm.additional_list)}) you specified through 'additional_list' must pair to the number of columns {len(self.parm.columns)}"
+            )
+
         ## deal with data
         begin, end, dt = self.parm.begin, self.parm.end, self.parm.dt
         final_aves, final_stds = [], []
-        all_out = "\n" + ">"*26 + "  detailed data  " + "<"*26 + "\n"
+        all_out = "\n" + ">" * 26 + "  detailed data  " + "<" * 26 + "\n"
         all_out += "XVGFILE                 , LEGEND                  ,   AVERAGE   ,   STD.ERR\n"
         xtitles, legends = ["" for _ in self.parm.columns], []
         for xvgfiles in self.parm.input:
@@ -926,7 +932,9 @@ class xvg_ave_bar(Command):
                 xvg.check_column_index(self.parm.columns)
                 for i, c in enumerate(self.parm.columns):
                     head, ave, std = xvg.calc_ave(begin, end, dt, c)
-                    all_out += f"{xvgfile:<24}, {head:<24}, {ave:^12.6f}, {std:^12.6f}\n"
+                    all_out += (
+                        f"{xvgfile:<24}, {head:<24}, {ave:^12.6f}, {std:^12.6f}\n"
+                    )
                     xtitles[i] = head
                     column_averages_matrix[i].append(ave)
             column_aves, column_stds = [], []
@@ -935,7 +943,7 @@ class xvg_ave_bar(Command):
                 column_stds.append(np.std(lis, ddof=1))
             final_aves.append(column_aves)
             final_stds.append(column_stds)
-        
+
         xtitles = self.remove_latex_msgs(xtitles)
         legends = self.remove_latex_msgs(legends)
         xtitles = self.sel_parm(self.parm.additional_list, xtitles)
@@ -943,20 +951,32 @@ class xvg_ave_bar(Command):
 
         # print averages
         print(all_out)
-        outstr = "\n" + ">"*28 + "  final data  " + "<"*28 
-        outstr += "\n" + "-"*70 + "\n"
-        outstr += "| Average " + " "*20 + "|" + "|".join(f"{t:^19}" for t in xtitles) + "|\n"
+        outstr = "\n" + ">" * 28 + "  final data  " + "<" * 28
+        outstr += "\n" + "-" * 70 + "\n"
+        outstr += (
+            "| Average "
+            + " " * 20
+            + "|"
+            + "|".join(f"{t:^19}" for t in xtitles)
+            + "|\n"
+        )
         for i in range(len(final_aves)):
             outstr += f"|{legends[i]:<28} |"
             outstr += "|".join([f"{ave:^19.6}" for ave in final_aves[i]])
             outstr += "|\n"
-        outstr += "-"*70 + "\n"
-        outstr += "| std.err " + " "*20 + "|" + "|".join(f"{t:^19}" for t in xtitles) + "|\n"
+        outstr += "-" * 70 + "\n"
+        outstr += (
+            "| std.err "
+            + " " * 20
+            + "|"
+            + "|".join(f"{t:^19}" for t in xtitles)
+            + "|\n"
+        )
         for i in range(len(final_stds)):
             outstr += f"|{legends[i]:<28} |"
             outstr += "|".join([f"{std:^19.6}" for std in final_stds[i]])
             outstr += "|\n"
-        outstr += "-"*70 + "\n"
+        outstr += "-" * 70 + "\n"
         print(outstr)
 
         if self.parm.csv:
@@ -1020,7 +1040,9 @@ class xvg_rama(Command):
             if not isinstance(xvg, str):
                 self.error("files should be seperated by space not ,")
         if len(self.parm.input) > 1:
-            self.warn(f"only the first file {self.parm.input[0]} you specified will be used to draw ramachandran")
+            self.warn(
+                f"only the first file {self.parm.input[0]} you specified will be used to draw ramachandran"
+            )
 
         xvg = XVG(self.parm.input[0])
 
@@ -1074,10 +1096,18 @@ class xvg_rama(Command):
                         phi = int(float(line.split()[0]))
                         psi = int(float(line.split()[1]))
                         ## plt.imshow show transpose of img
-                        rama_pref_values[key][psi + 180][phi + 180] = float(line.split()[2])
-                        rama_pref_values[key][psi + 179][phi + 180] = float(line.split()[2])
-                        rama_pref_values[key][psi + 180][phi + 179] = float(line.split()[2])
-                        rama_pref_values[key][psi + 179][phi + 179] = float(line.split()[2])
+                        rama_pref_values[key][psi + 180][phi + 180] = float(
+                            line.split()[2]
+                        )
+                        rama_pref_values[key][psi + 179][phi + 180] = float(
+                            line.split()[2]
+                        )
+                        rama_pref_values[key][psi + 180][phi + 179] = float(
+                            line.split()[2]
+                        )
+                        rama_pref_values[key][psi + 179][phi + 179] = float(
+                            line.split()[2]
+                        )
 
         normals, outliers = {}, {}
         for key in rama_preferences.keys():
@@ -1116,7 +1146,9 @@ class xvg_rama(Command):
             + "\n        General: the dihedrals of other amino acids"
         )
         print("\n" + "-" * 70)
-        print("{:<10} {:>20} {:>20}".format("", "Normal Dihedrals", "Outlier Dihedrals"))
+        print(
+            "{:<10} {:>20} {:>20}".format("", "Normal Dihedrals", "Outlier Dihedrals")
+        )
         for key in ["General", "GLY", "Pre-PRO", "PRO"]:
             print(
                 "{:<10} {:>20} {:>20}".format(
@@ -1130,9 +1162,9 @@ class xvg_rama(Command):
             "outliers": outliers,
             "rama_pref_values": rama_pref_values,
             "rama_preferences": rama_preferences,
-            "xlabel":self.sel_parm(self.parm.xlabel, "$phi$"),
-            "ylabel":self.sel_parm(self.parm.ylabel, "$psi$"),
-            "title":self.parm.title,
+            "xlabel": self.sel_parm(self.parm.xlabel, "$phi$"),
+            "ylabel": self.sel_parm(self.parm.ylabel, "$psi$"),
+            "title": self.parm.title,
             "outfig": self.parm.output,
             "noshow": self.parm.noshow,
         }
@@ -1141,4 +1173,6 @@ class xvg_rama(Command):
         elif self.parm.engine == "plotly":
             line = RamachandranPlotly(**kwargs)
         else:
-            self.error("Ramachandran plot only supported by matplotlib and plotly engine")
+            self.error(
+                "Ramachandran plot only supported by matplotlib and plotly engine"
+            )

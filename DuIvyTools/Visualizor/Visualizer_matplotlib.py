@@ -478,7 +478,8 @@ class RamachandranMatplotlib(ParentMatplotlib):
                 rama_pref_values[key],
                 cmap=mplcolors.ListedColormap(rama_preferences[key]["cmap"]),
                 norm=mplcolors.BoundaryNorm(
-                    rama_preferences[key]["bounds"], mplcolors.ListedColormap(rama_preferences[key]["cmap"]).N
+                    rama_preferences[key]["bounds"],
+                    mplcolors.ListedColormap(rama_preferences[key]["cmap"]).N,
                 ),
                 extent=(-180, 180, 180, -180),
             )
@@ -498,7 +499,7 @@ class RamachandranMatplotlib(ParentMatplotlib):
             plt.ylabel(kwargs["ylabel"])
             plt.tight_layout()
 
-            outfig  = kwargs["outfig"]
+            outfig = kwargs["outfig"]
             noshow = kwargs["noshow"]
             if outfig != None:
                 if os.path.exists(outfig):
