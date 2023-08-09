@@ -44,15 +44,6 @@ class ParentPlotly(log):
 
     def final(self, outfig: str, noshow: bool) -> None:
         if outfig != None:
-            if os.path.exists(outfig):
-                time_info = time.strftime("%Y%m%d%H%M%S", time.localtime())
-                new_outfig = f'{".".join(outfig.split(".")[:-1])}_{time_info}.{outfig.split(".")[-1]}'
-                self.warn(
-                    f"{outfig} is already in current directory, save to {new_outfig} for instead."
-                )
-                outfig = new_outfig
-            # self.figure.save_fig(outfig)
-            # self.info(f"save figure to {outfig} successfully")
             self.warn("unable to save figure by DIT, please save figure by yourself")
         if noshow == False:
             self.figure.show()
@@ -518,15 +509,6 @@ class RamachandranPlotly(ParentPlotly):
             )
 
             if outfig != None:
-                if os.path.exists(outfig):
-                    time_info = time.strftime("%Y%m%d%H%M%S", time.localtime())
-                    new_outfig = f'{".".join(outfig.split(".")[:-1])}_{time_info}.{outfig.split(".")[-1]}'
-                    self.warn(
-                        f"{outfig} is already in current directory, save to {new_outfig} for instead."
-                    )
-                    outfig = new_outfig
-                # self.figure.save_fig(outfig)
-                # self.info(f"save figure to {outfig} successfully")
                 self.warn("unable to save figure by DIT, please save figure by yourself")
             if noshow == False:
                 self.figure.show()

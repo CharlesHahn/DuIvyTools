@@ -470,8 +470,6 @@ class RamachandranMatplotlib(ParentMatplotlib):
         outliers = kwargs["outliers"]
         rama_pref_values = kwargs["rama_pref_values"]
         rama_preferences = kwargs["rama_preferences"]
-        outfig  = kwargs["outfig"]
-        noshow = kwargs["noshow"]
         for key in ["General", "GLY", "Pre-PRO", "PRO"]:
             if len(normals[key]["phi"]) + len(outliers[key]["phi"]) == 0:
                 continue
@@ -498,8 +496,10 @@ class RamachandranMatplotlib(ParentMatplotlib):
             plt.title(title)
             plt.xlabel(kwargs["xlabel"])
             plt.ylabel(kwargs["ylabel"])
-
             plt.tight_layout()
+
+            outfig  = kwargs["outfig"]
+            noshow = kwargs["noshow"]
             if outfig != None:
                 if os.path.exists(outfig):
                     time_info = time.strftime("%Y%m%d%H%M%S", time.localtime())
