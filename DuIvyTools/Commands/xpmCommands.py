@@ -62,7 +62,9 @@ class xpm2csv(Command):
                     y_value *= self.parm.yshrink
                     z_value *= self.parm.zshrink
                     fo.write(f"{x_value:.6f},{y_value:.6f},{z_value:.6f}\n")
-        self.info(f"extract data from {xpm.xpmfile} and saved into {self.parm.output} successfully")
+        self.info(
+            f"extract data from {xpm.xpmfile} and saved into {self.parm.output} successfully"
+        )
 
 
 class xpm2dat(Command):
@@ -94,22 +96,36 @@ class xpm2dat(Command):
             x_title = self.sel_parm(self.parm.xlabel, x_title)
             y_title = self.sel_parm(self.parm.ylabel, y_title)
             z_title = self.sel_parm(self.parm.zlabel, z_title)
-            fo.write("#### " + f"{x_title} (xaxis) data were shown below, from left to right:\n")
+            fo.write(
+                "#### "
+                + f"{x_title} (xaxis) data were shown below, from left to right:\n"
+            )
             fo.write(",".join([f"{x*self.parm.xshrink:.6f}" for x in xpm.xaxis]) + "\n")
-            fo.write("#### " + f"{y_title} (yaxis) data were shown below, from top to bottom:\n")
+            fo.write(
+                "#### "
+                + f"{y_title} (yaxis) data were shown below, from top to bottom:\n"
+            )
             fo.write(",".join([f"{y*self.parm.yshrink:.6f}" for y in xpm.yaxis]) + "\n")
-            fo.write("#### " + f"{y_title} (yaxis) data were shown below, from bottom to top:\n")
+            fo.write(
+                "#### "
+                + f"{y_title} (yaxis) data were shown below, from bottom to top:\n"
+            )
             y_lis = [f"{y*self.parm.yshrink:.6f}" for y in xpm.yaxis]
             y_lis.reverse()
             fo.write(",".join(y_lis) + "\n")
-            fo.write("#### " + f"{z_title} (figure dots) data were shown below, from top to bottom, from left to right:\n")
+            fo.write(
+                "#### "
+                + f"{z_title} (figure dots) data were shown below, from top to bottom, from left to right:\n"
+            )
             for y, _ in enumerate(xpm.yaxis):
-                line_list:List[str] = []
+                line_list: List[str] = []
                 for x, _ in enumerate(xpm.xaxis):
                     z_value = xpm.value_matrix[y][x]
                     line_list.append(f"{z_value*self.parm.zshrink:.6f}")
                 fo.write(",".join(line_list) + "\n")
-        self.info(f"extract data from {xpm.xpmfile} and saved into {self.parm.output} successfully")
+        self.info(
+            f"extract data from {xpm.xpmfile} and saved into {self.parm.output} successfully"
+        )
 
 
 class xpm_diff(Command):
