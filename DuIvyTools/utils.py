@@ -218,19 +218,21 @@ class Parameters(log):
         parser.add_argument(
             "--mode",
             type=str,
-            choices=[None, "withoutScatter"],
-            help="additional parameter, withoutScatter will NOT show scatter plot for xvg_box_compare and xvg_violin_compare",
+            choices=[None, "withoutScatter", "pcolormesh", "3d", "contour"],
+            help="additional parameter: withoutScatter will NOT show scatter plot for xvg_box_compare; imshow, pcolormesh, 3d, contour were used for xpm_show command",
         )
         parser.add_argument(
             "-al", "--additional_list", nargs="+", help="additional parameters"
         )
-
         parser.add_argument(
             "-ip",
             "--interpolation",
-            action="store_true",
-            help="whether to apply interpolation",
+            type=str,
+            default=None,
+            help="specify the interpolation method",
         )
+
+        """
         parser.add_argument(
             "-3d",
             "--threeDimensions",
@@ -324,6 +326,7 @@ class Parameters(log):
             type=str,
             help="use AND or OR to operate different hbonds. eg. -so AND1-2,4,7  -so OR0,4,6-8",
         )
+        """
 
         args = parser.parse_args()
         self.__dict__ = args.__dict__

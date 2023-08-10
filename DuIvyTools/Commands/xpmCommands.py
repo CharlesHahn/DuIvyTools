@@ -11,7 +11,10 @@ from typing import List, Union
 
 from Commands.Commands import Command
 from FileParser.xpmParser import XPM, XPMS
-from Visualizor.Visualizer_matplotlib import LineMatplotlib
+from Visualizor.Visualizer_matplotlib import *
+from Visualizor.Visualizer_plotext import *
+from Visualizor.Visualizer_plotly import *
+from Visualizor.Visualizer_gnuplot import *
 from utils import Parameters
 
 
@@ -23,6 +26,64 @@ class xpm_show(Command):
 
         self.info("in xpm_show")
         print(self.parm.__dict__)
+        
+        if not self.parm.input:
+            self.error("you must specify a xpm file to show")
+        # notes of mode: imshow, pcm, 3d, contour 
+        for xpmfile in self.parm.input:
+            xpm = XPM(xpmfile)
+
+            xaxis = [x*self.parm.xshrink for x in xpm.xaxis]
+            yaxis = [y*self.parm.yshrink for y in xpm.yaxis]
+            value_matrix = []
+            for y, _ in enumerate(yaxis):
+                v_lis = []
+                for x, _ in enumerate(xaxis):
+                    v_lis.append(xpm.value_matrix[y][x]*self.parm.zshrink)
+                value_matrix.append(v_lis)
+
+            kwargs = {
+                "data_list": value_matrix,
+                "xdata_list": xaxis,
+                "ydata_list": yaxis,
+                "legends": xpm.notes,
+                "color_list": xpm.colors,
+                "xmin": self.parm.xmin,
+                "xmax": self.parm.xmax,
+                "ymin": self.parm.ymin,
+                "ymax": self.parm.ymax,
+                "xlabel": self.get_parm("xlabel"),
+                "ylabel": self.get_parm("ylabel"),
+                "title": self.get_parm("title"),
+                "x_precision": self.parm.x_precision,
+                "y_precision": self.parm.y_precision,
+                "z_precision": self.parm.z_precision,
+                "alpha": self.parm.alpha,
+                "legend_location": self.parm.legend_location,
+                "colorbar_location": self.parm.colorbar_location,
+            }
+
+            interpolation = self.parm.interpolation
+            mode = self.parm.mode
+
+            if self.parm.engine == "matplotlib":
+                if mode in ["pcolormesh", "3d", "contour"] and interpolation != None:
+                    xaxis, yaxis, value_matrix = self.calc_interpolation(xaxis, yaxis, value_matrix, interpolation)
+                    kwargs["xdata_list"] = xaxis
+                    kwargs["ydata_list"] = yaxis
+                    kwargs["data_list"] = value_matrix
+                if mode == "pcolormesh":
+                    pass
+                elif mode == "3d":
+                    pass
+                elif mode == "contour":
+                    pass
+                else: # for imshow
+                    kwargs["interpolation"] = interpolation
+                    fig = ImshowMatplotlib(**kwargs)
+                    fig.final(self.parm.output, self.parm.noshow)
+            else:
+                self.error("wrong selection of plot engine")
 
 
 class xpm2csv(Command):
