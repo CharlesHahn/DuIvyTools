@@ -514,3 +514,146 @@ class RamachandranMatplotlib(ParentMatplotlib):
                 self.info(f"save figure to {outfig} successfully")
             if noshow == False:
                 plt.show()
+
+
+class ImshowMatplotlib(ParentMatplotlib):
+    """A matplotlib imshow plot class for heatmap
+
+    Args:
+        ParentMatplotlib (object): matplotlib parent class
+
+    Parameters:
+        data_list :List[List[float]]
+        xdata_list :List[float]
+        ydata_list :List[float]
+        legends :List[str]
+        color_list :List[str]
+        xlabel :str
+        ylabel :str
+        zlabel :str
+        title :str
+        xmin :float
+        xmax :float
+        ymin :float
+        ymax :float
+        x_precision :int
+        y_precision :int
+        z_precision :int
+        alpha :float
+        legend_location :str
+        colorbar_location :str
+        interpolation :str
+    """
+
+    def __init__(self, **kwargs) -> None:
+        super().__init__()
+
+        ## TODO: original color
+        im = plt.imshow(kwargs["data_list"], interpolation=kwargs["interpolation"], aspect="auto")
+        plt.colorbar(im, label=kwargs["zlabel"])
+
+        plt.title(kwargs["title"])
+        plt.xlabel(kwargs["xlabel"])
+        plt.ylabel(kwargs["ylabel"])
+
+
+class PcolormeshMatplotlib(ParentMatplotlib):
+    """A matplotlib pcolormesh plot class for heatmap
+
+    Args:
+        ParentMatplotlib (object): matplotlib parent class
+
+    Parameters:
+        data_list :List[List[float]]
+        xdata_list :List[float]
+        ydata_list :List[float]
+        legends :List[str]
+        color_list :List[str]
+        xlabel :str
+        ylabel :str
+        zlabel :str
+        title :str
+        xmin :float
+        xmax :float
+        ymin :float
+        ymax :float
+        x_precision :int
+        y_precision :int
+        z_precision :int
+        alpha :float
+        legend_location :str
+        colorbar_location :str
+    """
+
+    def __init__(self, **kwargs) -> None:
+        super().__init__()
+
+
+
+class ThreeDimensionMatplotlib(ParentMatplotlib):
+    """A matplotlib 3d plot class for heatmap
+
+    Args:
+        ParentMatplotlib (object): matplotlib parent class
+
+    Parameters:
+        data_list :List[List[float]]
+        xdata_list :List[float]
+        ydata_list :List[float]
+        legends :List[str]
+        color_list :List[str]
+        xlabel :str
+        ylabel :str
+        zlabel :str
+        title :str
+        xmin :float
+        xmax :float
+        ymin :float
+        ymax :float
+        x_precision :int
+        y_precision :int
+        z_precision :int
+        alpha :float
+        legend_location :str
+        colorbar_location :str
+    """
+
+    def __init__(self, **kwargs) -> None:
+        super().__init__()
+
+
+
+
+
+
+class ContourMatplotlib(ParentMatplotlib):
+    """A matplotlib contour plot class for heatmap
+
+    Args:
+        ParentMatplotlib (object): matplotlib parent class
+
+    Parameters:
+        data_list :List[List[float]]
+        xdata_list :List[float]
+        ydata_list :List[float]
+        legends :List[str]
+        color_list :List[str]
+        xlabel :str
+        ylabel :str
+        zlabel :str
+        title :str
+        xmin :float
+        xmax :float
+        ymin :float
+        ymax :float
+        x_precision :int
+        y_precision :int
+        z_precision :int
+        alpha :float
+        legend_location :str
+        colorbar_location :str
+    """
+
+    def __init__(self, **kwargs) -> None:
+        super().__init__()
+

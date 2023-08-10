@@ -231,6 +231,13 @@ class Parameters(log):
             default=None,
             help="specify the interpolation method",
         )
+        parser.add_argument(
+            "--interpolation_fold",
+            type=int,
+            default=10,
+            help="specify the interpolation fold",
+        )
+        ## TODO: when mode, show choices of ip methods
 
         """
         parser.add_argument(
