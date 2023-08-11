@@ -78,6 +78,7 @@ class xpm_show(Command):
                 "alpha": self.parm.alpha,
                 "legend_location": self.parm.legend_location,
                 "colorbar_location": self.parm.colorbar_location,
+                "fig_type": xpm.type,
             }
 
             interpolation = self.parm.interpolation

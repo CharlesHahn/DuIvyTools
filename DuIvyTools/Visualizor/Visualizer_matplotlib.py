@@ -13,6 +13,7 @@ import numpy as np
 
 import matplotlib.pyplot as plt
 from matplotlib import colors as mplcolors
+from matplotlib import patches
 from matplotlib.ticker import AutoLocator, FormatStrFormatter
 
 # sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
@@ -549,8 +550,21 @@ class ImshowMatplotlib(ParentMatplotlib):
         super().__init__()
 
         ## TODO: original color
-        im = plt.imshow(kwargs["data_list"], interpolation=kwargs["interpolation"], aspect="auto")
-        plt.colorbar(im, label=kwargs["zlabel"])
+        if kwargs["fig_type"] != "Continuous":
+            im = plt.imshow(kwargs["data_list"], interpolation=kwargs["interpolation"], alpha=kwargs["alpha"])
+            legend_patches = []
+            for ind, note in enumerate(kwargs["legends"]):
+                leg_patch = patches.Patch(color=kwargs["color_list"][ind], label=note)
+                legend_patches.append(leg_patch)
+            plt.legend(
+                handles=legend_patches,
+                bbox_to_anchor=(1.02, 1.00),
+                loc="upper left",
+                borderaxespad=0,
+            )
+        else:
+            im = plt.imshow(kwargs["data_list"], interpolation=kwargs["interpolation"], alpha=kwargs["alpha"])
+            plt.colorbar(im, label=kwargs["zlabel"])
 
         plt.title(kwargs["title"])
         plt.xlabel(kwargs["xlabel"])
