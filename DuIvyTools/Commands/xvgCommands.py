@@ -64,8 +64,8 @@ class xvg_show(Command):
                 "y_precision": self.parm.y_precision,
                 "highs": list(),
                 "lows": list(),
-                "alpha": self.parm.alpha,
-                "legend_location": self.parm.legend_location,
+                "alpha": self.sel_parm(self.parm.alpha, 0.4),
+                "legend_location": self.sel_parm(self.parm.legend_location, "inside"),
             }
             if self.parm.engine == "matplotlib":
                 line = LineMatplotlib(**kwargs)
@@ -163,8 +163,8 @@ class xvg_compare(Command):
             "y_precision": self.parm.y_precision,
             "highs": highs_list,
             "lows": lows_list,
-            "alpha": self.parm.alpha,
-            "legend_location": self.parm.legend_location,
+            "alpha": self.sel_parm(self.parm.alpha, 0.4),
+            "legend_location": self.sel_parm(self.parm.legend_location, "inside"),
         }
         if self.parm.engine == "matplotlib":
             line = LineMatplotlib(**kwargs)
@@ -522,8 +522,8 @@ class xvg_show_distribution(xvg_compare):
             "y_precision": self.parm.y_precision,
             "highs": list(),
             "lows": list(),
-            "alpha": self.parm.alpha,
-            "legend_location": self.parm.legend_location,
+            "alpha": self.sel_parm(self.parm.alpha, 0.4),
+            "legend_location": self.sel_parm(self.parm.legend_location, "inside"),
         }
         if self.parm.engine == "matplotlib":
             line = LineMatplotlib(**kwargs)
@@ -679,7 +679,7 @@ class xvg_show_scatter(Command):
             "y_precision": self.parm.y_precision,
             "z_precision": self.parm.z_precision,
             "colorbar_location": self.parm.colorbar_location,
-            "legend_location": self.parm.legend_location,
+            "legend_location": self.sel_parm(self.parm.legend_location, "inside"),
         }
         if self.parm.engine == "matplotlib":
             line = ScatterMatplotlib(**kwargs)
@@ -771,13 +771,6 @@ class xvg_show_stack(Command):
             xmax = np.max(xdata_list[0])
             ymin = 0
             ymax = np.max(highs_list[0])
-            if self.parm.alpha == 0.4:
-                alpha = 1.0
-                self.warn(
-                    "DIT strongly suggest use alpha==1.0 to draw stack plot. If you wanna specify alpha, don't use the default value (0.4) which would be convert to 1.0"
-                )
-            else:
-                alpha = self.parm.alpha
 
             kwargs = {
                 "data_list": data_list,
@@ -794,8 +787,8 @@ class xvg_show_stack(Command):
                 "y_precision": self.parm.y_precision,
                 "highs": highs_list,
                 "lows": lows_list,
-                "alpha": alpha,
-                "legend_location": self.parm.legend_location,
+                "alpha": self.sel_parm(self.parm.alpha, 1.0),
+                "legend_location": self.sel_parm(self.parm.legend_location, "inside"),
             }
             if self.parm.engine == "matplotlib":
                 line = StackMatplotlib(**kwargs)
@@ -866,7 +859,7 @@ class xvg_box_compare(xvg_compare):
             "x_precision": self.parm.x_precision,
             "y_precision": self.parm.y_precision,
             "z_precision": self.parm.z_precision,
-            "alpha": self.parm.alpha,
+            "alpha": self.sel_parm(self.parm.alpha, 0.4),
             "mode": self.parm.mode,
             "cmap": self.sel_parm(self.parm.colormap, None),
             "colorbar_location": self.parm.colorbar_location,
@@ -1007,7 +1000,7 @@ class xvg_ave_bar(Command):
             "title": self.sel_parm(self.parm.title, "XVG ave bar comparison"),
             "x_precision": self.parm.x_precision,
             "y_precision": self.parm.y_precision,
-            "legend_location": self.parm.legend_location,
+            "legend_location": self.sel_parm(self.parm.legend_location, "inside"),
         }
         if self.parm.engine == "matplotlib":
             line = BarMatplotlib(**kwargs)

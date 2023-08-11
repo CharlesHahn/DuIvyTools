@@ -544,14 +544,21 @@ class ImshowMatplotlib(ParentMatplotlib):
         legend_location :str
         colorbar_location :str
         interpolation :str
+        cmap :str
     """
 
     def __init__(self, **kwargs) -> None:
         super().__init__()
 
-        ## TODO: original color
         if kwargs["fig_type"] != "Continuous":
-            im = plt.imshow(kwargs["data_list"], interpolation=kwargs["interpolation"], alpha=kwargs["alpha"])
+            ## for discrete xpm, imshow use the original colors
+            color_map = mplcolors.ListedColormap(kwargs["color_list"])
+            im = plt.imshow(
+                kwargs["data_list"],
+                interpolation=kwargs["interpolation"],
+                alpha=kwargs["alpha"],
+                cmap=color_map,
+            )
             legend_patches = []
             for ind, note in enumerate(kwargs["legends"]):
                 leg_patch = patches.Patch(color=kwargs["color_list"][ind], label=note)
@@ -563,12 +570,19 @@ class ImshowMatplotlib(ParentMatplotlib):
                 borderaxespad=0,
             )
         else:
-            im = plt.imshow(kwargs["data_list"], interpolation=kwargs["interpolation"], alpha=kwargs["alpha"])
+            im = plt.imshow(
+                kwargs["data_list"],
+                interpolation=kwargs["interpolation"],
+                alpha=kwargs["alpha"],
+                cmap=kwargs["cmap"],
+            )
             plt.colorbar(im, label=kwargs["zlabel"])
 
         plt.title(kwargs["title"])
         plt.xlabel(kwargs["xlabel"])
         plt.ylabel(kwargs["ylabel"])
+
+        ## TODO sticks
 
 
 class PcolormeshMatplotlib(ParentMatplotlib):
@@ -587,21 +601,92 @@ class PcolormeshMatplotlib(ParentMatplotlib):
         ylabel :str
         zlabel :str
         title :str
-        xmin :float
-        xmax :float
-        ymin :float
-        ymax :float
         x_precision :int
         y_precision :int
         z_precision :int
         alpha :float
         legend_location :str
         colorbar_location :str
+        cmap :str
     """
 
     def __init__(self, **kwargs) -> None:
         super().__init__()
 
+        if len(kwargs["data_list"]) == 1:
+            self.error("!!! pcolormesh unable to proper deal with 1 dimension data !!!")
+        if kwargs["fig_type"] != "Continuous":
+            self.info(
+                f"""using user-defined colors, the original colors in xpm are: {kwargs["color_list"]}"""
+            )
+            colors = plt.rcParams["axes.prop_cycle"].by_key()["color"]
+            if len(colors) < len(kwargs["legends"]):
+                self.error(
+                    f"""you need to specify at least {len(kwargs["legends"])} colors to show discrete xpm figure"""
+                )
+            colors = colors[: len(kwargs["legends"])]
+            color_map = mplcolors.ListedColormap(colors)
+            im = plt.pcolormesh(
+                kwargs["xdata_list"],
+                kwargs["ydata_list"],
+                kwargs["data_list"],
+                alpha=kwargs["alpha"],
+                cmap=color_map,
+                shading="auto",
+            )
+            legend_patches = []
+            for ind, note in enumerate(kwargs["legends"]):
+                leg_patch = patches.Patch(color=colors[ind], label=note)
+                legend_patches.append(leg_patch)
+            if kwargs["legend_location"] == "outside":
+                plt.legend(
+                    handles=legend_patches,
+                    bbox_to_anchor=(1.02, 1.00),
+                    loc="upper left",
+                    borderaxespad=0,
+                )
+            else:
+                plt.legend(handles=legend_patches)
+        else:
+            im = plt.pcolormesh(
+                kwargs["xdata_list"],
+                kwargs["ydata_list"],
+                kwargs["data_list"],
+                alpha=kwargs["alpha"],
+                cmap=kwargs["cmap"],
+                shading="auto",
+            )
+            if kwargs["z_precision"] != None:
+                plt.colorbar(
+                    im,
+                    label=kwargs["zlabel"],
+                    format=FormatStrFormatter(f"""%.{kwargs["z_precision"]}f"""),
+                    location=kwargs["colorbar_location"],
+                )
+            else:
+                plt.colorbar(
+                    im, label=kwargs["zlabel"], location=kwargs["colorbar_location"]
+                )
+
+        if (
+            kwargs["xmin"] != None
+            or kwargs["xmax"] != None
+            or kwargs["ymin"] != None
+            or kwargs["ymax"] != None
+        ):
+            self.warn("pcolormesh do not support setting min or max of X or Y")
+
+        ax = plt.gca()
+        if kwargs["x_precision"] != None:
+            x_p = kwargs["x_precision"]
+            ax.xaxis.set_major_formatter(FormatStrFormatter(f"%.{x_p}f"))
+        if kwargs["y_precision"] != None:
+            y_p = kwargs["y_precision"]
+            ax.yaxis.set_major_formatter(FormatStrFormatter(f"%.{y_p}f"))
+
+        plt.xlabel(kwargs["xlabel"])
+        plt.ylabel(kwargs["ylabel"])
+        plt.title(kwargs["title"])
 
 
 class ThreeDimensionMatplotlib(ParentMatplotlib):
@@ -630,14 +715,11 @@ class ThreeDimensionMatplotlib(ParentMatplotlib):
         alpha :float
         legend_location :str
         colorbar_location :str
+        cmap :str
     """
 
     def __init__(self, **kwargs) -> None:
         super().__init__()
-
-
-
-
 
 
 class ContourMatplotlib(ParentMatplotlib):
@@ -666,8 +748,8 @@ class ContourMatplotlib(ParentMatplotlib):
         alpha :float
         legend_location :str
         colorbar_location :str
+        cmap :str
     """
 
     def __init__(self, **kwargs) -> None:
         super().__init__()
-

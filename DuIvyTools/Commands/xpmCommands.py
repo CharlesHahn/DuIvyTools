@@ -25,8 +25,8 @@ class xpm_show(Command):
     
     def calc_interpolation(self, xaxis:List[float], yaxis:List[float], matrix:List[List[float]], method:str, ip_fold:int) -> Union[List[float],List[List[float]]]:
         # interp2d : linear, cubic, quintic
-        # ip_func = interp2d(xaxis, yaxis, matrix, kind=method)
-        ip_func = RectBivariateSpline(xaxis, yaxis, matrix)#, kx=3, ky=3)
+        ip_func = interp2d(xaxis, yaxis, matrix, kind=method)
+        # ip_func = RectBivariateSpline(xaxis, yaxis, matrix)#, kx=3, ky=3)
         x_new = np.linspace(np.min(xaxis), np.max(xaxis), ip_fold * len(xaxis))
         y_new = np.linspace(np.min(yaxis), np.max(yaxis), ip_fold * len(yaxis))
         matrix_new = ip_func(x_new, y_new)
@@ -76,9 +76,10 @@ class xpm_show(Command):
                 "y_precision": self.parm.y_precision,
                 "z_precision": self.parm.z_precision,
                 "alpha": self.parm.alpha,
-                "legend_location": self.parm.legend_location,
+                "legend_location": self.sel_parm(self.parm.legend_location, "outside"),
                 "colorbar_location": self.parm.colorbar_location,
                 "fig_type": xpm.type,
+                "cmap": self.parm.colormap
             }
 
             interpolation = self.parm.interpolation
@@ -92,12 +93,15 @@ class xpm_show(Command):
                     kwargs["ydata_list"] = yaxis
                     kwargs["data_list"] = value_matrix
                 if mode == "pcolormesh":
-                    pass
+                    fig = PcolormeshMatplotlib(**kwargs)
+                    fig.final(self.parm.output, self.parm.noshow)
                 elif mode == "3d":
-                    pass
+                    fig = ThreeDimensionMatplotlib(**kwargs)
+                    fig.final(self.parm.output, self.parm.noshow)
                 elif mode == "contour":
-                    pass
-                else: # for imshow
+                    fig = ContourMatplotlib(**kwargs)
+                    fig.final(self.parm.output, self.parm.noshow)
+                else:
                     kwargs["interpolation"] = interpolation
                     fig = ImshowMatplotlib(**kwargs)
                     fig.final(self.parm.output, self.parm.noshow)

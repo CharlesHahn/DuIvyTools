@@ -178,7 +178,7 @@ class Parameters(log):
             help="confidence for confidence interval calculation",
         )
         parser.add_argument(
-            "--alpha", type=float, default=0.4, help="the alpha of background lines"
+            "--alpha", type=float, help="the alpha of background lines"
         )
         parser.add_argument("-csv", "--csv", help="store data into csv file")
         parser.add_argument(
@@ -211,7 +211,7 @@ class Parameters(log):
         parser.add_argument(
             "--legend_location",
             type=str,
-            default="inside",
+            default=None,
             choices=["inside", "outside"],
             help="the location of legend box",
         )
