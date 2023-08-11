@@ -62,7 +62,7 @@ class xpm_show(Command):
                 "data_list": value_matrix,
                 "xdata_list": xaxis,
                 "ydata_list": yaxis,
-                "legends": xpm.notes,
+                "legends": self.sel_parm(self.parm.legends, xpm.notes),
                 "color_list": xpm.colors,
                 "xmin": self.parm.xmin,
                 "xmax": self.parm.xmax,

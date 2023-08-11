@@ -550,39 +550,73 @@ class ImshowMatplotlib(ParentMatplotlib):
     def __init__(self, **kwargs) -> None:
         super().__init__()
 
+        ## set imshow origin to lower, reverse yaxis and data_list
+        kwargs["data_list"].reverse()
+        kwargs["ydata_list"].reverse()
+
         if kwargs["fig_type"] != "Continuous":
-            ## for discrete xpm, imshow use the original colors
             color_map = mplcolors.ListedColormap(kwargs["color_list"])
             im = plt.imshow(
                 kwargs["data_list"],
-                interpolation=kwargs["interpolation"],
                 alpha=kwargs["alpha"],
                 cmap=color_map,
+                origin="lower",
             )
             legend_patches = []
             for ind, note in enumerate(kwargs["legends"]):
                 leg_patch = patches.Patch(color=kwargs["color_list"][ind], label=note)
                 legend_patches.append(leg_patch)
-            plt.legend(
-                handles=legend_patches,
-                bbox_to_anchor=(1.02, 1.00),
-                loc="upper left",
-                borderaxespad=0,
-            )
+            if kwargs["legend_location"] == "outside":
+                plt.legend(
+                    handles=legend_patches,
+                    bbox_to_anchor=(1.02, 1.00),
+                    loc="upper left",
+                    borderaxespad=0,
+                )
+            else:
+                plt.legend(handles=legend_patches)
         else:
             im = plt.imshow(
                 kwargs["data_list"],
                 interpolation=kwargs["interpolation"],
                 alpha=kwargs["alpha"],
                 cmap=kwargs["cmap"],
+                origin="lower",
             )
-            plt.colorbar(im, label=kwargs["zlabel"])
+            if kwargs["z_precision"] != None:
+                plt.colorbar(
+                    im,
+                    label=kwargs["zlabel"],
+                    format=FormatStrFormatter(f"""%.{kwargs["z_precision"]}f"""),
+                    location=kwargs["colorbar_location"],
+                )
+            else:
+                plt.colorbar(
+                    im, label=kwargs["zlabel"], location=kwargs["colorbar_location"]
+                )
+        
+        if kwargs["x_precision"] == None:
+            kwargs["x_precision"] = 1
+        if kwargs["y_precision"] == None:
+            kwargs["y_precision"] = 1
 
-        plt.title(kwargs["title"])
+        ## set ticks: since matrix, the xtics should all be int, not float
+        xtics, _ = plt.xticks()
+        xtics = [int(x) for x in xtics[1:-1]]
+        plt.xticks(xtics, [f'{kwargs["xdata_list"][x]:.{kwargs["x_precision"]}f}' for x in xtics])
+        ytics, _ = plt.yticks()
+        ytics = [int(y) for y in ytics[1:-1]]
+        plt.yticks(ytics, [f'{kwargs["ydata_list"][y]:.{kwargs["y_precision"]}f}' for y in ytics])
+
+        if kwargs["xmin"] != None or kwargs["xmax"] != None:
+            plt.xlim(kwargs["xmin"], kwargs["xmax"])
+        if kwargs["ymin"] != None or kwargs["ymax"] != None:
+            plt.ylim(kwargs["ymin"], kwargs["ymax"])
+            self.warn("The behaviours of Y range limitation of imshow might be strange, carefully check it !")
+
         plt.xlabel(kwargs["xlabel"])
         plt.ylabel(kwargs["ylabel"])
-
-        ## TODO sticks
+        plt.title(kwargs["title"])
 
 
 class PcolormeshMatplotlib(ParentMatplotlib):
