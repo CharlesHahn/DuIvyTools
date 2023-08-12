@@ -559,9 +559,9 @@ class ImshowMatplotlib(ParentMatplotlib):
                 )
 
         if kwargs["x_precision"] == None:
-            kwargs["x_precision"] = 1
+            kwargs["x_precision"] = 0
         if kwargs["y_precision"] == None:
-            kwargs["y_precision"] = 1
+            kwargs["y_precision"] = 0
 
         ## set ticks: since matrix, the xtics should all be int, not float
         xtics, _ = plt.xticks()

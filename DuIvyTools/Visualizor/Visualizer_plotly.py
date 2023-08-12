@@ -461,3 +461,78 @@ class RamachandranPlotly(ParentPlotly):
                 )
             if noshow == False:
                 self.figure.show()
+
+class PcolormeshPlotly(ParentPlotly):
+    """A plotly pcolormesh plot class for heatmap
+
+    Args:
+        ParentPlotly (object): plotly parent class
+
+    Parameters:
+        data_list :List[List[float]]
+        xdata_list :List[float]
+        ydata_list :List[float]
+        legends :List[str]
+        color_list :List[str]
+        xlabel :str
+        ylabel :str
+        zlabel :str
+        title :str
+        x_precision :int
+        y_precision :int
+        z_precision :int
+        colorbar_location :str
+        cmap :str
+    """
+
+    def __init__(self, **kwargs) -> None:
+        super().__init__()
+
+        if kwargs["fig_type"] != "Continuous":
+            colorscale, tickvals, length = [], [], len(kwargs["legends"])
+            for i in range(length):
+                colorscale.append([i/length, kwargs["color_list"][i]])
+                colorscale.append([(i+1)/length, kwargs["color_list"][i]])
+            for i in range(length):
+                tickvals.append((i+0.5)/length*(length-1))
+            self.figure.add_trace(
+                go.Heatmap(
+                    x=kwargs["xdata_list"],
+                    y=kwargs["ydata_list"],
+                    z=kwargs["data_list"],
+                    colorscale=colorscale,
+                    showscale=True,
+                    colorbar={
+                        "title": {"text": kwargs["zlabel"], "side": "right"},
+                        "ticktext": kwargs["legends"],
+                        "tickvals": tickvals,
+                        "lenmode": "fraction",
+                        "len": 0.50,
+                        "xanchor": "left",
+                        "yanchor": "top",
+                    },
+                )
+            )
+        else:
+            self.figure.add_trace(
+                go.Heatmap(
+                    x=kwargs["xdata_list"],
+                    y=kwargs["ydata_list"],
+                    z=kwargs["data_list"],
+                    colorscale=kwargs["cmap"],
+                    showscale=True,
+                    colorbar={
+                            "title": {"text": kwargs["zlabel"], "side": "right"},
+                            "tickformat": f".{kwargs['z_precision']}f",
+                            "lenmode": "fraction",
+                            "len": 0.50,
+                            "xanchor": "left",
+                            "yanchor": "top",
+                    },
+                )
+            )
+            if kwargs["colorbar_location"]:
+                self.warn("colorbar_location parameter is not valid for plotly")
+        
+        
+        self.set_xyprecision_xyt_label(**kwargs)
