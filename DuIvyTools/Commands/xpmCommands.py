@@ -48,6 +48,7 @@ class xpm_show(Command):
         for xpmfile in self.parm.input:
             xpm = XPM(xpmfile)
             self.file = xpm
+            self.remove_latex(filetype="XPM")
 
             xaxis = [x*self.parm.xshrink for x in xpm.xaxis]
             yaxis = [y*self.parm.yshrink for y in xpm.yaxis]

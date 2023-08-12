@@ -80,16 +80,22 @@ class Command(log):
             res = res.replace("\\", "/")
         return res
 
-    def remove_latex(self) -> None:
-        """remove the super-/sub-scripts in data_heads, xlabel, and ylabel of data files"""
+    def remove_latex(self, filetype:str="XVG") -> None:
+        """remove the super-/sub-scripts in data_heads, xlabel, and ylabel of xvg data files"""
         if self.parm.engine in ["matplotlib", "plotly"]:
-            self.file.data_heads = [self.deal_latex(h) for h in self.file.data_heads]
+            if filetype == "XVG":
+                self.file.data_heads = [self.deal_latex(h) for h in self.file.data_heads]
+            elif filetype == "XPM":
+                self.file.legend = self.deal_latex(self.file.legend)
             self.file.xlabel = self.deal_latex(self.file.xlabel)
             self.file.ylabel = self.deal_latex(self.file.ylabel)
         elif self.parm.engine == "gnuplot":
-            self.file.data_heads = [
-                self.deal_latex(h, with_dollar=False) for h in self.file.data_heads
-            ]
+            if filetype == "XVG":
+                self.file.data_heads = [
+                    self.deal_latex(h, with_dollar=False) for h in self.file.data_heads
+                ]
+            elif filetype == "XPM":
+                self.file.legend = self.deal_latex(self.file.legend, with_dollar=False)
             self.file.xlabel = self.deal_latex(self.file.xlabel, with_dollar=False)
             self.file.ylabel = self.deal_latex(self.file.ylabel, with_dollar=False)
 
