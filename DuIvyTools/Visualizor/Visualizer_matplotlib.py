@@ -71,6 +71,18 @@ class ParentMatplotlib(log):
         if noshow == False:
             plt.show()
 
+    def set_xyprecision_xyt_label(self, **kwargs) -> None:
+        ax = plt.gca()
+        if kwargs["x_precision"] != None:
+            x_p = kwargs["x_precision"]
+            ax.xaxis.set_major_formatter(FormatStrFormatter(f"%.{x_p}f"))
+        if kwargs["y_precision"] != None:
+            y_p = kwargs["y_precision"]
+            ax.yaxis.set_major_formatter(FormatStrFormatter(f"%.{y_p}f"))
+        plt.xlabel(kwargs["xlabel"])
+        plt.ylabel(kwargs["ylabel"])
+        plt.title(kwargs["title"])
+
 
 class LineMatplotlib(ParentMatplotlib):
     """A matplotlib line plot class for line plots
@@ -116,22 +128,13 @@ class LineMatplotlib(ParentMatplotlib):
         if kwargs["ymin"] != None or kwargs["ymax"] != None:
             plt.ylim(kwargs["ymin"], kwargs["ymax"])
 
-        ax = plt.gca()
-        if kwargs["x_precision"] != None:
-            x_p = kwargs["x_precision"]
-            ax.xaxis.set_major_formatter(FormatStrFormatter(f"%.{x_p}f"))
-        if kwargs["y_precision"] != None:
-            y_p = kwargs["y_precision"]
-            ax.yaxis.set_major_formatter(FormatStrFormatter(f"%.{y_p}f"))
-
         if kwargs["legend_location"] == "outside":
             ## TODO hard code the legend location???
             plt.legend(bbox_to_anchor=(1.02, 1.00), loc="upper left")
         else:
             plt.legend()
-        plt.xlabel(kwargs["xlabel"])
-        plt.ylabel(kwargs["ylabel"])
-        plt.title(kwargs["title"])
+
+        self.set_xyprecision_xyt_label(**kwargs)
 
 
 class ScatterMatplotlib(ParentMatplotlib):
@@ -211,21 +214,12 @@ class ScatterMatplotlib(ParentMatplotlib):
         if kwargs["ymin"] != None or kwargs["ymax"] != None:
             plt.ylim(kwargs["ymin"], kwargs["ymax"])
 
-        ax = plt.gca()
-        if kwargs["x_precision"] != None:
-            x_p = kwargs["x_precision"]
-            ax.xaxis.set_major_formatter(FormatStrFormatter(f"%.{x_p}f"))
-        if kwargs["y_precision"] != None:
-            y_p = kwargs["y_precision"]
-            ax.yaxis.set_major_formatter(FormatStrFormatter(f"%.{y_p}f"))
-
         if kwargs["legend_location"] == "outside":
             plt.legend(bbox_to_anchor=(1.02, 1.00), loc="upper left")
         else:
             plt.legend()
-        plt.xlabel(kwargs["xlabel"])
-        plt.ylabel(kwargs["ylabel"])
-        plt.title(kwargs["title"])
+
+        self.set_xyprecision_xyt_label(**kwargs)
 
 
 class StackMatplotlib(ParentMatplotlib):
@@ -271,21 +265,12 @@ class StackMatplotlib(ParentMatplotlib):
         if kwargs["ymin"] != None or kwargs["ymax"] != None:
             plt.ylim(kwargs["ymin"], kwargs["ymax"])
 
-        ax = plt.gca()
-        if kwargs["x_precision"] != None:
-            x_p = kwargs["x_precision"]
-            ax.xaxis.set_major_formatter(FormatStrFormatter(f"%.{x_p}f"))
-        if kwargs["y_precision"] != None:
-            y_p = kwargs["y_precision"]
-            ax.yaxis.set_major_formatter(FormatStrFormatter(f"%.{y_p}f"))
-
         if kwargs["legend_location"] == "outside":
             plt.legend(bbox_to_anchor=(1.02, 1.00), loc="upper left")
         else:
             plt.legend()
-        plt.xlabel(kwargs["xlabel"])
-        plt.ylabel(kwargs["ylabel"])
-        plt.title(kwargs["title"])
+
+        self.set_xyprecision_xyt_label(**kwargs)
 
 
 class BarMatplotlib(ParentMatplotlib):
@@ -335,22 +320,13 @@ class BarMatplotlib(ParentMatplotlib):
         if kwargs["ymin"] != None or kwargs["ymax"] != None:
             plt.ylim(kwargs["ymin"], kwargs["ymax"])
 
-        ax = plt.gca()
-        if kwargs["x_precision"] != None:
-            x_p = kwargs["x_precision"]
-            ax.xaxis.set_major_formatter(FormatStrFormatter(f"%.{x_p}f"))
-        if kwargs["y_precision"] != None:
-            y_p = kwargs["y_precision"]
-            ax.yaxis.set_major_formatter(FormatStrFormatter(f"%.{y_p}f"))
-
         if kwargs["legend_location"] == "outside":
             ## TODO hard code the legend location???
             plt.legend(bbox_to_anchor=(1.02, 1.00), loc="upper left")
         else:
             plt.legend()
-        plt.xlabel(kwargs["xlabel"])
-        plt.ylabel(kwargs["ylabel"])
-        plt.title(kwargs["title"])
+
+        self.set_xyprecision_xyt_label(**kwargs)
 
 
 class BoxMatplotlib(ParentMatplotlib):
@@ -432,17 +408,7 @@ class BoxMatplotlib(ParentMatplotlib):
         if kwargs["ymin"] != None or kwargs["ymax"] != None:
             plt.ylim(kwargs["ymin"], kwargs["ymax"])
 
-        ax = plt.gca()
-        if kwargs["x_precision"] != None:
-            x_p = kwargs["x_precision"]
-            ax.xaxis.set_major_formatter(FormatStrFormatter(f"%.{x_p}f"))
-        if kwargs["y_precision"] != None:
-            y_p = kwargs["y_precision"]
-            ax.yaxis.set_major_formatter(FormatStrFormatter(f"%.{y_p}f"))
-
-        plt.xlabel(kwargs["xlabel"])
-        plt.ylabel(kwargs["ylabel"])
-        plt.title(kwargs["title"])
+        self.set_xyprecision_xyt_label(**kwargs)
 
 
 class RamachandranMatplotlib(ParentMatplotlib):
@@ -491,15 +457,12 @@ class RamachandranMatplotlib(ParentMatplotlib):
             plt.xticks([-180, -120, -60, 0, 60, 120, 180])
             plt.yticks([-180, -120, -60, 0, 60, 120, 180])
             plt.tick_params(left=False, bottom=False, top=False, right=False)
-            if kwargs["title"] != None:
-                title = kwargs["title"]
-            else:
-                title = key
-            plt.title(title)
-            plt.xlabel(kwargs["xlabel"])
-            plt.ylabel(kwargs["ylabel"])
-            plt.tight_layout()
+            if kwargs["title"] == None:
+                kwargs["title"] = key
 
+            self.set_xyprecision_xyt_label(**kwargs)
+
+            plt.tight_layout()
             outfig = kwargs["outfig"]
             noshow = kwargs["noshow"]
             if outfig != None:
@@ -718,17 +681,7 @@ class PcolormeshMatplotlib(ParentMatplotlib):
         ):
             self.warn("pcolormesh do not support setting min or max of X or Y")
 
-        ax = plt.gca()
-        if kwargs["x_precision"] != None:
-            x_p = kwargs["x_precision"]
-            ax.xaxis.set_major_formatter(FormatStrFormatter(f"%.{x_p}f"))
-        if kwargs["y_precision"] != None:
-            y_p = kwargs["y_precision"]
-            ax.yaxis.set_major_formatter(FormatStrFormatter(f"%.{y_p}f"))
-
-        plt.xlabel(kwargs["xlabel"])
-        plt.ylabel(kwargs["ylabel"])
-        plt.title(kwargs["title"])
+        self.set_xyprecision_xyt_label(**kwargs)
 
 
 class ThreeDimensionMatplotlib(ParentMatplotlib):
@@ -800,18 +753,8 @@ class ThreeDimensionMatplotlib(ParentMatplotlib):
                 im, label=kwargs["zlabel"], location=kwargs["colorbar_location"]
             )
 
-        ax = plt.gca()
-        if kwargs["x_precision"] != None:
-            x_p = kwargs["x_precision"]
-            ax.xaxis.set_major_formatter(FormatStrFormatter(f"%.{x_p}f"))
-        if kwargs["y_precision"] != None:
-            y_p = kwargs["y_precision"]
-            ax.yaxis.set_major_formatter(FormatStrFormatter(f"%.{y_p}f"))
-
-        plt.xlabel(kwargs["xlabel"])
-        plt.ylabel(kwargs["ylabel"])
         ax.set_zlabel(kwargs["zlabel"])
-        plt.title(kwargs["title"])
+        self.set_xyprecision_xyt_label(**kwargs)
 
 
 class ContourMatplotlib(ParentMatplotlib):
@@ -856,14 +799,4 @@ class ContourMatplotlib(ParentMatplotlib):
                 label=kwargs["zlabel"], location=kwargs["colorbar_location"]
             )
 
-        ax = plt.gca()
-        if kwargs["x_precision"] != None:
-            x_p = kwargs["x_precision"]
-            ax.xaxis.set_major_formatter(FormatStrFormatter(f"%.{x_p}f"))
-        if kwargs["y_precision"] != None:
-            y_p = kwargs["y_precision"]
-            ax.yaxis.set_major_formatter(FormatStrFormatter(f"%.{y_p}f"))
-
-        plt.xlabel(kwargs["xlabel"])
-        plt.ylabel(kwargs["ylabel"])
-        plt.title(kwargs["title"])
+        self.set_xyprecision_xyt_label(**kwargs)

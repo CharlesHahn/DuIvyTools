@@ -1158,6 +1158,8 @@ class xvg_rama(Command):
             "xlabel": self.sel_parm(self.parm.xlabel, "$phi$"),
             "ylabel": self.sel_parm(self.parm.ylabel, "$psi$"),
             "title": self.parm.title,
+            "x_precision": self.parm.x_precision,
+            "y_precision": self.parm.y_precision,
             "outfig": self.parm.output,
             "noshow": self.parm.noshow,
         }

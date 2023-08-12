@@ -509,6 +509,10 @@ class RamachandranPlotly(ParentPlotly):
                 yaxis_range=[-180, 180],
                 showlegend=True,
             )
+            if kwargs["x_precision"] != None:
+                self.figure.update_layout(xaxis_tickformat=f".{kwargs['x_precision']}f")
+            if kwargs["y_precision"] != None:
+                self.figure.update_layout(yaxis_tickformat=f".{kwargs['y_precision']}f")
 
             if outfig != None:
                 self.warn(
