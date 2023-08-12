@@ -47,7 +47,7 @@ class ParentPlotly(log):
             self.warn("unable to save figure by DIT, please save figure by yourself")
         if noshow == False:
             self.figure.show()
-    
+
     def set_xyprecision_xyt_label(self, **kwargs) -> None:
         self.figure.update_layout(
             legend_orientation="h",
@@ -61,7 +61,7 @@ class ParentPlotly(log):
             self.figure.update_layout(xaxis_tickformat=f".{kwargs['x_precision']}f")
         if kwargs["y_precision"] != None:
             self.figure.update_layout(yaxis_tickformat=f".{kwargs['y_precision']}f")
-  
+
     def set_xy_min_max(self, **kwargs) -> None:
         if kwargs["xmin"] != None or kwargs["xmax"] != None:
             self.figure.update_layout(xaxis_range=[kwargs["xmin"], kwargs["xmax"]])
@@ -245,6 +245,7 @@ class ScatterPlotly(ParentPlotly):
 
         self.set_xyprecision_xyt_label(**kwargs)
         self.set_xy_min_max(**kwargs)
+
 
 class BarPlotly(ParentPlotly):
     """A plotly bar plot class for bar plots

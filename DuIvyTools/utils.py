@@ -177,9 +177,7 @@ class Parameters(log):
             default=0.95,
             help="confidence for confidence interval calculation",
         )
-        parser.add_argument(
-            "--alpha", type=float, help="the alpha of background lines"
-        )
+        parser.add_argument("--alpha", type=float, help="the alpha of background lines")
         parser.add_argument("-csv", "--csv", help="store data into csv file")
         parser.add_argument(
             "-eg",

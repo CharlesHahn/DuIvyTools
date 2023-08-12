@@ -795,8 +795,6 @@ class ContourMatplotlib(ParentMatplotlib):
                 location=kwargs["colorbar_location"],
             )
         else:
-            plt.colorbar(
-                label=kwargs["zlabel"], location=kwargs["colorbar_location"]
-            )
+            plt.colorbar(label=kwargs["zlabel"], location=kwargs["colorbar_location"])
 
         self.set_xyprecision_xyt_label(**kwargs)

@@ -22,8 +22,15 @@ from utils import Parameters
 class xpm_show(Command):
     def __init__(self, parm: Parameters) -> None:
         self.parm = parm
-    
-    def calc_interpolation(self, xaxis:List[float], yaxis:List[float], matrix:List[List[float]], method:str, ip_fold:int) -> Union[List[float],List[List[float]]]:
+
+    def calc_interpolation(
+        self,
+        xaxis: List[float],
+        yaxis: List[float],
+        matrix: List[List[float]],
+        method: str,
+        ip_fold: int,
+    ) -> Union[List[float], List[List[float]]]:
         # interp2d : linear, cubic, quintic
         ip_func = interp2d(xaxis, yaxis, matrix, kind=method)
         # ip_func = RectBivariateSpline(xaxis, yaxis, matrix)#, kx=3, ky=3)
@@ -32,16 +39,16 @@ class xpm_show(Command):
         matrix_new = ip_func(x_new, y_new)
         x_new, y_new = np.meshgrid(x_new, y_new)
         return x_new, y_new, matrix_new
-        
+
     def __call__(self):  ## write process code
 
         self.info("in xpm_show")
         print(self.parm.__dict__)
-        
+
         if not self.parm.input:
             self.error("you must specify a xpm file to show")
 
-        # notes of mode: imshow, pcm, 3d, contour 
+        # notes of mode: imshow, pcm, 3d, contour
 
         # IP for imshow: None, 'none', 'nearest', 'bilinear', 'bicubic', 'spline16', 'spline36', 'hanning', 'hamming', 'hermite', 'kaiser', 'quadric', 'catrom', 'gaussian', 'bessel', 'mitchell', 'sinc', 'lanczos'
 
@@ -50,13 +57,13 @@ class xpm_show(Command):
             self.file = xpm
             self.remove_latex(filetype="XPM")
 
-            xaxis = [x*self.parm.xshrink for x in xpm.xaxis]
-            yaxis = [y*self.parm.yshrink for y in xpm.yaxis]
+            xaxis = [x * self.parm.xshrink for x in xpm.xaxis]
+            yaxis = [y * self.parm.yshrink for y in xpm.yaxis]
             value_matrix = []
             for y, _ in enumerate(yaxis):
                 v_lis = []
                 for x, _ in enumerate(xaxis):
-                    v_lis.append(xpm.value_matrix[y][x]*self.parm.zshrink)
+                    v_lis.append(xpm.value_matrix[y][x] * self.parm.zshrink)
                 value_matrix.append(v_lis)
 
             kwargs = {
@@ -80,7 +87,7 @@ class xpm_show(Command):
                 "legend_location": self.sel_parm(self.parm.legend_location, "outside"),
                 "colorbar_location": self.parm.colorbar_location,
                 "fig_type": xpm.type,
-                "cmap": self.parm.colormap
+                "cmap": self.parm.colormap,
             }
 
             interpolation = self.parm.interpolation
@@ -90,7 +97,9 @@ class xpm_show(Command):
             if self.parm.engine == "matplotlib":
                 if mode in ["pcolormesh", "3d", "contour"]:
                     if interpolation != None:
-                        xaxis, yaxis, value_matrix = self.calc_interpolation(xaxis, yaxis, value_matrix, interpolation, ip_fold)
+                        xaxis, yaxis, value_matrix = self.calc_interpolation(
+                            xaxis, yaxis, value_matrix, interpolation, ip_fold
+                        )
                         kwargs["xdata_list"] = xaxis
                         kwargs["ydata_list"] = yaxis
                         kwargs["data_list"] = value_matrix
