@@ -47,6 +47,26 @@ class ParentPlotly(log):
             self.warn("unable to save figure by DIT, please save figure by yourself")
         if noshow == False:
             self.figure.show()
+    
+    def set_xyprecision_xyt_label(self, **kwargs) -> None:
+        self.figure.update_layout(
+            legend_orientation="h",
+            title=kwargs["title"],
+            xaxis_title=kwargs["xlabel"],
+            yaxis_title=kwargs["ylabel"],
+            font=dict(family="Arial, Times New Roman", size=18),
+            showlegend=True,
+        )
+        if kwargs["x_precision"] != None:
+            self.figure.update_layout(xaxis_tickformat=f".{kwargs['x_precision']}f")
+        if kwargs["y_precision"] != None:
+            self.figure.update_layout(yaxis_tickformat=f".{kwargs['y_precision']}f")
+  
+    def set_xy_min_max(self, **kwargs) -> None:
+        if kwargs["xmin"] != None or kwargs["xmax"] != None:
+            self.figure.update_layout(xaxis_range=[kwargs["xmin"], kwargs["xmax"]])
+        if kwargs["ymin"] != None or kwargs["ymax"] != None:
+            self.figure.update_layout(yaxis_range=[kwargs["ymin"], kwargs["ymax"]])
 
 
 class LinePlotly(ParentPlotly):
@@ -111,22 +131,8 @@ class LinePlotly(ParentPlotly):
                     )
                 )
 
-        self.figure.update_layout(
-            legend_orientation="h",
-            title=kwargs["title"],
-            xaxis_title=kwargs["xlabel"],
-            yaxis_title=kwargs["ylabel"],
-            font=dict(family="Arial, Times New Roman", size=18),
-            showlegend=True,
-        )
-        if kwargs["xmin"] != None or kwargs["xmax"] != None:
-            self.figure.update_layout(xaxis_range=[kwargs["xmin"], kwargs["xmax"]])
-        if kwargs["ymin"] != None or kwargs["ymax"] != None:
-            self.figure.update_layout(yaxis_range=[kwargs["ymin"], kwargs["ymax"]])
-        if kwargs["x_precision"] != None:
-            self.figure.update_layout(xaxis_tickformat=f".{kwargs['x_precision']}f")
-        if kwargs["y_precision"] != None:
-            self.figure.update_layout(yaxis_tickformat=f".{kwargs['y_precision']}f")
+        self.set_xyprecision_xyt_label(**kwargs)
+        self.set_xy_min_max(**kwargs)
 
 
 class StackPlotly(ParentPlotly):
@@ -175,22 +181,8 @@ class StackPlotly(ParentPlotly):
                 )
             )
 
-        self.figure.update_layout(
-            legend_orientation="h",
-            title=kwargs["title"],
-            xaxis_title=kwargs["xlabel"],
-            yaxis_title=kwargs["ylabel"],
-            font=dict(family="Arial, Times New Roman", size=18),
-            showlegend=True,
-        )
-        if kwargs["xmin"] != None or kwargs["xmax"] != None:
-            self.figure.update_layout(xaxis_range=[kwargs["xmin"], kwargs["xmax"]])
-        if kwargs["ymin"] != None or kwargs["ymax"] != None:
-            self.figure.update_layout(yaxis_range=[kwargs["ymin"], kwargs["ymax"]])
-        if kwargs["x_precision"] != None:
-            self.figure.update_layout(xaxis_tickformat=f".{kwargs['x_precision']}f")
-        if kwargs["y_precision"] != None:
-            self.figure.update_layout(yaxis_tickformat=f".{kwargs['y_precision']}f")
+        self.set_xyprecision_xyt_label(**kwargs)
+        self.set_xy_min_max(**kwargs)
 
 
 class ScatterPlotly(ParentPlotly):
@@ -248,25 +240,11 @@ class ScatterPlotly(ParentPlotly):
                     ),
                 )
             )
-        self.figure.update_layout(
-            legend_orientation="h",
-            title=kwargs["title"],
-            xaxis_title=kwargs["xlabel"],
-            yaxis_title=kwargs["ylabel"],
-            font=dict(family="Arial, Times New Roman", size=18),
-            showlegend=True,
-        )
         if kwargs["colorbar_location"]:
             self.warn("colorbar_location parameter is not valid for plotly")
-        if kwargs["xmin"] != None or kwargs["xmax"] != None:
-            self.figure.update_layout(xaxis_range=[kwargs["xmin"], kwargs["xmax"]])
-        if kwargs["ymin"] != None or kwargs["ymax"] != None:
-            self.figure.update_layout(yaxis_range=[kwargs["ymin"], kwargs["ymax"]])
-        if kwargs["x_precision"] != None:
-            self.figure.update_layout(xaxis_tickformat=f".{kwargs['x_precision']}f")
-        if kwargs["y_precision"] != None:
-            self.figure.update_layout(yaxis_tickformat=f".{kwargs['y_precision']}f")
 
+        self.set_xyprecision_xyt_label(**kwargs)
+        self.set_xy_min_max(**kwargs)
 
 class BarPlotly(ParentPlotly):
     """A plotly bar plot class for bar plots
@@ -313,23 +291,9 @@ class BarPlotly(ParentPlotly):
             ticktext=kwargs["xtitles"],
         )
 
-        self.figure.update_layout(
-            barmode="group",
-            legend_orientation="h",
-            title=kwargs["title"],
-            xaxis_title=kwargs["xlabel"],
-            yaxis_title=kwargs["ylabel"],
-            font=dict(family="Arial, Times New Roman", size=18),
-            showlegend=True,
-        )
-        if kwargs["xmin"] != None or kwargs["xmax"] != None:
-            self.figure.update_layout(xaxis_range=[kwargs["xmin"], kwargs["xmax"]])
-        if kwargs["ymin"] != None or kwargs["ymax"] != None:
-            self.figure.update_layout(yaxis_range=[kwargs["ymin"], kwargs["ymax"]])
-        if kwargs["x_precision"] != None:
-            self.figure.update_layout(xaxis_tickformat=f".{kwargs['x_precision']}f")
-        if kwargs["y_precision"] != None:
-            self.figure.update_layout(yaxis_tickformat=f".{kwargs['y_precision']}f")
+        self.figure.update_layout(barmode="group")
+        self.set_xyprecision_xyt_label(**kwargs)
+        self.set_xy_min_max(**kwargs)
 
 
 class BoxPlotly(ParentPlotly):
@@ -404,24 +368,11 @@ class BoxPlotly(ParentPlotly):
             tickvals=[i + 1 for i in range(len(kwargs["data_list"]))],
             ticktext=kwargs["legends"],
         )
-        self.figure.update_layout(
-            legend_orientation="h",
-            title=kwargs["title"],
-            xaxis_title=kwargs["xlabel"],
-            yaxis_title=kwargs["ylabel"],
-            font=dict(family="Arial, Times New Roman", size=18),
-            showlegend=False,
-        )
         if kwargs["colorbar_location"]:
             self.warn("colorbar_location parameter is not valid for plotly")
-        if kwargs["xmin"] != None or kwargs["xmax"] != None:
-            self.figure.update_layout(xaxis_range=[kwargs["xmin"], kwargs["xmax"]])
-        if kwargs["ymin"] != None or kwargs["ymax"] != None:
-            self.figure.update_layout(yaxis_range=[kwargs["ymin"], kwargs["ymax"]])
-        if kwargs["x_precision"] != None:
-            self.figure.update_layout(xaxis_tickformat=f".{kwargs['x_precision']}f")
-        if kwargs["y_precision"] != None:
-            self.figure.update_layout(yaxis_tickformat=f".{kwargs['y_precision']}f")
+
+        self.set_xyprecision_xyt_label(**kwargs)
+        self.set_xy_min_max(**kwargs)
 
 
 class RamachandranPlotly(ParentPlotly):
@@ -495,24 +446,13 @@ class RamachandranPlotly(ParentPlotly):
                     ),
                 )
             )
-            if kwargs["title"] != None:
-                title = kwargs["title"]
-            else:
-                title = key
+            if kwargs["title"] == None:
+                kwargs["title"] = key
             self.figure.update_layout(
-                legend_orientation="h",
-                title=title,
-                xaxis_title=kwargs["xlabel"],
-                yaxis_title=kwargs["ylabel"],
-                font=dict(family="Arial, Times New Roman", size=18),
                 xaxis_range=[-180, 180],
                 yaxis_range=[-180, 180],
-                showlegend=True,
             )
-            if kwargs["x_precision"] != None:
-                self.figure.update_layout(xaxis_tickformat=f".{kwargs['x_precision']}f")
-            if kwargs["y_precision"] != None:
-                self.figure.update_layout(yaxis_tickformat=f".{kwargs['y_precision']}f")
+            self.set_xyprecision_xyt_label(**kwargs)
 
             if outfig != None:
                 self.warn(
