@@ -733,27 +733,73 @@ class ThreeDimensionMatplotlib(ParentMatplotlib):
         data_list :List[List[float]]
         xdata_list :List[float]
         ydata_list :List[float]
-        legends :List[str]
-        color_list :List[str]
         xlabel :str
         ylabel :str
         zlabel :str
         title :str
-        xmin :float
-        xmax :float
-        ymin :float
-        ymax :float
         x_precision :int
         y_precision :int
         z_precision :int
         alpha :float
-        legend_location :str
         colorbar_location :str
         cmap :str
     """
 
     def __init__(self, **kwargs) -> None:
         super().__init__()
+
+        if kwargs["cmap"] == None:
+            if plt.rcParams.get("image.cmap", None) == None:
+                self.warn("you have not set the colormap through commands or image.cmap of mplstyle file, the color of 3D plot may not be pretty")
+            kwargs["cmap"] = plt.rcParams["image.cmap"]
+
+        ax = self.figure.add_subplot(projection="3d")
+        im = ax.plot_surface(
+            kwargs["xdata_list"],
+            kwargs["ydata_list"],
+            kwargs["data_list"],
+            alpha=kwargs["alpha"],
+            cmap=kwargs["cmap"],
+            linewidth=0,
+            antialiased=False,
+        )
+        # set the 2d surface location
+        offset= np.floor(np.min(kwargs["data_list"])) - np.floor(np.max(kwargs["data_list"]) - np.min(kwargs["data_list"])) / 30
+        ax.contourf(
+            kwargs["xdata_list"],
+            kwargs["ydata_list"],
+            kwargs["data_list"],
+            cmap=kwargs["cmap"],
+            zdir="z",
+            offset=offset,
+        )
+        if kwargs["z_precision"] != None:
+            plt.colorbar(
+                im,
+                label=kwargs["zlabel"],
+                format=FormatStrFormatter(f"""%.{kwargs["z_precision"]}f"""),
+                location=kwargs["colorbar_location"],
+            )
+        else:
+            plt.colorbar(
+                im, label=kwargs["zlabel"], location=kwargs["colorbar_location"]
+            )
+
+        ax = plt.gca()
+        if kwargs["x_precision"] != None:
+            x_p = kwargs["x_precision"]
+            ax.xaxis.set_major_formatter(FormatStrFormatter(f"%.{x_p}f"))
+        if kwargs["y_precision"] != None:
+            y_p = kwargs["y_precision"]
+            ax.yaxis.set_major_formatter(FormatStrFormatter(f"%.{y_p}f"))
+
+        plt.xlabel(kwargs["xlabel"])
+        plt.ylabel(kwargs["ylabel"])
+        ax.set_zlabel(kwargs["zlabel"])
+        plt.title(kwargs["title"])
+
+
+
 
 
 class ContourMatplotlib(ParentMatplotlib):

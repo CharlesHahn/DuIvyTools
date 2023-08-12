@@ -87,11 +87,17 @@ class xpm_show(Command):
             mode = self.parm.mode
 
             if self.parm.engine == "matplotlib":
-                if mode in ["pcolormesh", "3d", "contour"] and interpolation != None:
-                    xaxis, yaxis, value_matrix = self.calc_interpolation(xaxis, yaxis, value_matrix, interpolation, ip_fold)
-                    kwargs["xdata_list"] = xaxis
-                    kwargs["ydata_list"] = yaxis
-                    kwargs["data_list"] = value_matrix
+                if mode in ["pcolormesh", "3d", "contour"]:
+                    if interpolation != None:
+                        xaxis, yaxis, value_matrix = self.calc_interpolation(xaxis, yaxis, value_matrix, interpolation, ip_fold)
+                        kwargs["xdata_list"] = xaxis
+                        kwargs["ydata_list"] = yaxis
+                        kwargs["data_list"] = value_matrix
+                    else:
+                        xaxis, yaxis = np.meshgrid(xaxis, yaxis)
+                        kwargs["xdata_list"] = np.array(xaxis)
+                        kwargs["ydata_list"] = np.array(yaxis)
+                        kwargs["data_list"] = np.array(kwargs["data_list"])
                 if mode == "pcolormesh":
                     fig = PcolormeshMatplotlib(**kwargs)
                     fig.final(self.parm.output, self.parm.noshow)
