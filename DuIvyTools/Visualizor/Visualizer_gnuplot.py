@@ -134,6 +134,33 @@ class Gnuplot(log):
             gpl = self.contour(gpl)
 
         return gpl
+
+    def threeDimension(self, gpl:str) -> str:
+
+        return gpl
+
+    def contour(self, gpl:str) -> str:
+
+        if self.zlabel != None:
+            gpl += f"""set cblabel "{self.zlabel}"\n"""
+        if self.z_precision != None:
+            gpl += f"""set cbtics format "%.{self.z_precision}f"\n"""
+        gpl += "set pm3d implicit at s\n"
+        gpl += "set colorbox user\n"
+        gpl += "set view map\n"
+        gpl += "set ylabel norotate offset -1,0\n"
+        gpl += "set contour base\n"
+        gpl += f"\n$matrix << EOD\n"
+        for y, y_value in enumerate(self.ydata):
+            for x, x_value in enumerate(self.xdata):
+                gpl += f"""{x_value} {y_value} {self.data[y][x]}\n"""
+            gpl += "\n"
+        gpl += "EOD\n\n"
+        gpl += f"splot [{self.xmin}:{self.xmax}][{self.ymin}:{self.ymax}] "
+        gpl += f"""$matrix using 1:2:3 with lines nosurface notitle """
+        gpl += "\n"
+
+        return gpl
     
     def imshow(self, gpl:str) -> str:
         if len(self.data) == 1:
@@ -175,13 +202,6 @@ class Gnuplot(log):
 
         return gpl
 
-    def threeDimension(self, gpl:str) -> str:
-
-        return gpl
-
-    def contour(self, gpl:str) -> str:
-
-        return gpl
 
     def stack_plot(self, gpl: str) -> str:
         gpl += f"""set style fill transparent solid {self.style["alpha"]} noborder\n"""
@@ -680,7 +700,7 @@ class ImshowGnuplot(ParentGnuplot):
         cmap :str
     """
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, plot_type:str, /, **kwargs) -> None:
         super().__init__()
 
         self.gnuplot.term = "png"
@@ -718,7 +738,7 @@ class ImshowGnuplot(ParentGnuplot):
         self.gnuplot.ydata = kwargs["ydata_list"]
         self.gnuplot.legends = kwargs["legends"]
         self.gnuplot.color_list = kwargs["color_list"]
-        self.gnuplot.plot_type = "imshow"
+        self.gnuplot.plot_type = plot_type
         self.gnuplot.xpm_type = kwargs["fig_type"]
 
         # self.gnuplot.colormap = kwargs["cmap"]
@@ -730,71 +750,3 @@ class ImshowGnuplot(ParentGnuplot):
         if kwargs["colorbar_location"]:
             self.warn("DIT is unable to set colorbar location for gnuplot now.")
 
-
-class ThreeDimensionGnuplot(ParentGnuplot):
-    """A gnuplot 3d plot class for heatmap
-
-    Args:
-        ParentGnuplot (object): matplotlib parent class
-
-    Parameters:
-        data_list :List[List[float]]
-        xdata_list :List[float]
-        ydata_list :List[float]
-        legends :List[str]
-        color_list :List[str]
-        xlabel :str
-        ylabel :str
-        zlabel :str
-        title :str
-        xmin :float
-        xmax :float
-        ymin :float
-        ymax :float
-        x_precision :int
-        y_precision :int
-        z_precision :int
-        alpha :float
-        legend_location :str
-        colorbar_location :str
-        interpolation :str
-        cmap :str
-    """
-
-    def __init__(self, **kwargs) -> None:
-        super().__init__()
-
-
-
-class ContourGnuplot(ParentGnuplot):
-    """A gnuplot Contour plot class for heatmap
-
-    Args:
-        ParentGnuplot (object): matplotlib parent class
-
-    Parameters:
-        data_list :List[List[float]]
-        xdata_list :List[float]
-        ydata_list :List[float]
-        legends :List[str]
-        color_list :List[str]
-        xlabel :str
-        ylabel :str
-        zlabel :str
-        title :str
-        xmin :float
-        xmax :float
-        ymin :float
-        ymax :float
-        x_precision :int
-        y_precision :int
-        z_precision :int
-        alpha :float
-        legend_location :str
-        colorbar_location :str
-        interpolation :str
-        cmap :str
-    """
-
-    def __init__(self, **kwargs) -> None:
-        super().__init__()

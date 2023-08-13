@@ -153,15 +153,10 @@ class xpm_show(Command):
                     kwargs["xdata_list"] = xaxis
                     kwargs["ydata_list"] = yaxis
                     kwargs["data_list"] = value_matrix
-                if mode == "3d":
-                    fig = ThreeDimensionGnuplot(**kwargs)
-                    fig.final(self.parm.output, self.parm.noshow)
-                elif mode == "contour":
-                    fig = ContourGnuplot(**kwargs)
-                    fig.final(self.parm.output, self.parm.noshow)
-                else:
-                    fig = ImshowGnuplot(**kwargs)
-                    fig.final(self.parm.output, self.parm.noshow)
+                if mode not in ["3d", "contour"]:
+                    mode = "imshow"
+                fig = ImshowGnuplot(mode, **kwargs)
+                fig.final(self.parm.output, self.parm.noshow)
 
             elif self.parm.engine == "plotext":
                 if interpolation != None:
