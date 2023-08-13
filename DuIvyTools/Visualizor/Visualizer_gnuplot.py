@@ -59,6 +59,7 @@ class Gnuplot(log):
         self.z_precision: int = None
         self.legends: List[str] = None
         self.xdata: List[List[float]] = None
+        self.ydata: List[List[float]] = None
         self.data: List[List[float]] = None
         self.highs: List[List[float]] = None
         self.lows: List[List[float]] = None
@@ -125,6 +126,60 @@ class Gnuplot(log):
             gpl = self.violin_plot(gpl)
         elif self.plot_type == "bar":
             gpl = self.bar_plot(gpl)
+        elif self.plot_type == "imshow":
+            gpl = self.imshow(gpl)
+        elif self.plot_type == "3d":
+            gpl = self.threeDimension(gpl)
+        elif self.plot_type == "contour":
+            gpl = self.contour(gpl)
+
+        return gpl
+    
+    def imshow(self, gpl:str) -> str:
+        if len(self.data) == 1:
+            self.error("gnuplot engine can not deal with heatmap with only 1 dimension")
+        if self.xpm_type != "Continuous":
+            gpl += "set key out reverse Left spacing 2 samplen 1/2\n"
+            gpl += "unset colorbox\n"
+            pal_line = "set pal defined("
+            for index, color in enumerate(self.color_list):
+                pal_line += f"""{index} "{color}","""
+            pal_line = pal_line.strip(",") + ")"
+            gpl += pal_line + "\n\n"
+            gpl += f"\n$matrix << EOD\n"
+            for y, y_value in enumerate(self.ydata):
+                for x, x_value in enumerate(self.xdata):
+                    gpl += f"""{x_value} {y_value} {self.data[y][x]}\n"""
+                gpl += "\n"
+            gpl += "EOD\n\n"
+            gpl += f"plot [{self.xmin}:{self.xmax}][{self.ymin}:{self.ymax}] "
+            gpl += f"""$matrix using 1:2:3 with image notitle, \\\n"""
+            for id, leg in enumerate(self.legends):
+                gpl += f"""{np.floor(np.min(self.ydata))-1} w p ps 4 pt 5 lc rgb "{self.color_list[id]}" title "{leg}", \\\n"""
+            gpl = gpl.strip("\n").strip("\\").strip().strip(",")
+
+        else:
+            if self.zlabel != None:
+                gpl += f"""set cblabel "{self.zlabel}"\n"""
+            if self.z_precision != None:
+                gpl += f"""set cbtics format "%.{self.z_precision}f"\n"""
+            gpl += f"\n$matrix << EOD\n"
+            for y, y_value in enumerate(self.ydata):
+                for x, x_value in enumerate(self.xdata):
+                    gpl += f"""{x_value} {y_value} {self.data[y][x]}\n"""
+                gpl += "\n"
+            gpl += "EOD\n\n"
+            gpl += f"plot [{self.xmin}:{self.xmax}][{self.ymin}:{self.ymax}] "
+            gpl += f"""$matrix using 1:2:3 with image notitle """
+            gpl += "\n"
+
+        return gpl
+
+    def threeDimension(self, gpl:str) -> str:
+
+        return gpl
+
+    def contour(self, gpl:str) -> str:
 
         return gpl
 
@@ -595,3 +650,151 @@ class BoxGnuplot(ParentGnuplot):
         # self.gnuplot.colorbar_location = kwargs["colorbar_location"]
         if kwargs["colorbar_location"]:
             self.warn("DIT is unable to set colorbar location for gnuplot now.")
+
+
+class ImshowGnuplot(ParentGnuplot):
+    """A gnuplot imshow plot class for heatmap
+
+    Args:
+        ParentGnuplot (object): matplotlib parent class
+
+    Parameters:
+        fig_type :str
+        data_list :List[List[float]]
+        xdata_list :List[float]
+        ydata_list :List[float]
+        legends :List[str]
+        color_list :List[str]
+        xlabel :str
+        ylabel :str
+        zlabel :str
+        title :str
+        xmin :float
+        xmax :float
+        ymin :float
+        ymax :float
+        x_precision :int
+        y_precision :int
+        z_precision :int
+        colorbar_location :str
+        cmap :str
+    """
+
+    def __init__(self, **kwargs) -> None:
+        super().__init__()
+
+        self.gnuplot.term = "png"
+        self.gnuplot.title = kwargs["title"]
+        self.gnuplot.xlabel = kwargs["xlabel"]
+        self.gnuplot.ylabel = kwargs["ylabel"]
+        self.gnuplot.zlabel = kwargs["zlabel"]
+
+        if kwargs["xmin"] != None or kwargs["xmax"] != None:
+            self.gnuplot.xmin = kwargs["xmin"]
+            self.gnuplot.xmax = kwargs["xmax"]
+        if kwargs["ymin"] != None or kwargs["ymax"] != None:
+            self.gnuplot.ymin = kwargs["ymin"]
+            self.gnuplot.ymax = kwargs["ymax"]
+
+        data = kwargs["xdata_list"]
+        dot_len_x = (np.max(data) - np.min(data))/(len(data)-1)
+        data = kwargs["ydata_list"]
+        dot_len_y = (np.max(data) - np.min(data))/(len(data)-1)
+        if self.gnuplot.xmin == None:
+            self.gnuplot.xmin = np.min(kwargs["xdata_list"]) - 0.5*dot_len_x
+        if self.gnuplot.xmax == None:
+            self.gnuplot.xmax = np.max(kwargs["xdata_list"]) + 0.5*dot_len_x
+        if self.gnuplot.ymin == None:
+            self.gnuplot.ymin = np.min(kwargs["ydata_list"]) - 0.5*dot_len_y
+        if self.gnuplot.ymax == None:
+            self.gnuplot.ymax = np.max(kwargs["ydata_list"]) + 0.5*dot_len_y
+
+        self.gnuplot.x_precision = kwargs["x_precision"]
+        self.gnuplot.y_precision = kwargs["y_precision"]
+        self.gnuplot.z_precision = kwargs["z_precision"]
+
+        self.gnuplot.data = kwargs["data_list"]
+        self.gnuplot.xdata = kwargs["xdata_list"]
+        self.gnuplot.ydata = kwargs["ydata_list"]
+        self.gnuplot.legends = kwargs["legends"]
+        self.gnuplot.color_list = kwargs["color_list"]
+        self.gnuplot.plot_type = "imshow"
+        self.gnuplot.xpm_type = kwargs["fig_type"]
+
+        # self.gnuplot.colormap = kwargs["cmap"]
+        if kwargs["cmap"]:
+            self.warn(
+                "DIT is unable to set colormap for gnuplot now. The https://github.com/Gnuplotting/gnuplot-palettes may help you"
+            )
+        # self.gnuplot.colorbar_location = kwargs["colorbar_location"]
+        if kwargs["colorbar_location"]:
+            self.warn("DIT is unable to set colorbar location for gnuplot now.")
+
+
+class ThreeDimensionGnuplot(ParentGnuplot):
+    """A gnuplot 3d plot class for heatmap
+
+    Args:
+        ParentGnuplot (object): matplotlib parent class
+
+    Parameters:
+        data_list :List[List[float]]
+        xdata_list :List[float]
+        ydata_list :List[float]
+        legends :List[str]
+        color_list :List[str]
+        xlabel :str
+        ylabel :str
+        zlabel :str
+        title :str
+        xmin :float
+        xmax :float
+        ymin :float
+        ymax :float
+        x_precision :int
+        y_precision :int
+        z_precision :int
+        alpha :float
+        legend_location :str
+        colorbar_location :str
+        interpolation :str
+        cmap :str
+    """
+
+    def __init__(self, **kwargs) -> None:
+        super().__init__()
+
+
+
+class ContourGnuplot(ParentGnuplot):
+    """A gnuplot Contour plot class for heatmap
+
+    Args:
+        ParentGnuplot (object): matplotlib parent class
+
+    Parameters:
+        data_list :List[List[float]]
+        xdata_list :List[float]
+        ydata_list :List[float]
+        legends :List[str]
+        color_list :List[str]
+        xlabel :str
+        ylabel :str
+        zlabel :str
+        title :str
+        xmin :float
+        xmax :float
+        ymin :float
+        ymax :float
+        x_precision :int
+        y_precision :int
+        z_precision :int
+        alpha :float
+        legend_location :str
+        colorbar_location :str
+        interpolation :str
+        cmap :str
+    """
+
+    def __init__(self, **kwargs) -> None:
+        super().__init__()

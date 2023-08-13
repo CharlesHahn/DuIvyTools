@@ -144,6 +144,24 @@ class xpm_show(Command):
                 else:
                     fig = PcolormeshPlotly(**kwargs)
                     fig.final(self.parm.output, self.parm.noshow)
+            
+            elif self.parm.engine == "gnuplot":
+                if interpolation != None:
+                    if self.file.type != "Continuous":
+                        self.warn(f"you are applying interpolation to {self.file.type} type of XPM. It should not be, but DIT would do it. BE CAREFUL for what you get !")
+                    _, _, value_matrix, xaxis, yaxis = self.calc_interpolation(xaxis, yaxis, value_matrix, interpolation, ip_fold)
+                    kwargs["xdata_list"] = xaxis
+                    kwargs["ydata_list"] = yaxis
+                    kwargs["data_list"] = value_matrix
+                if mode == "3d":
+                    fig = ThreeDimensionGnuplot(**kwargs)
+                    fig.final(self.parm.output, self.parm.noshow)
+                elif mode == "contour":
+                    fig = ContourGnuplot(**kwargs)
+                    fig.final(self.parm.output, self.parm.noshow)
+                else:
+                    fig = ImshowGnuplot(**kwargs)
+                    fig.final(self.parm.output, self.parm.noshow)
 
             elif self.parm.engine == "plotext":
                 if interpolation != None:
