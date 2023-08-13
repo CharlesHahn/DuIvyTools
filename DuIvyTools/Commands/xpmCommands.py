@@ -130,10 +130,15 @@ class xpm_show(Command):
                     kwargs["xdata_list"] = xaxis
                     kwargs["ydata_list"] = yaxis
                     kwargs["data_list"] = value_matrix
-
-                fig = PcolormeshPlotly(**kwargs)
-                fig.final(self.parm.output, self.parm.noshow)
-
+                if mode == "3d":
+                    fig = ThreeDimensionPlotly(**kwargs)
+                    fig.final(self.parm.output, self.parm.noshow)
+                elif mode == "contour":
+                    fig = ContourPlotly(**kwargs)
+                    fig.final(self.parm.output, self.parm.noshow)
+                else:
+                    fig = PcolormeshPlotly(**kwargs)
+                    fig.final(self.parm.output, self.parm.noshow)
             else:
                 self.error("wrong selection of plot engine")
 
@@ -242,6 +247,15 @@ class xpm2dat(Command):
 
 
 class xpm_diff(Command):
+    def __init__(self, parm: Parameters) -> None:
+        self.parm = parm
+
+    def __call__(self):
+        self.info("in xpm_diff")
+        print(self.parm.__dict__)
+
+
+class xpm_merge(Command): # TODO: merge two xpm half by half
     def __init__(self, parm: Parameters) -> None:
         self.parm = parm
 

@@ -12,6 +12,7 @@ from typing import List, Union, Tuple
 import numpy as np
 import pandas as pd
 
+import plotly.io as pio
 import plotly.express as pe
 import plotly.graph_objs as go
 
@@ -20,6 +21,7 @@ from utils import log
 
 class ParentPlotly(log):
     def __init__(self):
+        # pio.templates.default = "ggplot2"
         self.figure = go.Figure()
         self.style = {
             "color_cycle": [
@@ -37,6 +39,10 @@ class ParentPlotly(log):
                 "#FC8D62",
             ],
         }
+
+    def load_themes(self):
+        ## TODO plotly theme and style file system
+        pass
 
     def hex2rgb(self, hex: str) -> Tuple[float]:
         rgb = [int(hex.lstrip("#")[i : i + 2], 16) for i in (0, 2, 4)]
@@ -462,6 +468,7 @@ class RamachandranPlotly(ParentPlotly):
             if noshow == False:
                 self.figure.show()
 
+
 class PcolormeshPlotly(ParentPlotly):
     """A plotly pcolormesh plot class for heatmap
 
@@ -488,13 +495,14 @@ class PcolormeshPlotly(ParentPlotly):
     def __init__(self, **kwargs) -> None:
         super().__init__()
 
+        ## TODO: using original colors, use user-defined?
         if kwargs["fig_type"] != "Continuous":
             colorscale, tickvals, length = [], [], len(kwargs["legends"])
             for i in range(length):
-                colorscale.append([i/length, kwargs["color_list"][i]])
-                colorscale.append([(i+1)/length, kwargs["color_list"][i]])
+                colorscale.append([i / length, kwargs["color_list"][i]])
+                colorscale.append([(i + 1) / length, kwargs["color_list"][i]])
             for i in range(length):
-                tickvals.append((i+0.5)/length*(length-1))
+                tickvals.append((i + 0.5) / length * (length - 1))
             self.figure.add_trace(
                 go.Heatmap(
                     x=kwargs["xdata_list"],
@@ -522,17 +530,117 @@ class PcolormeshPlotly(ParentPlotly):
                     colorscale=kwargs["cmap"],
                     showscale=True,
                     colorbar={
-                            "title": {"text": kwargs["zlabel"], "side": "right"},
-                            "tickformat": f".{kwargs['z_precision']}f",
-                            "lenmode": "fraction",
-                            "len": 0.50,
-                            "xanchor": "left",
-                            "yanchor": "top",
+                        "title": {"text": kwargs["zlabel"], "side": "right"},
+                        "tickformat": f".{kwargs['z_precision']}f",
+                        "lenmode": "fraction",
+                        "len": 0.50,
+                        "xanchor": "left",
+                        "yanchor": "top",
                     },
                 )
             )
             if kwargs["colorbar_location"]:
                 self.warn("colorbar_location parameter is not valid for plotly")
-        
-        
+
         self.set_xyprecision_xyt_label(**kwargs)
+
+
+class ThreeDimensionPlotly(ParentPlotly):
+    """A plotly 3d plot class for heatmap
+
+    Args:
+        ParentPlotly (object): plotly parent class
+
+    Parameters:
+        data_list :List[List[float]]
+        xdata_list :List[float]
+        ydata_list :List[float]
+        legends :List[str]
+        color_list :List[str]
+        xlabel :str
+        ylabel :str
+        zlabel :str
+        title :str
+        x_precision :int
+        y_precision :int
+        z_precision :int
+        colorbar_location :str
+        cmap :str
+    """
+
+    def __init__(self, **kwargs) -> None:
+        super().__init__()
+
+        self.figure.add_trace(
+            go.Surface(
+                x=kwargs["xdata_list"],
+                y=kwargs["ydata_list"],
+                z=kwargs["data_list"],
+                colorscale=kwargs["cmap"],
+                showscale=True,
+                colorbar={
+                    "title": {"text": kwargs["zlabel"], "side": "right"},
+                    "tickformat": f".{kwargs['z_precision']}f",
+                    "lenmode": "fraction",
+                    "len": 0.50,
+                    "xanchor": "left",
+                    "yanchor": "top",
+                },
+            )
+        )
+        self.figure.update_layout(
+            legend_orientation="h",
+            title=kwargs["title"],
+            font=dict(family="Arial, Times New Roman", size=18),
+            showlegend=True,
+            scene=dict(
+                xaxis=dict(
+                    tickfont=dict(size=14, family="Arial, Times New Roman"),
+                    title=kwargs["xlabel"],
+                ),
+                yaxis=dict(
+                    tickfont=dict(size=14, family="Arial, Times New Roman"),
+                    title=kwargs["ylabel"],
+                ),
+                zaxis=dict(
+                    tickfont=dict(size=14, family="Arial, Times New Roman"),
+                    title=kwargs["zlabel"],
+                ),
+            ),
+        )
+        self.figure.update_traces(contours_z=dict(show=True, usecolormap=True, project_z=True))
+        if kwargs["x_precision"] != None:
+            self.figure.update_scenes(xaxis_tickformat=f".{kwargs['x_precision']}f")
+        if kwargs["y_precision"] != None:
+            self.figure.update_scenes(yaxis_tickformat=f".{kwargs['y_precision']}f")
+        if kwargs["z_precision"] != None:
+            self.figure.update_scenes(zaxis_tickformat=f".{kwargs['z_precision']}f")
+        if kwargs["colorbar_location"]:
+            self.warn("colorbar_location parameter is not valid for plotly")
+
+
+class ContourPlotly(ParentPlotly):
+    """A plotly contour plot class for heatmap
+
+    Args:
+        ParentPlotly (object): plotly parent class
+
+    Parameters:
+        data_list :List[List[float]]
+        xdata_list :List[float]
+        ydata_list :List[float]
+        legends :List[str]
+        color_list :List[str]
+        xlabel :str
+        ylabel :str
+        zlabel :str
+        title :str
+        x_precision :int
+        y_precision :int
+        z_precision :int
+        colorbar_location :str
+        cmap :str
+    """
+
+    def __init__(self, **kwargs) -> None:
+        super().__init__()
