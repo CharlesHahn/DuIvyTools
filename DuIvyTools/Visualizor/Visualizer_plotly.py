@@ -608,7 +608,9 @@ class ThreeDimensionPlotly(ParentPlotly):
                 ),
             ),
         )
-        self.figure.update_traces(contours_z=dict(show=True, usecolormap=True, project_z=True))
+        self.figure.update_traces(
+            contours_z=dict(show=True, usecolormap=True, project_z=True)
+        )
         if kwargs["x_precision"] != None:
             self.figure.update_scenes(xaxis_tickformat=f".{kwargs['x_precision']}f")
         if kwargs["y_precision"] != None:
@@ -644,3 +646,28 @@ class ContourPlotly(ParentPlotly):
 
     def __init__(self, **kwargs) -> None:
         super().__init__()
+
+        self.figure.add_trace(
+            go.Contour(
+                x=kwargs["xdata_list"],
+                y=kwargs["ydata_list"],
+                z=kwargs["data_list"],
+                colorscale=kwargs["cmap"],
+                showscale=True,
+                colorbar={
+                    "title": {"text": kwargs["zlabel"], "side": "right"},
+                    "tickformat": f".{kwargs['z_precision']}f",
+                    "lenmode": "fraction",
+                    "len": 0.50,
+                    "xanchor": "left",
+                    "yanchor": "top",
+                },
+                contours=dict(showlines=False),
+            )
+        )
+
+        if kwargs["colorbar_location"]:
+            self.warn("colorbar_location parameter is not valid for plotly")
+
+        self.set_xyprecision_xyt_label(**kwargs)
+        self.set_xy_min_max(**kwargs)
