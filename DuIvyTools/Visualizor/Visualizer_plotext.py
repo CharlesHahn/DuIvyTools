@@ -168,6 +168,7 @@ class BarPlotext(ParentPlotext):
     def __init__(self, **kwargs) -> None:
         super().__init__()
 
+        ## TODO: error bar ???
         plt.simple_multiple_bar(
             kwargs["xtitles"],
             kwargs["data_list"],
@@ -177,3 +178,33 @@ class BarPlotext(ParentPlotext):
         )
         if len(kwargs["stds_list"]) != 0:
             self.warn("plotext engine do not support error bar")
+
+
+class ImshowPlotext(ParentPlotext):
+    """A plotext imshow plot class for heatmap
+
+    Args:
+        ParentPlotext (object): plotext parent class
+
+    Parameters:
+        data_list :List[List[float]]
+        xdata_list :List[float]
+        ydata_list :List[float]
+    """
+
+    def __init__(self, **kwargs) -> None:
+        super().__init__()
+
+        self.warn(f"""!!! IMPORTANT !!! \n If the figure size ({len(kwargs["xdata_list"])}, {len(kwargs["ydata_list"])}) is larger than your terminal size, the resulting graph has a high probability of being WRONG !!! """)
+        plt.plot_size(len(kwargs["xdata_list"]), len(kwargs["ydata_list"])+2)
+        plt.matrix_plot(kwargs["data_list"])
+        plt.xticks([i for i in range(len(kwargs["xdata_list"]))], [])
+        plt.yticks([i for i in range(len(kwargs["ydata_list"]))], [])
+        plt.xlabel("")
+        plt.ylabel("")
+        plt.title("")
+        plt.show()
+        self.warn(f"""!!! IMPORTANT !!! \n If the figure size ({len(kwargs["xdata_list"])}, {len(kwargs["ydata_list"])}) is larger than your terminal size, the resulting graph has a high probability of being WRONG !!! """)
+
+
+

@@ -40,6 +40,11 @@ class xpm_show(Command):
         x_new_mg, y_new_mg = np.meshgrid(x_new, y_new)
         return x_new_mg, y_new_mg, matrix_new, x_new, y_new
 
+    def hex_to_rgb(self, value):
+        value = value.lstrip('#')
+        res = tuple(int(value[i:i+2], 16) for i in (0, 2, 4))
+        return res
+
     def __call__(self):  ## write process code
 
         self.info("in xpm_show")
@@ -139,6 +144,19 @@ class xpm_show(Command):
                 else:
                     fig = PcolormeshPlotly(**kwargs)
                     fig.final(self.parm.output, self.parm.noshow)
+
+            elif self.parm.engine == "plotext":
+                if interpolation != None:
+                    self.warn("plotext engine do not support interpolation now, ignored it")
+                color_matrix = []
+                for y, _ in enumerate(yaxis):
+                    c_lis = []
+                    for x, _ in enumerate(xaxis):
+                        c = xpm.colors[xpm.chars.index(xpm.dot_matrix[y][x])]
+                        c_lis.append(self.hex_to_rgb(c))
+                    color_matrix.append(c_lis)
+                kwargs["data_list"] = color_matrix
+                ImshowPlotext(**kwargs)
             else:
                 self.error("wrong selection of plot engine")
 
