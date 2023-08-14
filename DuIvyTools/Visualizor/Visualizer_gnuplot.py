@@ -150,6 +150,7 @@ class Gnuplot(log):
         gpl += "set view map\n"
         gpl += "set ylabel norotate offset -1,0\n"
         gpl += "set contour base\n"
+        gpl += "set colorbox vertical origin screen 0.9, 0.2 size screen 0.03, 0.6 front  noinvert noborder\n"
         gpl += f"\n$matrix << EOD\n"
         for y, y_value in enumerate(self.ydata):
             for x, x_value in enumerate(self.xdata):
