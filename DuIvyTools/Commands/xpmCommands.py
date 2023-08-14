@@ -41,8 +41,8 @@ class xpm_show(Command):
         return x_new_mg, y_new_mg, matrix_new, x_new, y_new
 
     def hex_to_rgb(self, value):
-        value = value.lstrip('#')
-        res = tuple(int(value[i:i+2], 16) for i in (0, 2, 4))
+        value = value.lstrip("#")
+        res = tuple(int(value[i : i + 2], 16) for i in (0, 2, 4))
         return res
 
     def __call__(self):  ## write process code
@@ -103,8 +103,12 @@ class xpm_show(Command):
                 if mode in ["pcolormesh", "3d", "contour"]:
                     if interpolation != None:
                         if self.file.type != "Continuous":
-                            self.warn(f"you are applying interpolation to {self.file.type} type of XPM. It should not be, but DIT would do it. BE CAREFUL for what you get !")
-                        xaxis, yaxis, value_matrix, _, _ = self.calc_interpolation(xaxis, yaxis, value_matrix, interpolation, ip_fold)
+                            self.warn(
+                                f"you are applying interpolation to {self.file.type} type of XPM. It should not be, but DIT would do it. BE CAREFUL for what you get !"
+                            )
+                        xaxis, yaxis, value_matrix, _, _ = self.calc_interpolation(
+                            xaxis, yaxis, value_matrix, interpolation, ip_fold
+                        )
                         kwargs["xdata_list"] = xaxis
                         kwargs["ydata_list"] = yaxis
                         kwargs["data_list"] = value_matrix
@@ -130,8 +134,12 @@ class xpm_show(Command):
             elif self.parm.engine == "plotly":
                 if interpolation != None:
                     if self.file.type != "Continuous":
-                        self.warn(f"you are applying interpolation to {self.file.type} type of XPM. It should not be, but DIT would do it. BE CAREFUL for what you get !")
-                    _, _, value_matrix, xaxis, yaxis = self.calc_interpolation(xaxis, yaxis, value_matrix, interpolation, ip_fold)
+                        self.warn(
+                            f"you are applying interpolation to {self.file.type} type of XPM. It should not be, but DIT would do it. BE CAREFUL for what you get !"
+                        )
+                    _, _, value_matrix, xaxis, yaxis = self.calc_interpolation(
+                        xaxis, yaxis, value_matrix, interpolation, ip_fold
+                    )
                     kwargs["xdata_list"] = xaxis
                     kwargs["ydata_list"] = yaxis
                     kwargs["data_list"] = value_matrix
@@ -144,12 +152,16 @@ class xpm_show(Command):
                 else:
                     fig = PcolormeshPlotly(**kwargs)
                     fig.final(self.parm.output, self.parm.noshow)
-            
+
             elif self.parm.engine == "gnuplot":
                 if interpolation != None:
                     if self.file.type != "Continuous":
-                        self.warn(f"you are applying interpolation to {self.file.type} type of XPM. It should not be, but DIT would do it. BE CAREFUL for what you get !")
-                    _, _, value_matrix, xaxis, yaxis = self.calc_interpolation(xaxis, yaxis, value_matrix, interpolation, ip_fold)
+                        self.warn(
+                            f"you are applying interpolation to {self.file.type} type of XPM. It should not be, but DIT would do it. BE CAREFUL for what you get !"
+                        )
+                    _, _, value_matrix, xaxis, yaxis = self.calc_interpolation(
+                        xaxis, yaxis, value_matrix, interpolation, ip_fold
+                    )
                     kwargs["xdata_list"] = xaxis
                     kwargs["ydata_list"] = yaxis
                     kwargs["data_list"] = value_matrix
@@ -160,7 +172,9 @@ class xpm_show(Command):
 
             elif self.parm.engine == "plotext":
                 if interpolation != None:
-                    self.warn("plotext engine do not support interpolation now, ignored it")
+                    self.warn(
+                        "plotext engine do not support interpolation now, ignored it"
+                    )
                 color_matrix = []
                 for y, _ in enumerate(yaxis):
                     c_lis = []
@@ -286,7 +300,7 @@ class xpm_diff(Command):
         print(self.parm.__dict__)
 
 
-class xpm_merge(Command): # TODO: merge two xpm half by half
+class xpm_merge(Command):  # TODO: merge two xpm half by half
     def __init__(self, parm: Parameters) -> None:
         self.parm = parm
 

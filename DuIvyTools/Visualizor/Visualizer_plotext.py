@@ -195,8 +195,10 @@ class ImshowPlotext(ParentPlotext):
     def __init__(self, **kwargs) -> None:
         super().__init__()
 
-        self.warn(f"""!!! IMPORTANT !!! \n If the figure size ({len(kwargs["xdata_list"])}, {len(kwargs["ydata_list"])}) is larger than your terminal size, the resulting graph has a high probability of being WRONG !!! """)
-        plt.plot_size(len(kwargs["xdata_list"]), len(kwargs["ydata_list"])+2)
+        self.warn(
+            f"""!!! IMPORTANT !!! \n If the figure size ({len(kwargs["xdata_list"])}, {len(kwargs["ydata_list"])}) is larger than your terminal size, the resulting graph has a high probability of being WRONG !!! """
+        )
+        plt.plot_size(len(kwargs["xdata_list"]), len(kwargs["ydata_list"]) + 2)
         plt.matrix_plot(kwargs["data_list"])
         plt.xticks([i for i in range(len(kwargs["xdata_list"]))], [])
         plt.yticks([i for i in range(len(kwargs["ydata_list"]))], [])
@@ -204,7 +206,6 @@ class ImshowPlotext(ParentPlotext):
         plt.ylabel("")
         plt.title("")
         plt.show()
-        self.warn(f"""!!! IMPORTANT !!! \n If the figure size ({len(kwargs["xdata_list"])}, {len(kwargs["ydata_list"])}) is larger than your terminal size, the resulting graph has a high probability of being WRONG !!! """)
-
-
-
+        self.warn(
+            f"""!!! IMPORTANT !!! \n If the figure size ({len(kwargs["xdata_list"])}, {len(kwargs["ydata_list"])}) is larger than your terminal size, the resulting graph has a high probability of being WRONG !!! """
+        )
