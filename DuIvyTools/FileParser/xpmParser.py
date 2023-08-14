@@ -7,6 +7,7 @@ Written by DuIvy and provided to you by GPLv3 license.
 import os
 import sys
 import math
+import string
 import numpy as np
 from typing import Dict, List
 
@@ -15,15 +16,7 @@ from utils import log
 
 
 class XPM(log):
-    def __init__(self, xpmfile: str, is_file: bool = True) -> None:
-        if is_file:
-            self.xpmfile: str = xpmfile
-            if not os.path.exists(xpmfile):
-                self.error(f"No {xpmfile} detected ! check it !")
-            with open(xpmfile, "r") as fo:
-                content = fo.read()
-        else:
-            content = xpmfile
+    def __init__(self, xpmfile: str, is_file: bool = True, new_file: bool = False) -> None:
 
         self.title: str = ""
         self.legend: str = ""
@@ -43,7 +36,23 @@ class XPM(log):
         self.dot_matrix: list[list[str]] = []
         self.value_matrix: list[list[float]] = []
 
-        lines = [l.strip() for l in content.split("\n")]
+        if new_file:
+            self.xpmfile = xpmfile 
+        else:
+            if is_file:
+                self.xpmfile: str = xpmfile
+                if not os.path.exists(xpmfile):
+                    self.error(f"No {xpmfile} detected ! check it !")
+                with open(xpmfile, "r") as fo:
+                    content = fo.read()
+            else:
+                content = xpmfile
+            lines = [l.strip() for l in content.split("\n")]
+            self.parse_xpm(lines)
+            if is_file:
+                self.info(f"parsing data from {xpmfile} successfully !")
+
+    def parse_xpm(self, lines:List[str]) -> None:
         flag_4_code: int = 0
         for line in lines:
             if flag_4_code == 1:
@@ -165,10 +174,47 @@ class XPM(log):
         ):
             self.error("Dimension error while parsing xpm file")
 
-        if is_file:
-            self.info(f"parsing data from {xpmfile} successfully !")
+    def __sub__(self, xpm):  # diff_map
+        if self.type != "Continuous" or xpm.type != "Continuous":
+            self.error("Only supported to apply xpm_diff to Continuous type of xpms")
+        for key in ["title", "xlabel", "ylabel", "xaxis", "yaxis", "notes"]:
+            if self.__dict__[key] != xpm.__dict__[key]:
+                self.warn(f"Detected different {key} in {self.xpmfile} and {xpm.xpmfile}. \nDIT strongly warns you that different type (meanings) of xpms should NOT be used to calculate difference. The results would NOT be reliable !!! ")
+        if self.width != xpm.width or self.height != xpm.height:
+            self.error(f"The shape of {self.xpmfile} ({self.width}, {self.height}) and {xpm.xpmfile} ({xpm.width}, {xpm.height}) are different, unable to calculate difference.")
+        
+        out = XPM("", is_file=False, new_file=True)
+        for key, value in self.__dict__.items():
+            out.__dict__[key] = value
+        out_value_set = set()
+        for h in range(self.height):
+            for w in range(self.width):
+                value = self.value_matrix[h][w] - xpm.value_matrix[h][w]
+                value = float(f"{value:.6f}")
+                out.value_matrix[h][w] = value
+                out_value_set.add(value)
 
-    def __sub__(self, other):  # diff_map
+        out_value_list = sorted(list(out_value_set))
+        chars = [f"{x}{y}" for x in string.ascii_letters for y in string.ascii_letters][:len(out_value_list)]
+        colors, l = [], len(out_value_list)
+        for i in range(l):
+            c = 62500//len(out_value_list) * i
+            colors.append("#"+hex(c)[-6:].replace('x', '0').upper())
+        out.char_per_pixel = 2
+        out.chars = chars
+        out.color_num = l
+        out.colors = colors
+        for h in range(self.height):
+            dot_line:str = ""
+            for w in range(self.width):
+                dot = chars[out_value_list.index(out.value_matrix[h][w])]
+                out.dot_matrix[h][w] = dot
+                dot_line += dot
+            out.datalines[h] = dot_line
+
+        return out
+
+    def save(self, outname:str) -> None:
         pass
 
 

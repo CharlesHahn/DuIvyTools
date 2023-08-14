@@ -299,6 +299,20 @@ class xpm_diff(Command):
         self.info("in xpm_diff")
         print(self.parm.__dict__)
 
+        if not self.parm.input:
+            self.error("you must specify two xpm file for calcuelation")
+        if len(self.parm.input) > 2:
+            self.warn("only the first two xpm file you specified will be used !")
+        if not self.parm.output:
+            self.error("you must specify a xpm file name to store results")
+        self.parm.output = self.check_output_exist(self.parm.output)
+
+        xpm0 = XPM(self.parm.input[0])
+        xpm1 = XPM(self.parm.input[1])
+        xpm = xpm0 - xpm1
+        xpm.xpmfile = self.parm.output
+        xpm.save(self.parm.output)
+
 
 class xpm_merge(Command):  # TODO: merge two xpm half by half
     def __init__(self, parm: Parameters) -> None:

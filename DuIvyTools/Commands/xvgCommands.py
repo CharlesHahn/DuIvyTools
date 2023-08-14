@@ -315,7 +315,7 @@ class xvg_energy_compute(Command):
         prolig_xvg = self.parm.input[0]
         pro_xvg = self.parm.input[1]
         lig_xvg = self.parm.input[2]
-        if self.parm.output == None:
+        if not self.parm.output:
             self.error("please specify output xvg file name")
         self.parm.output = self.check_output_exist(self.parm.output)
 
@@ -430,7 +430,7 @@ class xvg_combine(Command):
         print(self.parm.__dict__)
 
         ## check parm
-        if self.parm.output == None:
+        if not self.parm.output:
             self.error("please specify output xvg file name")
         self.parm.output = self.check_output_exist(self.parm.output)
 

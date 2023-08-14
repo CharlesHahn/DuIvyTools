@@ -58,7 +58,7 @@ class ParentMatplotlib(log):
             noshow (bool): True for no display the figure
         """
         plt.tight_layout()
-        if outfig != None:
+        if outfig != None and outfig != "":
             if os.path.exists(outfig):
                 time_info = time.strftime("%Y%m%d%H%M%S", time.localtime())
                 new_outfig = f'{".".join(outfig.split(".")[:-1])}_{time_info}.{outfig.split(".")[-1]}'
