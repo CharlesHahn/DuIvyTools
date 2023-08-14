@@ -25,7 +25,7 @@ class Gnuplot(log):
             "fontscale": 1,
             "linewidth": 2,
             "pointscale": 1,
-            "width": 1200,
+            "width": 1400,
             "height": 1000,
             "color_cycle": [
                 "#38A7D0",
@@ -135,12 +135,31 @@ class Gnuplot(log):
 
         return gpl
 
-    def threeDimension(self, gpl:str) -> str:
+    def threeDimension(self, gpl: str) -> str:
+        if self.zlabel != None:
+            gpl += f"""set cblabel "{self.zlabel}"\n"""
+        if self.z_precision != None:
+            gpl += f"""set cbtics format "%.{self.z_precision}f"\n"""
+        gpl += "set pm3d implicit at s\n"
+        gpl += "set colorbox user\n"
+        gpl += "set contour base\n"
+        gpl += "set cntrparam levels 10\n"
+        # gpl += "set ylabel norotate offset -1,0\n"
+        gpl += "set colorbox vertical origin 0.9, 0.2 size 0.03, 0.6 front noinvert noborder\n"
+        gpl += f"\n$matrix << EOD\n"
+        for y, y_value in enumerate(self.ydata):
+            for x, x_value in enumerate(self.xdata):
+                gpl += f"""{x_value} {y_value} {self.data[y][x]}\n"""
+            gpl += "\n"
+        gpl += "EOD\n\n"
+        gpl += f"splot [{self.xmin}:{self.xmax}][{self.ymin}:{self.ymax}] "
+        gpl += f"""$matrix using 1:2:3 with pm3d notitle, \\\n"""
+        gpl += f"""$matrix using 1:2:3 with lines nosurface notitle """
+        gpl += "\n"
 
         return gpl
 
-    def contour(self, gpl:str) -> str:
-
+    def contour(self, gpl: str) -> str:
         if self.zlabel != None:
             gpl += f"""set cblabel "{self.zlabel}"\n"""
         if self.z_precision != None:
@@ -162,8 +181,8 @@ class Gnuplot(log):
         gpl += "\n"
 
         return gpl
-    
-    def imshow(self, gpl:str) -> str:
+
+    def imshow(self, gpl: str) -> str:
         if len(self.data) == 1:
             self.error("gnuplot engine can not deal with heatmap with only 1 dimension")
         if self.xpm_type != "Continuous":
@@ -202,7 +221,6 @@ class Gnuplot(log):
             gpl += "\n"
 
         return gpl
-
 
     def stack_plot(self, gpl: str) -> str:
         gpl += f"""set style fill transparent solid {self.style["alpha"]} noborder\n"""
@@ -701,7 +719,7 @@ class ImshowGnuplot(ParentGnuplot):
         cmap :str
     """
 
-    def __init__(self, plot_type:str, /, **kwargs) -> None:
+    def __init__(self, plot_type: str, /, **kwargs) -> None:
         super().__init__()
 
         self.gnuplot.term = "png"
@@ -718,17 +736,17 @@ class ImshowGnuplot(ParentGnuplot):
             self.gnuplot.ymax = kwargs["ymax"]
 
         data = kwargs["xdata_list"]
-        dot_len_x = (np.max(data) - np.min(data))/(len(data)-1)
+        dot_len_x = (np.max(data) - np.min(data)) / (len(data) - 1)
         data = kwargs["ydata_list"]
-        dot_len_y = (np.max(data) - np.min(data))/(len(data)-1)
+        dot_len_y = (np.max(data) - np.min(data)) / (len(data) - 1)
         if self.gnuplot.xmin == None:
-            self.gnuplot.xmin = np.min(kwargs["xdata_list"]) - 0.5*dot_len_x
+            self.gnuplot.xmin = np.min(kwargs["xdata_list"]) - 0.5 * dot_len_x
         if self.gnuplot.xmax == None:
-            self.gnuplot.xmax = np.max(kwargs["xdata_list"]) + 0.5*dot_len_x
+            self.gnuplot.xmax = np.max(kwargs["xdata_list"]) + 0.5 * dot_len_x
         if self.gnuplot.ymin == None:
-            self.gnuplot.ymin = np.min(kwargs["ydata_list"]) - 0.5*dot_len_y
+            self.gnuplot.ymin = np.min(kwargs["ydata_list"]) - 0.5 * dot_len_y
         if self.gnuplot.ymax == None:
-            self.gnuplot.ymax = np.max(kwargs["ydata_list"]) + 0.5*dot_len_y
+            self.gnuplot.ymax = np.max(kwargs["ydata_list"]) + 0.5 * dot_len_y
 
         self.gnuplot.x_precision = kwargs["x_precision"]
         self.gnuplot.y_precision = kwargs["y_precision"]
@@ -750,4 +768,3 @@ class ImshowGnuplot(ParentGnuplot):
         # self.gnuplot.colorbar_location = kwargs["colorbar_location"]
         if kwargs["colorbar_location"]:
             self.warn("DIT is unable to set colorbar location for gnuplot now.")
-
