@@ -201,15 +201,15 @@
 - ndx_combine
 - ndx_rename
 
+- ndx_add
+- ndx_split ## ndx group split into several group
+
 - mdp_gen
-
 - show_style
-
 - find_center
-- pipi_dist_ang
-- hbond
 - dccm_ascii
 - dssp
+
 
 
 **angle vs time, circle plot**
@@ -217,8 +217,12 @@
 **seaborn engine**
 
 
-
 ### Procedures
+
+** move to procedure **
+
+- pipi_dist_ang
+- hbond
 
 #### dock
 

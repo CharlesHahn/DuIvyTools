@@ -25,19 +25,23 @@ class mdp_gen(Command):
         self.info("in mdp_gen")
         print(self.parm.__dict__)
 
-        mdp_path = os.path.realpath(os.getcwd(), os.path.join(os.path.dirname(__file__), os.path.join("..", "data", "mdps")))
+        mdp_path = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__), os.path.join("..", "data", "mdps")))
         mdp_files = [f for f in os.listdir(mdp_path) if f.endswith(".mdp")]
-
-        if self.parm.output not in mdp_files:
-            self.warn(f"the specified {self.parm.output} were unable to provide")
-
+        if self.parm.output != None and self.parm.output not in mdp_files:
+            self.warn(f"the specified output file \"{self.parm.output}\" were unable to provide")
+            self.parm.output = None
         if self.parm.output == None:
             print("-"*70)
-            print("You can get one of the following mdp file by specifing the output parameter: ")
+            print("You can get one of the following mdp file by specifing the output parameter: \n")
             print("  ".join(mdp_files))
             print("-"*70)
-
-
+        if self.parm.output in mdp_files:
+            with open(os.path.join(mdp_path,  self.parm.output), 'r') as fo:
+                content = fo.read()
+            self.parm.output = self.check_output_exist(self.parm.output)
+            with open(self.parm.output, 'w') as fo:
+                fo.write(content)
+            self.info(f"generated {self.parm.output} successfully")
 
 
 class show_style(Command):
