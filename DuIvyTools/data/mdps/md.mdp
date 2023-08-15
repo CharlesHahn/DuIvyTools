@@ -1,15 +1,14 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; a MD template, suit for normal MD
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 title       = Protein-ligand complex MD simulation 
 
 ; Run parameters
 ;------------------------------------------------------------------------------
-integrator  = md          ; leap-frog integrator
-nsteps      = 50000000    ; 100ns
-dt          = 0.002       ; 2 fs
+integrator  = md                ; leap-frog integrator
+nsteps      = 50000000          ; 100ns
+dt          = 0.002             ; 2 fs
 
 ; Output control
 ;------------------------------------------------------------------------------
@@ -23,8 +22,8 @@ compressed-x-grps   = System
 
 ; remove rot+trans during running
 ; -----------------------------------------------------------------------------
-; comm-mode   = Angular
-; comm-grps   = Protein
+comm-mode   = Angular
+comm-grps   = Protein
 
 ; Bond parameters
 ;------------------------------------------------------------------------------
@@ -50,18 +49,18 @@ fourierspacing  = 0.16      ; grid spacing for FFT
 
 ; Temperature coupling
 ;------------------------------------------------------------------------------
-tcoupl      = V-rescale                     ; modified Berendsen thermostat
-tc-grps     = Water Non-Water               ; two coupling groups - more accurate
-tau_t       = 0.1   0.1                     ; time constant, in ps
-ref_t       = 300   300                     ; reference temperature, one for each group, in K
+tcoupl      = V-rescale         ; modified Berendsen thermostat
+tc-grps     = Water Non-Water   ; two coupling groups - more accurate
+tau_t       = 0.1   0.1         ; time constant, in ps
+ref_t       = 300   300         ; reference temperature, one for each group, in K
 
 ; Pressure coupling 
 ;------------------------------------------------------------------------------
-pcoupl      = Parrinello-Rahman             ; pressure coupling is on for NPT
-pcoupltype  = isotropic                     ; uniform scaling of box vectors
-tau_p       = 2.0                           ; time constant, in ps
-ref_p       = 1.0                           ; reference pressure, in bar
-compressibility = 4.5e-5                    ; isothermal compressibility of water, bar^-1
+pcoupl      = Parrinello-Rahman ; pressure coupling is on for NPT
+pcoupltype  = isotropic         ; uniform scaling of box vectors
+tau_p       = 2.0               ; time constant, in ps
+ref_p       = 1.0               ; reference pressure, in bar
+compressibility = 4.5e-5        ; isothermal compressibility of water, bar^-1
 
 ; Periodic boundary conditions
 ;------------------------------------------------------------------------------

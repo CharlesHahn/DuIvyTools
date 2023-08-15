@@ -1,16 +1,16 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; a EM template, suit for normal EM
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 title		= Minimization	; Title of run
 
 ; Parameters describing what to do, when to stop and what to save
 ;------------------------------------------------------------------------------
 integrator	= steep		; Algorithm (steep = steepest descent minimization)
-emtol		= 100.0  	; Stop minimization when the maximum force < 100.0 kJ/mol
+emtol		= 10.0  	; Stop minimization when the maximum force < 10.0 kJ/mol
 emstep      = 0.01      ; Energy step size
 nsteps		= 50000	  	; Maximum number of (minimization) steps to perform
-energygrps	= Protein Ligand	; Which energy group(s) to write to disk
+energygrps	= System	; Which energy group(s) to write to disk
 
 ; Parameters describing how to find the neighbors of each atom and how to calculate the interactions
 ;------------------------------------------------------------------------------
