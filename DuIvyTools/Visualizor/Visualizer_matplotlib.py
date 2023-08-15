@@ -196,6 +196,7 @@ class ScatterMatplotlib(ParentMatplotlib):
                 label=kwargs["legends"][i],
                 marker=marker_list[i],
                 cmap=kwargs["cmap"],
+                vmin=kwargs["zmin"], vmax=kwargs["zmax"],
             )
         if kwargs["z_precision"] != None:
             plt.colorbar(
@@ -343,6 +344,8 @@ class BoxMatplotlib(ParentMatplotlib):
         xmax :flaot
         ymin :float
         ymax :float
+        zmin :float
+        zmax :float
         xlabel :str
         ylabel :str
         zlabel :str
@@ -370,6 +373,7 @@ class BoxMatplotlib(ParentMatplotlib):
                     alpha=kwargs["alpha"],
                     c=kwargs["color_list"][i],
                     cmap=kwargs["cmap"],
+                    vmin=kwargs["zmin"], vmax=kwargs["zmax"],
                 )
             if kwargs["z_precision"] != None:
                 plt.colorbar(
@@ -500,6 +504,8 @@ class ImshowMatplotlib(ParentMatplotlib):
         xmax :float
         ymin :float
         ymax :float
+        zmin :float
+        zmax :float
         x_precision :int
         y_precision :int
         z_precision :int
@@ -545,6 +551,7 @@ class ImshowMatplotlib(ParentMatplotlib):
                 alpha=kwargs["alpha"],
                 cmap=kwargs["cmap"],
                 origin="lower",
+                vmin=kwargs["zmin"], vmax=kwargs["zmax"],
             )
             if kwargs["z_precision"] != None:
                 plt.colorbar(
@@ -606,6 +613,8 @@ class PcolormeshMatplotlib(ParentMatplotlib):
         ylabel :str
         zlabel :str
         title :str
+        zmin :float
+        zmax :float
         x_precision :int
         y_precision :int
         z_precision :int
@@ -660,6 +669,7 @@ class PcolormeshMatplotlib(ParentMatplotlib):
                 alpha=kwargs["alpha"],
                 cmap=kwargs["cmap"],
                 shading="auto",
+                vmin=kwargs["zmin"], vmax=kwargs["zmax"],
             )
             if kwargs["z_precision"] != None:
                 plt.colorbar(

@@ -852,6 +852,8 @@ class xvg_box_compare(xvg_compare):
             "xmax": self.parm.xmax,
             "ymin": self.parm.ymin,
             "ymax": self.parm.ymax,
+            "zmin": self.parm.zmin,
+            "zmax": self.parm.zmax,
             "xlabel": self.parm.xlabel,
             "ylabel": self.get_parm("ylabel"),
             "zlabel": self.sel_parm(self.parm.zlabel, zlabel),

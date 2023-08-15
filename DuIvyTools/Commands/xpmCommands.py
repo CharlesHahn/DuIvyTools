@@ -81,6 +81,8 @@ class xpm_show(Command):
                 "xmax": self.parm.xmax,
                 "ymin": self.parm.ymin,
                 "ymax": self.parm.ymax,
+                "zmin": self.parm.zmin, 
+                "zmax": self.parm.zmax,
                 "xlabel": self.get_parm("xlabel"),
                 "ylabel": self.get_parm("ylabel"),
                 "zlabel": self.sel_parm(self.parm.zlabel, xpm.legend),
@@ -311,6 +313,7 @@ class xpm_diff(Command):
         xpm1 = XPM(self.parm.input[1])
         xpm = xpm0 - xpm1
         xpm.xpmfile = self.parm.output
+        xpm.title = f"{xpm0.xpmfile} - {xpm1.xpmfile}"
         xpm.save(self.parm.output)
 
 
