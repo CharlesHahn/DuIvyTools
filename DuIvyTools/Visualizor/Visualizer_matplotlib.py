@@ -750,6 +750,7 @@ class ThreeDimensionMatplotlib(ParentMatplotlib):
             cmap=kwargs["cmap"],
             zdir="z",
             offset=offset,
+            vmin=kwargs["zmin"], vmax=kwargs["zmax"],
         )
         if kwargs["z_precision"] != None:
             plt.colorbar(
@@ -797,6 +798,7 @@ class ContourMatplotlib(ParentMatplotlib):
             kwargs["ydata_list"],
             kwargs["data_list"],
             cmap=kwargs["cmap"],
+            vmin=kwargs["zmin"], vmax=kwargs["zmax"],
         )
         if kwargs["z_precision"] != None:
             plt.colorbar(
