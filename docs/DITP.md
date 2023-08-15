@@ -190,6 +190,8 @@
 - xpm_show
 - xpm2csv
 - xpm2dat
+- xpm_diff
+- xpm_merge
 
 - ndx_show
 - ndx_rm_dup

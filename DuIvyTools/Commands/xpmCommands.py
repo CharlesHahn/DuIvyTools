@@ -20,6 +20,7 @@ from utils import Parameters
 
 
 class xpm_show(Command):
+    """visualize xpm files"""
     def __init__(self, parm: Parameters) -> None:
         self.parm = parm
 
@@ -191,6 +192,7 @@ class xpm_show(Command):
 
 
 class xpm2csv(Command):
+    """convert xpm to csv file"""
     def __init__(self, parm: Parameters) -> None:
         self.parm = parm
 
@@ -233,6 +235,7 @@ class xpm2csv(Command):
 
 
 class xpm2dat(Command):
+    """convert xpm to dat file"""
     def __init__(self, parm: Parameters) -> None:
         self.parm = parm
 
@@ -294,6 +297,7 @@ class xpm2dat(Command):
 
 
 class xpm_diff(Command):
+    """calculate the difference of two xpm files"""
     def __init__(self, parm: Parameters) -> None:
         self.parm = parm
 
@@ -319,7 +323,8 @@ class xpm_diff(Command):
         xpm.save(self.parm.output)
 
 
-class xpm_merge(Command):  # TODO: merge two xpm half by half
+class xpm_merge(Command):
+    """merge two xpm file by half and half"""
     def __init__(self, parm: Parameters) -> None:
         self.parm = parm
 
