@@ -305,6 +305,8 @@ class xpm_diff(Command):
             self.error("you must specify two xpm file for calcuelation")
         if len(self.parm.input) > 2:
             self.warn("only the first two xpm file you specified will be used !")
+        if len(self.parm.input) < 2:
+            self.warn("at least two xpm file are needed for calculation !")
         if not self.parm.output:
             self.error("you must specify a xpm file name to store results")
         self.parm.output = self.check_output_exist(self.parm.output)
@@ -322,5 +324,37 @@ class xpm_merge(Command):  # TODO: merge two xpm half by half
         self.parm = parm
 
     def __call__(self):
-        self.info("in xpm_diff")
+        self.info("in xpm_merge")
         print(self.parm.__dict__)
+
+        if not self.parm.input:
+            self.error("you must specify two xpm file for calcuelation")
+        if len(self.parm.input) > 2:
+            self.warn("only the first two xpm file you specified will be used !")
+        if len(self.parm.input) < 2:
+            self.warn("at least two xpm file are needed for calculation !")
+        if not self.parm.output:
+            self.error("you must specify a xpm file name to store results")
+        self.parm.output = self.check_output_exist(self.parm.output)
+
+        xpm0 = XPM(self.parm.input[0])
+        xpm1 = XPM(self.parm.input[1])
+        for key in ["title", "xlabel", "ylabel", "xaxis", "yaxis"]:
+            if xpm0.__dict__[key] != xpm1.__dict__[key]:
+                self.warn(f"Detected different {key} in {xpm0.xpmfile} and {xpm1.xpmfile}. \nDIT strongly warns you that different type (meanings) of xpms should NOT be used to merge. The results may NOT be reliable !!! ")
+        if xpm0.width != xpm1.width or xpm0.height != xpm1.height:
+            self.error(f"The shape of {xpm0.xpmfile} ({xpm0.width}, {xpm0.height}) and {xpm1.xpmfile} ({xpm1.width}, {xpm1.height}) are different, unable to calculate difference.")
+
+        out = XPM(self.parm.output, is_file=False, new_file=True)
+        for key, value in xpm0.__dict__.items():
+            out.__dict__[key] = value
+        for h in range(xpm0.height):
+            for w in range(xpm0.width):
+                if h/xpm0.height + w/xpm0.width < 1:
+                    value = xpm0.value_matrix[h][w] # left top
+                else:
+                    value = xpm1.value_matrix[h][w] # right bottom
+                out.value_matrix[h][w] = value
+        out.refresh_by_value_matrix()
+        out.title = f"{xpm0.xpmfile}(left) / {xpm1.xpmfile}(right)"
+        out.save(self.parm.output)

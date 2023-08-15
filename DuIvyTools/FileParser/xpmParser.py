@@ -187,7 +187,6 @@ class XPM(log):
         out = XPM("", is_file=False, new_file=True)
         for key, value in self.__dict__.items():
             out.__dict__[key] = value
-        out.yaxis.reverse() # top to bottom -> bottom -> top
         for h in range(self.height):
             for w in range(self.width):
                 value = self.value_matrix[h][w] - xpm.value_matrix[h][w]
@@ -229,6 +228,7 @@ class XPM(log):
             outstr += f""""{char}  c {color} " /* "{note}" */,\n"""
         for x in range(0, len(self.xaxis), 50):
             outstr += "/* x-axis: " + " ".join(str(v) for v in self.xaxis[x:x+50]) + " */\n"
+        self.yaxis.reverse() # top to bottom -> bottom -> top
         for y in range(0, len(self.yaxis), 50):
             outstr += "/* y-axis: " + " ".join(str(v) for v in self.yaxis[y:y+50]) + " */\n"
         for line in self.datalines:
