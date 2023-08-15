@@ -54,7 +54,24 @@ class show_style(Command):
         self.info("in show_style")
         print(self.parm.__dict__)
 
+        mplstyle_path = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__), os.path.join("..", "data", "mplstyle")))
+        mplstyle_files = [f for f in os.listdir(mplstyle_path) if f.endswith(".mplstyle")]
 
+        if self.parm.output != None and self.parm.output not in mplstyle_files:
+            self.warn(f"the specified output file \"{self.parm.output}\" were unable to provide")
+            print("-"*70)
+            print("You can get one of the following mplstyle file by specifing the output parameter: \n")
+            print("  ".join(mplstyle_files))
+            print("-"*70)
+        elif self.parm.output == None:
+            self.parm.output = "DIT.mplstyle"
+        if self.parm.output != None and self.parm.output in mplstyle_files:
+            with open(os.path.join(mplstyle_path,  self.parm.output), 'r') as fo:
+                content = fo.read()
+            self.parm.output = self.check_output_exist(self.parm.output)
+            with open(self.parm.output, 'w') as fo:
+                fo.write(content)
+            self.info(f"generated {self.parm.output} successfully")
 
 
 class find_center(Command):
