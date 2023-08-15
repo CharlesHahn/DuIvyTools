@@ -196,7 +196,8 @@ class ScatterMatplotlib(ParentMatplotlib):
                 label=kwargs["legends"][i],
                 marker=marker_list[i],
                 cmap=kwargs["cmap"],
-                vmin=kwargs["zmin"], vmax=kwargs["zmax"],
+                vmin=kwargs["zmin"],
+                vmax=kwargs["zmax"],
             )
         if kwargs["z_precision"] != None:
             plt.colorbar(
@@ -373,7 +374,8 @@ class BoxMatplotlib(ParentMatplotlib):
                     alpha=kwargs["alpha"],
                     c=kwargs["color_list"][i],
                     cmap=kwargs["cmap"],
-                    vmin=kwargs["zmin"], vmax=kwargs["zmax"],
+                    vmin=kwargs["zmin"],
+                    vmax=kwargs["zmax"],
                 )
             if kwargs["z_precision"] != None:
                 plt.colorbar(
@@ -551,7 +553,8 @@ class ImshowMatplotlib(ParentMatplotlib):
                 alpha=kwargs["alpha"],
                 cmap=kwargs["cmap"],
                 origin="lower",
-                vmin=kwargs["zmin"], vmax=kwargs["zmax"],
+                vmin=kwargs["zmin"],
+                vmax=kwargs["zmax"],
             )
             if kwargs["z_precision"] != None:
                 plt.colorbar(
@@ -669,7 +672,8 @@ class PcolormeshMatplotlib(ParentMatplotlib):
                 alpha=kwargs["alpha"],
                 cmap=kwargs["cmap"],
                 shading="auto",
-                vmin=kwargs["zmin"], vmax=kwargs["zmax"],
+                vmin=kwargs["zmin"],
+                vmax=kwargs["zmax"],
             )
             if kwargs["z_precision"] != None:
                 plt.colorbar(
@@ -750,7 +754,8 @@ class ThreeDimensionMatplotlib(ParentMatplotlib):
             cmap=kwargs["cmap"],
             zdir="z",
             offset=offset,
-            vmin=kwargs["zmin"], vmax=kwargs["zmax"],
+            vmin=kwargs["zmin"],
+            vmax=kwargs["zmax"],
         )
         if kwargs["z_precision"] != None:
             plt.colorbar(
@@ -798,7 +803,8 @@ class ContourMatplotlib(ParentMatplotlib):
             kwargs["ydata_list"],
             kwargs["data_list"],
             cmap=kwargs["cmap"],
-            vmin=kwargs["zmin"], vmax=kwargs["zmax"],
+            vmin=kwargs["zmin"],
+            vmax=kwargs["zmax"],
         )
         if kwargs["z_precision"] != None:
             plt.colorbar(
