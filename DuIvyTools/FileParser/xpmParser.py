@@ -208,13 +208,18 @@ class XPM(log):
         ]
         colors, l = [], len(out_value_list)
         for i in range(l):
-            c = 62500 // len(out_value_list) * i
-            colors.append("#" + hex(c)[-6:].replace("x", "0").upper())
+            c = 16000000 // len(out_value_list) * i
+            colors.append(f'#{hex(c)[-6:].replace("x", "0").upper():0>6}')
         self.char_per_pixel = 2
         self.chars = chars
         self.color_num = l
         self.colors = colors
         self.notes = out_value_list
+        if len(self.dot_matrix) == 0 or len(self.datalines) == 0:
+            for h in range(self.height):
+                self.dot_matrix.append(["" for w in range(self.width)])
+                self.datalines.append("")
+        print(l, len(chars))
         for h in range(self.height):
             dot_line: str = ""
             for w in range(self.width):
