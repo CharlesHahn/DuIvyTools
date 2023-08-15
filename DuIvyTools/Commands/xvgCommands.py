@@ -1056,22 +1056,22 @@ class xvg_rama(Command):
         ## reference : pyrama
         rama_preferences = {
             "General": {
-                "file": os.path.join("../", "data", "pref_general.data"),
+                "file": os.path.join("../", "data", "ramachandran", "pref_general.data"),
                 "cmap": ["#FFFFFF", "#B3E8FF", "#7FD9FF"],
                 "bounds": [0, 0.0005, 0.02, 1],
             },
             "GLY": {
-                "file": os.path.join("../", "data", "pref_glycine.data"),
+                "file": os.path.join("../", "data", "ramachandran", "pref_glycine.data"),
                 "cmap": ["#FFFFFF", "#FFE8C5", "#FFCC7F"],
                 "bounds": [0, 0.002, 0.02, 1],
             },
             "PRO": {
-                "file": os.path.join("../", "data", "pref_proline.data"),
+                "file": os.path.join("../", "data", "ramachandran", "pref_proline.data"),
                 "cmap": ["#FFFFFF", "#D0FFC5", "#7FFF8C"],
                 "bounds": [0, 0.002, 0.02, 1],
             },
             "Pre-PRO": {
-                "file": os.path.join("../", "data", "pref_preproline.data"),
+                "file": os.path.join("../", "data", "ramachandran", "pref_preproline.data"),
                 "cmap": ["#FFFFFF", "#B3E8FF", "#7FD9FF"],
                 "bounds": [0, 0.002, 0.02, 1],
             },

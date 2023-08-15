@@ -43,7 +43,7 @@ class ParentMatplotlib(log):
                 os.path.join(os.getcwd(), os.path.dirname(__file__), "../")
             )
             mplstyle = os.path.join(
-                data_file_path, os.path.join("data", "DIT.mplstyle")
+                data_file_path, os.path.join("data", "mplstyle", "DIT.mplstyle")
             )
             plt.style.use(mplstyle)
             self.info(
