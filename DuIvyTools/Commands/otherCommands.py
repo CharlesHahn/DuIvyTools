@@ -124,11 +124,13 @@ class dccm_ascii(Command):
         covar = results["sum"].to_numpy()
         covar = covar.reshape(resnum, resnum)
         ## convert covar to corr
+        if self.parm.z_precision == None:
+            self.parm.z_precision = 3
         corr = np.zeros((resnum, resnum))
         for i in range(resnum):
             for j in range(resnum):
                 corr_ij = covar[i, j] / np.sqrt(covar[i, i] * covar[j, j])
-                corr[i, j] = float(f"{corr_ij:.3f}")
+                corr[i, j] = float(f"{corr_ij:.{self.parm.z_precision}f}")
         
         ## save to xpm
         xpm = XPM(self.parm.output, is_file=False, new_file=True)

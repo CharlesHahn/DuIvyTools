@@ -202,28 +202,52 @@ class XPM(log):
         return out
 
     def refresh_by_value_matrix(self, is_Continuous: bool = True) -> None:
+        """generate the xpm class content by value_matrix
+
+        Args:
+            is_Continuous (bool, optional): set the type of xpm. Defaults to True.
+        """
         out_value_list = sorted(list(set(chain(*self.value_matrix))))
-        chars = [f"{x}{y}" for x in string.ascii_letters for y in string.ascii_letters][
-            : len(out_value_list)
-        ]
+        self.notes = out_value_list
         colors, l = [], len(out_value_list)
         for i in range(l):
             c = 16000000 // len(out_value_list) * i
             colors.append(f'#{hex(c)[-6:].replace("x", "0").upper():0>6}')
-        self.char_per_pixel = 2
-        self.chars = chars
         self.color_num = l
         self.colors = colors
-        self.notes = out_value_list
+
+        letters = string.ascii_letters + "0123456789!@#$%^&*()-_=+{}|;"
+        if l <= 0:
+            self.error("no data detected in xpm.value_matrix")
+        elif l > 0 and l <= len(letters):
+            self.char_per_pixel = 1
+            self.chars = [f"{x}" for x in letters][:l]
+        elif l > len(letters) and l <= len(letters) * len(letters):
+            self.char_per_pixel = 2
+            self.chars = [f"{x}{y}" for x in letters for y in letters][:l]
+        elif l > len(letters) * len(letters) and l <= len(letters) * len(letters) * len(
+            letters
+        ):
+            self.warn(
+                f"so many values ({l}) in xpm.value_matrix, may resulting in large xpm file"
+            )
+            self.char_per_pixel = 3
+            self.chars = [
+                f"{x}{y}{z}" for x in letters for y in letters for z in letters
+            ][:l]
+        else:
+            self.error(
+                f"too many values ({l}) in xpm.value_matrix, only able to construct XPM with {len(letters)*len(letters)*len(letters)} values or less"
+            )
+
         if len(self.dot_matrix) == 0 or len(self.datalines) == 0:
             for h in range(self.height):
-                self.dot_matrix.append(["" for w in range(self.width)])
+                self.dot_matrix.append(["" for _ in range(self.width)])
                 self.datalines.append("")
-        print(l, len(chars))
         for h in range(self.height):
             dot_line: str = ""
             for w in range(self.width):
-                dot = chars[out_value_list.index(self.value_matrix[h][w])]
+                dot = self.chars[out_value_list.index(self.value_matrix[h][w])]
                 self.dot_matrix[h][w] = dot
                 dot_line += dot
             self.datalines[h] = dot_line
