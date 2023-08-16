@@ -216,8 +216,8 @@ class Parameters(log):
         parser.add_argument(
             "--mode",
             type=str,
-            choices=[None, "withoutScatter", "pcolormesh", "3d", "contour"],
-            help="additional parameter: withoutScatter will NOT show scatter plot for xvg_box_compare; imshow, pcolormesh, 3d, contour were used for xpm_show command",
+            choices=[None, "withoutScatter", "pcolormesh", "3d", "contour", "AllAtoms"],
+            help="additional parameter: 'withoutScatter' will NOT show scatter plot for xvg_box_compare; 'imshow', 'pcolormesh', '3d', 'contour' were used for xpm_show command; 'AllAtoms' were used for find_center command",
         )
         parser.add_argument(
             "-al", "--additional_list", nargs="+", help="additional parameters"
@@ -230,6 +230,7 @@ class Parameters(log):
             help="specify the interpolation method",
         )
         parser.add_argument(
+            "-ipf",
             "--interpolation_fold",
             type=int,
             default=10,
@@ -238,21 +239,6 @@ class Parameters(log):
         ## TODO: when mode, show choices of ip methods
 
         """
-        parser.add_argument(
-            "-3d",
-            "--threeDimensions",
-            action="store_true",
-            help="whether to draw 3D figure",
-        )
-
-        ## TODO think twice
-        parser.add_argument(
-            "-pcm",
-            "--pcolormesh",
-            action="store_true",
-            help="whether to apply pcolormesh function to draw",
-        )
-
         parser.add_argument(
             "-gl", "--grouplist", nargs="+", help="specify a list of group names"
         )
@@ -272,64 +258,10 @@ class Parameters(log):
             "-nn", "--newname", type=str, help="specify the new group name"
         )
         parser.add_argument(
-            "-a",
-            "--application",
-            choices=["ions", "em", "nvt", "npt", "md", "blank"],
-            help="specify the application of mdp, choices: ions, em, nvt, npt, md, blank",
-        )
-        parser.add_argument("-n", "--index", help="index file")
-        parser.add_argument(
-            "-vg", action="store_true", help="whether to get vector by index group"
-        )
-        parser.add_argument(
-            "-vec", nargs=3, type=float, help="get vector by your input, eg. -vec 6 6 6"
-        )
-        parser.add_argument(
-            "-select", nargs="*", help="select the groups, eg. -select ring1 ring2"
-        )
-        parser.add_argument(
             "-aa",
             "--AllAtoms",
             action="store_true",
             help="if to find center in all atoms of gro file",
-        )
-        parser.add_argument("-m", "--map", help="hbond map file for input")
-        parser.add_argument(
-            "-hnf",
-            "--hbond_name_format",
-            help="define the hbond name format by user! Each atom has four"
-            + " features: resname, resnum, atomname, atomnum. Distinguish "
-            + "donor, hydrogen, acceptor by adding one prefix to each feature,"
-            + " like: d_resname, a_resnum, h_atomname. \nSo you may able to "
-            + "define hbond name style by: 'd_resname(d_resnum)@d_atomname(d_"
-            + "atomnum)->h_atomname(h_atomnum)...a_resname(a_resnum)@a_atomn"
-            + "ame(a_atomnum)' which is the default style,  or also you could"
-            + " specify 'd_atomname@h_atomname...a_atomname' or some format you "
-            + "would like. \nOr you could just set the hnf to be 'number' or 'id'",
-        )
-        parser.add_argument(
-            "-genscript",
-            "--genscript",
-            action="store_true",
-            help="whether to generate scripts for calculating distance and angle of hbonds",
-        )
-        parser.add_argument(
-            "-cda",
-            "--calc_distance_angle",
-            action="store_true",
-            help="whether to calculate distance and angle of hbonds from distance xvg file and angle xvg file",
-        )
-        parser.add_argument(
-            "-distancefile", "--distancefile", help="distance file of hbonds for input"
-        )
-        parser.add_argument(
-            "-anglefile", "--anglefile", help="angle file of hbonds for input"
-        )
-        parser.add_argument(
-            "-so",
-            "--set_operation",
-            type=str,
-            help="use AND or OR to operate different hbonds. eg. -so AND1-2,4,7  -so OR0,4,6-8",
         )
         """
 

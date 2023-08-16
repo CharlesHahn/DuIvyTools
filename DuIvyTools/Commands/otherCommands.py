@@ -15,6 +15,8 @@ import pandas as pd
 from Commands.Commands import Command
 from utils import Parameters
 from FileParser.xpmParser import XPM
+from FileParser.groParser import GRO
+from FileParser.ndxParser import NDX
 
 
 class mdp_gen(Command):
@@ -107,6 +109,84 @@ class find_center(Command):
     def __call__(self):
         self.info("in find_center")
         print(self.parm.__dict__)
+
+        ## read user input
+        if self.parm.input == None:
+            self.error("you must specify a gro file (or with an index file) for finding atom group center")
+        else: 
+            indexfile, grofile = "", ""
+            if ".gro" in "".join(self.parm.input):
+                for file in self.parm.input:
+                    if file.endswith(".gro") and grofile == "":
+                        grofile = file
+                        self.info(f"{file} has been used as gro file")
+            if ".ndx" in "".join(self.parm.input):
+                for file in self.parm.input:
+                    if file.endswith(".ndx") and indexfile == "":
+                        indexfile = file
+                        self.info(f"{file} has been used as index file")
+        if grofile == "":
+            self.error("you must specify a gro file (or with an index file) for finding atom group center")
+        
+        ## deal with logic
+        gro = GRO(grofile)
+        if indexfile == "":
+            indexs = [i for i in range(1, gro.atom_number+1)]
+        else:
+            ndx = NDX(indexfile)
+            print(ndx.show_names)
+            indexs :Union[List[int], None]= None
+            while indexs == None:
+                name = input("==> select a group to calculate center: ")
+                indexs = ndx[name]
+                if indexs == None:
+                    print(">> wrong selection, no atom indexs fetched")
+        ## calculate the center point
+        center_x, center_y, center_z = 0, 0, 0
+        for i in indexs:
+            coor = gro.frames[0][i-1].coor
+            center_x += coor[0]
+            center_y += coor[1]
+            center_z += coor[2]
+        center_x = center_x / len(indexs)
+        center_y = center_y / len(indexs)
+        center_z = center_z / len(indexs)
+        self.info(
+            "the center point is ({:.3f}, {:.3f}, {:.3f})".format(
+                center_x, center_y, center_z
+            )
+        )
+        ## find the closed atom
+        AllAtoms:bool = False
+        if self.parm.mode == "AllAtoms":
+            AllAtoms = True
+        atom_info = ""
+        dist = 5  # nm, find closed atom in sphere of 5 nm
+        for i, atom in enumerate(gro.frames[0]):
+            if (not AllAtoms) and (i + 1 not in indexs):
+                continue
+            x = atom.coor[0]
+            y = atom.coor[1]
+            z = atom.coor[2]
+            atom_center_dist = (
+                (x - center_x) ** 2 + (y - center_y) ** 2 + (z - center_z) ** 2
+            ) ** 0.5
+            if atom_center_dist < dist:
+                dist = atom_center_dist
+                atom_info = str(atom)
+        if atom_info == "":
+            self.info("no atom detected in 5.0 nm sphere of center point. ")
+        else:
+            self.info(f"distance from nearest atom to center: {dist:.3f} nm")
+            print("--------------------------------------------")
+            print("ResID Name Atom  Num       X       Y       Z")
+            print("--------------------------------------------")
+            print(atom_info)
+            print("--------------------------------------------")
+
+
+
+
 
 
 class dccm_ascii(Command):

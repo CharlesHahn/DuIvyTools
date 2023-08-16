@@ -49,7 +49,15 @@ class NDX(log):
     def __len__(self) -> int:
         return len(self.names)
 
-    def __getitem__(self, name: str) -> List[int]:
+    def __getitem__(self, name: Union[str, int]) -> List[int]:
+        if name.isnumeric():
+            name = int(name)
+            if name < len(self):
+                name = self.names[name]
+            else: # index over range
+                return None
+        if name not in self.names:
+            return None
         return self.name_index[name]
 
     def __setitem__(self, name: str, indexs: List[int]) -> None:
@@ -75,7 +83,14 @@ class NDX(log):
         return output
 
     def get_id_by_name(self, name: str) -> int:
-        return self.names.index(name) + 1
+        return self.names.index(name)
+    
+    @property
+    def show_names(self) -> str:
+        output :str = ""
+        for name in self.names:
+            output += f"{self.get_id_by_name(name)} {name} \n"
+        return output
 
     def formatter(self, name: str, column_num: int) -> str:
         if column_num <= 0:
