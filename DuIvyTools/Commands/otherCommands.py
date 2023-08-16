@@ -262,3 +262,32 @@ class dssp(Command):
     def __call__(self):
         self.info("in dssp")
         print(self.parm.__dict__)
+
+        ## for 2023, read in dat file and output normal xpm and ss.xvg
+
+        ## the infos were get from https://github.com/gromacs/gromacs/blob/main/src/gromacs/trajectoryanalysis/modules/dssp.cpp#L220
+        dssp_symbols_dict = {
+            "~": "Loops",       # Loop
+            "=": "Breaks",      # Break
+            "S": "Bends",       # Bend
+            "T": "Turns",       # Turn
+            "P": "PP_Helices",  # Helix_PP
+            "I": "π-Helices",   # Helix_5
+            "G": "3⏨-Helices",  # Helix_3
+            "E": "β-Strands",   # Strands
+            "B": "β-Bridges",   # Bridge
+            "H": "α-Helices",   # Helix_4
+        }
+        infos = """
+        One-symbol secondary structure designations that are used in the output file:[PAR]
+        [TT]H[tt] — [GRK]alpha[grk]-helix;[PAR]
+        [TT]B[tt] — residue in isolated [GRK]beta[grk]-bridge;[PAR]
+        [TT]E[tt] — extended strand that participates in [GRK]beta[grk]-ladder;[PAR]
+        [TT]G[tt] — 3[SUB]10[sub]-helix;[PAR]
+        [TT]I[tt] — [GRK]pi[grk]-helix;[PAR]
+        [TT]P[tt] — [GRK]kappa[grk]-helix (poly-proline II helix);[PAR]
+        [TT]S[tt] — bend;[PAR]
+        [TT]T[tt] — hydrogen-bonded turn;[PAR]
+        [TT]=[tt] — break;[PAR]
+        [TT]~[tt] — loop (no special secondary structure designation).[PAR]
+        """
