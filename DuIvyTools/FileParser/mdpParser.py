@@ -11,6 +11,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from utils import log
 
 
+## totally re-construction may needed
 class MDP(log):
     """
     class MDP are designed to generate kinds of mdp files

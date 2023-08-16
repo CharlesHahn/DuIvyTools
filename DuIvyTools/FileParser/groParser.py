@@ -46,6 +46,8 @@ class GRO(log):
         if not new_file and grofile:
             if not os.path.exists(grofile):
                 self.error(f"No {grofile} detected ! check it !")
+            if grofile[-4:] != ".gro":
+                self.error(f"you must specify a file with suffix .gro, instead of {grofile}")
             with open(grofile, "r") as fo:
                 lines = fo.readlines()
             try:

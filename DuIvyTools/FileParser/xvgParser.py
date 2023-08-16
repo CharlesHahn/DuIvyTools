@@ -42,6 +42,8 @@ class XVG(log):
                 self.xvgfile: str = xvgfile
                 if not os.path.exists(xvgfile):
                     self.error(f"No {xvgfile} detected ! check it !")
+                if xvgfile[-4:] != ".xvg":
+                    self.error(f"you must specify a file with suffix .xvg, instead of {xvgfile}")
                 with open(xvgfile, "r") as fo:
                     lines = fo.readlines()
             else:

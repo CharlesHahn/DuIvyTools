@@ -22,6 +22,8 @@ class NDX(log):
         if not new_file and ndxfile:
             if not os.path.exists(ndxfile):
                 self.error(f"No {ndxfile} detected ! check it !")
+            if ndxfile[-4:] != ".ndx":
+                self.error(f"you must specify a file with suffix .ndx, instead of {ndxfile}")
             with open(ndxfile, "r") as fo:
                 lines = [line.strip() for line in fo.readlines()]
             for id, line in enumerate(lines):

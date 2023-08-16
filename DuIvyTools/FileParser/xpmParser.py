@@ -46,6 +46,8 @@ class XPM(log):
                 self.xpmfile: str = xpmfile
                 if not os.path.exists(xpmfile):
                     self.error(f"No {xpmfile} detected ! check it !")
+                if xpmfile[-4:] != ".xpm":
+                    self.error(f"you must specify a file with suffix .xpm, instead of {xpmfile}")
                 with open(xpmfile, "r") as fo:
                     content = fo.read()
             else:
