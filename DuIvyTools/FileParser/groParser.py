@@ -7,7 +7,7 @@ Written by DuIvy and provided to you by GPLv3 license.
 import os
 import sys
 
-sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
+# sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from utils import log
 
 
@@ -35,31 +35,36 @@ class Atom(object):
 class GRO(log):
     """GRO class for parsing gro file"""
 
-    def __init__(self, grofile: str) -> None:
+    def __init__(self, grofile: str, new_file: bool = False) -> None:
         self.frame_num: int = 0
         self.atom_number: int = 0
         self.frames: list[list[Atom]] = []
         self.notes: list[str] = []
         self.box_coors: list[tuple] = []
-        if not os.path.exists(grofile):
-            self.error(f"No {grofile} detected ! check it !")
-        with open(grofile, "r") as fo:
-            lines = fo.readlines()
-        try:
-            self.atom_number = int(lines[1].strip())
-        except:
-            self.error("The second line of gro file must be Int number")
-        self.frame_num = len(lines) // (self.atom_number + 3)
-        for f in range(self.frame_num):
-            atom_list: list[Atom] = []
-            for line in lines[
-                f * (self.atom_number + 3) + 2 : (f + 1) * (self.atom_number + 3) - 1
-            ]:
-                atom_list.append(Atom(line))
-            self.frames.append(atom_list)
-            self.notes.append(lines[f * (self.atom_number + 3)])
-            coor_line = lines[(f + 1) * (self.atom_number + 3) - 1].strip().split()
-            self.box_coors.append(tuple([float(c) for c in coor_line]))
+        self.grofile: str = grofile
+
+        if not new_file and grofile:
+            if not os.path.exists(grofile):
+                self.error(f"No {grofile} detected ! check it !")
+            with open(grofile, "r") as fo:
+                lines = fo.readlines()
+            try:
+                self.atom_number = int(lines[1].strip())
+            except:
+                self.error("The second line of gro file must be Int number")
+            self.frame_num = len(lines) // (self.atom_number + 3)
+            for f in range(self.frame_num):
+                atom_list: list[Atom] = []
+                for line in lines[
+                    f * (self.atom_number + 3)
+                    + 2 : (f + 1) * (self.atom_number + 3)
+                    - 1
+                ]:
+                    atom_list.append(Atom(line))
+                self.frames.append(atom_list)
+                self.notes.append(lines[f * (self.atom_number + 3)])
+                coor_line = lines[(f + 1) * (self.atom_number + 3) - 1].strip().split()
+                self.box_coors.append(tuple([float(c) for c in coor_line]))
 
     def get_time_info(self):
         pass

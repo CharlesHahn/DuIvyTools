@@ -9,15 +9,19 @@ import sys
 import math
 from typing import Dict, List, Union
 
-sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
+# sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from utils import log
 
 
 class NDX(log):
-    def __init__(self, ndxfile: str) -> None:
+    def __init__(self, ndxfile: str, new_file: bool = False) -> None:
         self.name_index: Dict[str, List[int]] = dict()
         self.names: list = []
-        if ndxfile:
+        self.ndxfile: str = ndxfile
+
+        if not new_file and ndxfile:
+            if not os.path.exists(ndxfile):
+                self.error(f"No {ndxfile} detected ! check it !")
             with open(ndxfile, "r") as fo:
                 lines = [line.strip() for line in fo.readlines()]
             for id, line in enumerate(lines):
