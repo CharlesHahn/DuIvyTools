@@ -30,9 +30,9 @@ class Atom(object):
             self.velocity_y = None
             self.velocity_z = None
         self.velocity = (self.velocity_x, self.velocity_y, self.velocity_z)
-    
+
     def __str__(self) -> str:
-        output :str = f"""{self.res_id:>5}{self.res_name:<5}{self.atom_name:>5}"""
+        output: str = f"""{self.res_id:>5}{self.res_name:<5}{self.atom_name:>5}"""
         output += f"""{self.atom_id:>5}{self.coor_x:>8}"""
         output += f"""{self.coor_y:>8}{self.coor_z:>8}"""
         return output
@@ -53,7 +53,9 @@ class GRO(log):
             if not os.path.exists(grofile):
                 self.error(f"No {grofile} detected ! check it !")
             if grofile[-4:] != ".gro":
-                self.error(f"you must specify a file with suffix .gro, instead of {grofile}")
+                self.error(
+                    f"you must specify a file with suffix .gro, instead of {grofile}"
+                )
             with open(grofile, "r") as fo:
                 lines = fo.readlines()
             try:

@@ -23,7 +23,9 @@ class NDX(log):
             if not os.path.exists(ndxfile):
                 self.error(f"No {ndxfile} detected ! check it !")
             if ndxfile[-4:] != ".ndx":
-                self.error(f"you must specify a file with suffix .ndx, instead of {ndxfile}")
+                self.error(
+                    f"you must specify a file with suffix .ndx, instead of {ndxfile}"
+                )
             with open(ndxfile, "r") as fo:
                 lines = [line.strip() for line in fo.readlines()]
             for id, line in enumerate(lines):
@@ -54,7 +56,7 @@ class NDX(log):
             name = int(name)
             if name < len(self):
                 name = self.names[name]
-            else: # index over range
+            else:  # index over range
                 return None
         if name not in self.names:
             return None
@@ -84,10 +86,10 @@ class NDX(log):
 
     def get_id_by_name(self, name: str) -> int:
         return self.names.index(name)
-    
+
     @property
     def show_names(self) -> str:
-        output :str = ""
+        output: str = ""
         for name in self.names:
             output += f"{self.get_id_by_name(name)} {name} \n"
         return output

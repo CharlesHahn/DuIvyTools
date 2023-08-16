@@ -112,8 +112,10 @@ class find_center(Command):
 
         ## read user input
         if self.parm.input == None:
-            self.error("you must specify a gro file (or with an index file) for finding atom group center")
-        else: 
+            self.error(
+                "you must specify a gro file (or with an index file) for finding atom group center"
+            )
+        else:
             indexfile, grofile = "", ""
             if ".gro" in "".join(self.parm.input):
                 for file in self.parm.input:
@@ -126,16 +128,18 @@ class find_center(Command):
                         indexfile = file
                         self.info(f"{file} has been used as index file")
         if grofile == "":
-            self.error("you must specify a gro file (or with an index file) for finding atom group center")
-        
+            self.error(
+                "you must specify a gro file (or with an index file) for finding atom group center"
+            )
+
         ## deal with logic
         gro = GRO(grofile)
         if indexfile == "":
-            indexs = [i for i in range(1, gro.atom_number+1)]
+            indexs = [i for i in range(1, gro.atom_number + 1)]
         else:
             ndx = NDX(indexfile)
             print(ndx.show_names)
-            indexs :Union[List[int], None]= None
+            indexs: Union[List[int], None] = None
             while indexs == None:
                 name = input("==> select a group to calculate center: ")
                 indexs = ndx[name]
@@ -144,7 +148,7 @@ class find_center(Command):
         ## calculate the center point
         center_x, center_y, center_z = 0, 0, 0
         for i in indexs:
-            coor = gro.frames[0][i-1].coor
+            coor = gro.frames[0][i - 1].coor
             center_x += coor[0]
             center_y += coor[1]
             center_z += coor[2]
@@ -157,7 +161,7 @@ class find_center(Command):
             )
         )
         ## find the closed atom
-        AllAtoms:bool = False
+        AllAtoms: bool = False
         if self.parm.mode == "AllAtoms":
             AllAtoms = True
         atom_info = ""
@@ -183,10 +187,6 @@ class find_center(Command):
             print("--------------------------------------------")
             print(atom_info)
             print("--------------------------------------------")
-
-
-
-
 
 
 class dccm_ascii(Command):
