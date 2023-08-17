@@ -410,7 +410,7 @@ class xvg_energy_compute(Command):
         xvg.column_num = 10
         xvg.row_num = prolig.row_num
         xvg.data_heads = out_heads
-        xvg.dump2xvg(self.parm.output)
+        xvg.save(self.parm.output)
         self.info(
             f"energy computation through {prolig_xvg}, {pro_xvg} and {lig_xvg} sucessfully"
         )
@@ -464,7 +464,7 @@ class xvg_combine(Command):
             out_xvg.ylabel = self.parm.ylabel
         if self.parm.legends:
             out_xvg.legends = self.parm.legends
-        out_xvg.dump2xvg(self.parm.output)
+        out_xvg.save(self.parm.output)
         self.info("xvg files combined successfully")
 
 

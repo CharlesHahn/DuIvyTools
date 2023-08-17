@@ -6,6 +6,7 @@ Written by DuIvy and provided to you by GPLv3 license.
 
 import os
 import sys
+import time
 import numpy as np
 import scipy.stats as stats
 from typing import List, Union, Tuple
@@ -22,6 +23,7 @@ class XVG(log):
         new_file: bool = False,
     ) -> None:
         self.comments: str = ""
+        self.comments_tail: str = ""
         self.title: str = ""
         self.xlabel: str = ""
         self.ylabel: str = ""
@@ -135,7 +137,7 @@ class XVG(log):
                 f"string column may detected, data_heads {len(self.data_heads)} < column_num {self.column_num}"
             )
 
-    def dump2xvg(self, outxvg: str, check: bool = True) -> None:
+    def save(self, outxvg: str, check: bool = True) -> None:
         """dump xvg class to xvg file
 
         Args:
@@ -155,8 +157,10 @@ class XVG(log):
             if len(self.data_columns[0]) != 0 and self.row_num == 0:
                 self.row_num = len(self.data_columns[0])
 
-        outstr: str = ""
-        outstr += self.comments
+        time_info = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        outstr: str = f"# This file was created by DuIvyTools at {time_info}\n"
+        if self.comments:
+            outstr += self.comments.strip() + "\n"
         outstr += f'@    title "{self.title}"\n'
         if self.xlabel:
             outstr += f'@    xaxis label "{self.xlabel}"\n'
@@ -171,6 +175,8 @@ class XVG(log):
             for i in range(self.column_num):
                 outstr += f"{self.data_columns[i][row]:>16.6f} "
             outstr += "\n"
+        if self.comments_tail:
+            outstr += self.comments_tail.strip() + "\n"
         with open(outxvg, "w") as fo:
             fo.write(outstr)
         self.info(f"dump xvg to {outxvg} successfully")

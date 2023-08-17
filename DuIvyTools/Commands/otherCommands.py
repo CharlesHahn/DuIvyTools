@@ -8,7 +8,7 @@ import os
 import sys
 import time
 from itertools import chain
-from typing import List, Tuple, Union
+from typing import List, Dict, Tuple, Union
 
 import numpy as np
 import pandas as pd
@@ -16,6 +16,7 @@ import pandas as pd
 from Commands.Commands import Command
 from utils import Parameters
 from FileParser.xpmParser import XPM
+from FileParser.xvgParser import XVG
 from FileParser.groParser import GRO
 from FileParser.ndxParser import NDX
 
@@ -307,23 +308,23 @@ class dssp(Command):
             "B": "β-Bridges",   # Bridge
             "S": "Bends",       # Bend
             "T": "Turns",       # Turn
-            "P": "PP_Helices",  # Helix_PP
-            "I": "π-Helices",   # Helix_5
+            "P": "PP-Helices",  # Helix_PP
+            "I": "5-Helices",   # "π-Helices",   # Helix_5
             "H": "α-Helices",   # Helix_4
-            "G": "3⏨-Helices",  # Helix_3
+            "G": "3-Helices",   # "3⏨-Helices",  # Helix_3
             "=": "Breaks",      # Break
         }
         char_color_dict = {
-            "~": "Loops",       # Loop
-            "E": "β-Strands",   # Strands
-            "B": "β-Bridges",   # Bridge
-            "S": "Bends",       # Bend
-            "T": "Turns",       # Turn
-            "P": "PP_Helices",  # Helix_PP
-            "I": "π-Helices",   # Helix_5
-            "H": "α-Helices",   # Helix_4
-            "G": "3⏨-Helices",  # Helix_3
-            "=": "Breaks",      # Break
+            "~": "#FFFFFF",   # Loop
+            "E": "#FF0000",   # Strands
+            "B": "#000000",   # Bridge
+            "S": "#008000",   # Bend
+            "T": "#FFFF00",   # Turn
+            "P": "#00FFFF",   # Helix_PP
+            "I": "#000080",   # Helix_5
+            "H": "#00FF00",   # Helix_4
+            "G": "#808080",   # Helix_3
+            "=": "#E6E6E6",   # Break
         }
         infos = """
         One-symbol secondary structure designations that are used in the output file:
@@ -345,7 +346,7 @@ class dssp(Command):
 
         xpm = XPM(outxpm, new_file=True)
         xpm.title = self.sel_parm(self.parm.title, "Secondary Structure")
-        xpm.xlabel = self.sel_parm(self.parm.xlabel, "Time (ps)")
+        xpm.xlabel = self.sel_parm(self.parm.xlabel, "Frame")
         xpm.ylabel = self.sel_parm(self.parm.ylabel, "Residue")
         xpm.type = "Discrete"
         xpm.width = len(lines)
@@ -358,7 +359,7 @@ class dssp(Command):
                 xpm.dot_matrix[i][id] = c # residue, top low, bottom high
         xpm.dot_matrix.reverse() # residue, top high, bottom low
         xpm.datalines = ["".join(lis) for lis in xpm.dot_matrix]
-        xpm.chars = sorted(list(set(chain(*xpm.dot_matrix))))
+        xpm.chars = sorted(list(set(chain(*xpm.dot_matrix))), key=lambda x:"~EBSTPIHG=".index(x))
         for h in range(xpm.height):
             value_line :List[int] = []
             for w in range(xpm.width):
@@ -371,10 +372,10 @@ class dssp(Command):
 
         if len(self.parm.columns) == 0:
             xpm.yaxis = [i+1 for i in range(xpm.height)]
-        elif len(self.parm.columns) != 0 and len(self.parm.columns) == xpm.height:
-            xpm.yaxis = self.parm.columns
-        elif len(self.parm.columns) != 0 and len(self.parm.columns) != xpm.height:
-            self.error(f"wrong specification of yaxis, need {xpm.height} numbers, but only {len(self.parm.columns)} were specified")
+        elif len(self.parm.columns) != 0 and len(self.parm.columns[0]) == xpm.height:
+            xpm.yaxis = self.parm.columns[0]
+        elif len(self.parm.columns) != 0 and len(self.parm.columns[0]) != xpm.height:
+            self.error(f"wrong specification of yaxis, need {xpm.height} numbers, but only {len(self.parm.columns[0])} were specified")
         xpm.yaxis.reverse() # turn into: from high to low
         if self.parm.begin and self.parm.end:
             xpm.xaxis = [i for i in range(self.parm.begin, self.parm.end, self.parm.dt)]
@@ -386,8 +387,54 @@ class dssp(Command):
             self.error("you can not generate xaxis by only specifing -e without -b")
         else:
             xpm.xaxis = [i for i in range(xpm.width)]
-        
         ## save xpm
         xpm.save(outxpm)
+
+        ## dssp_sc
+        time_residue_count :Dict[str:List[int]] = {}
+        for char in xpm.chars:
+            time_residue_count[char] = []
+        for id, line in enumerate(lines):
+            for key in time_residue_count.keys():
+                time_residue_count[key].append(line.count(key))
+        xaxis = xpm.xaxis[:]
+        xvg_sc = XVG(outxvg_sc, new_file=True)
+        xvg_sc.title = xpm.title
+        xvg_sc.xlabel = xpm.xlabel
+        xvg_sc.ylabel = "Number of Residues"
+        xvg_sc.legends = [char_note_dict[c] for c in xpm.chars]
+        xvg_sc.column_num = xpm.color_num +1
+        xvg_sc.row_num = len(xaxis)
+        xvg_sc.data_heads = [xvg_sc.xlabel] + xvg_sc.legends
+        xvg_sc.data_columns.append(xaxis)
+        for char in xpm.chars:
+            xvg_sc.data_columns.append(time_residue_count[char])
+        xvg_sc.save(outxvg_sc)
+        # TODO the comments_tail
+        
+        ## dssp_residue
+        residue_frame_count :Dict[str:List[int]] = {}
+        for char in xpm.chars:
+            residue_frame_count[char] = []
+        for id, line in enumerate(reversed(xpm.datalines)):
+            for key in residue_frame_count.keys():
+                residue_frame_count[key].append(line.count(key))
+        xaxis = [x for x in reversed(xpm.yaxis)]
+        xvg_res = XVG(outxvg_res, new_file=True)
+        xvg_res.title = xpm.title
+        xvg_res.xlabel = xpm.ylabel
+        xvg_res.ylabel = "Number of Frames"
+        xvg_res.legends = [char_note_dict[c] for c in xpm.chars]
+        xvg_res.column_num = xpm.color_num +1
+        xvg_res.row_num = len(xaxis)
+        xvg_res.data_heads = [xvg_res.xlabel] + xvg_res.legends
+        xvg_res.data_columns.append(xaxis)
+        for char in xpm.chars:
+            xvg_res.data_columns.append(residue_frame_count[char])
+        xvg_res.save(outxvg_res)
+
+
+
+
 
 
