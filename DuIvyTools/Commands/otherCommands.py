@@ -7,6 +7,7 @@ Written by DuIvy and provided to you by GPLv3 license.
 import os
 import sys
 import time
+from itertools import chain
 from typing import List, Tuple, Union
 
 import numpy as np
@@ -286,7 +287,7 @@ class dssp(Command):
         datafile :str = self.parm.input[0]
         outname = "dit_dssp_gmx2023"
         if self.parm.output:
-            outname = self.parm.output
+            outname = self.parm.output.split(".")[0]
         outxpm :str = f"{outname}.xpm"
         outxvg_sc :str = f"{outname}_sc.xvg"
         outxvg_res :str = f"{outname}_residue.xvg"
@@ -299,18 +300,30 @@ class dssp(Command):
                 outxvg_res :str = f"{outname}_residue.xvg"
                 break
 
-        ## the infos were get from https://github.com/gromacs/gromacs/blob/main/src/gromacs/trajectoryanalysis/modules/dssp.cpp#L220
-        dssp_symbols_dict = {
+        ## the note infos were get from https://github.com/gromacs/gromacs/blob/main/src/gromacs/trajectoryanalysis/modules/dssp.cpp#L220
+        char_note_dict = {
             "~": "Loops",       # Loop
-            "=": "Breaks",      # Break
+            "E": "β-Strands",   # Strands
+            "B": "β-Bridges",   # Bridge
             "S": "Bends",       # Bend
             "T": "Turns",       # Turn
             "P": "PP_Helices",  # Helix_PP
             "I": "π-Helices",   # Helix_5
+            "H": "α-Helices",   # Helix_4
             "G": "3⏨-Helices",  # Helix_3
+            "=": "Breaks",      # Break
+        }
+        char_color_dict = {
+            "~": "Loops",       # Loop
             "E": "β-Strands",   # Strands
             "B": "β-Bridges",   # Bridge
+            "S": "Bends",       # Bend
+            "T": "Turns",       # Turn
+            "P": "PP_Helices",  # Helix_PP
+            "I": "π-Helices",   # Helix_5
             "H": "α-Helices",   # Helix_4
+            "G": "3⏨-Helices",  # Helix_3
+            "=": "Breaks",      # Break
         }
         infos = """
         One-symbol secondary structure designations that are used in the output file:
@@ -327,13 +340,54 @@ class dssp(Command):
         """
         
         # deal with logic
+        with open(datafile, 'r') as fo:
+            lines = [l.strip() for l in fo.readlines() if l.strip() != ""]
+
         xpm = XPM(outxpm, new_file=True)
         xpm.title = self.sel_parm(self.parm.title, "Secondary Structure")
         xpm.xlabel = self.sel_parm(self.parm.xlabel, "Time (ps)")
         xpm.ylabel = self.sel_parm(self.parm.ylabel, "Residue")
         xpm.type = "Discrete"
+        xpm.width = len(lines)
+        xpm.height = len(lines[0])
+        xpm.dot_matrix = [["" for _ in range(xpm.width)] for _ in range(xpm.height)]
+        for id, line in enumerate(lines):
+            if len(line) != xpm.height:
+                self.error(f"wrong line length of line {id} ({len(line)}), not equal to the first line ({xpm.height})")
+            for i, c in enumerate(line):
+                xpm.dot_matrix[i][id] = c # residue, top low, bottom high
+        xpm.dot_matrix.reverse() # residue, top high, bottom low
+        xpm.datalines = ["".join(lis) for lis in xpm.dot_matrix]
+        xpm.chars = sorted(list(set(chain(*xpm.dot_matrix))))
+        for h in range(xpm.height):
+            value_line :List[int] = []
+            for w in range(xpm.width):
+                value_line.append(xpm.chars.index(xpm.dot_matrix[h][w]))
+            xpm.value_matrix.append(value_line)
+        xpm.notes = [char_note_dict[c] for c in xpm.chars]
+        xpm.colors = [char_color_dict[c] for c in xpm.chars]
+        xpm.color_num = len(xpm.chars)
+        xpm.char_per_pixel = 1
 
-
-        with open(datafile, 'r') as fo:
-            lines = fo.readlines()
+        if len(self.parm.columns) == 0:
+            xpm.yaxis = [i+1 for i in range(xpm.height)]
+        elif len(self.parm.columns) != 0 and len(self.parm.columns) == xpm.height:
+            xpm.yaxis = self.parm.columns
+        elif len(self.parm.columns) != 0 and len(self.parm.columns) != xpm.height:
+            self.error(f"wrong specification of yaxis, need {xpm.height} numbers, but only {len(self.parm.columns)} were specified")
+        xpm.yaxis.reverse() # turn into: from high to low
+        if self.parm.begin and self.parm.end:
+            xpm.xaxis = [i for i in range(self.parm.begin, self.parm.end, self.parm.dt)]
+            if len(xpm.xaxis) != xpm.width:
+                self.error(f"wrong specification of xaxis, need {xpm.width} numbers, only get {len(xpm.xaxis)} numbers by -b, -e, and -dt")
+        elif self.parm.begin and not self.parm.end:
+            xpm.xaxis = [i for i in range(self.parm.begin, self.parm.begin + xpm.width*self.parm.dt, self.parm.dt)]
+        elif not self.parm.begin and self.parm.end:
+            self.error("you can not generate xaxis by only specifing -e without -b")
+        else:
+            xpm.xaxis = [i for i in range(xpm.width)]
         
+        ## save xpm
+        xpm.save(outxpm)
+
+

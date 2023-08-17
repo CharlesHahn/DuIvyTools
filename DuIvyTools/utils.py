@@ -298,12 +298,9 @@ class Parameters(log):
 
         column_select = []
         if self.columns != None:
-            if len(self.columns) > 1:
-                for columns in self.columns:
-                    column_select.append(self.__parse_column(columns))
-            else:
-                column_select = self.__parse_column(self.columns)
-            self.columns = column_select
+            for columns in self.columns:
+                column_select.append(self.__parse_column(columns))
+        self.columns = column_select
 
         if self.legends != None and "," in "".join(self.legends):
             self.legends = [ls.strip(",").split(",") for ls in self.legends]

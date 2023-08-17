@@ -98,11 +98,6 @@ class xvg_compare(Command):
         for xvg in self.parm.input:
             if not isinstance(xvg, str):
                 self.error("files should be seperated by space not ,")
-        for indexs in self.parm.columns:
-            if isinstance(indexs, list):
-                break
-        else:
-            self.parm.columns = [[cs] for cs in self.parm.columns]
         if len(self.parm.input) != len(self.parm.columns):
             self.error(f"columns must contain {len(self.parm.input)} list")
         if self.parm.legends != None and len(self.parm.legends) != sum(
@@ -437,11 +432,6 @@ class xvg_combine(Command):
         for xvg in self.parm.input:
             if not isinstance(xvg, str):
                 self.error("files should be seperated by space not ,")
-        for indexs in self.parm.columns:
-            if isinstance(indexs, list):
-                break
-        else:
-            self.parm.columns = [[cs] for cs in self.parm.columns]
         if len(self.parm.input) != len(self.parm.columns):
             self.error(f"columns must contain {len(self.parm.input)} list")
         if (
@@ -713,11 +703,6 @@ class xvg_show_stack(Command):
         for xvg in self.parm.input:
             if not isinstance(xvg, str):
                 self.error("files should be seperated by space not ,")
-        for indexs in self.parm.columns:
-            if isinstance(indexs, list):
-                break
-        else:
-            self.parm.columns = [[cs] for cs in self.parm.columns]
         if len(self.parm.input) != len(self.parm.columns):
             self.error(f"columns must contain {len(self.parm.input)} list")
         if self.parm.legends != None:
@@ -899,9 +884,9 @@ class xvg_ave_bar(Command):
                 break
         else:
             self.parm.input = [[xvg] for xvg in self.parm.input]
-        for columns in self.parm.columns:
-            if not isinstance(columns, int):
-                self.error("the item of column_select must be int, do not use ,")
+        if len(self.parm.columns) > 1:
+            self.warn(f"only the first column list ({self.parm.columns[0]}) were used")
+        self.parm.columns = self.parm.columns[0]
         if self.parm.legends != None and len(self.parm.legends) != len(self.parm.input):
             self.error(
                 f"number of legends ({len(self.parm.legends)}) you input can not pair to the number of file groups ({len(self.parm.input)})"
