@@ -268,6 +268,27 @@ class Parameters(log):
         args = parser.parse_args()
         self.__dict__ = args.__dict__
         self.__check_convert()
+    
+    def __parse_column(self, msg_line:str) -> List[int]:
+        lis: List[int] = []
+        try:
+            for msg in msg_line.strip(",").split(","):
+                if msg.strip("-").count("-") == 2 :
+                    b, e = int(msg.split("-")[0]), int(msg.split("-")[1])
+                    dt = int(msg.split("-")[2])
+                    lis += [i for i in range(b, e, dt)]
+                elif msg.strip("-").count("-") == 1 :
+                    b, e = int(msg.split("-")[0]), int(msg.split("-")[1])
+                    lis += [i for i in range(b, e)]
+                elif msg.strip("-").count("-") == 0:
+                    lis.append(int(msg))
+                else:
+                    self.error(f"wrong in parsing {msg}. '1-10', '1-10-2', or '10' were supported for input")
+        except ValueError as verr:
+            self.error(f"Error occured in parsing column selections, please input INTEGER ! \n {verr}")
+        except Exception as ex:
+            self.error(f"Error occured in parsing column selections. {ex}")
+        return lis
 
     def __check_convert(self) -> None:
 
@@ -277,18 +298,11 @@ class Parameters(log):
 
         column_select = []
         if self.columns != None:
-            if "," in "".join(self.columns):
+            if len(self.columns) > 1:
                 for columns in self.columns:
-                    lis: List[int] = []
-                    for c in columns.strip(",").split(","):
-                        if "-" in c.strip("-"):
-                            b, e = int(c.split("-")[0]), int(c.split("-")[1])
-                            lis += [i for i in range(b, e)]
-                        else:
-                            lis.append(int(c))
-                    column_select.append(lis)
+                    column_select.append(self.__parse_column(columns))
             else:
-                column_select = [int(c) for c in self.columns]
+                column_select = self.__parse_column(self.columns)
             self.columns = column_select
 
         if self.legends != None and "," in "".join(self.legends):
