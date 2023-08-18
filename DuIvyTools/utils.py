@@ -301,21 +301,21 @@ class Parameters(log):
         ## deal parameters
         if self.input != None and "," in "".join(self.input):
             self.input = [fs.strip(",").split(",") for fs in self.input]
-
         column_select = []
         if self.columns != None:
             for columns in self.columns:
                 column_select.append(self.__parse_column(columns))
         self.columns = column_select
-
         if self.legends != None and "," in "".join(self.legends):
             self.legends = [ls.strip(",").split(",") for ls in self.legends]
 
-        ## TODO: check the range of parameters
+        ## check parameters
         if self.begin and self.begin < 0:
-            self.error("parameter 'begin' should not be a minus")
+            self.warn("parameter 'begin' should not be a minus, BE SURE for what you are doing")
         if self.end and self.end < 0:
-            self.error("parameter 'end' should not be a minus")
+            self.warn("parameter 'end' should not be a minus, BE SURE for what you are doing")
+        if self.dt and self.dt < 0:
+            self.warn("parameter 'dt' should not be a minus, BE SURE for what you are doing")
         if self.x_precision and self.x_precision < 0:
             self.error("parameter 'x_precision' should not be a minus")
         if self.y_precision and self.y_precision < 0:
