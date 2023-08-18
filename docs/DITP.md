@@ -212,6 +212,8 @@
 
 - help 
 
+** support xy min max to xpm_show **
+
 ** style setting **
 
 

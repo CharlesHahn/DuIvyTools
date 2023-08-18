@@ -268,24 +268,28 @@ class Parameters(log):
         args = parser.parse_args()
         self.__dict__ = args.__dict__
         self.__check_convert()
-    
-    def __parse_column(self, msg_line:str) -> List[int]:
+
+    def __parse_column(self, msg_line: str) -> List[int]:
         lis: List[int] = []
         try:
             for msg in msg_line.strip(",").split(","):
-                if msg.strip("-").count("-") == 2 :
+                if msg.strip("-").count("-") == 2:
                     b, e = int(msg.split("-")[0]), int(msg.split("-")[1])
                     dt = int(msg.split("-")[2])
                     lis += [i for i in range(b, e, dt)]
-                elif msg.strip("-").count("-") == 1 :
+                elif msg.strip("-").count("-") == 1:
                     b, e = int(msg.split("-")[0]), int(msg.split("-")[1])
                     lis += [i for i in range(b, e)]
                 elif msg.strip("-").count("-") == 0:
                     lis.append(int(msg))
                 else:
-                    self.error(f"wrong in parsing {msg}. '1-10', '1-10-2', or '10' were supported for input")
+                    self.error(
+                        f"wrong in parsing {msg}. '1-10', '1-10-2', or '10' were supported for input"
+                    )
         except ValueError as verr:
-            self.error(f"Error occured in parsing column selections, please input INTEGER ! \n {verr}")
+            self.error(
+                f"Error occured in parsing column selections, please input INTEGER ! \n {verr}"
+            )
         except Exception as ex:
             self.error(f"Error occured in parsing column selections. {ex}")
         return lis

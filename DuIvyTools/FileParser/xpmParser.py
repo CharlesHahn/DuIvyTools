@@ -279,12 +279,11 @@ class XPM(log):
                 + " ".join(str(v) for v in self.xaxis[x : x + 50])
                 + " */\n"
             )
-        self.yaxis.reverse()  # top to bottom -> bottom -> top
-        for y in range(0, len(self.yaxis), 50):
+        # should not change original xpm data
+        yaxis = [y for y in reversed(self.yaxis)]  # top to bottom -> bottom to top
+        for y in range(0, len(yaxis), 50):
             outstr += (
-                "/* y-axis: "
-                + " ".join(str(v) for v in self.yaxis[y : y + 50])
-                + " */\n"
+                "/* y-axis: " + " ".join(str(v) for v in yaxis[y : y + 50]) + " */\n"
             )
         for line in self.datalines:
             outstr += f""""{line}",\n"""

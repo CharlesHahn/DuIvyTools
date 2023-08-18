@@ -173,7 +173,11 @@ class XVG(log):
             outstr += f'@ s{i} legend "{leg}"\n'
         for row in range(self.row_num):
             for i in range(self.column_num):
-                outstr += f"{self.data_columns[i][row]:>16.6f} "
+                value = self.data_columns[i][row]
+                if isinstance(value, int):
+                    outstr += f"{value:>6d} "
+                else:
+                    outstr += f"{value:>16.6f} "
             outstr += "\n"
         if self.comments_tail:
             outstr += self.comments_tail.strip() + "\n"

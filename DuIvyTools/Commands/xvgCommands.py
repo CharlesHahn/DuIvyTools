@@ -773,7 +773,7 @@ class xvg_show_stack(Command):
                 "highs": highs_list,
                 "lows": lows_list,
                 "alpha": self.sel_parm(self.parm.alpha, 1.0),
-                "legend_location": self.sel_parm(self.parm.legend_location, "inside"),
+                "legend_location": self.sel_parm(self.parm.legend_location, "outside"),
             }
             if self.parm.engine == "matplotlib":
                 line = StackMatplotlib(**kwargs)

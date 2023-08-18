@@ -257,7 +257,7 @@ class dccm_ascii(Command):
 
 class dssp(Command):
     """a command class to convert dssp data (gmx2023) into dssp xpm file
-    
+
     input :str gmx2023 dssp data file
     output :str the outname of several files
     xlabel :str
@@ -285,46 +285,46 @@ class dssp(Command):
             self.warn(f"only the first file {self.parm.input[0]} will be used")
         if not os.path.exists(self.parm.input[0]):
             self.error(f"no {self.parm.input[0]} in current directory")
-        datafile :str = self.parm.input[0]
+        datafile: str = self.parm.input[0]
         outname = "dit_dssp_gmx2023"
         if self.parm.output:
             outname = self.parm.output.split(".")[0]
-        outxpm :str = f"{outname}.xpm"
-        outxvg_sc :str = f"{outname}_sc.xvg"
-        outxvg_res :str = f"{outname}_residue.xvg"
+        outxpm: str = f"{outname}.xpm"
+        outxvg_sc: str = f"{outname}_sc.xvg"
+        outxvg_res: str = f"{outname}_residue.xvg"
         for file in [outxpm, outxvg_sc, outxvg_res]:
             new_file = self.check_output_exist(file)
             if new_file != file:
                 outname = new_file.split(".")[0]
-                outxpm :str = f"{outname}.xpm"
-                outxvg_sc :str = f"{outname}_sc.xvg"
-                outxvg_res :str = f"{outname}_residue.xvg"
+                outxpm: str = f"{outname}.xpm"
+                outxvg_sc: str = f"{outname}_sc.xvg"
+                outxvg_res: str = f"{outname}_residue.xvg"
                 break
 
         ## the note infos were get from https://github.com/gromacs/gromacs/blob/main/src/gromacs/trajectoryanalysis/modules/dssp.cpp#L220
         char_note_dict = {
-            "~": "Loops",       # Loop
-            "E": "β-Strands",   # Strands
-            "B": "β-Bridges",   # Bridge
-            "S": "Bends",       # Bend
-            "T": "Turns",       # Turn
+            "~": "Loops",  # Loop
+            "E": "β-Strands",  # Strands
+            "B": "β-Bridges",  # Bridge
+            "S": "Bends",  # Bend
+            "T": "Turns",  # Turn
             "P": "PP-Helices",  # Helix_PP
-            "I": "5-Helices",   # "π-Helices",   # Helix_5
-            "H": "α-Helices",   # Helix_4
-            "G": "3-Helices",   # "3⏨-Helices",  # Helix_3
-            "=": "Breaks",      # Break
+            "I": "5-Helices",  # "π-Helices",   # Helix_5
+            "H": "α-Helices",  # Helix_4
+            "G": "3-Helices",  # "3⏨-Helices",  # Helix_3
+            "=": "Breaks",  # Break
         }
         char_color_dict = {
-            "~": "#FFFFFF",   # Loop
-            "E": "#FF0000",   # Strands
-            "B": "#000000",   # Bridge
-            "S": "#008000",   # Bend
-            "T": "#FFFF00",   # Turn
-            "P": "#00FFFF",   # Helix_PP
-            "I": "#000080",   # Helix_5
-            "H": "#00FF00",   # Helix_4
-            "G": "#808080",   # Helix_3
-            "=": "#E6E6E6",   # Break
+            "~": "#FFFFFF",  # Loop
+            "E": "#FF0000",  # Strands
+            "B": "#000000",  # Bridge
+            "S": "#008000",  # Bend
+            "T": "#FFFF00",  # Turn
+            "P": "#00FFFF",  # Helix_PP
+            "I": "#000080",  # Helix_5
+            "H": "#00FF00",  # Helix_4
+            "G": "#808080",  # Helix_3
+            "=": "#E6E6E6",  # Break
         }
         infos = """
         One-symbol secondary structure designations that are used in the output file:
@@ -339,9 +339,9 @@ class dssp(Command):
         = — break;
         ~ — loop (no special secondary structure designation).
         """
-        
+
         # deal with logic
-        with open(datafile, 'r') as fo:
+        with open(datafile, "r") as fo:
             lines = [l.strip() for l in fo.readlines() if l.strip() != ""]
 
         xpm = XPM(outxpm, new_file=True)
@@ -354,14 +354,18 @@ class dssp(Command):
         xpm.dot_matrix = [["" for _ in range(xpm.width)] for _ in range(xpm.height)]
         for id, line in enumerate(lines):
             if len(line) != xpm.height:
-                self.error(f"wrong line length of line {id} ({len(line)}), not equal to the first line ({xpm.height})")
+                self.error(
+                    f"wrong line length of line {id} ({len(line)}), not equal to the first line ({xpm.height})"
+                )
             for i, c in enumerate(line):
-                xpm.dot_matrix[i][id] = c # residue, top low, bottom high
-        xpm.dot_matrix.reverse() # residue, top high, bottom low
+                xpm.dot_matrix[i][id] = c  # residue, top low, bottom high
+        xpm.dot_matrix.reverse()  # residue, top high, bottom low
         xpm.datalines = ["".join(lis) for lis in xpm.dot_matrix]
-        xpm.chars = sorted(list(set(chain(*xpm.dot_matrix))), key=lambda x:"~EBSTPIHG=".index(x))
+        xpm.chars = sorted(
+            list(set(chain(*xpm.dot_matrix))), key=lambda x: "~EBSTPIHG=".index(x)
+        )
         for h in range(xpm.height):
-            value_line :List[int] = []
+            value_line: List[int] = []
             for w in range(xpm.width):
                 value_line.append(xpm.chars.index(xpm.dot_matrix[h][w]))
             xpm.value_matrix.append(value_line)
@@ -371,18 +375,29 @@ class dssp(Command):
         xpm.char_per_pixel = 1
 
         if len(self.parm.columns) == 0:
-            xpm.yaxis = [i+1 for i in range(xpm.height)]
+            xpm.yaxis = [i + 1 for i in range(xpm.height)]
         elif len(self.parm.columns) != 0 and len(self.parm.columns[0]) == xpm.height:
             xpm.yaxis = self.parm.columns[0]
         elif len(self.parm.columns) != 0 and len(self.parm.columns[0]) != xpm.height:
-            self.error(f"wrong specification of yaxis, need {xpm.height} numbers, but only {len(self.parm.columns[0])} were specified")
-        xpm.yaxis.reverse() # turn into: from high to low
+            self.error(
+                f"wrong specification of yaxis, need {xpm.height} numbers, but only {len(self.parm.columns[0])} were specified"
+            )
+        xpm.yaxis.reverse()  # turn into: from high to low
         if self.parm.begin and self.parm.end:
             xpm.xaxis = [i for i in range(self.parm.begin, self.parm.end, self.parm.dt)]
             if len(xpm.xaxis) != xpm.width:
-                self.error(f"wrong specification of xaxis, need {xpm.width} numbers, only get {len(xpm.xaxis)} numbers by -b, -e, and -dt")
+                self.error(
+                    f"wrong specification of xaxis, need {xpm.width} numbers, only get {len(xpm.xaxis)} numbers by -b, -e, and -dt"
+                )
         elif self.parm.begin and not self.parm.end:
-            xpm.xaxis = [i for i in range(self.parm.begin, self.parm.begin + xpm.width*self.parm.dt, self.parm.dt)]
+            xpm.xaxis = [
+                i
+                for i in range(
+                    self.parm.begin,
+                    self.parm.begin + xpm.width * self.parm.dt,
+                    self.parm.dt,
+                )
+            ]
         elif not self.parm.begin and self.parm.end:
             self.error("you can not generate xaxis by only specifing -e without -b")
         else:
@@ -391,7 +406,7 @@ class dssp(Command):
         xpm.save(outxpm)
 
         ## dssp_sc
-        time_residue_count :Dict[str:List[int]] = {}
+        time_residue_count: Dict[str : List[int]] = {}
         for char in xpm.chars:
             time_residue_count[char] = []
         for id, line in enumerate(lines):
@@ -403,17 +418,22 @@ class dssp(Command):
         xvg_sc.xlabel = xpm.xlabel
         xvg_sc.ylabel = "Number of Residues"
         xvg_sc.legends = [char_note_dict[c] for c in xpm.chars]
-        xvg_sc.column_num = xpm.color_num +1
+        xvg_sc.column_num = xpm.color_num + 1
         xvg_sc.row_num = len(xaxis)
         xvg_sc.data_heads = [xvg_sc.xlabel] + xvg_sc.legends
         xvg_sc.data_columns.append(xaxis)
         for char in xpm.chars:
             xvg_sc.data_columns.append(time_residue_count[char])
+        Totals: List[int] = []
+        for data in xvg_sc.data_columns[1:]:
+            Totals.append(sum(data))
+        SSpr: List[str] = [f"{t/sum(Totals):6.2f}" for t in Totals]
+        xvg_sc.comments_tail += "# Totals " + " ".join([f"{t:6}" for t in Totals])
+        xvg_sc.comments_tail += "\n# SS pr. " + " ".join(SSpr)
         xvg_sc.save(outxvg_sc)
-        # TODO the comments_tail
-        
+
         ## dssp_residue
-        residue_frame_count :Dict[str:List[int]] = {}
+        residue_frame_count: Dict[str : List[int]] = {}
         for char in xpm.chars:
             residue_frame_count[char] = []
         for id, line in enumerate(reversed(xpm.datalines)):
@@ -425,16 +445,16 @@ class dssp(Command):
         xvg_res.xlabel = xpm.ylabel
         xvg_res.ylabel = "Number of Frames"
         xvg_res.legends = [char_note_dict[c] for c in xpm.chars]
-        xvg_res.column_num = xpm.color_num +1
+        xvg_res.column_num = xpm.color_num + 1
         xvg_res.row_num = len(xaxis)
         xvg_res.data_heads = [xvg_res.xlabel] + xvg_res.legends
         xvg_res.data_columns.append(xaxis)
         for char in xpm.chars:
             xvg_res.data_columns.append(residue_frame_count[char])
+        Totals: List[int] = []
+        for data in xvg_res.data_columns[1:]:
+            Totals.append(sum(data))
+        SSpr: List[str] = [f"{t/sum(Totals):6.2f}" for t in Totals]
+        xvg_res.comments_tail += "# Totals " + " ".join([f"{t:6}" for t in Totals])
+        xvg_res.comments_tail += "\n# SS pr. " + " ".join(SSpr)
         xvg_res.save(outxvg_res)
-
-
-
-
-
-
