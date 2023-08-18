@@ -46,8 +46,10 @@ class xpm_show(Command):
         value = value.lstrip("#")
         res = tuple(int(value[i : i + 2], 16) for i in (0, 2, 4))
         return res
-    
-    def image_split(self, xaxis:List[float], yaxis:List[float], value_matrix:List[List[float]]) -> Union[List[float], List[List[float]]]:
+
+    def image_split(
+        self, xaxis: List[float], yaxis: List[float], value_matrix: List[List[float]]
+    ) -> Union[List[float], List[List[float]]]:
         """image cutting by xmin, xmax, ymin, and ymax
 
         Args:
@@ -60,20 +62,30 @@ class xpm_show(Command):
         """
 
         if self.parm.xmin != None and not isinstance(self.parm.xmin, int):
-            self.warn(f"the -xmin indicates setting the min x_index of image, which must be int. DIT converted it into {int(self.parm.xmin)}")
+            self.warn(
+                f"the -xmin indicates setting the min x_index of image, which must be int. DIT converted it into {int(self.parm.xmin)}"
+            )
             self.parm.xmin = int(self.parm.xmin)
-        if self.parm.xmax != None  and not isinstance(self.parm.xmax, int):
-            self.warn(f"the -xmax indicates setting the max x_index of image, which must be int. DIT converted it into {int(self.parm.xmax)}")
+        if self.parm.xmax != None and not isinstance(self.parm.xmax, int):
+            self.warn(
+                f"the -xmax indicates setting the max x_index of image, which must be int. DIT converted it into {int(self.parm.xmax)}"
+            )
             self.parm.xmax = int(self.parm.xmax)
-        if self.parm.ymin != None  and not isinstance(self.parm.ymin, int):
-            self.warn(f"the -ymin indicates setting the min y_index of image, which must be int. DIT converted it into {int(self.parm.ymin)}")
+        if self.parm.ymin != None and not isinstance(self.parm.ymin, int):
+            self.warn(
+                f"the -ymin indicates setting the min y_index of image, which must be int. DIT converted it into {int(self.parm.ymin)}"
+            )
             self.parm.ymin = int(self.parm.ymin)
-        if self.parm.ymax != None  and not isinstance(self.parm.ymax, int):
-            self.warn(f"the -ymax indicates setting the max y_index of image, which must be int. DIT converted it into {int(self.parm.ymax)}")
+        if self.parm.ymax != None and not isinstance(self.parm.ymax, int):
+            self.warn(
+                f"the -ymax indicates setting the max y_index of image, which must be int. DIT converted it into {int(self.parm.ymax)}"
+            )
             self.parm.ymax = int(self.parm.ymax)
 
         if len(xaxis) != len(value_matrix[0]) or len(yaxis) != len(value_matrix):
-            self.error(f"unequal size detected in image splitting: xaxis ({len(xaxis)}), yaxis ({len(yaxis)}), value_matrix ({len(value_matrix[0])}*{len(value_matrix)})")
+            self.error(
+                f"unequal size detected in image splitting: xaxis ({len(xaxis)}), yaxis ({len(yaxis)}), value_matrix ({len(value_matrix[0])}*{len(value_matrix)})"
+            )
 
         if self.parm.xmin == None:
             self.parm.xmin = 0
@@ -89,18 +101,24 @@ class xpm_show(Command):
         xaxis = xaxis[xmin:xmax]
         for y, _ in enumerate(yaxis):
             value_matrix[y] = value_matrix[y][xmin:xmax]
-        value_matrix.reverse() # from bottom to top
+        value_matrix.reverse()  # from bottom to top
         yaxis.reverse()
         value_matrix = value_matrix[ymin:ymax]
         yaxis = yaxis[ymin:ymax]
-        value_matrix.reverse() # from top to bottom 
+        value_matrix.reverse()  # from top to bottom
         yaxis.reverse()
 
         if len(xaxis) < 1 or len(yaxis) < 1:
-            self.error(f"the image ({len(xaxis)}*{len(yaxis)}) less than 1 dimensions, unable to draw")
-        self.info(f"cutting image by x_index in range [{xmin}, {xmax}), y_index in range [{ymin}, {ymax})")
-        self.info(f"cutting image by xaxis in range [{xaxis[0]}, {xaxis[-1]}], yaxis in range [{yaxis[-1]}, {yaxis[0]}]")
-        
+            self.error(
+                f"the image ({len(xaxis)}*{len(yaxis)}) less than 1 dimensions, unable to draw"
+            )
+        self.info(
+            f"cutting image by x_index in range [{xmin}, {xmax}), y_index in range [{ymin}, {ymax})"
+        )
+        self.info(
+            f"cutting image by xaxis in range [{xaxis[0]}, {xaxis[-1]}], yaxis in range [{yaxis[-1]}, {yaxis[0]}]"
+        )
+
         return xaxis, yaxis, value_matrix
 
     def __call__(self):  ## write process code
@@ -124,7 +142,7 @@ class xpm_show(Command):
                 for x, _ in enumerate(xaxis):
                     v_lis.append(xpm.value_matrix[y][x] * self.parm.zshrink)
                 value_matrix.append(v_lis)
-            
+
             xaxis, yaxis, value_matrix = self.image_split(xaxis, yaxis, value_matrix)
 
             kwargs = {

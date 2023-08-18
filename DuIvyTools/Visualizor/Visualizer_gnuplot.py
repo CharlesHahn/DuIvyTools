@@ -725,7 +725,9 @@ class ImshowGnuplot(ParentGnuplot):
         self.gnuplot.zlabel = kwargs["zlabel"]
 
         if len(kwargs["xdata_list"]) <= 1 or len(kwargs["ydata_list"]) <= 1:
-            self.error(f"""Gnuplot engine can not handle data with 1 dimension ({len(kwargs["xdata_list"])}*{len(kwargs["ydata_list"])})""")
+            self.error(
+                f"""Gnuplot engine can not handle data with 1 dimension ({len(kwargs["xdata_list"])}*{len(kwargs["ydata_list"])})"""
+            )
 
         data = kwargs["xdata_list"]
         dot_len_x = (np.max(data) - np.min(data)) / (len(data) - 1)
