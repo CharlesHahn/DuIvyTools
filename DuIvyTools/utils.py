@@ -63,7 +63,7 @@ class Parameters(log):
         parser = argparse.ArgumentParser(
             description="DuIvyTools: A Simple MD Analysis Tool"
         )
-        parser.add_argument("cmd", type=str, help="command of DIT")
+        parser.add_argument("cmd", type=str, help="command of DIT to run")
 
         parser.add_argument(
             "-f", "--input", nargs="+", help="specify the input file or files"
@@ -73,16 +73,16 @@ class Parameters(log):
             "-ns", "--noshow", action="store_true", help="not to show figure"
         )
         parser.add_argument(
-            "-c", "--columns", nargs="+", help="select column indexs for visualization"
+            "-c", "--columns", nargs="+", help="select the column indexs for visualization or calculation"
         )
         parser.add_argument(
-            "-l", "--legends", nargs="+", help="legends you wanna specify"
+            "-l", "--legends", nargs="+", help="specify the legends of figure or data"
         )
         parser.add_argument(
-            "-b", "--begin", type=int, help="specify the index beginning (include)"
+            "-b", "--begin", type=int, help="specify the index for beginning (include)"
         )
         parser.add_argument(
-            "-e", "--end", type=int, help="specify the index ending (not include)"
+            "-e", "--end", type=int, help="specify the index for ending (not include)"
         )
         parser.add_argument(
             "-dt",
@@ -92,16 +92,16 @@ class Parameters(log):
             help="specify the index step, default to 1",
         )
         parser.add_argument(
-            "-x", "--xlabel", type=str, help="specify the xlabel of figure"
+            "-x", "--xlabel", type=str, help="specify the xlabel of figure or data"
         )
         parser.add_argument(
-            "-y", "--ylabel", type=str, help="specify the ylabel of figure"
+            "-y", "--ylabel", type=str, help="specify the ylabel of figure or data"
         )
         parser.add_argument(
-            "-z", "--zlabel", type=str, help="specify the zlabel of figure"
+            "-z", "--zlabel", type=str, help="specify the zlabel of figure or data"
         )
         parser.add_argument(
-            "-t", "--title", type=str, help="specify the title of figure"
+            "-t", "--title", type=str, help="specify the title of figure or data"
         )
         parser.add_argument(
             "-xmin", "--xmin", type=float, help="specify the X value limitation, x_min"
@@ -124,74 +124,114 @@ class Parameters(log):
         parser.add_argument(
             "--x_precision",
             type=int,
-            help="specify the precision of x values",
+            help="specify the precision of X values for visualization",
         )
         parser.add_argument(
             "--y_precision",
             type=int,
-            help="specify the precision of y values",
+            help="specify the precision of Y values for visualization",
         )
         parser.add_argument(
             "--z_precision",
             type=int,
-            help="specify the precision of z values",
+            help="specify the precision of Z values for visualization",
         )
         parser.add_argument(
             "-xs",
             "--xshrink",
             type=float,
             default=1.0,
-            help="modify x values by multipling xshrink",
+            help="modify X values by multipling xshrink, default to 1.0",
         )
         parser.add_argument(
             "-ys",
             "--yshrink",
             type=float,
             default=1.0,
-            help="modify y values by multipling yshrink",
+            help="modify Y values by multipling yshrink, default to 1.0",
         )
         parser.add_argument(
             "-zs",
             "--zshrink",
             type=float,
             default=1.0,
-            help="modify z values by multipling zshrink",
+            help="modify Z values by multipling zshrink, default to 1.0",
         )
         parser.add_argument(
             "-smv",
             "--showMV",
             action="store_true",
-            help="whether to show moving average",
+            help="whether to show moving averages of data",
         )
         parser.add_argument(
             "-ws",
             "--windowsize",
             type=int,
             default=50,
-            help="window size for moving average calculation",
+            help="window size for moving average calculation, default to 50",
         )
         parser.add_argument(
             "-cf",
             "--confidence",
             type=float,
             default=0.95,
-            help="confidence for confidence interval calculation",
+            help="confidence for confidence interval calculation, default to 0.95",
         )
-        parser.add_argument("--alpha", type=float, help="the alpha of background lines")
-        parser.add_argument("-csv", "--csv", help="store data into csv file")
+        parser.add_argument("--alpha", type=float, help="the alpha of figure items")
+        parser.add_argument("-csv", "--csv", type=str, help="store data into csv file")
         parser.add_argument(
             "-eg",
             "--engine",
             type=str,
             default="matplotlib",
             choices=["matplotlib", "plotext", "plotly", "gnuplot"],
-            help="specify the engine for plotting, 'matplotlib', 'plotext', 'plotly', 'gnuplot'",
+            help="specify the engine for plotting: 'matplotlib', 'plotext', 'plotly', 'gnuplot'",
         )
         parser.add_argument(
             "-cmap",
             "--colormap",
-            help="specify the figure style, 'origin', 'gaussian', 'bio3d'",
+            help="specify the colormap applied for figures, available for 'matplotlib' and 'plotly' engine",
         )
+        parser.add_argument(
+            "--colorbar_location",
+            type=str,
+            default=None,
+            choices=[None, "left", "top", "bottom", "right"],
+            help="the location of colorbar, also determining the orientation of colorbar, ['left', 'top', 'bottom', 'right'], available for 'matplotlib'",
+        )
+        parser.add_argument(
+            "--legend_location",
+            type=str,
+            default=None,
+            choices=["inside", "outside"],
+            help="the location of legend box, ['inside', 'outside'], available for 'matplotlib' and 'gnuplot'",
+        )
+        parser.add_argument(
+            "-m",
+            "--mode",
+            type=str,
+            choices=[None, "withoutScatter", "pcolormesh", "3d", "contour", "AllAtoms"],
+            help="additional parameter: 'withoutScatter' will NOT show scatter plot for 'xvg_box_compare'; 'imshow', 'pcolormesh', '3d', 'contour' were used for 'xpm_show' command; 'AllAtoms' were used for 'find_center' command",
+        )
+        parser.add_argument(
+            "-al", "--additional_list", nargs="+", help="additional parameters. Used to set xtitles for 'xvg_ave_bar'"
+        )
+        parser.add_argument(
+            "-ip",
+            "--interpolation",
+            type=str,
+            default=None,
+            help="specify the interpolation method, default to None",
+        )
+        ## TODO: when mode, show choices of ip methods
+        parser.add_argument(
+            "-ipf",
+            "--interpolation_fold",
+            type=int,
+            default=10,
+            help="specify the interpolation fold, default to 10",
+        )
+        ## TODO think again
         parser.add_argument(
             "-bin",
             "--bin",
@@ -199,44 +239,6 @@ class Parameters(log):
             default=100,
             help="the bin number for distribution calculation",
         )
-        parser.add_argument(
-            "--colorbar_location",
-            type=str,
-            default=None,
-            choices=[None, "left", "top", "bottom", "right"],
-            help="the location of colorbar, also determining the orientation of colorbar",
-        )
-        parser.add_argument(
-            "--legend_location",
-            type=str,
-            default=None,
-            choices=["inside", "outside"],
-            help="the location of legend box",
-        )
-        parser.add_argument(
-            "--mode",
-            type=str,
-            choices=[None, "withoutScatter", "pcolormesh", "3d", "contour", "AllAtoms"],
-            help="additional parameter: 'withoutScatter' will NOT show scatter plot for xvg_box_compare; 'imshow', 'pcolormesh', '3d', 'contour' were used for xpm_show command; 'AllAtoms' were used for find_center command",
-        )
-        parser.add_argument(
-            "-al", "--additional_list", nargs="+", help="additional parameters"
-        )
-        parser.add_argument(
-            "-ip",
-            "--interpolation",
-            type=str,
-            default=None,
-            help="specify the interpolation method",
-        )
-        parser.add_argument(
-            "-ipf",
-            "--interpolation_fold",
-            type=int,
-            default=10,
-            help="specify the interpolation fold",
-        )
-        ## TODO: when mode, show choices of ip methods
 
         """
         parser.add_argument(

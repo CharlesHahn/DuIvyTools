@@ -193,6 +193,12 @@
 - xpm_diff
 - xpm_merge
 
+- mdp_gen
+- show_style
+- find_center
+- dccm_ascii
+- dssp
+
 - ndx_show
 - ndx_rm_dup
 - ndx_rm
@@ -204,17 +210,13 @@
 - ndx_add
 - ndx_split ## ndx group split into several group
 
-- mdp_gen
-- show_style
-- find_center
-- dccm_ascii
-- dssp
-
 - help 
 
-** support xy min max to xpm_show **
+
+** distribution to density map **
 
 ** style setting **
+
 
 
 **angle vs time, circle plot**
