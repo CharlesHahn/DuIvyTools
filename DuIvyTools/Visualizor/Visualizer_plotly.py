@@ -571,6 +571,8 @@ class ThreeDimensionPlotly(ParentPlotly):
     def __init__(self, **kwargs) -> None:
         super().__init__()
 
+        if len(kwargs["data_list"]) <= 1 or len(kwargs["data_list"][0]) <= 1:
+            self.error("!!! 3d plot unable to proper deal with 1 dimension data !!!")
         self.figure.add_trace(
             go.Surface(
                 x=kwargs["xdata_list"],
@@ -647,6 +649,8 @@ class ContourPlotly(ParentPlotly):
     def __init__(self, **kwargs) -> None:
         super().__init__()
 
+        if len(kwargs["data_list"]) <= 1 or len(kwargs["data_list"][0]) <= 1:
+            self.error("!!! contour unable to proper deal with 1 dimension data !!!")
         self.figure.add_trace(
             go.Contour(
                 x=kwargs["xdata_list"],
@@ -670,4 +674,3 @@ class ContourPlotly(ParentPlotly):
             self.warn("colorbar_location parameter is not valid for plotly")
 
         self.set_xyprecision_xyt_label(**kwargs)
-        self.set_xy_min_max(**kwargs)

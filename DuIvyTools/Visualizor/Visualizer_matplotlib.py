@@ -502,10 +502,6 @@ class ImshowMatplotlib(ParentMatplotlib):
         ylabel :str
         zlabel :str
         title :str
-        xmin :float
-        xmax :float
-        ymin :float
-        ymax :float
         zmin :float
         zmax :float
         x_precision :int
@@ -587,14 +583,6 @@ class ImshowMatplotlib(ParentMatplotlib):
             [f'{kwargs["ydata_list"][y]:.{kwargs["y_precision"]}f}' for y in ytics],
         )
 
-        if kwargs["xmin"] != None or kwargs["xmax"] != None:
-            plt.xlim(kwargs["xmin"], kwargs["xmax"])
-        if kwargs["ymin"] != None or kwargs["ymax"] != None:
-            plt.ylim(kwargs["ymin"], kwargs["ymax"])
-            self.warn(
-                "The behaviours of Y range limitation of imshow might be strange, carefully check it !"
-            )
-
         plt.xlabel(kwargs["xlabel"])
         plt.ylabel(kwargs["ylabel"])
         plt.title(kwargs["title"])
@@ -630,7 +618,7 @@ class PcolormeshMatplotlib(ParentMatplotlib):
     def __init__(self, **kwargs) -> None:
         super().__init__()
 
-        if len(kwargs["data_list"]) == 1:
+        if len(kwargs["data_list"]) <= 1 or len(kwargs["data_list"][0]) <= 1:
             self.error("!!! pcolormesh unable to proper deal with 1 dimension data !!!")
         if kwargs["fig_type"] != "Continuous":
             self.info(
@@ -687,14 +675,6 @@ class PcolormeshMatplotlib(ParentMatplotlib):
                     im, label=kwargs["zlabel"], location=kwargs["colorbar_location"]
                 )
 
-        if (
-            kwargs["xmin"] != None
-            or kwargs["xmax"] != None
-            or kwargs["ymin"] != None
-            or kwargs["ymax"] != None
-        ):
-            self.warn("pcolormesh do not support setting min or max of X or Y")
-
         self.set_xyprecision_xyt_label(**kwargs)
 
 
@@ -723,7 +703,7 @@ class ThreeDimensionMatplotlib(ParentMatplotlib):
     def __init__(self, **kwargs) -> None:
         super().__init__()
 
-        if len(kwargs["data_list"]) == 1:
+        if len(kwargs["data_list"]) <= 1 or len(kwargs["data_list"][0]) <= 1:
             self.error("!!! 3D plot unable to proper deal with 1 dimension data !!!")
         if kwargs["cmap"] == None:
             if plt.rcParams.get("image.cmap", None) == None:
@@ -798,6 +778,8 @@ class ContourMatplotlib(ParentMatplotlib):
     def __init__(self, **kwargs) -> None:
         super().__init__()
 
+        if len(kwargs["data_list"]) <= 1 or len(kwargs["data_list"][0]) <= 1:
+            self.error("!!! contour unable to proper deal with 1 dimension data !!!")
         plt.contourf(
             kwargs["xdata_list"],
             kwargs["ydata_list"],

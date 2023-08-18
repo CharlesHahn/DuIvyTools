@@ -100,12 +100,10 @@ class Gnuplot(log):
             self.xmin = ""
         if self.xmax == None:
             self.xmax = ""
-        # gpl += f"""set xrange [{self.xmin}:{self.xmax}]\n"""
         if self.ymin == None:
             self.ymin = ""
         if self.ymax == None:
             self.ymax = ""
-        # gpl += f"""set yrange [{self.ymin}:{self.ymax}]\n"""
 
         if self.x_precision != None:
             gpl += f"""set xtics format "%.{self.x_precision}f" \n"""
@@ -183,8 +181,6 @@ class Gnuplot(log):
         return gpl
 
     def imshow(self, gpl: str) -> str:
-        if len(self.data) == 1:
-            self.error("gnuplot engine can not deal with heatmap with only 1 dimension")
         if self.xpm_type != "Continuous":
             gpl += "set key out reverse Left spacing 2 samplen 1/2\n"
             gpl += "unset colorbox\n"
@@ -728,12 +724,8 @@ class ImshowGnuplot(ParentGnuplot):
         self.gnuplot.ylabel = kwargs["ylabel"]
         self.gnuplot.zlabel = kwargs["zlabel"]
 
-        if kwargs["xmin"] != None or kwargs["xmax"] != None:
-            self.gnuplot.xmin = kwargs["xmin"]
-            self.gnuplot.xmax = kwargs["xmax"]
-        if kwargs["ymin"] != None or kwargs["ymax"] != None:
-            self.gnuplot.ymin = kwargs["ymin"]
-            self.gnuplot.ymax = kwargs["ymax"]
+        if len(kwargs["xdata_list"]) <= 1 or len(kwargs["ydata_list"]) <= 1:
+            self.error(f"""Gnuplot engine can not handle data with 1 dimension ({len(kwargs["xdata_list"])}*{len(kwargs["ydata_list"])})""")
 
         data = kwargs["xdata_list"]
         dot_len_x = (np.max(data) - np.min(data)) / (len(data) - 1)
