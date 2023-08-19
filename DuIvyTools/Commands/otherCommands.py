@@ -143,10 +143,14 @@ class find_center(Command):
             print(ndx.show_names)
             indexs: Union[List[int], None] = None
             while indexs == None:
-                name = input("==> select a group to calculate center: ")
-                indexs = ndx[name]
+                key = input("==> select a group to calculate center: ")
+                if key.isnumeric(): # if key could be int, treat as group id
+                    key = int(key)
+                name, indexs = ndx[key]
                 if indexs == None:
-                    print(">> wrong selection, no atom indexs fetched")
+                    print(">>> wrong selection, no atom indexs fetched <<<")
+                else:
+                    print(f">>> selected group {name}")
         ## calculate the center point
         center_x, center_y, center_z = 0, 0, 0
         for i in indexs:
@@ -492,9 +496,8 @@ class ndx_add(Command):
         
         for name, indexs in zip(groupnames, indexs_list):
             if name in ndx.names:
-                self.error(f"{name} already exists in ndxfile {ndx.ndxfile}")
-            else:
-                ndx[name] = indexs
+                self.warn(f"{name} already exists in ndxfile {ndx.ndxfile}. Anyway, added it for you")
+            ndx.add(name, indexs, 15)
         ndx.save(outname)
 
 
@@ -529,12 +532,12 @@ class ndx_split(Command):
         
         if groupname.isnumeric():
             groupname = ndx.names[int(groupname)]
-        indexs = ndx[groupname]
+        name, indexs = ndx[groupname]
         if len(indexs) % split_fold != 0:
-            self.error(f"got {len(indexs)} from group {groupname}, unable to equally devide into {split_fold} groups")
+            self.error(f"got {len(indexs)} from group {name}, unable to equally devide into {split_fold} groups")
         for i in range(split_fold):
             ndx[f"{groupname}_{i}"] = indexs[i*len(indexs)//split_fold: (i+1)*len(indexs)//split_fold]
-        self.info(f"split '{groupname}' into {split_fold} groups successfully")
+        self.info(f"split '{name}' into {split_fold} groups successfully")
         
         ndx.save(outname)
 

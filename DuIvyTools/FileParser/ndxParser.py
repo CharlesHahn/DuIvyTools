@@ -15,13 +15,14 @@ from utils import log
 
 class NDX(log):
     def __init__(self, ndxfile: str, new_file: bool = False) -> None:
-        self.name_index: Dict[str, List[int]] = dict()
-        self.names: list = []
         self.ndxfile: str = ndxfile
+        self.indexs: List[int] = []
+        self.names: List[str] = []
+        self.column_nums: List[int] = []
 
         if not new_file and ndxfile:
             if not os.path.exists(ndxfile):
-                self.error(f"No {ndxfile} detected ! check it !")
+                self.error(f"No {ndxfile} detected! check it!")
             if ndxfile[-4:] != ".ndx":
                 self.error(
                     f"you must specify a file with suffix .ndx, instead of {ndxfile}"
@@ -33,54 +34,96 @@ class NDX(log):
                     continue
                 elif line[0] == "[" and line[-1] == "]":
                     name = line[1:-1].strip()
-                    if name in self.name_index.keys():
-                        self.warn(
-                            f"Repeat group name {name} detected, dropped the former one."
-                        )
-                        self.names.remove(name)
-                    self.name_index[name] = []
+                    self.indexs.append([])
+                    self.column_nums.append(0)
                     self.names.append(name)
                 else:
                     try:
-                        self.name_index[name] += [int(i) for i in line.split()]
+                        line_list = [int(i) for i in line.split()]
+                        if len(self.indexs[-1]) == 0:
+                            self.column_nums[-1] = len(line_list)
+                        self.indexs[-1] += line_list
                     except:
                         self.error(f"Unable to parse line {id} of {ndxfile}, check it!")
-        if len(self.names) != len(self.name_index.keys()):
+        if len(self.names) != len(self.indexs) or len(self.names) != len(self.column_nums):
             self.critical("wrong length in paring ndx file")
 
     def __len__(self) -> int:
         return len(self.names)
 
-    def __getitem__(self, name: Union[str, int]) -> List[int]:
-        if name.isnumeric():
-            name = int(name)
-            if name < len(self):
-                name = self.names[name]
+    def __getitem__(self, key: Union[str, int]) -> Union[Union[str, None], Union[None, List[int]]]:
+        if isinstance(key, int):
+            if key < len(self):
+                name = self.names[key]
+                index = self.indexs[key]
+                return name, index
             else:  # index over range
-                return None
-        if name not in self.names:
-            return None
-        return self.name_index[name]
-
-    def __setitem__(self, name: str, indexs: List[int]) -> None:
-        self.name_index[name] = indexs
-        self.names.append(name)
-
-    def __delitem__(self, name: str) -> None:
-        if self.name_index.get(name, 0) == 0:
-            self.warn(f"request group {name} not found")
+                return None, None
+        elif isinstance(key, str):
+            if key in self.names:
+                index = self.indexs[self.names.index(key)]
+                return key, index
+            else:
+                return None, None
         else:
-            del self.name_index[name]
-            self.names.remove(name)
+            return None, None
 
-    def get_id_by_name(self, name: str) -> int:
-        return self.names.index(name)
+    def __setitem__(self, key: Union[str, int], indexs: List[int]) -> None:
+        if isinstance(key, int):
+            if key >= len(self):
+                self.error("key over range for setting item of NDX")
+            self.names[id] = key
+            self.indexs[id] = indexs
+            self.column_nums[id] = 15
+        elif isinstance(key, str):
+            if key not in self.names:
+                self.indexs.append(indexs)
+                self.names.append(key)
+                self.column_nums.append(15)
+            else:
+                ids = self.get_id_by_name()
+                for id in ids:
+                    self.names[id] = key
+                    self.indexs[id] = indexs
+                    self.column_nums[id] = 15
+        else:
+            pass
+    
+    def add(self, name:str, indexs:List[int], column_num:int=15) -> None:
+        self.names.append(name)
+        self.indexs.append(indexs)
+        self.column_nums.append(column_num)
+
+
+    def __delitem__(self, key: Union[str, int]) -> None:
+        if isinstance(key, int):
+            if key >= len(self):
+                self.error("key over range for deleting item of NDX")
+            del self.names[key]
+            del self.indexs[key]
+            del self.column_nums[key]
+        elif isinstance(key, str):
+            name = key
+        else:
+            self.error("Wrong key for deleting item of NDX")
+        while name in self.names:
+            id  = self.names.index(name)
+            del self.names[id]
+            del self.indexs[id]
+            del self.column_nums[id]
+
+    def get_id_by_name(self, key: str) -> List[int]:
+        id_list = []
+        for id, name in enumerate(self.names):
+            if key == name:
+                id_list.append(id)
+        return id_list
 
     @property
     def show_names(self) -> str:
         output: str = ""
-        for name in self.names:
-            output += f"{self.get_id_by_name(name)} {name} \n"
+        for id, name in enumerate(self.names):
+            output += f"{id} {name:<20} {len(self.indexs[id])}\n"
         return output
 
     def save(self, outfile) -> None:
@@ -89,39 +132,21 @@ class NDX(log):
 
     def __str__(self) -> str:
         output: str = ""
-        for name, _ in self.name_index.items():
-            out = self.formatter(name, 15)
+        for id in range(len(self)):
+            out = self.formatter(id)
             output += out
         output += "\n "
         return output
 
-    def formatter(self, name: str, column_num: int) -> str:
+    def formatter(self, id: int) -> str:
+        name = self.names[id]
+        index = self.indexs[id]
+        column_num = self.column_nums[id]
         if column_num <= 0:
-            self.error("Unable to format indexs by 0 column")
-            return ""
+            self.error(f"Unable to format indexs by 0 column at group id {id}")
         output: str = f"[ {name} ] \n"
-        indexs = self.name_index[name]
-        count = math.ceil(len(indexs) / column_num)
+        count = math.ceil(len(index) / column_num)
         for c in range(count):
-            items = [f"{v:>4d}" for v in indexs[c * column_num : (c + 1) * column_num]]
+            items = [f"{v:>4d}" for v in index[c * column_num : (c + 1) * column_num]]
             output += " ".join(items) + "\n"
         return output
-
-
-def main():
-    ndx = NDX("../../test/index.ndx")
-    for key, value in ndx.name_index.items():
-        print(key)
-        print(value)
-
-    print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
-    print(ndx["1ZIN"])
-    print(len(ndx))
-    ndx["hhhh"] = [0, 10, 20, -1]
-    print(ndx["hhhh"])
-    del ndx["System"]
-    print(ndx.names)
-
-    print(ndx.formatter("1ZIN", 4))
-    print(ndx.formatter("2ZIN", 0))
-    print(ndx.formatter("3ZIN", 1))
