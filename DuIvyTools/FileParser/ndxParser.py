@@ -73,17 +73,6 @@ class NDX(log):
             del self.name_index[name]
             self.names.remove(name)
 
-    def __str__(self) -> str:
-        output: str = ""
-        for name, indexs in self.name_index.items():
-            output += f"[ {name} ] \n"
-            count = math.ceil(len(indexs) / 15)
-            for c in range(count):
-                items = [f"{v:>4d}" for v in indexs[c * 15 : c * 15 + 15]]
-                output += " ".join(items) + "\n"
-        output += "\n "
-        return output
-
     def get_id_by_name(self, name: str) -> int:
         return self.names.index(name)
 
@@ -92,6 +81,18 @@ class NDX(log):
         output: str = ""
         for name in self.names:
             output += f"{self.get_id_by_name(name)} {name} \n"
+        return output
+
+    def save(self, outfile) -> None:
+        with open(outfile, 'w') as fo:
+            fo.write(str(self))
+
+    def __str__(self) -> str:
+        output: str = ""
+        for name, _ in self.name_index.items():
+            out = self.formatter(name, 15)
+            output += out
+        output += "\n "
         return output
 
     def formatter(self, name: str, column_num: int) -> str:

@@ -41,6 +41,7 @@ class DIT(log):
             "dssp",
             "ndx_add",
             "ndx_split",
+            "ndx_show",
         ]
         self.cmds_infos = """
 XVG:
@@ -69,6 +70,7 @@ Others:
     dssp                  : generate xpm and xvg from ascii file of gmx2023
     ndx_add               : new a index group to ndx file
     ndx_split             : split one index group into several groups
+    ndx_show              : show the groupnames of index file
 """
         self.welcome_info = (
             """

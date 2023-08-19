@@ -468,8 +468,36 @@ class ndx_add(Command):
         self.info("in ndx_add")
         print(self.parm.__dict__)
 
-        # self.parm.additional_list for groupname
-        # self.parm.columns for indexs
+        if self.parm.additional_list != None:
+            groupnames = [l for l in self.parm.additional_list]
+        else:
+            self.error("you must specify additional_list to provide groupnames")
+        if len(self.parm.columns) != 0:
+            indexs_list = [c for c in self.parm.columns]
+        else:
+            self.error("you must specify columns to provide index groups")
+        if len(groupnames) != len(indexs_list):
+            self.error(f"The number of groupnames ({len(groupnames)}) should be equal to number of index groups ({len(indexs_list)})")
+        if self.parm.output:
+            outname = self.parm.output
+        else:
+            outname = "dit_index.ndx"
+        outname = self.check_output_exist(outname)
+        if self.parm.input == None:
+            ndx = NDX(outname, new_file=True)
+        else:
+            ndx = NDX(self.parm.input[0])
+            if len(self.parm.input) > 1:
+                self.warn(f"Only the first input file ({self.parm.input[0]}) was used")
+        
+        for name, indexs in zip(groupnames, indexs_list):
+            if name in ndx.names:
+                self.error(f"{name} already exists in ndxfile {ndx.ndxfile}")
+            else:
+                ndx[name] = indexs
+        ndx.save(outname)
+
+
 
 
 class ndx_split(Command):
@@ -480,4 +508,48 @@ class ndx_split(Command):
         self.info("in ndx_split")
         print(self.parm.__dict__)
 
-        # self.parm.additional_list for groupname, and split fold
+        if self.parm.additional_list == None:
+            self.error("you must specify additional_list to provide groupname and split_fold, like: Protein 2")
+        if len(self.parm.additional_list) == 2 and self.parm.additional_list[1].isnumeric():
+            groupname = self.parm.additional_list[0]
+            split_fold = int(self.parm.additional_list[1])
+        else:
+            self.error("you must specify additional_list to provide groupname and split_fold, like: Protein 2")
+        if self.parm.output:
+            outname = self.parm.output
+        else:
+            outname = "dit_index.ndx"
+        outname = self.check_output_exist(outname)
+        if self.parm.input == None:
+            ndx = NDX(outname, new_file=True)
+        else:
+            ndx = NDX(self.parm.input[0])
+            if len(self.parm.input) > 1:
+                self.warn(f"Only the first input file ({self.parm.input[0]}) was used")
+        
+        if groupname.isnumeric():
+            groupname = ndx.names[int(groupname)]
+        indexs = ndx[groupname]
+        if len(indexs) % split_fold != 0:
+            self.error(f"got {len(indexs)} from group {groupname}, unable to equally devide into {split_fold} groups")
+        for i in range(split_fold):
+            ndx[f"{groupname}_{i}"] = indexs[i*len(indexs)//split_fold: (i+1)*len(indexs)//split_fold]
+        self.info(f"split '{groupname}' into {split_fold} groups successfully")
+        
+        ndx.save(outname)
+
+
+class ndx_show(Command):
+    def __init__(self, parm: Parameters) -> None:
+        self.parm = parm
+
+    def __call__(self):
+        self.info("in ndx_show")
+        print(self.parm.__dict__)
+
+        if self.parm.input == None:
+            self.error("you have to specify a index file to show grounames")
+        else:
+            for ndxfile in self.parm.input:
+                ndx = NDX(ndxfile)
+                print(ndx.show_names)

@@ -199,14 +199,6 @@
 - dccm_ascii
 - dssp
 
-- ndx_show
-- ndx_rm_dup
-- ndx_rm
-- ndx_preserve
-- ndx_add
-- ndx_combine
-- ndx_rename
-
 - ndx_add
 - ndx_split ## ndx group split into several group
 
