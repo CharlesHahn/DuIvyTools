@@ -73,7 +73,7 @@ class Parameters(log):
             "-ns", "--noshow", action="store_true", help="not to show figure"
         )
         parser.add_argument(
-            "-c", "--columns", nargs="+", help="select the column indexs for visualization or calculation"
+            "-c", "--columns", nargs="+", help="select the column indexs for visualization or calculation, or input numerical list"
         )
         parser.add_argument(
             "-l", "--legends", nargs="+", help="specify the legends of figure or data"
@@ -223,7 +223,6 @@ class Parameters(log):
             default=None,
             help="specify the interpolation method, default to None",
         )
-        ## TODO: when mode, show choices of ip methods
         parser.add_argument(
             "-ipf",
             "--interpolation_fold",

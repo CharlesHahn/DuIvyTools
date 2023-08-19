@@ -458,3 +458,32 @@ class dssp(Command):
         xvg_res.comments_tail += "# Totals " + " ".join([f"{t:6}" for t in Totals])
         xvg_res.comments_tail += "\n# SS pr. " + " ".join(SSpr)
         xvg_res.save(outxvg_res)
+
+
+class ndx_add(Command):
+
+    def __init__(self, parm: Parameters) -> None:
+        self.parm = parm
+
+    def __call__(self):
+        self.info("in ndx_add")
+        print(self.parm.__dict__)
+
+        # self.parm.additional_list for groupname
+        # self.parm.columns for indexs
+
+
+
+
+class ndx_split(Command):
+
+    def __init__(self, parm: Parameters) -> None:
+        self.parm = parm
+
+    def __call__(self):
+        self.info("in ndx_split")
+        print(self.parm.__dict__)
+
+        # self.parm.additional_list for groupname, and split fold
+
+
