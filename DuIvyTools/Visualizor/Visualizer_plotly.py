@@ -4,22 +4,19 @@ Visualizer_plotly module is part of DuIvyTools providing basic visualization too
 Written by DuIvy and provided to you by GPLv3 license.
 """
 
-import os
-import sys
-import time
-from typing import List, Union, Tuple
+from typing import Tuple
 
 import numpy as np
-import pandas as pd
-
-import plotly.io as pio
 import plotly.express as pe
 import plotly.graph_objs as go
+import plotly.io as pio
 
 from utils import log
 
 
 class ParentPlotly(log):
+    """parent class of plotly visualizer class"""
+
     def __init__(self):
         # pio.templates.default = "ggplot2"
         self.figure = go.Figure()
@@ -49,12 +46,19 @@ class ParentPlotly(log):
         return tuple(rgb)
 
     def final(self, outfig: str, noshow: bool) -> None:
+        """do final process of drawing figure with plotly
+
+        Args:
+            outfig (str): the user specified output figure name
+            noshow (bool): True for no display the figure
+        """
         if outfig != None:
             self.warn("unable to save figure by DIT, please save figure by yourself")
         if noshow == False:
             self.figure.show()
 
     def set_xyprecision_xyt_label(self, **kwargs) -> None:
+        """set x_precision, y_precision, xlabel, ylabel, title"""
         self.figure.update_layout(
             legend_orientation="h",
             title=kwargs["title"],
@@ -69,6 +73,7 @@ class ParentPlotly(log):
             self.figure.update_layout(yaxis_tickformat=f".{kwargs['y_precision']}f")
 
     def set_xy_min_max(self, **kwargs) -> None:
+        """set xmin, xmax, ymin, ymax"""
         if kwargs["xmin"] != None or kwargs["xmax"] != None:
             self.figure.update_layout(xaxis_range=[kwargs["xmin"], kwargs["xmax"]])
         if kwargs["ymin"] != None or kwargs["ymax"] != None:
@@ -94,7 +99,6 @@ class LinePlotly(ParentPlotly):
         title :str
         x_precision :int
         y_precision :int
-        # optional
         highs :List[List[float]]
         lows :List[List[float]]
         alpha :float
@@ -160,7 +164,6 @@ class StackPlotly(ParentPlotly):
         title :str
         x_precision :int
         y_precision :int
-        # optional
         highs :List[List[float]]
         lows :List[List[float]]
         alpha :float

@@ -4,18 +4,16 @@ Visualizer_plotext module is part of DuIvyTools providing visualization tools ba
 Written by DuIvy and provided to you by GPLv3 license.
 """
 
-import os
-import sys
-import time
-from typing import List, Union, Tuple
+from typing import Tuple
 
-import numpy as np
 import plotext as plt
 
 from utils import log
 
 
 class ParentPlotext(log):
+    """the parent class of plotext visualizer classes"""
+
     def __init__(self) -> None:
         plt.clear_figure()
         self.style = {
@@ -64,7 +62,6 @@ class LinePlotext(ParentPlotext):
         title :str
         x_precision :int
         y_precision :int
-        # optional
         highs :List[List[float]]
         lows :List[List[float]]
     """

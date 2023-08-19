@@ -5,23 +5,19 @@ Written by DuIvy and provided to you by GPLv3 license.
 """
 
 import os
-import sys
 import time
-from typing import List, Union
-
-import numpy as np
 
 import matplotlib.pyplot as plt
+import numpy as np
 from matplotlib import colors as mplcolors
 from matplotlib import patches
-from matplotlib.ticker import AutoLocator, FormatStrFormatter
+from matplotlib.ticker import FormatStrFormatter
 
-# sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from utils import log
 
 
 class ParentMatplotlib(log):
-    """parent class for drawing figure by matplotlib"""
+    """parent class for matplotlib visualizer classes"""
 
     def __init__(self):
         self.load_style()
@@ -72,6 +68,7 @@ class ParentMatplotlib(log):
             plt.show()
 
     def set_xyprecision_xyt_label(self, **kwargs) -> None:
+        """set x_precision, y_precision, xlabel, ylabel, title"""
         ax = plt.gca()
         if kwargs["x_precision"] != None:
             x_p = kwargs["x_precision"]
@@ -103,7 +100,6 @@ class LineMatplotlib(ParentMatplotlib):
         title :str
         x_precision :int
         y_precision :int
-        # optional
         highs :List[List[float]]
         lows :List[List[float]]
         alpha :float
