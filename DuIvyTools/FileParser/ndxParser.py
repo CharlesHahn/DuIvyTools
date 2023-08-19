@@ -45,13 +45,17 @@ class NDX(log):
                         self.indexs[-1] += line_list
                     except:
                         self.error(f"Unable to parse line {id} of {ndxfile}, check it!")
-        if len(self.names) != len(self.indexs) or len(self.names) != len(self.column_nums):
+        if len(self.names) != len(self.indexs) or len(self.names) != len(
+            self.column_nums
+        ):
             self.critical("wrong length in paring ndx file")
 
     def __len__(self) -> int:
         return len(self.names)
 
-    def __getitem__(self, key: Union[str, int]) -> Union[Union[str, None], Union[None, List[int]]]:
+    def __getitem__(
+        self, key: Union[str, int]
+    ) -> Union[Union[str, None], Union[None, List[int]]]:
         if isinstance(key, int):
             if key < len(self):
                 name = self.names[key]
@@ -88,12 +92,11 @@ class NDX(log):
                     self.column_nums[id] = 15
         else:
             pass
-    
-    def add(self, name:str, indexs:List[int], column_num:int=15) -> None:
+
+    def add(self, name: str, indexs: List[int], column_num: int = 15) -> None:
         self.names.append(name)
         self.indexs.append(indexs)
         self.column_nums.append(column_num)
-
 
     def __delitem__(self, key: Union[str, int]) -> None:
         if isinstance(key, int):
@@ -107,7 +110,7 @@ class NDX(log):
         else:
             self.error("Wrong key for deleting item of NDX")
         while name in self.names:
-            id  = self.names.index(name)
+            id = self.names.index(name)
             del self.names[id]
             del self.indexs[id]
             del self.column_nums[id]
@@ -127,7 +130,7 @@ class NDX(log):
         return output
 
     def save(self, outfile) -> None:
-        with open(outfile, 'w') as fo:
+        with open(outfile, "w") as fo:
             fo.write(str(self))
 
     def __str__(self) -> str:

@@ -144,7 +144,7 @@ class find_center(Command):
             indexs: Union[List[int], None] = None
             while indexs == None:
                 key = input("==> select a group to calculate center: ")
-                if key.isnumeric(): # if key could be int, treat as group id
+                if key.isnumeric():  # if key could be int, treat as group id
                     key = int(key)
                 name, indexs = ndx[key]
                 if indexs == None:
@@ -481,7 +481,9 @@ class ndx_add(Command):
         else:
             self.error("you must specify columns to provide index groups")
         if len(groupnames) != len(indexs_list):
-            self.error(f"The number of groupnames ({len(groupnames)}) should be equal to number of index groups ({len(indexs_list)})")
+            self.error(
+                f"The number of groupnames ({len(groupnames)}) should be equal to number of index groups ({len(indexs_list)})"
+            )
         if self.parm.output:
             outname = self.parm.output
         else:
@@ -493,14 +495,14 @@ class ndx_add(Command):
             ndx = NDX(self.parm.input[0])
             if len(self.parm.input) > 1:
                 self.warn(f"Only the first input file ({self.parm.input[0]}) was used")
-        
+
         for name, indexs in zip(groupnames, indexs_list):
             if name in ndx.names:
-                self.warn(f"{name} already exists in ndxfile {ndx.ndxfile}. Anyway, added it for you")
+                self.warn(
+                    f"{name} already exists in ndxfile {ndx.ndxfile}. Anyway, added it for you"
+                )
             ndx.add(name, indexs, 15)
         ndx.save(outname)
-
-
 
 
 class ndx_split(Command):
@@ -512,12 +514,19 @@ class ndx_split(Command):
         print(self.parm.__dict__)
 
         if self.parm.additional_list == None:
-            self.error("you must specify additional_list to provide groupname and split_fold, like: Protein 2")
-        if len(self.parm.additional_list) == 2 and self.parm.additional_list[1].isnumeric():
+            self.error(
+                "you must specify additional_list to provide groupname and split_fold, like: Protein 2"
+            )
+        if (
+            len(self.parm.additional_list) == 2
+            and self.parm.additional_list[1].isnumeric()
+        ):
             groupname = self.parm.additional_list[0]
             split_fold = int(self.parm.additional_list[1])
         else:
-            self.error("you must specify additional_list to provide groupname and split_fold, like: Protein 2")
+            self.error(
+                "you must specify additional_list to provide groupname and split_fold, like: Protein 2"
+            )
         if self.parm.output:
             outname = self.parm.output
         else:
@@ -529,16 +538,20 @@ class ndx_split(Command):
             ndx = NDX(self.parm.input[0])
             if len(self.parm.input) > 1:
                 self.warn(f"Only the first input file ({self.parm.input[0]}) was used")
-        
+
         if groupname.isnumeric():
             groupname = ndx.names[int(groupname)]
         name, indexs = ndx[groupname]
         if len(indexs) % split_fold != 0:
-            self.error(f"got {len(indexs)} from group {name}, unable to equally devide into {split_fold} groups")
+            self.error(
+                f"got {len(indexs)} from group {name}, unable to equally devide into {split_fold} groups"
+            )
         for i in range(split_fold):
-            ndx[f"{groupname}_{i}"] = indexs[i*len(indexs)//split_fold: (i+1)*len(indexs)//split_fold]
+            ndx[f"{groupname}_{i}"] = indexs[
+                i * len(indexs) // split_fold : (i + 1) * len(indexs) // split_fold
+            ]
         self.info(f"split '{name}' into {split_fold} groups successfully")
-        
+
         ndx.save(outname)
 
 
