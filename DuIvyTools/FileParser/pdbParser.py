@@ -5,13 +5,12 @@ Written by DuIvy and provided to you by GPLv3 license.
 """
 
 import os
-import sys
 
-sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from utils import log
 
 
 class Atom(object):
+    """Atom class for parsing atom line in pdb file"""
     def __init__(self, line: str) -> None:
         self.atom_id = int(line[6:11].strip())
         self.atom_name = line[12:16].strip()
@@ -62,10 +61,3 @@ class PDB(log):
             self.model_num += 1
             self.models.append(atom_list)
             self.atom_number = len(atom_list)
-
-
-def main():
-    pdb = PDB("../../test/prolig/prolig.pdb")
-    print(pdb.atom_number)
-    print(pdb.model_num)
-    print(pdb.models[0][100].__dict__)

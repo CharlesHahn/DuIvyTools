@@ -5,13 +5,12 @@ Written by DuIvy and provided to you by GPLv3 license.
 """
 
 import os
-import sys
 
-# sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from utils import log
 
 
 class Atom(object):
+    """Atom class for parsing atom line in gro file"""
     def __init__(self, line: str) -> None:
         self.res_id = int(line[:5].strip())
         self.res_name = line[5:10].strip()
@@ -78,11 +77,3 @@ class GRO(log):
 
     def get_time_info(self):
         pass
-
-
-def main():
-    gro = GRO("../../test/hbond_test.gro")
-    print(gro.coors)
-    print(gro.notes)
-    print(gro.frame_num)
-    print(gro.frames[0][1].__dict__)
