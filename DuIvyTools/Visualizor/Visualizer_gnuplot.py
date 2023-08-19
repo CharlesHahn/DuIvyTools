@@ -5,15 +5,15 @@ Written by DuIvy and provided to you by GPLv3 license.
 """
 
 import os
-import sys
-import time
 import subprocess
-from typing import List, Union
+import time
+from typing import List
 
 import numpy as np
 
 from utils import log
 
+## TODO maybe re-construction is needed for this module
 
 class Gnuplot(log):
     """Gnuplot class for plotting with gnuplot"""
@@ -73,7 +73,7 @@ class Gnuplot(log):
         self.stds_list: List[List[str]] = None
 
     def dump2str(self) -> str:
-        """dump gnuplot properties to gnuplot input scripts
+        """dump gnuplot attributes to gnuplot input scripts string
 
         Returns:
             str: result string for gnuplto input
@@ -134,6 +134,7 @@ class Gnuplot(log):
         return gpl
 
     def threeDimension(self, gpl: str) -> str:
+        """dump data of 3d plot to string"""
         if self.zlabel != None:
             gpl += f"""set cblabel "{self.zlabel}"\n"""
         if self.z_precision != None:
@@ -158,6 +159,7 @@ class Gnuplot(log):
         return gpl
 
     def contour(self, gpl: str) -> str:
+        """dump data of contour plot to string"""
         if self.zlabel != None:
             gpl += f"""set cblabel "{self.zlabel}"\n"""
         if self.z_precision != None:
@@ -181,6 +183,7 @@ class Gnuplot(log):
         return gpl
 
     def imshow(self, gpl: str) -> str:
+        """dump data of image plot to string"""
         if self.xpm_type != "Continuous":
             gpl += "set key out reverse Left spacing 2 samplen 1/2\n"
             gpl += "unset colorbox\n"
@@ -219,6 +222,7 @@ class Gnuplot(log):
         return gpl
 
     def stack_plot(self, gpl: str) -> str:
+        """dump data of stack line plot to string"""
         gpl += f"""set style fill transparent solid {self.style["alpha"]} noborder\n"""
         for c in range(len(self.data)):
             gpl += f"\n$data{c} << EOD\n"
@@ -233,6 +237,7 @@ class Gnuplot(log):
         return gpl
 
     def violin_plot(self, gpl: str) -> str:
+        """dump data of violin plot to string"""
         if self.data and self.legends:
             for c in range(len(self.data)):
                 gpl += f"\n$data{c} << EOD\n"
@@ -282,6 +287,7 @@ set colorbox vertical origin screen 0.9, 0.2 size screen 0.05, 0.6 front  noinve
         return gpl
 
     def scatter_plot(self, gpl: str) -> str:
+        """dump data of scatter plot to string"""
         # TODO colorbar_location
         # TODO cmap
         if self.zlabel != None:
@@ -302,6 +308,7 @@ set colorbox vertical origin screen 0.9, 0.2 size screen 0.05, 0.6 front  noinve
         return gpl
 
     def line_plot(self, gpl: str) -> str:
+        """dump data of line plot to string"""
         if self.data and self.legends and len(self.highs) == 0 and len(self.lows) == 0:
             for c in range(len(self.data)):
                 gpl += f"\n$data{c} << EOD\n"
@@ -330,6 +337,7 @@ set colorbox vertical origin screen 0.9, 0.2 size screen 0.05, 0.6 front  noinve
         return gpl
 
     def bar_plot(self, gpl: str) -> str:
+        """dump data of bar plot to string"""
         if self.data and self.legends:
             for c in range(len(self.data)):
                 gpl += f"\n$data{c} << EOD\n"
@@ -351,7 +359,7 @@ set colorbox vertical origin screen 0.9, 0.2 size screen 0.05, 0.6 front  noinve
 
 
 class ParentGnuplot(log):
-    """the parent class of varieties of gnuplot figures"""
+    """the parent class of gnuplot visualizer classes"""
 
     def __init__(self) -> None:
         time_info = time.strftime("%Y%m%d%H%M%S", time.localtime())
@@ -430,7 +438,6 @@ class LineGnuplot(ParentGnuplot):
         title :str
         x_precision :int
         y_precision :int
-        # optional
         highs :List[List[float]]
         lows :List[List[float]]
         alpha :float
