@@ -17,7 +17,31 @@ import inspect
 class DIT(log):
     def __init__(self) -> None:
         self.classes = dict(inspect.getmembers(sys.modules[__name__], inspect.isclass))
-        self.cmds = ["xvg_show", "xvg_compare", "xvg_ave", "xvg_energy_compute", "xvg_combine", "xvg_show_distribution", "xvg_show_scatter", "xvg_show_stack", "xvg_box_compare", "xvg_ave_bar", "xvg_rama", "xpm_show", "xpm2csv", "xpm2dat", "xpm_diff", "xpm_merge", "mdp_gen", "show_style", "find_center", "dccm_ascii", "dssp", "ndx_add", "ndx_split"]
+        self.cmds = [
+            "xvg_show",
+            "xvg_compare",
+            "xvg_ave",
+            "xvg_energy_compute",
+            "xvg_combine",
+            "xvg_show_distribution",
+            "xvg_show_scatter",
+            "xvg_show_stack",
+            "xvg_box_compare",
+            "xvg_ave_bar",
+            "xvg_rama",
+            "xpm_show",
+            "xpm2csv",
+            "xpm2dat",
+            "xpm_diff",
+            "xpm_merge",
+            "mdp_gen",
+            "show_style",
+            "find_center",
+            "dccm_ascii",
+            "dssp",
+            "ndx_add",
+            "ndx_split",
+        ]
         self.cmds_infos = """
 XVG:
     xvg_show              : easily show xvg file
@@ -46,7 +70,8 @@ Others:
     ndx_add               : new a index group to ndx file
     ndx_split             : split one index group into several groups
 """
-        self.welcome_info = """
+        self.welcome_info = (
+            """
  *******           **                  **********               **        
 /**////**         /**          **   **/////**///               /**        
 /**    /** **   **/** **    **//** **     /**  ******   ****** /**  ******
@@ -60,7 +85,9 @@ DuIvyTools is a simple analysis and visualization tool for GROMACS result files 
 
 DuIvyTools provides about 30 commands for visualization and processing of GMX result files like .xvg or .xpm. 
 
-All commands are shown below: """ + self.cmds_infos + """
+All commands are shown below: """
+            + self.cmds_infos
+            + """
 You can type `dit <command> -h` for detailed help messages about each command, like: `dit xvg_show -h`. 
 
 All possible parameters could be inspected by `dit -h` or `dit --help`.
@@ -69,6 +96,7 @@ Cite DuIvyTools by DOI at https://doi.org/10.5281/zenodo.6339993
 
 Have a good day !
 """
+        )
 
     def run(self) -> None:
         ## help infos
@@ -80,13 +108,18 @@ Have a good day !
                 print(f"====== command: {sys.argv[1]} ======")
                 print(self.classes[sys.argv[1]].__doc__)
             else:
-                self.error(f"Wrong specification of command `{sys.argv[1]}`, type `dit` to see all possible commands")
+                self.error(
+                    f"Wrong specification of command `{sys.argv[1]}`, type `dit` to see all possible commands"
+                )
             sys.exit()
 
         ## try to run DIT
         parm = Parameters()
         if parm.cmd not in self.cmds:
-            self.error(f"{parm.cmd} is not available. DIT supports commands as below: \n" + self.cmds_infos)
+            self.error(
+                f"{parm.cmd} is not available. DIT supports commands as below: \n"
+                + self.cmds_infos
+            )
         cmd = self.classes.get(parm.cmd, None)
         cmd = cmd(parm)
         cmd()

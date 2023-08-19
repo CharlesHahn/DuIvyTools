@@ -73,7 +73,10 @@ class Parameters(log):
             "-ns", "--noshow", action="store_true", help="not to show figure"
         )
         parser.add_argument(
-            "-c", "--columns", nargs="+", help="select the column indexs for visualization or calculation, or input numerical list"
+            "-c",
+            "--columns",
+            nargs="+",
+            help="select the column indexs for visualization or calculation, or input numerical list",
         )
         parser.add_argument(
             "-l", "--legends", nargs="+", help="specify the legends of figure or data"
@@ -214,7 +217,10 @@ class Parameters(log):
             help="additional parameter: 'withoutScatter' will NOT show scatter plot for 'xvg_box_compare'; 'imshow', 'pcolormesh', '3d', 'contour' were used for 'xpm_show' command; 'AllAtoms' were used for 'find_center' command",
         )
         parser.add_argument(
-            "-al", "--additional_list", nargs="+", help="additional parameters. Used to set xtitles for 'xvg_ave_bar'"
+            "-al",
+            "--additional_list",
+            nargs="+",
+            help="additional parameters. Used to set xtitles for 'xvg_ave_bar'",
         )
         parser.add_argument(
             "-ip",
@@ -310,11 +316,17 @@ class Parameters(log):
 
         ## check parameters
         if self.begin and self.begin < 0:
-            self.warn("parameter 'begin' should not be a minus, BE SURE for what you are doing")
+            self.warn(
+                "parameter 'begin' should not be a minus, BE SURE for what you are doing"
+            )
         if self.end and self.end < 0:
-            self.warn("parameter 'end' should not be a minus, BE SURE for what you are doing")
+            self.warn(
+                "parameter 'end' should not be a minus, BE SURE for what you are doing"
+            )
         if self.dt and self.dt < 0:
-            self.warn("parameter 'dt' should not be a minus, BE SURE for what you are doing")
+            self.warn(
+                "parameter 'dt' should not be a minus, BE SURE for what you are doing"
+            )
         if self.x_precision and self.x_precision < 0:
             self.error("parameter 'x_precision' should not be a minus")
         if self.y_precision and self.y_precision < 0:

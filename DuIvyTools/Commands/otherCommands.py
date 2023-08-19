@@ -461,7 +461,6 @@ class dssp(Command):
 
 
 class ndx_add(Command):
-
     def __init__(self, parm: Parameters) -> None:
         self.parm = parm
 
@@ -473,10 +472,7 @@ class ndx_add(Command):
         # self.parm.columns for indexs
 
 
-
-
 class ndx_split(Command):
-
     def __init__(self, parm: Parameters) -> None:
         self.parm = parm
 
@@ -485,5 +481,3 @@ class ndx_split(Command):
         print(self.parm.__dict__)
 
         # self.parm.additional_list for groupname, and split fold
-
-
