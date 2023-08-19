@@ -4,13 +4,13 @@ utils module is part of DuIvyTools. This module provides log parent class.
 Written by DuIvy and provided to you by GPLv3 license.
 """
 
+import argparse
+import logging
 import sys
 import time
-import logging
-import argparse
-from colorama import Fore, Back, Style
-
 from typing import List
+
+from colorama import Back, Fore, Style
 
 
 class log(object):
@@ -58,13 +58,14 @@ class log(object):
 
 
 class Parameters(log):
-    def __init__(self) -> None:
+    """A class to deal with and store user-input parameters
+    """
 
+    def __init__(self) -> None:
         parser = argparse.ArgumentParser(
             description="DuIvyTools: A Simple MD Analysis Tool"
         )
         parser.add_argument("cmd", type=str, help="command of DIT to run")
-
         parser.add_argument(
             "-f", "--input", nargs="+", help="specify the input file or files"
         )
@@ -245,38 +246,12 @@ class Parameters(log):
             help="the bin number for distribution calculation",
         )
 
-        """
-        parser.add_argument(
-            "-gl", "--grouplist", nargs="+", help="specify a list of group names"
-        )
-        parser.add_argument(
-            "-int",
-            "--interactive",
-            action="store_true",
-            help="whether to initiate interactive mode",
-        )
-        parser.add_argument(
-            "-gn", "--groupname", type=str, help="specify the group name"
-        )
-        parser.add_argument(
-            "-on", "--oldname", type=str, help="specify the old group name"
-        )
-        parser.add_argument(
-            "-nn", "--newname", type=str, help="specify the new group name"
-        )
-        parser.add_argument(
-            "-aa",
-            "--AllAtoms",
-            action="store_true",
-            help="if to find center in all atoms of gro file",
-        )
-        """
-
         args = parser.parse_args()
         self.__dict__ = args.__dict__
         self.__check_convert()
 
     def __parse_column(self, msg_line: str) -> List[int]:
+        """parse column selections, generate List[int]"""
         lis: List[int] = []
         try:
             for msg in msg_line.strip(",").split(","):
@@ -302,7 +277,7 @@ class Parameters(log):
         return lis
 
     def __check_convert(self) -> None:
-
+        """check part of parameters and deal with parameter format"""
         ## deal parameters
         if self.input != None and "," in "".join(self.input):
             self.input = [fs.strip(",").split(",") for fs in self.input]
@@ -313,7 +288,6 @@ class Parameters(log):
         self.columns = column_select
         if self.legends != None and "," in "".join(self.legends):
             self.legends = [ls.strip(",").split(",") for ls in self.legends]
-
         ## check parameters
         if self.begin and self.begin < 0:
             self.warn(

@@ -199,7 +199,7 @@
 - dccm_ascii
 - dssp
 
-- ndx_add
+- ndx_add   ## add a new group
 - ndx_split ## ndx group split into several group
 
 - help 
