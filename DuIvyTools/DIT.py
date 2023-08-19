@@ -4,17 +4,18 @@ DIT module is part of DuIvyTools. This module provides log parent class.
 Written by DuIvy and provided to you by GPLv3 license.
 """
 
-
+import inspect
 import sys
 
-from Commands.xvgCommands import *
-from Commands.xpmCommands import *
 from Commands.otherCommands import *
+from Commands.xpmCommands import *
+from Commands.xvgCommands import *
 from utils import Parameters, log
-import inspect
 
 
 class DIT(log):
+    """DIT class, show information and invoke commands"""
+
     def __init__(self) -> None:
         self.classes = dict(inspect.getmembers(sys.modules[__name__], inspect.isclass))
         self.cmds = [
@@ -101,6 +102,8 @@ Have a good day !
         )
 
     def run(self) -> None:
+        """show help infos and invoke commands
+        """
         ## help infos
         if len(sys.argv) == 1:
             print(self.welcome_info)

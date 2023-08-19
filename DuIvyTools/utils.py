@@ -14,9 +14,7 @@ from colorama import Back, Fore, Style
 
 
 class log(object):
-    """log class, a logging system parent class, provied five functions for
-    output debug, info, warning, error, and critical messages.
-    """
+    """log class, a logging system parent class, provied five functions for output debug, info, warning, error, and critical messages."""
 
     logging.basicConfig(
         level=logging.INFO,
@@ -58,8 +56,7 @@ class log(object):
 
 
 class Parameters(log):
-    """A class to deal with and store user-input parameters
-    """
+    """A class to deal with and store user-input parameters"""
 
     def __init__(self) -> None:
         parser = argparse.ArgumentParser(
