@@ -4,23 +4,103 @@ xpmCommander module is part of DuIvyTools providing xpm related commands.
 Written by DuIvy and provided to you by GPLv3 license.
 """
 
-import os
-import sys
-import time
 from typing import List, Union
-from scipy.interpolate import interp2d, RectBivariateSpline
+
+from scipy.interpolate import RectBivariateSpline, interp2d
 
 from Commands.Commands import Command
-from FileParser.xpmParser import XPM, XPMS
+from FileParser.xpmParser import XPM
+from utils import Parameters
+from Visualizor.Visualizer_gnuplot import *
 from Visualizor.Visualizer_matplotlib import *
 from Visualizor.Visualizer_plotext import *
 from Visualizor.Visualizer_plotly import *
-from Visualizor.Visualizer_gnuplot import *
-from utils import Parameters
 
 
 class xpm_show(Command):
-    """visualize xpm files"""
+    """
+    Visualize the xpm file. 
+    DIT support 4 plot engines (matplotlib, plotly, gnuplot, and plotext) and several modes to plot xpm into figures. 4 modes for matplotlib (imshow which is default, pcolormesh, 3d, and contour), and 3 modes for plotly and gnuplot (pcolormesh which is default, 3d, and contour). Plotext only support plotting simple and small size xpm in gray. 
+    Modes imshow and pcolormesh mainly show the matrix of xpm. For `Continuous` type xpms, matplotlib, plotly and gnuplot will NOT use its original colors, and the colormaps of each engine will be used. For matploblib and plotly, you can set colormaps by `-cmap`. For `Discrete` type of xpms, only pcolormesh of matploblib will NOT use its original colors. But you can set colors by mplstyle file or other style files.For the methods using its original colors, you can set colors by directly modifing the xpm file. 
+    Mode 3d mainly plot a 3d figure for `Continuous` xpm. Mode contour plot a contour figure for `Continuous` xpm. Also, you can set colormaps by `-cmap`.
+    You can perform INTERPOLATION to data by specifing `-ip`. 
+    For imshow of matplotlib, the interpolation method was using the interpolation method of imshow function of matplobli, and there are lots of interpolation methods could be selected. If you do not know the names of interpolation methods, simply specify `-ip hhh`, then the error message will show you all names of interpolation methods for you to choose. 
+    For any other engines or modes, DIT use `scipy.interpolate.interp2d` to do the interpolation, so the methods for you to choose is `linear`, `cubic`, and `quintic`. Also, `-ip hhh` trick works. For this interpolation methods, you need to define a `--interpolation_fold` (default to 10).
+    DIT support performing xpm cutting by `-xmin`, `-xmax`, `-ymin`, and `-ymax`, like only show 100*100 pixels from a 132*10000 DSSP xpm by setting `-xmin 100 -xmax 200 -ymin 200 -ymax 300`. 
+
+    :Parameters:
+        -f, --input
+                specify the input xpm file (or files)
+        -o, --output
+                specify the file name for saving figures
+        -ns, --noshow
+                whether not to show figures. When applied to gnuplot, DIT will generate a gnuplot input script
+        -x, --xlabel
+                specify the xlabel of figure
+        -y, --ylabel
+                specify the ylabel of figure
+        -z, --zlabel
+                specify the zlabel of figure
+        -t, --title
+                specify the title of figure
+        -xs, --xshrink
+                specify the shrink fold number of X values
+        -ys, --yshrink
+                specify the shrink fold number of Y values
+        -zs, --zshrink
+                specify the shrink fold number of Z values
+        -xmin, --xmin
+                specify the xmin index of xpm matrix to show
+        -xmax, --xmax
+                specify the xmax index of xpm matrix to show
+        -ymin, --ymin
+                specify the ymin index of xpm matrix to show
+        -ymax, --ymax
+                specify the ymax index of xpm matrix to show
+        -zmin, --zmin
+                specify the min value of colorbar to show
+        -zmax, --zmax
+                specify the max value of colorbar to show
+        -m, --mode
+                specify the mode of visualization: imshow, pcolormesh, 3d, contour
+        -eg, --engine
+                specify the plot engine: matplotlib (default), plotly, gnuplot, plotext
+        -cmap, --colormap
+                specify the colormap for visualization
+        -ip, --interpolation
+                specify the interpolation method
+        -ipf, --interpolation_fold
+                specify the multiple of interpolation
+        --alpha
+                specify the alpha of figure
+        --x_precision
+                specify the precision of X ticklabels
+        --y_precision
+                specify the precision of Y ticklabels
+        --z_precision
+                specify the precision of Z ticklabels
+        --legend_location
+                specify the location of legend, inside or outside
+        --colorbar_location
+                specify the location of colorbar, available for matplotlib: left, top, bottom, right
+
+    :Usage:
+        dit xpm_show -f FEL.xpm 
+        dit xpm_show -f hbond.xpm 
+        dit xpm_show -f DSSP.xpm -ns -o dssp.png
+        dit xpm_show -f FEL.xpm -m pcolormesh -ip linear -ipf 5 -cmap solar
+        dit xpm_show -f FEL.xpm -m 3d -x PC1 -y PC2 -z Energy -t FEL --alpha 0.5
+        dit xpm_show -f FEL.xpm -m 3d --x_precision 1 --y_precision 2 --z_precision 0
+        dit xpm_show -f FEL.xpm -m contour -cmap jet --colorbar_location bottom
+        dit xpm_show -f FEL.xpm -m contour -cmap jet -zmin 0 -zmax 20
+        dit xpm_show -f DSSP.xpm -xs 0.001 -x Time(ns) --legend_location outside
+        dit xpm_show -f DSSP.xpm -eg plotly -xmin 1000 -xmax 2001 -ymin 50 -ymax 101
+        dit xpm_show -f FEL.xpm -eg plotly -m 3d
+        dit xpm_show -f FEL.xpm -eg plotly -m contour
+        dit xpm_show -f DSSP.xpm -eg gnuplot --legend_location outside
+        dit xpm_show -f FEL.xpm -eg gnuplot -m 3d -ip cubic 
+        dit xpm_show -f FEL.xpm -eg gnuplot -m contour -ns -o contour.png
+    """
 
     def __init__(self, parm: Parameters) -> None:
         self.parm = parm
@@ -123,8 +203,8 @@ class xpm_show(Command):
 
     def __call__(self):  ## write process code
 
-        self.info("in xpm_show")
-        print(self.parm.__dict__)
+        # self.info("in xpm_show")
+        # print(self.parm.__dict__)
 
         if not self.parm.input:
             self.error("you must specify a xpm file to show")

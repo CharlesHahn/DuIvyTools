@@ -767,7 +767,6 @@ class ContourMatplotlib(ParentMatplotlib):
         x_precision :int
         y_precision :int
         z_precision :int
-        alpha :float
         colorbar_location :str
         cmap :str
     """
