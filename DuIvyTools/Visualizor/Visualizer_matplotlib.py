@@ -627,6 +627,7 @@ class PcolormeshMatplotlib(ParentMatplotlib):
                 )
             colors = colors[: len(kwargs["legends"])]
             color_map = mplcolors.ListedColormap(colors)
+            ## TODO: repeat series in xdata_list or ydata_list cause error
             im = plt.pcolormesh(
                 kwargs["xdata_list"],
                 kwargs["ydata_list"],
