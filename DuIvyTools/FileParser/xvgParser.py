@@ -5,17 +5,17 @@ Written by DuIvy and provided to you by GPLv3 license.
 """
 
 import os
-import sys
 import time
+from typing import List, Tuple, Union
+
 import numpy as np
 import scipy.stats as stats
-from typing import List, Union, Tuple
 
-sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from utils import log
 
 
 class XVG(log):
+    """XVG class for parsing xvg file"""
     def __init__(
         self,
         xvgfile: Union[str, List[str]],
@@ -57,7 +57,7 @@ class XVG(log):
                 self.info(f"parsing data from {xvgfile} successfully !")
 
     def parse_xvg(self, lines: List[str]) -> None:
-        """parse xvg content
+        """parse xvg content (lines) into XVG class
 
         Args:
             lines (List[str]): xvg file lines
@@ -138,10 +138,11 @@ class XVG(log):
             )
 
     def save(self, outxvg: str, check: bool = True) -> None:
-        """dump xvg class to xvg file
+        """dump XVG class to xvg file
 
         Args:
             outxvg (str): output xvg file name
+            check (bool): whether check XVG attributes before dumping
         """
         if check:
             if len(self.data_heads) == 0:
@@ -257,6 +258,11 @@ class XVG(log):
         return legend, ave, std
 
     def check_column_index(self, column_index: Union[int, List]) -> None:
+        """check user-input column index in or not in xpm column range
+
+        Args:
+            column_index (Union[int, List]): the user-input column index(s)
+        """        
         if isinstance(column_index, int):
             column_index = [column_index]
         elif isinstance(column_index, list):
@@ -273,6 +279,7 @@ class XVG(log):
 
 
 class XVGS(log):
+    """XVGS class for parsing xvg file with multiframes"""
     def __init__(self, xvgfile: str) -> None:
         self.xvgfile: str = xvgfile
         self.frames: list[XVG] = []
@@ -295,29 +302,9 @@ class XVGS(log):
         self.info(f"parsing multi-frames data from {xvgfile} successfully !")
 
     def __len__(self) -> int:
+        """return the frame number"""
         return len(self.frames)
 
     def __getitem__(self, index: int) -> XVG:
+        """get one frame by frame index"""
         return self.frames[index]
-
-
-def main():
-    # xvg = XVGS("../../test/pc1.xvg")[0]
-    # xvg = XVGS("../../test/rama.xvg")[0]
-    # xvg = XVG("../../test/gyrate.xvg")
-    # xvg = XVG("../../test/dssp_sc.xvg")
-    xvg = XVG("../../test/hbond.xvg")
-
-    print(xvg.title)
-    print(xvg.xlabel)
-    print(xvg.ylabel)
-    print(xvg.xmin)
-    print(xvg.xmax)
-    print(xvg.ymin)
-    print(xvg.ymax)
-    print(xvg.legends)
-    print(xvg.column_num)
-    print(xvg.row_num)
-    print(xvg.data_heads)
-    for data in xvg.data_columns:
-        print(data[:10])

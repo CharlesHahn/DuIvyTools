@@ -5,15 +5,14 @@ Written by DuIvy and provided to you by GPLv3 license.
 """
 
 import os
-import sys
 import time
-from typing import List, Union, Any
+from typing import Any, List
 
-# sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from utils import log
 
 
 class Command(log):
+    """Command class was desiged as parent class for all commands"""
     def __init__(self) -> None:
         pass
 
