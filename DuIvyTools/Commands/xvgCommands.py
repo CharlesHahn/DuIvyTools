@@ -181,7 +181,7 @@ class xvg_compare(Command):
         -ymax, --ymax (optional)
                 specify the ymax value of figure canvas
         --alpha (optional)
-                set the opacify of confidence intervals
+                set the opacity of confidence intervals
         --legend_location (optional)
                 specify the location of legends, inside or outside
         --x_precision (optional)
@@ -205,7 +205,7 @@ class xvg_compare(Command):
         self.parm = parm
 
     def check_parm(self) -> None:
-        ## check and convert parm
+        """check user-input parameters: input, columns, legends"""
         if not self.parm.input:
             self.error("you must specify the xvg files to compare")
         if not self.parm.columns:
@@ -299,6 +299,7 @@ class xvg_compare(Command):
                 self.dump2csv(kwargs)
 
     def dump2csv_1_input(self, kwargs):
+        """dump data into csv with only ONE input xvg"""
         ## merge xvg2csv and xvg_mvave functions here
         if self.parm.showMV:
             with open(self.parm.csv, "w") as fo:
@@ -328,6 +329,7 @@ class xvg_compare(Command):
         self.info(f"data has been dumped to {self.parm.csv} successfully")
 
     def dump2csv(self, kwargs):
+        """dump data into csv with MORE THAN ONE input xvgs"""
         ## merge xvg2csv and xvg_mvave functions here
         if self.parm.showMV:
             with open(self.parm.csv, "w") as fo:
@@ -358,19 +360,23 @@ class xvg_compare(Command):
 
 
 class xvg_ave(Command):
-    """compute averages of all data columns of specified xvg files"""
     """
-
+    compute averages of all data columns of specified xvg files
 
     :Parameters:
         -f, --input
+                specify the xvg file (or files) for calculating averages of each column
         -o, --output (optional)
+                specify a data file for saving the results
         -b, --begin (optional)
+                specify the begin index of data to calculate
         -e, --end (optional)
+                specify the end index of data to calculate
         -dt, --dt (optional)
+                specify the index step of data to calculate
 
     :Usage:
-    
+        dit xvg_ave -f RMSD.xvg -b 1000 -e 2001 -o RMSD_ave.dat
     """
 
     def __init__(self, parm: Parameters) -> None:
@@ -408,30 +414,23 @@ class xvg_ave(Command):
 
 class xvg_energy_compute(Command):
     """
-    compute the interaction between protein and ligand by:
+    compute the interaction energy between protein and ligand by:
         binding energy  = prolig energy - pro energy - lig energy
 
-    :parameters::
-        xvgfiles: a list contains three xvg files
-            prolig_xvg: energy xvg file of prolig
-            pro_xvg: energy xvg file of protein
-            lig_xvg: energy xvg file of ligand
-        outfile: the output xvg file name
-
     IMPORTANT:
-        the xvg file used here should contain and ONLY contain five columns:
-        Time, LJ(SR), Disper.corr., Coulomb(SR), Coul.recip.
-    """
-    """
-
+        User need to specify three xvg data files: 
+            prolig.xvg, pro.xvg, lig.xvg.
+        The xvg file used here should contain and ONLY contain five columns:
+            Time, LJ(SR), Disper.corr., Coulomb(SR), Coul.recip.
 
     :Parameters:
         -f, --input
+                specify the energy xvg files: prolig.xvg, pro.xvg, lig.xvg
         -o, --output (optional)
                 specify the output xvg file name, default to 'dit_energy_compute.xvg'
 
     :Usage:
-    
+        dit xvg_energy_compute -f prolig.xvg pro.xvg lig.xvg
     """
 
     def __init__(self, parm: Parameters) -> None:
@@ -557,23 +556,34 @@ class xvg_energy_compute(Command):
 
 class xvg_combine(Command):
     """
-
+    Conbine the data columns of xvg files into a new xvg file
 
     :Parameters:
         -f, --input
+                specify the xvg file or files
         -c, --columns
+                specify the indexs of data columns of each file
         -l, --legends (optional)
+                specify the legends of each data column you select
         -o, --output (optional)
+                specify the output xvg file name, default to `dit_xvg_combine.xvg`
         -x, --xlabel (optional)
+                specify the xlabel of output xvg file
         -y, --ylabel (optional)
+                specify the ylabel of output xvg file
         -t, --title (optional)
+                specify the title of output xvg file
         -b, --begin (optional)
+                specify the begin index of data
         -e, --end (optional)
+                specify the end index of data
         -dt, --dt (optional)
+                specify the index step of data
         -ys, --yshrink (optional)
+                specify the shrink fold number of all selected data columns
 
     :Usage:
-    
+        dit xvg_combine -f RMSD.xvg Gyrate.xvg -c 0,1 1 -l RMSD Gyrate -x Time(ps)
     """
     def __init__(self, parm: Parameters) -> None:
         self.parm = parm
@@ -630,35 +640,60 @@ class xvg_combine(Command):
 
 class xvg_show_distribution(xvg_compare):
     """
-
+    Show the distribution of selected xvg file data.
 
     :Parameters:
         -f, --input
+                specify the xvg file or files
         -c, --columns
+                select the column index of each file to show distribution
         -l, --legends (optional)
+                specify the legends of figure
         -o, --output (optional)
+                specify the file name for saving figure
         -ns, --noshow (optional)
+                NOT show figure
         -x, --xlabel (optional)
+                set the xlabel of figure
         -y, --ylabel (optional)
+                set the ylabel of figure
         -t, --title (optional)
+                set the title of figure
         -eg, --engine (optional)
+                specify the plot engine: matplobli (default), plotly, gnuplot, plotext
         -b, --begin (optional)
+                specify the begin index of data to calculate distribution 
         -e, --end (optional)
+                specify the end index of data to calculate distribution 
         -dt, --dt (optional)
+                specify the index step of data to calculate distribution 
         -xmin, --xmin (optional)
+                specify the xmin value of figure canvas
         -xmax, --xmax (optional)
+                specify the xmax value of figure canvas
         -ymin, --ymin (optional)
+                specify the ymin value of figure canvas
         -ymax, --ymax (optional)
+                specify the ymax value of figure canvas
         --csv (optional)
+                specify the output csv file name for saving distribution data
         --alpha (optional)
+                specify the opacity of distribution, default to 0.4
         --x_precision (optional)
+                specify the precision of X ticklabels
         --y_precision (optional)
+                specify the precision of Y ticklabels
         --legend_location (optional)
+                specify the location of legends, inside or outside
         -bin, --bin (optional)
+                specify the bin number of calculating distribution, default to 100
 
     :Usage:
-    
+        dit xvg_show_distribution -f RMSD.xvg Gyrate.xvg -c 1 1
+        dit xvg_show_distribution -f RMSD.xvg -c 1 -bin 50 -csv test.csv
+        dit xvg_show_distribution -f RMSD.xvg -c 1 -eg plotly
     """
+
     def __init__(self, parm: Parameters) -> None:
         self.parm = parm
 
@@ -725,6 +760,7 @@ class xvg_show_distribution(xvg_compare):
             self.dump2csv(kwargs)
 
     def dump2csv(self, kwargs):
+        """save distribution data into csv file"""
         with open(self.parm.csv, "w") as fo:
             for leg in kwargs["legends"]:
                 fo.write(
@@ -772,41 +808,74 @@ class xvg_show_distribution(xvg_compare):
 
 class xvg_show_scatter(Command):
     """
-
+    Visualize selected data through scatter plot.
+    User can specify a third data column index to colorize the scatters.
 
     :Parameters:
         -f, --input
+                specify the input xvg file or files
         -c, --columns
+                specify the data column indexs for X, Y, (or with Z for colorizing)
         -l, --legends (optional)
+                specify the legends of figure
         -o, --output (optional)
+                specify the file name for saving figure
         -ns, --noshow (optional)
+                NOT to show figure
         -x, --xlabel (optional)
+                specify the xlabel of figure
         -y, --ylabel (optional)
+                specify the ylabel of figure
         -z, --zlabel (optional)
+                specify the colorbar title
         -t, --title (optional)
+                specify the title of figure
         -eg, --engine (optional)
+                specify the plot engine: matplotlib (default), plotly, gnuplot, plotext
         -b, --begin (optional)
+                specify the begin index of data to present
         -e, --end (optional)
+                specify the end index of data to present
         -dt, --dt (optional)
+                specify the index step of data to present
         -xs, --xshrink (optional)
+                specify the shrink fold number of X values
         -ys, --yshrink (optional)
+                specify the shrink fold number of Y values
         -zs, --zshrink (optional)
+                specify the shrink fold number of Z values
         -xmin, --xmin (optional)
+                specify the xmin value of figure canvas
         -xmax, --xmax (optional)
+                specify the xmax value of figure canvas
         -ymin, --ymin (optional)
+                specify the ymin value of figure canvas
         -ymax, --ymax (optional)
+                specify the ymax value of figure canvas
         -zmin, --zmin (optional)
+                specify the zmin value of figure canvas
         -zmax, --zmax (optional)
+                specify the zmax value of figure canvas
         -cmap, --colormap (optional)
+                specify the colormap for colorizing scatters
         --alpha (optional)
+                specify the opacity of scatters
         --x_precision (optional)
+                specify the precision of X ticklabels
         --y_precision (optional)
+                specify the precision of Y ticklabels
         --z_precision (optional)
+                specify the precision of colobar ticklabels
         --colorbar_location (optional)
+                specify the location of colorbar: bottom, top, left, right
         --legend_location (optional)
+                specify the location of legends, inside or outside
 
     :Usage:
-    
+        dit xvg_show_scatter -f Gyrate.xvg -c 1,2
+        dit xvg_show_scatter -f Gyrate.xvg -c 1,2 -eg plotly
+        dit xvg_show_scatter -f Gyrate.xvg -c 1,2,0 -cmap jet -z Time(ns) -zs 0.001
+        dit xvg_show_scatter -f Gyrate.xvg -c 1,2,0 --z_precision 0 --colorbar_location bottom
     """
 
     def __init__(self, parm: Parameters) -> None:
@@ -918,34 +987,59 @@ class xvg_show_scatter(Command):
 
 class xvg_show_stack(Command):
     """
-
+    Show the stack area plot of selected xvg data.
 
     :Parameters:
         -f, --input
+                specify the xvg file or files to show stack area plot
         -c, --columns
+                select the indexs of data columns to draw
         -l, --legends (optional)
+                specify the legends of stacked data
         -o, --output (optional)
+                specify the file name for saving figure
         -ns, --noshow (optional)
+                NOT to show figure
         -x, --xlabel (optional)
+                specify the xlabel of figure
         -y, --ylabel (optional)
+                specify the ylabel of figure
         -t, --title (optional)
+                specify the title of figure
         -eg, --engine (optional)
+                specify the plot engine: matplotlib (default), plotly, gnuplot, plotext
         -b, --begin (optional)
+                specify the begin index of data to present
         -e, --end (optional)
+                specify the end index of data to present
         -dt, --dt (optional)
+                specify the index step of data to present
         -xs, --xshrink (optional)
+                specify the shrink fold number of X values
         -ys, --yshrink (optional)
+                specify the shrink fold number of Y values
         -xmin, --xmin (optional)
+                specify the xmin value of figure canvas
         -xmax, --xmax (optional)
+                specify the xmax value of figure canvas
         -ymin, --ymin (optional)
+                specify the ymin value of figure canvas
         -ymax, --ymax (optional)
+                specify the ymax value of figure canvas
         --x_precision (optional)
+                specify the precision of X ticklabels
         --y_precision (optional)
+                specify the precision of Y ticklabels
         --alpha (optional)
+                set the opacity of confidence intervals
         --legend_location (optional)
+                specify the location of legends, inside or outside
 
     :Usage:
-    
+        dit xvg_show_stack -f dssp_sc.xvg -c 2-7 
+        dit xvg_show_stack -f dssp_sc.xvg -c 2-7 -xs 0.001 -x Time(ns) --x_precision 0
+        dit xvg_show_stack -f dssp_sc.xvg -c 2-7 -eg plotly -b 1000 -e 2001
+        dit xvg_show_stack -f dssp_sc.xvg -c 2-7 -eg gnuplot --alpha 0.4
     """
 
     def __init__(self, parm: Parameters) -> None:
@@ -1334,21 +1428,32 @@ class xvg_ave_bar(Command):
 
 class xvg_rama(Command):
     """
-
+    Generate Ramachandran plot from xvg file generated by `gmx rama`.
+    This command will count the Normal points and outlier points of Ramachandran.
 
     :Parameters:
         -f, --input
+                specify the xvg file generated by `gmx rama`
         -o, --output (optional)
+                specify the file name for saving figure
         -ns, --noshow (optional)
+                NOT to show figure
         -x, --xlabel (optional)
+                specify the xlabel of figure
         -y, --ylabel (optional)
+                specify the ylabel of figure
         -t, --title (optional)
+                specify the title of figure
         -eg, --engine (optional)
+                specify the plot engine: matplotlib (default), plotly
         --x_precision (optional)
+                specify the precision of X ticklabels
         --y_precision (optional)
+                specify the precision of Y ticklabels
 
     :Usage:
-    
+        dit xvg_rama -f rama.xvg
+        dit xvg_rama -f rama.xvg -eg plotly
     """
 
     def __init__(self, parm: Parameters) -> None:
