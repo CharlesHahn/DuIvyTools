@@ -1148,40 +1148,72 @@ class xvg_show_stack(Command):
 
 class xvg_box_compare(xvg_compare):
     """
-
+    Show the difference of xvg data by violin and scatter plot. 
+    The data selected will be drawn into violin plot with a scatter plot colored by the data of corresponding first column data in xvg file. If `-m withoutScatter` specified, only the violin plot will be shown. 
 
     :Parameters:
         -f, --input
+                specify the input xvg file or files
         -c, --columns
+                specify the indexs of data columns
         -l, --legends (optional)
+                specify the xtitles of violin figure
         -o, --output (optional)
+                specify the file name for saving figure
         -ns, --noshow (optional)
+                NOT to show figure
         -x, --xlabel (optional)
+                specify the xlabel of figure
         -y, --ylabel (optional)
+                specify the ylabel of figure
         -z, --zlabel (optional)
+                specify the colorbar title of figure
         -t, --title (optional)
+                specify the title of figure
         -eg, --engine (optional)
+                specify the plot engine: matplotlib (default), plotly, gnuplot
         -b, --begin (optional)
+                specify the begin index of data to present
         -e, --end (optional)
+                specify the end index of data to present
         -dt, --dt (optional)
+                specify the index step of data to present
         -ys, --yshrink (optional)
+                specify the shrink fold number of Y values
         -zs, --zshrink (optional)
+                specify the shrink fold number of Z values (for colorizing)
         -xmin, --xmin (optional)
+                specify the xmin value of figure canvas
         -xmax, --xmax (optional)
+                specify the xmax value of figure canvas
         -ymin, --ymin (optional)
+                specify the ymin value of figure canvas
         -ymax, --ymax (optional)
+                specify the ymax value of figure canvas
         -zmin, --zmin (optional)
+                specify the zmin value of figure canvas, colorbar min value
         -zmax, --zmax (optional)
+                specify the zmax value of figure canvas, colorbar max value
         -m, --mode (optional)
+                specify `withoutScatter` to hide scatter plot
         -cmap, --colormap (optional)
+                specify the colormap to colorize scatter
         --alpha (optional)
+                specify the opacity of scatter points, default to 0.4
         --x_precision (optional)
+                specify the precision of X ticklabels
         --y_precision (optional)
+                specify the precision of Y ticklabels
         --z_precision (optional)
+                specify the precision of Z ticklabels
         --colorbar_location (optional)
+                specify the colorbar_location: bottom, up, left, right
 
     :Usage:
-    
+        dit xvg_box_compare -f RMSD.xvg -c 1 -cmap jet --alpha 1.0
+        dit xvg_box_compare -f RMSD.xvg gyrate.xvg -c 1 1,2,3,4 -m withoutScatter -l RMSD Gyrate Gx Gy Gz
+        dit xvg_box_compare -f RMSD.xvg -c 1 -cmap plasma -eg plotly -z Time(ns) --z_precision 0 -zs 0.001 
+        dit xvg_box_compare -f RMSD.xvg gyrate.xvg -eg gnuplot -c 1 1,2,3,4 -l RMSD Gyrate Gx Gy Gz
     """
 
     def __init__(self, parm: Parameters) -> None:

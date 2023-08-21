@@ -358,6 +358,7 @@ class BoxPlotly(ParentPlotly):
                                 "xanchor": "left",
                                 "yanchor": "top",
                             },
+                            opacity=kwargs["alpha"],
                             color=kwargs["color_list"][i],
                             colorscale=kwargs["cmap"],
                             symbol=i,
@@ -374,6 +375,7 @@ class BoxPlotly(ParentPlotly):
                     x0=kwargs["legends"][i],
                     box_visible=True,
                     meanline_visible=True,
+                    showlegend=False,
                 )
             )
         self.figure.update_xaxes(
