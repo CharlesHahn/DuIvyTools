@@ -113,6 +113,22 @@ class xpm_show(Command):
         method: str,
         ip_fold: int,
     ) -> Union[List[float], List[List[float]]]:
+        """perform the interpolation of matrix data
+
+        Args:
+            xaxis (List[float]): the X data
+            yaxis (List[float]): the Y data
+            matrix (List[List[float]]): the matrix values
+            method (str): method for interpolation
+            ip_fold (int): the multiple of interpolation
+
+        Returns:
+            x_new_mg (List[float]): the meshgrided X data after interpolation
+            y_new_mg (List[float]): the meshgrided Y data after interpolation
+            matrix_new (List[List[float]]): the matrix values after interpolation
+            x_new (List[float]): the X data after interpolation
+            y_new (List[float]): the Y data after interpolation
+        """
         # interp2d : linear, cubic, quintic
         ip_func = interp2d(xaxis, yaxis, matrix, kind=method)
         # ip_func = RectBivariateSpline(xaxis, yaxis, matrix)#, kx=3, ky=3)
@@ -138,7 +154,9 @@ class xpm_show(Command):
             value_matrix (List[List[float]]): image value matrix
 
         Returns:
-            Union[List[float], List[List[float]]]: xaxis, yaxis, value_matrix
+            xaxis (List[float]): xaxis data after cutting
+            yaxis (List[float]): yaxis data after cutting
+            value_matrix (List[List[float]]): image value matrix after cutting
         """
 
         if self.parm.xmin != None and not isinstance(self.parm.xmin, int):
@@ -201,8 +219,7 @@ class xpm_show(Command):
 
         return xaxis, yaxis, value_matrix
 
-    def __call__(self):  ## write process code
-
+    def __call__(self):
         # self.info("in xpm_show")
         # print(self.parm.__dict__)
 
@@ -341,14 +358,38 @@ class xpm_show(Command):
 
 
 class xpm2csv(Command):
-    """convert xpm to csv file"""
+    """
+    Converting xpm file into csv file in (X, Y, Z) data format.
+
+    :Parameters:
+        -f, --input
+                specify the input xpm file (or files)
+        -o, --output
+                specify the csv file name for saving data
+        -x, --xlabel
+                specify the xlabel of XPM
+        -y, --ylabel
+                specify the ylabel of XPM 
+        -z, --zlabel
+                specify the zlabel of XPM 
+        -xs, --xshrink
+                specify the shrink fold number of X values
+        -ys, --yshrink
+                specify the shrink fold number of Y values
+        -zs, --zshrink
+                specify the shrink fold number of Z values
+
+    :Usage:
+        dit xpm2csv -f FEL.xpm -o fel.csv
+        dit xpm2csv -f DSSP.xpm -o dssp.csv -x Time(ns) -xs 0.001 -y "Residue No."
+    """
 
     def __init__(self, parm: Parameters) -> None:
         self.parm = parm
 
     def __call__(self):
-        self.info("in xpm2csv")
-        print(self.parm.__dict__)
+        # self.info("in xpm2csv")
+        # print(self.parm.__dict__)
 
         if not self.parm.input:
             self.error("you must specify a xpm file for converting to csv file")
@@ -385,14 +426,38 @@ class xpm2csv(Command):
 
 
 class xpm2dat(Command):
-    """convert xpm to dat file"""
+    """
+    Converting xpm file into dat file in data matrix format.
+
+    :Parameters:
+        -f, --input
+                specify the input xpm file (or files)
+        -o, --output
+                specify the dat file name for saving data
+        -x, --xlabel
+                specify the xlabel of XPM
+        -y, --ylabel
+                specify the ylabel of XPM 
+        -z, --zlabel
+                specify the zlabel of XPM 
+        -xs, --xshrink
+                specify the shrink fold number of X values
+        -ys, --yshrink
+                specify the shrink fold number of Y values
+        -zs, --zshrink
+                specify the shrink fold number of Z values
+
+    :Usage:
+        dit xpm2dat -f FEL.xpm -o fel.dat
+        dit xpm2dat -f DSSP.xpm -o dssp.dat -x Time(ns) -xs 0.001
+    """
 
     def __init__(self, parm: Parameters) -> None:
         self.parm = parm
 
     def __call__(self):
-        self.info("in xpm2dat")
-        print(self.parm.__dict__)
+        # self.info("in xpm2dat")
+        # print(self.parm.__dict__)
 
         if not self.parm.input:
             self.error("you must specify a xpm file for converting to dat file")
@@ -448,14 +513,39 @@ class xpm2dat(Command):
 
 
 class xpm_diff(Command):
-    """calculate the difference of two xpm files"""
+    """
+    Calculate the difference of two xpm files. 
+    By calculating the difference of matrix values of two xpms correspondingly (first xpm - second xpm), this command could be used for presentation the variation of two xpm files.
+
+    :Parameters:
+        -f, --input
+                specify the two xpm files for input
+        -o, --output
+                specify the xpm file name for output
+        -x, --xlabel
+                specify the xlabel of XPM of output
+        -y, --ylabel
+                specify the ylabel of XPM of output
+        -z, --zlabel
+                specify the zlabel of XPM of output
+        -xs, --xshrink
+                specify the shrink fold number of X values
+        -ys, --yshrink
+                specify the shrink fold number of Y values
+        -zs, --zshrink
+                specify the shrink fold number of Z values
+
+    :Usage:
+        dit xpm_diff -f DCCM0.xpm DCCM1.xpm -o DCCM0-1.xpm
+    """
+
 
     def __init__(self, parm: Parameters) -> None:
         self.parm = parm
 
     def __call__(self):
-        self.info("in xpm_diff")
-        print(self.parm.__dict__)
+        # self.info("in xpm_diff")
+        # print(self.parm.__dict__)
 
         if not self.parm.input:
             self.error("you must specify two xpm file for calcuelation")
@@ -471,19 +561,51 @@ class xpm_diff(Command):
         xpm1 = XPM(self.parm.input[1])
         xpm = xpm0 - xpm1
         xpm.xpmfile = self.parm.output
-        xpm.title = f"{xpm0.xpmfile} - {xpm1.xpmfile}"
+        xpm.xlabel = self.sel_parm(self.parm.xlabel, xpm.xlabel)
+        xpm.ylabel = self.sel_parm(self.parm.ylabel, xpm.ylabel)
+        xpm.legend = self.sel_parm(self.parm.zlabel, xpm.legend)
+        xpm.title = self.sel_parm(self.parm.title, f"{xpm0.xpmfile} - {xpm1.xpmfile}")
+        xpm.xaxis = [x * self.parm.xshrink for x in xpm.xaxis]
+        xpm.yaxis = [y * self.parm.yshrink for y in xpm.yaxis]
+        for y, _ in enumerate(xpm.yaxis):
+            for x, _ in enumerate(xpm.xaxis):
+                xpm.value_matrix[y][x] *= self.parm.zshrink
         xpm.save(self.parm.output)
 
 
 class xpm_merge(Command):
-    """merge two xpm file by half and half"""
+    """
+    Merge two xpm files half by half.
+    The first specified xpm will be located at left top corner, the second one will be located at right bottom corner. Thi command might be useful for stitching two xpm together.
+
+    :Parameters:
+        -f, --input
+                specify the two xpm files for input
+        -o, --output
+                specify the xpm file name for output
+        -x, --xlabel
+                specify the xlabel of XPM of output
+        -y, --ylabel
+                specify the ylabel of XPM of output
+        -z, --zlabel
+                specify the zlabel of XPM of output
+        -xs, --xshrink
+                specify the shrink fold number of X values
+        -ys, --yshrink
+                specify the shrink fold number of Y values
+        -zs, --zshrink
+                specify the shrink fold number of Z values
+
+    :Usage:
+        dit xpm_merge -f DCCM0.xpm DCCM1.xpm -o DCCM0-1.xpm
+    """
 
     def __init__(self, parm: Parameters) -> None:
         self.parm = parm
 
     def __call__(self):
-        self.info("in xpm_merge")
-        print(self.parm.__dict__)
+        # self.info("in xpm_merge")
+        # print(self.parm.__dict__)
 
         if not self.parm.input:
             self.error("you must specify two xpm file for calcuelation")
@@ -533,5 +655,13 @@ class xpm_merge(Command):
                     out.value_matrix[h][w] = value
             out.refresh_by_value_matrix(is_Continuous=False)
 
-        out.title = f"{xpm0.xpmfile}(left) / {xpm1.xpmfile}(right)"
+        out.title = self.sel_parm(self.parm.title, f"{xpm0.xpmfile}(left) / {xpm1.xpmfile}(right)")
+        out.xlabel = self.sel_parm(self.parm.xlabel, out.xlabel)
+        out.ylabel = self.sel_parm(self.parm.ylabel, out.ylabel)
+        out.legend = self.sel_parm(self.parm.zlabel, out.legend)
+        out.xaxis = [x * self.parm.xshrink for x in out.xaxis]
+        out.yaxis = [y * self.parm.yshrink for y in out.yaxis]
+        for y, _ in enumerate(out.yaxis):
+            for x, _ in enumerate(out.xaxis):
+                out.value_matrix[y][x] *= self.parm.zshrink
         out.save(self.parm.output)
