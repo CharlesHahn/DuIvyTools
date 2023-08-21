@@ -20,33 +20,55 @@ from Visualizor.Visualizer_plotly import *
 
 class xvg_show(Command):
     """
-
+    Visualize all data in xvg files. 
 
     :Parameters:
         -f, --input
+                specify the input xvg file (or files)
         -o, --output (optional)
+                specify the name for saving figure
         -ns, --noshow (optional)
+                Not to show figure
         -l, --legends (optional)
+                specify the legends of shown data columns
         -x, --xlabel (optional)
+                specify the xlabel of figure
         -y, --ylabel (optional)
+                specify the ylabel of figure
         -t, --title (optional)
+                specify the title of figure
         -eg, --engine (optional)
+                specify the plot engine: matplotlib (default), plotly, gnuplot, plotext
         -b, --begin (optional)
+                specify the begin index of data to present
         -e, --end (optional)
+                specify the end index of data to present
         -dt, --dt (optional)
+                specify the index step of data to present
         -xs, --xshrink (optional)
+                specify the shrink fold number of X values
         -ys, --yshrink (optional)
+                specify the shrink fold number of Y values
         -xmin, --xmin (optional)
+                specify the xmin value of figure canvas
         -xmax, --xmax (optional)
+                specify the xmax value of figure canvas
         -ymin, --ymin (optional)
+                specify the ymin value of figure canvas
         -ymax, --ymax (optional)
-        --alpha (optional)
+                specify the ymax value of figure canvas
         --legend_location (optional)
+                specify the location of legends, inside or outside
         --x_precision (optional)
+                specify the precision of X ticklabels
         --y_precision (optional)
+                specify the precision of Y ticklabels
 
     :Usage:
-    
+        dit xvg_show -f RMSD.xvg 
+        dit xvg_show -f RMSD.xvg -ns -o rmsd.png
+        dit xvg_show -f RMSD.xvg -x Time(ns) -xs 0.001 --legend_location
+        dit xvg_show -f gyrate.xvg -b 1000 -e 2001 --x_precision 2 --y_precision 2
     """
 
     def __init__(self, parm: Parameters) -> None:
@@ -111,38 +133,72 @@ class xvg_show(Command):
 
 class xvg_compare(Command):
     """
-
+    Compare the data columns of different xvg files.
+    Moving averages and confidence intervals could be calculated and presented by `-smv`. 
+    `-csv` allows users to dump data into csv file, by which users could convert any xvg files into csv files.
 
     :Parameters:
         -f, --input
+                specify the input xvg file or files
         -c, --columns
+                specify the indexs of data columns you wanna visualize
         -l, --legends (optional)
+                specify the legends of figure
         -o, --output (optional)
+                specify the file name for saving figure
         -ns, --noshow (optional)
+                NOT to show figure
         -x, --xlabel (optional)
+                specify the xlabel of figure
         -y, --ylabel (optional)
+                specify the ylabel of figure
         -t, --title (optional)
+                specify the title of figure
         -eg, --engine (optional)
+                specify the plot engine: matplotlib (default), plotly, gnuplot, plotext (unable to show confidence interval)
         -b, --begin (optional)
+                specify the begin index of data to present
         -e, --end (optional)
+                specify the end index of data to present
         -dt, --dt (optional)
+                specify the index step of data to present
         -smv, --showMV (optional)
+                show the moving averages and confidence intervals
         -ws, --windowsize (optional)
+                set the windowsize of calculating moving averages, default to 50
         -cf, --confidence (optional)
+                set the confidence of calculating confidence intervals, default to 0.95
         -xs, --xshrink (optional)
+                specify the shrink fold number of X values
         -ys, --yshrink (optional)
+                specify the shrink fold number of Y values
         -xmin, --xmin (optional)
+                specify the xmin value of figure canvas
         -xmax, --xmax (optional)
+                specify the xmax value of figure canvas
         -ymin, --ymin (optional)
+                specify the ymin value of figure canvas
         -ymax, --ymax (optional)
-        --csv (optional)
+                specify the ymax value of figure canvas
         --alpha (optional)
+                set the opacify of confidence intervals
         --legend_location (optional)
+                specify the location of legends, inside or outside
         --x_precision (optional)
+                specify the precision of X ticklabels
         --y_precision (optional)
+                specify the precision of Y ticklabels
+        --csv (optional)
+                specify the csv file name for dumping xvg data
 
     :Usage:
-    
+        dit xvg_compare -f RMSD.xvg Gyrate.xvg -c 1 1 -l RMSD(nm) Gyrate(nm)
+        dit xvg_compare -f RMSD.xvg Gyrate.xvg -c 1 1 -b 1000 -e 2001 -dt 10
+        dit xvg_compare -f RMSD.xvg Gyrate.xvg -c 1 1 -b 10000 -ns -o test.png
+        dit xvg_compare -f RMSD.xvg Gyrate.xvg -c 1 1 -xs 0.001 -x Time(ns) -y nm
+        dit xvg_compare -f Gyrate.xvg -c 1,2,3 -smv -ws 100 -cf 0.90 --alpha 0.4
+        dit xvg_compare -f Gyrate.xvg -c 1,2,3 -smv -eg plotly -csv gyrate.csv
+        dit xvg_compare -f Gyrate.xvg -c 1-4 -eg gnuplot --legend_location outside
     """
 
     def __init__(self, parm: Parameters) -> None:
@@ -742,7 +798,7 @@ class xvg_show_scatter(Command):
         -zmin, --zmin (optional)
         -zmax, --zmax (optional)
         -cmap, --colormap (optional)
-        -alpha (optional)
+        --alpha (optional)
         --x_precision (optional)
         --y_precision (optional)
         --z_precision (optional)
@@ -752,6 +808,7 @@ class xvg_show_scatter(Command):
     :Usage:
     
     """
+
     def __init__(self, parm: Parameters) -> None:
         self.parm = parm
 
@@ -860,6 +917,37 @@ class xvg_show_scatter(Command):
 
 
 class xvg_show_stack(Command):
+    """
+
+
+    :Parameters:
+        -f, --input
+        -c, --columns
+        -l, --legends (optional)
+        -o, --output (optional)
+        -ns, --noshow (optional)
+        -x, --xlabel (optional)
+        -y, --ylabel (optional)
+        -t, --title (optional)
+        -eg, --engine (optional)
+        -b, --begin (optional)
+        -e, --end (optional)
+        -dt, --dt (optional)
+        -xs, --xshrink (optional)
+        -ys, --yshrink (optional)
+        -xmin, --xmin (optional)
+        -xmax, --xmax (optional)
+        -ymin, --ymin (optional)
+        -ymax, --ymax (optional)
+        --x_precision (optional)
+        --y_precision (optional)
+        --alpha (optional)
+        --legend_location (optional)
+
+    :Usage:
+    
+    """
+
     def __init__(self, parm: Parameters) -> None:
         self.parm = parm
 
@@ -965,6 +1053,43 @@ class xvg_show_stack(Command):
 
 
 class xvg_box_compare(xvg_compare):
+    """
+
+
+    :Parameters:
+        -f, --input
+        -c, --columns
+        -l, --legends (optional)
+        -o, --output (optional)
+        -ns, --noshow (optional)
+        -x, --xlabel (optional)
+        -y, --ylabel (optional)
+        -z, --zlabel (optional)
+        -t, --title (optional)
+        -eg, --engine (optional)
+        -b, --begin (optional)
+        -e, --end (optional)
+        -dt, --dt (optional)
+        -ys, --yshrink (optional)
+        -zs, --zshrink (optional)
+        -xmin, --xmin (optional)
+        -xmax, --xmax (optional)
+        -ymin, --ymin (optional)
+        -ymax, --ymax (optional)
+        -zmin, --zmin (optional)
+        -zmax, --zmax (optional)
+        -m, --mode (optional)
+        -cmap, --colormap (optional)
+        --alpha (optional)
+        --x_precision (optional)
+        --y_precision (optional)
+        --z_precision (optional)
+        --colorbar_location (optional)
+
+    :Usage:
+    
+    """
+
     def __init__(self, parm: Parameters) -> None:
         self.parm = parm
 
@@ -1039,6 +1164,36 @@ class xvg_box_compare(xvg_compare):
 
 
 class xvg_ave_bar(Command):
+    """
+
+
+    :Parameters:
+        -f, --input
+        -c, --columns
+        -l, --legends (optional)
+        -o, --output (optional)
+        -ns, --noshow (optional)
+        -al, --additional_list (optional)
+        -x, --xlabel (optional)
+        -y, --ylabel (optional)
+        -t, --title (optional)
+        -eg, --engine (optional)
+        -b, --begin (optional)
+        -e, --end (optional)
+        -dt, --dt (optional)
+        -xmin, --xmin (optional)
+        -xmax, --xmax (optional)
+        -ymin, --ymin (optional)
+        -ymax, --ymax (optional)
+        --csv (optional)
+        --x_precision (optional)
+        --y_precision (optional)
+        --legend_location (optional)
+
+    :Usage:
+    
+    """
+
     def __init__(self, parm: Parameters) -> None:
         self.parm = parm
 
@@ -1178,6 +1333,24 @@ class xvg_ave_bar(Command):
 
 
 class xvg_rama(Command):
+    """
+
+
+    :Parameters:
+        -f, --input
+        -o, --output (optional)
+        -ns, --noshow (optional)
+        -x, --xlabel (optional)
+        -y, --ylabel (optional)
+        -t, --title (optional)
+        -eg, --engine (optional)
+        --x_precision (optional)
+        --y_precision (optional)
+
+    :Usage:
+    
+    """
+
     def __init__(self, parm: Parameters) -> None:
         self.parm = parm
 
