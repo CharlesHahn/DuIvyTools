@@ -218,6 +218,7 @@ class ScatterPlotly(ParentPlotly):
         x_precision :int
         y_precision :int
         z_precision :int
+        alpha
         cmap :str
         colorbar_location:str
     """
@@ -242,6 +243,7 @@ class ScatterPlotly(ParentPlotly):
                             "xanchor": "left",
                             "yanchor": "top",
                         },
+                        opacity=kwargs["alpha"],
                         color=kwargs["color_list"][i],
                         colorscale=kwargs["cmap"],
                         symbol=i,

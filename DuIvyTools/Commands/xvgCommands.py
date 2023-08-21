@@ -5,30 +5,56 @@ Written by DuIvy and provided to you by GPLv3 license.
 """
 
 import os
-import sys
-import time
-from typing import List, Tuple, Union
+from typing import List, Tuple
 
 import numpy as np
 
 from Commands.Commands import Command
 from FileParser.xvgParser import XVG
+from utils import Parameters
+from Visualizor.Visualizer_gnuplot import *
 from Visualizor.Visualizer_matplotlib import *
 from Visualizor.Visualizer_plotext import *
 from Visualizor.Visualizer_plotly import *
-from Visualizor.Visualizer_gnuplot import *
-from utils import Parameters
 
 
 class xvg_show(Command):
-    """a command class to show xvg data file"""
+    """
+
+
+    :Parameters:
+        -f, --input
+        -o, --output (optional)
+        -ns, --noshow (optional)
+        -l, --legends (optional)
+        -x, --xlabel (optional)
+        -y, --ylabel (optional)
+        -t, --title (optional)
+        -eg, --engine (optional)
+        -b, --begin (optional)
+        -e, --end (optional)
+        -dt, --dt (optional)
+        -xs, --xshrink (optional)
+        -ys, --yshrink (optional)
+        -xmin, --xmin (optional)
+        -xmax, --xmax (optional)
+        -ymin, --ymin (optional)
+        -ymax, --ymax (optional)
+        --alpha (optional)
+        --legend_location (optional)
+        --x_precision (optional)
+        --y_precision (optional)
+
+    :Usage:
+    
+    """
 
     def __init__(self, parm: Parameters) -> None:
         self.parm = parm
 
-    def __call__(self):  ## write process code
-        self.info("in xvgSHOW")
-        print(self.parm.__dict__)
+    def __call__(self):
+        # self.info("in xvgSHOW")
+        # print(self.parm.__dict__)
 
         if not self.parm.input:
             self.error("you must specify the xvg files to show")
@@ -84,7 +110,40 @@ class xvg_show(Command):
 
 
 class xvg_compare(Command):
-    """a command class for compare xvg file data"""
+    """
+
+
+    :Parameters:
+        -f, --input
+        -c, --columns
+        -l, --legends (optional)
+        -o, --output (optional)
+        -ns, --noshow (optional)
+        -x, --xlabel (optional)
+        -y, --ylabel (optional)
+        -t, --title (optional)
+        -eg, --engine (optional)
+        -b, --begin (optional)
+        -e, --end (optional)
+        -dt, --dt (optional)
+        -smv, --showMV (optional)
+        -ws, --windowsize (optional)
+        -cf, --confidence (optional)
+        -xs, --xshrink (optional)
+        -ys, --yshrink (optional)
+        -xmin, --xmin (optional)
+        -xmax, --xmax (optional)
+        -ymin, --ymin (optional)
+        -ymax, --ymax (optional)
+        --csv (optional)
+        --alpha (optional)
+        --legend_location (optional)
+        --x_precision (optional)
+        --y_precision (optional)
+
+    :Usage:
+    
+    """
 
     def __init__(self, parm: Parameters) -> None:
         self.parm = parm
@@ -106,8 +165,8 @@ class xvg_compare(Command):
             self.error("number of legends you input can not pair to columns you select")
 
     def __call__(self):
-        self.info("in xvgCompare")
-        print(self.parm.__dict__)
+        # self.info("in xvgCompare")
+        # print(self.parm.__dict__)
 
         self.check_parm()
         if self.parm.title == None:
@@ -244,13 +303,26 @@ class xvg_compare(Command):
 
 class xvg_ave(Command):
     """compute averages of all data columns of specified xvg files"""
+    """
+
+
+    :Parameters:
+        -f, --input
+        -o, --output (optional)
+        -b, --begin (optional)
+        -e, --end (optional)
+        -dt, --dt (optional)
+
+    :Usage:
+    
+    """
 
     def __init__(self, parm: Parameters) -> None:
         self.parm = parm
 
     def __call__(self):
-        self.info("in xvg_ave")
-        print(self.parm.__dict__)
+        # self.info("in xvg_ave")
+        # print(self.parm.__dict__)
 
         outstr: str = ""
         begin, end, dt = self.parm.begin, self.parm.end, self.parm.dt
@@ -294,13 +366,24 @@ class xvg_energy_compute(Command):
         the xvg file used here should contain and ONLY contain five columns:
         Time, LJ(SR), Disper.corr., Coulomb(SR), Coul.recip.
     """
+    """
+
+
+    :Parameters:
+        -f, --input
+        -o, --output (optional)
+                specify the output xvg file name, default to 'dit_energy_compute.xvg'
+
+    :Usage:
+    
+    """
 
     def __init__(self, parm: Parameters) -> None:
         self.parm = parm
 
     def __call__(self):
-        self.info("in xvg_energy_compute")
-        print(self.parm.__dict__)
+        # self.info("in xvg_energy_compute")
+        # print(self.parm.__dict__)
 
         ## check parameters
         if len(self.parm.input) != 3:
@@ -311,7 +394,7 @@ class xvg_energy_compute(Command):
         pro_xvg = self.parm.input[1]
         lig_xvg = self.parm.input[2]
         if not self.parm.output:
-            self.error("please specify output xvg file name")
+            self.parm.output = "dit_energy_compute.xvg"
         self.parm.output = self.check_output_exist(self.parm.output)
 
         prolig, pro, lig = XVG(prolig_xvg), XVG(pro_xvg), XVG(lig_xvg)
@@ -417,16 +500,35 @@ class xvg_energy_compute(Command):
 
 
 class xvg_combine(Command):
+    """
+
+
+    :Parameters:
+        -f, --input
+        -c, --columns
+        -l, --legends (optional)
+        -o, --output (optional)
+        -x, --xlabel (optional)
+        -y, --ylabel (optional)
+        -t, --title (optional)
+        -b, --begin (optional)
+        -e, --end (optional)
+        -dt, --dt (optional)
+        -ys, --yshrink (optional)
+
+    :Usage:
+    
+    """
     def __init__(self, parm: Parameters) -> None:
         self.parm = parm
 
     def __call__(self):
-        self.info("in xvg_combine")
-        print(self.parm.__dict__)
+        # self.info("in xvg_combine")
+        # print(self.parm.__dict__)
 
         ## check parm
         if not self.parm.output:
-            self.error("please specify output xvg file name")
+            self.parm.output = "dit_xvg_combine.xvg"
         self.parm.output = self.check_output_exist(self.parm.output)
 
         for xvg in self.parm.input:
@@ -440,6 +542,7 @@ class xvg_combine(Command):
         ):
             self.error("number of legends you input can not pair to columns you select")
 
+        begin, end, dt = self.parm.begin, self.parm.end, self.parm.dt
         # process xvg combination
         out_xvg = XVG(self.parm.output, is_file=False, new_file=True)
         title_list: str = []
@@ -453,7 +556,8 @@ class xvg_combine(Command):
             for column_index in column_indexs:
                 xvg.check_column_index(column_index)
                 out_xvg.data_heads.append(xvg.data_heads[column_index])
-                out_xvg.data_columns.append(xvg.data_columns[column_index])
+                data = xvg.data_columns[column_index][begin:end:dt]
+                out_xvg.data_columns.append([d*self.parm.yshrink for d in data])
         if self.parm.title:
             out_xvg.title = self.parm.title
         else:
@@ -469,12 +573,42 @@ class xvg_combine(Command):
 
 
 class xvg_show_distribution(xvg_compare):
+    """
+
+
+    :Parameters:
+        -f, --input
+        -c, --columns
+        -l, --legends (optional)
+        -o, --output (optional)
+        -ns, --noshow (optional)
+        -x, --xlabel (optional)
+        -y, --ylabel (optional)
+        -t, --title (optional)
+        -eg, --engine (optional)
+        -b, --begin (optional)
+        -e, --end (optional)
+        -dt, --dt (optional)
+        -xmin, --xmin (optional)
+        -xmax, --xmax (optional)
+        -ymin, --ymin (optional)
+        -ymax, --ymax (optional)
+        --csv (optional)
+        --alpha (optional)
+        --x_precision (optional)
+        --y_precision (optional)
+        --legend_location (optional)
+        -bin, --bin (optional)
+
+    :Usage:
+    
+    """
     def __init__(self, parm: Parameters) -> None:
         self.parm = parm
 
     def __call__(self):
-        self.info("in xvg_show_distribution")
-        print(self.parm.__dict__)
+        # self.info("in xvg_show_distribution")
+        # print(self.parm.__dict__)
 
         ## TODO: fill the curve to zero, KDE density map
         self.check_parm()
@@ -581,12 +715,49 @@ class xvg_show_distribution(xvg_compare):
 
 
 class xvg_show_scatter(Command):
+    """
+
+
+    :Parameters:
+        -f, --input
+        -c, --columns
+        -l, --legends (optional)
+        -o, --output (optional)
+        -ns, --noshow (optional)
+        -x, --xlabel (optional)
+        -y, --ylabel (optional)
+        -z, --zlabel (optional)
+        -t, --title (optional)
+        -eg, --engine (optional)
+        -b, --begin (optional)
+        -e, --end (optional)
+        -dt, --dt (optional)
+        -xs, --xshrink (optional)
+        -ys, --yshrink (optional)
+        -zs, --zshrink (optional)
+        -xmin, --xmin (optional)
+        -xmax, --xmax (optional)
+        -ymin, --ymin (optional)
+        -ymax, --ymax (optional)
+        -zmin, --zmin (optional)
+        -zmax, --zmax (optional)
+        -cmap, --colormap (optional)
+        -alpha (optional)
+        --x_precision (optional)
+        --y_precision (optional)
+        --z_precision (optional)
+        --colorbar_location (optional)
+        --legend_location (optional)
+
+    :Usage:
+    
+    """
     def __init__(self, parm: Parameters) -> None:
         self.parm = parm
 
     def __call__(self):
-        self.info("in xvg_show_scatter")
-        print(self.parm.__dict__)
+        # self.info("in xvg_show_scatter")
+        # print(self.parm.__dict__)
 
         ## check and convert parm
         if not self.parm.input:
@@ -664,6 +835,7 @@ class xvg_show_scatter(Command):
             "ylabel": self.sel_parm(self.parm.ylabel, ylabel),
             "title": self.sel_parm(self.parm.title, self.file.title),
             "zlabel": self.sel_parm(self.parm.zlabel, color_head),
+            "alpha": self.sel_parm(self.parm.alpha, 1.0),
             "cmap": self.sel_parm(self.parm.colormap, None),
             "x_precision": self.parm.x_precision,
             "y_precision": self.parm.y_precision,
@@ -692,8 +864,8 @@ class xvg_show_stack(Command):
         self.parm = parm
 
     def __call__(self):
-        self.info("in xvg_show_stack")
-        print(self.parm.__dict__)
+        # self.info("in xvg_show_stack")
+        # print(self.parm.__dict__)
 
         ## check and convert parm
         if not self.parm.input:
@@ -797,8 +969,8 @@ class xvg_box_compare(xvg_compare):
         self.parm = parm
 
     def __call__(self):
-        self.info("in xvg_box")
-        print(self.parm.__dict__)
+        # self.info("in xvg_box")
+        # print(self.parm.__dict__)
 
         self.check_parm()
         ## draw data relative to its original xdata
@@ -871,8 +1043,8 @@ class xvg_ave_bar(Command):
         self.parm = parm
 
     def __call__(self):
-        self.info("in xvg_ave_bar")
-        print(self.parm.__dict__)
+        # self.info("in xvg_ave_bar")
+        # print(self.parm.__dict__)
 
         ## check and convert parm
         if not self.parm.input:
@@ -1010,8 +1182,8 @@ class xvg_rama(Command):
         self.parm = parm
 
     def __call__(self):
-        self.info("in xvg_rama")
-        print(self.parm.__dict__)
+        # self.info("in xvg_rama")
+        # print(self.parm.__dict__)
 
         ## check parameters
         if not self.parm.input:

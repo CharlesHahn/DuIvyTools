@@ -157,6 +157,7 @@ class ScatterMatplotlib(ParentMatplotlib):
         x_precision :int
         y_precision :int
         z_precision :int
+        alpha :float
         cmap :str
         colorbar_location:str
         legend_location:str #{inside, outside}
@@ -194,6 +195,7 @@ class ScatterMatplotlib(ParentMatplotlib):
                 cmap=kwargs["cmap"],
                 vmin=kwargs["zmin"],
                 vmax=kwargs["zmax"],
+                alpha=kwargs["alpha"],
             )
         if kwargs["z_precision"] != None:
             plt.colorbar(

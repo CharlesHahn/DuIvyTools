@@ -31,57 +31,57 @@ class xpm_show(Command):
     :Parameters:
         -f, --input
                 specify the input xpm file (or files)
-        -o, --output
+        -o, --output (optional)
                 specify the file name for saving figures
-        -ns, --noshow
+        -ns, --noshow (optional)
                 whether not to show figures. When applied to gnuplot, DIT will generate a gnuplot input script
-        -x, --xlabel
+        -x, --xlabel (optional)
                 specify the xlabel of figure
-        -y, --ylabel
+        -y, --ylabel (optional)
                 specify the ylabel of figure
-        -z, --zlabel
+        -z, --zlabel (optional)
                 specify the zlabel of figure
-        -t, --title
+        -t, --title (optional)
                 specify the title of figure
-        -xs, --xshrink
+        -xs, --xshrink (optional)
                 specify the shrink fold number of X values
-        -ys, --yshrink
+        -ys, --yshrink (optional)
                 specify the shrink fold number of Y values
-        -zs, --zshrink
+        -zs, --zshrink (optional)
                 specify the shrink fold number of Z values
-        -xmin, --xmin
+        -xmin, --xmin (optional)
                 specify the xmin index of xpm matrix to show
-        -xmax, --xmax
+        -xmax, --xmax (optional)
                 specify the xmax index of xpm matrix to show
-        -ymin, --ymin
+        -ymin, --ymin (optional)
                 specify the ymin index of xpm matrix to show
-        -ymax, --ymax
+        -ymax, --ymax (optional)
                 specify the ymax index of xpm matrix to show
-        -zmin, --zmin
+        -zmin, --zmin (optional)
                 specify the min value of colorbar to show
-        -zmax, --zmax
+        -zmax, --zmax (optional)
                 specify the max value of colorbar to show
-        -m, --mode
+        -m, --mode (optional)
                 specify the mode of visualization: imshow, pcolormesh, 3d, contour
-        -eg, --engine
+        -eg, --engine (optional)
                 specify the plot engine: matplotlib (default), plotly, gnuplot, plotext
-        -cmap, --colormap
+        -cmap, --colormap (optional)
                 specify the colormap for visualization
-        -ip, --interpolation
+        -ip, --interpolation (optional)
                 specify the interpolation method
-        -ipf, --interpolation_fold
+        -ipf, --interpolation_fold (optional)
                 specify the multiple of interpolation
-        --alpha
+        --alpha (optional)
                 specify the alpha of figure
-        --x_precision
+        --x_precision (optional)
                 specify the precision of X ticklabels
-        --y_precision
+        --y_precision (optional)
                 specify the precision of Y ticklabels
-        --z_precision
+        --z_precision (optional)
                 specify the precision of Z ticklabels
-        --legend_location
+        --legend_location (optional)
                 specify the location of legend, inside or outside
-        --colorbar_location
+        --colorbar_location (optional)
                 specify the location of colorbar, available for matplotlib: left, top, bottom, right
 
     :Usage:
@@ -364,19 +364,19 @@ class xpm2csv(Command):
     :Parameters:
         -f, --input
                 specify the input xpm file (or files)
-        -o, --output
-                specify the csv file name for saving data
-        -x, --xlabel
+        -o, --output (optional)
+                specify the csv file name for saving data, default to 'dit_{input}.csv'
+        -x, --xlabel (optional)
                 specify the xlabel of XPM
-        -y, --ylabel
+        -y, --ylabel (optional)
                 specify the ylabel of XPM 
-        -z, --zlabel
+        -z, --zlabel (optional)
                 specify the zlabel of XPM 
-        -xs, --xshrink
+        -xs, --xshrink (optional)
                 specify the shrink fold number of X values
-        -ys, --yshrink
+        -ys, --yshrink (optional)
                 specify the shrink fold number of Y values
-        -zs, --zshrink
+        -zs, --zshrink (optional)
                 specify the shrink fold number of Z values
 
     :Usage:
@@ -394,9 +394,9 @@ class xpm2csv(Command):
         if not self.parm.input:
             self.error("you must specify a xpm file for converting to csv file")
         if len(self.parm.input) > 1:
-            self.warn("only the first xpm file you specified will be used !")
+            self.warn(f"only the first xpm file {self.parm.input[0]} will be used !")
         if not self.parm.output:
-            self.error("you must specify a csv file to store results")
+            self.parm.output = f"dit_{self.parm.input[0].split('.')[0]}.csv"
         self.parm.output = self.check_output_exist(self.parm.output)
 
         xpm = XPM(self.parm.input[0])
@@ -432,19 +432,19 @@ class xpm2dat(Command):
     :Parameters:
         -f, --input
                 specify the input xpm file (or files)
-        -o, --output
-                specify the dat file name for saving data
-        -x, --xlabel
+        -o, --output (optional)
+                specify the dat file name for saving data, default to 'dit_{input}.dat'
+        -x, --xlabel (optional)
                 specify the xlabel of XPM
-        -y, --ylabel
+        -y, --ylabel (optional)
                 specify the ylabel of XPM 
-        -z, --zlabel
+        -z, --zlabel (optional)
                 specify the zlabel of XPM 
-        -xs, --xshrink
+        -xs, --xshrink (optional)
                 specify the shrink fold number of X values
-        -ys, --yshrink
+        -ys, --yshrink (optional)
                 specify the shrink fold number of Y values
-        -zs, --zshrink
+        -zs, --zshrink (optional)
                 specify the shrink fold number of Z values
 
     :Usage:
@@ -464,7 +464,7 @@ class xpm2dat(Command):
         if len(self.parm.input) > 1:
             self.warn("only the first xpm file you specified will be used !")
         if not self.parm.output:
-            self.error("you must specify a dat file to store results")
+            self.parm.output = f"dit_{self.parm.input[0].split('.')[0]}.dat"
         self.parm.output = self.check_output_exist(self.parm.output)
 
         xpm = XPM(self.parm.input[0])
@@ -520,19 +520,19 @@ class xpm_diff(Command):
     :Parameters:
         -f, --input
                 specify the two xpm files for input
-        -o, --output
-                specify the xpm file name for output
-        -x, --xlabel
+        -o, --output (optional)
+                specify the xpm file name for output, default to 'dit_xpm_diff.xpm'
+        -x, --xlabel (optional)
                 specify the xlabel of XPM of output
-        -y, --ylabel
+        -y, --ylabel (optional)
                 specify the ylabel of XPM of output
-        -z, --zlabel
+        -z, --zlabel (optional)
                 specify the zlabel of XPM of output
-        -xs, --xshrink
+        -xs, --xshrink (optional)
                 specify the shrink fold number of X values
-        -ys, --yshrink
+        -ys, --yshrink (optional)
                 specify the shrink fold number of Y values
-        -zs, --zshrink
+        -zs, --zshrink (optional)
                 specify the shrink fold number of Z values
 
     :Usage:
@@ -554,7 +554,7 @@ class xpm_diff(Command):
         if len(self.parm.input) < 2:
             self.warn("at least two xpm file are needed for calculation !")
         if not self.parm.output:
-            self.error("you must specify a xpm file name to store results")
+            self.parm.output = "dit_xpm_diff.xpm"
         self.parm.output = self.check_output_exist(self.parm.output)
 
         xpm0 = XPM(self.parm.input[0])
@@ -581,19 +581,19 @@ class xpm_merge(Command):
     :Parameters:
         -f, --input
                 specify the two xpm files for input
-        -o, --output
-                specify the xpm file name for output
-        -x, --xlabel
+        -o, --output (optional)
+                specify the xpm file name for output, default to 'dit_xpm_merge.xpm'
+        -x, --xlabel (optional)
                 specify the xlabel of XPM of output
-        -y, --ylabel
+        -y, --ylabel (optional)
                 specify the ylabel of XPM of output
-        -z, --zlabel
+        -z, --zlabel (optional)
                 specify the zlabel of XPM of output
-        -xs, --xshrink
+        -xs, --xshrink (optional)
                 specify the shrink fold number of X values
-        -ys, --yshrink
+        -ys, --yshrink (optional)
                 specify the shrink fold number of Y values
-        -zs, --zshrink
+        -zs, --zshrink (optional)
                 specify the shrink fold number of Z values
 
     :Usage:
@@ -614,7 +614,7 @@ class xpm_merge(Command):
         if len(self.parm.input) < 2:
             self.warn("at least two xpm file are needed for calculation !")
         if not self.parm.output:
-            self.error("you must specify a xpm file name to store results")
+            self.parm.output = "dit_xpm_merge.xpm"
         self.parm.output = self.check_output_exist(self.parm.output)
 
         xpm0 = XPM(self.parm.input[0])

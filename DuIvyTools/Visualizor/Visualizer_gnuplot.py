@@ -66,6 +66,7 @@ class Gnuplot(log):
         self.color_list: List[List[float]] = None
         self.colorbar_location: str = None
         self.legend_location: str = "inside"
+        self.alpha = None
         self.colormap: str = None
         self.plot_type: str = "line"
         self.mode: str = None
@@ -294,6 +295,10 @@ set colorbox vertical origin screen 0.9, 0.2 size screen 0.05, 0.6 front  noinve
             gpl += f"""set cblabel "{self.zlabel}"\n"""
         if self.z_precision != None:
             gpl += f"""set cbtics format "%.{self.z_precision}f"\n"""
+        if self.alpha == None:
+            self.alpha = 1.0
+        gpl += f"set style fill transparent solid {self.alpha} noborder\n"
+        gpl += f"set style circle radius 0.02\n"
         if self.data and self.legends:
             for c in range(len(self.data)):
                 gpl += f"\n$data{c} << EOD\n"
@@ -302,7 +307,7 @@ set colorbox vertical origin screen 0.9, 0.2 size screen 0.05, 0.6 front  noinve
                 gpl += "EOD\n\n"
             gpl += f"plot [{self.xmin}:{self.xmax}][{self.ymin}:{self.ymax}] "
             for c in range(len(self.data)):
-                gpl += f"""$data{c} u 1:2:3 title "{self.legends[c]}" with points palette, \\\n"""
+                gpl += f"""$data{c} u 1:2:3 title "{self.legends[c]}" with circles palette, \\\n"""
             gpl += "\n"
 
         return gpl
@@ -530,6 +535,7 @@ class ScatterGnuplot(ParentGnuplot):
         x_precision :int
         y_precision :int
         z_precision :int
+        alpha :float
         cmap :str
         colorbar_location:str
         legend_location :str # {inside, outside}
@@ -563,6 +569,7 @@ class ScatterGnuplot(ParentGnuplot):
         self.gnuplot.color_list = kwargs["color_list"]
         self.gnuplot.zlabel = kwargs["zlabel"]
         self.gnuplot.plot_type = "scatter"
+        self.gnuplot.alpha = kwargs["alpha"]
         self.gnuplot.legend_location = kwargs["legend_location"]
         # self.gnuplot.colormap = kwargs["cmap"]
         if kwargs["cmap"]:
