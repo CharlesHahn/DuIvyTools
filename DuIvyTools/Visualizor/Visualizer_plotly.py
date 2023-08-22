@@ -36,6 +36,7 @@ class ParentPlotly(log):
                 "#FC8D62",
             ],
         }
+        self.nticks:int = 7 # for tick location by hand
 
     def load_themes(self):
         ## TODO plotly theme and style file system
@@ -71,6 +72,32 @@ class ParentPlotly(log):
             self.figure.update_layout(xaxis_tickformat=f".{kwargs['x_precision']}f")
         if kwargs["y_precision"] != None:
             self.figure.update_layout(yaxis_tickformat=f".{kwargs['y_precision']}f")
+    
+
+    def set_xytick_precision_xyt_label(self, **kwargs) -> None:
+        """set Y tick, precision, Y tick, precision, xlabel, ylabel, title"""
+        step = len(kwargs["xdata_list"])//self.nticks
+        step = [step, 1][step==0]
+        xdata_index = [i for i in range(0, len(kwargs["xdata_list"]), step)]
+        step = len(kwargs["ydata_list"])//self.nticks
+        step = [step, 1][step==0]
+        ydata_index = [i for i in range(0, len(kwargs["ydata_list"]), step)]
+        self.figure.update_xaxes(
+            tickvals = xdata_index,
+            ticktext = [f"{kwargs['xdata_list'][x]:.{kwargs['x_precision']}f}" for x in xdata_index]
+        )
+        self.figure.update_yaxes(
+            tickvals = ydata_index,
+            ticktext = [f"{kwargs['ydata_list'][y]:.{kwargs['y_precision']}f}" for y in ydata_index]
+        )
+        self.figure.update_layout(
+            legend_orientation="h",
+            title=kwargs["title"],
+            xaxis_title=kwargs["xlabel"],
+            yaxis_title=kwargs["ylabel"],
+            font=dict(family="Arial, Times New Roman", size=18),
+            showlegend=True,
+        )
 
     def set_xy_min_max(self, **kwargs) -> None:
         """set xmin, xmax, ymin, ymax"""
@@ -78,6 +105,21 @@ class ParentPlotly(log):
             self.figure.update_layout(xaxis_range=[kwargs["xmin"], kwargs["xmax"]])
         if kwargs["ymin"] != None or kwargs["ymax"] != None:
             self.figure.update_layout(yaxis_range=[kwargs["ymin"], kwargs["ymax"]])
+    
+    def check_repeat_values(self, values) -> bool:
+        """True for repeat values exists in values"""
+        if len(list(set(values))) < len(values):
+            return True # for repeat values
+        else:
+            return False
+    
+    def check_XY_repeat(self, **kwargs) -> bool:
+        """True for repeat values exists in xdata_list or ydata_list"""
+        if self.check_repeat_values(kwargs["xdata_list"]):
+            return True
+        if self.check_repeat_values(kwargs["ydata_list"]):
+            return True
+        return False
 
 
 class LinePlotly(ParentPlotly):
@@ -510,46 +552,87 @@ class PcolormeshPlotly(ParentPlotly):
                 colorscale.append([(i + 1) / length, kwargs["color_list"][i]])
             for i in range(length):
                 tickvals.append((i + 0.5) / length * (length - 1))
-            self.figure.add_trace(
-                go.Heatmap(
-                    x=kwargs["xdata_list"],
-                    y=kwargs["ydata_list"],
-                    z=kwargs["data_list"],
-                    colorscale=colorscale,
-                    showscale=True,
-                    colorbar={
-                        "title": {"text": kwargs["zlabel"], "side": "right"},
-                        "ticktext": kwargs["legends"],
-                        "tickvals": tickvals,
-                        "lenmode": "fraction",
-                        "len": 0.50,
-                        "xanchor": "left",
-                        "yanchor": "top",
-                    },
-                )
-            )
-        else:
-            self.figure.add_trace(
-                go.Heatmap(
-                    x=kwargs["xdata_list"],
-                    y=kwargs["ydata_list"],
-                    z=kwargs["data_list"],
-                    colorscale=kwargs["cmap"],
-                    showscale=True,
-                    colorbar={
-                        "title": {"text": kwargs["zlabel"], "side": "right"},
-                        "tickformat": f".{kwargs['z_precision']}f",
-                        "lenmode": "fraction",
-                        "len": 0.50,
-                        "xanchor": "left",
-                        "yanchor": "top",
-                    },
-                )
-            )
-            if kwargs["colorbar_location"]:
-                self.warn("colorbar_location parameter is not valid for plotly")
 
-        self.set_xyprecision_xyt_label(**kwargs)
+            if not self.check_XY_repeat(**kwargs):
+                self.figure.add_trace(
+                    go.Heatmap(
+                        x=kwargs["xdata_list"],
+                        y=kwargs["ydata_list"],
+                        z=kwargs["data_list"],
+                        colorscale=colorscale,
+                        showscale=True,
+                        colorbar={
+                            "title": {"text": kwargs["zlabel"], "side": "right"},
+                            "ticktext": kwargs["legends"],
+                            "tickvals": tickvals,
+                            "lenmode": "fraction",
+                            "len": 0.50,
+                            "xanchor": "left",
+                            "yanchor": "top",
+                        },
+                    )
+                )
+                self.set_xyprecision_xyt_label(**kwargs)
+            else:
+                self.figure.add_trace(
+                    go.Heatmap(
+                        z=kwargs["data_list"],
+                        colorscale=colorscale,
+                        showscale=True,
+                        colorbar={
+                            "title": {"text": kwargs["zlabel"], "side": "right"},
+                            "ticktext": kwargs["legends"],
+                            "tickvals": tickvals,
+                            "lenmode": "fraction",
+                            "len": 0.50,
+                            "xanchor": "left",
+                            "yanchor": "top",
+                        },
+                    )
+                )
+                self.set_xytick_precision_xyt_label(**kwargs)
+        else:
+            if not self.check_XY_repeat(**kwargs):
+                self.figure.add_trace(
+                    go.Heatmap(
+                        x=kwargs["xdata_list"],
+                        y=kwargs["ydata_list"],
+                        z=kwargs["data_list"],
+                        colorscale=kwargs["cmap"],
+                        showscale=True,
+                        colorbar={
+                            "title": {"text": kwargs["zlabel"], "side": "right"},
+                            "tickformat": f".{kwargs['z_precision']}f",
+                            "lenmode": "fraction",
+                            "len": 0.50,
+                            "xanchor": "left",
+                            "yanchor": "top",
+                        },
+                    )
+                )
+                if kwargs["colorbar_location"]:
+                    self.warn("colorbar_location parameter is not valid for plotly")
+                self.set_xyprecision_xyt_label(**kwargs)
+            else:
+                self.figure.add_trace(
+                    go.Heatmap(
+                        z=kwargs["data_list"],
+                        colorscale=kwargs["cmap"],
+                        showscale=True,
+                        colorbar={
+                            "title": {"text": kwargs["zlabel"], "side": "right"},
+                            "tickformat": f".{kwargs['z_precision']}f",
+                            "lenmode": "fraction",
+                            "len": 0.50,
+                            "xanchor": "left",
+                            "yanchor": "top",
+                        },
+                    )
+                )
+                if kwargs["colorbar_location"]:
+                    self.warn("colorbar_location parameter is not valid for plotly")
+                self.set_xytick_precision_xyt_label(**kwargs)
+
 
 
 class ThreeDimensionPlotly(ParentPlotly):
@@ -580,54 +663,115 @@ class ThreeDimensionPlotly(ParentPlotly):
 
         if len(kwargs["data_list"]) <= 1 or len(kwargs["data_list"][0]) <= 1:
             self.error("!!! 3d plot unable to proper deal with 1 dimension data !!!")
-        self.figure.add_trace(
-            go.Surface(
-                x=kwargs["xdata_list"],
-                y=kwargs["ydata_list"],
-                z=kwargs["data_list"],
-                colorscale=kwargs["cmap"],
-                showscale=True,
-                colorbar={
-                    "title": {"text": kwargs["zlabel"], "side": "right"},
-                    "tickformat": f".{kwargs['z_precision']}f",
-                    "lenmode": "fraction",
-                    "len": 0.50,
-                    "xanchor": "left",
-                    "yanchor": "top",
-                },
+
+        if not self.check_XY_repeat(**kwargs):
+            self.figure.add_trace(
+                go.Surface(
+                    x=kwargs["xdata_list"],
+                    y=kwargs["ydata_list"],
+                    z=kwargs["data_list"],
+                    colorscale=kwargs["cmap"],
+                    showscale=True,
+                    colorbar={
+                        "title": {"text": kwargs["zlabel"], "side": "right"},
+                        "tickformat": f".{kwargs['z_precision']}f",
+                        "lenmode": "fraction",
+                        "len": 0.50,
+                        "xanchor": "left",
+                        "yanchor": "top",
+                    },
+                )
             )
-        )
-        self.figure.update_layout(
-            legend_orientation="h",
-            title=kwargs["title"],
-            font=dict(family="Arial, Times New Roman", size=18),
-            showlegend=True,
-            scene=dict(
-                xaxis=dict(
-                    tickfont=dict(size=14, family="Arial, Times New Roman"),
-                    title=kwargs["xlabel"],
+            self.figure.update_layout(
+                legend_orientation="h",
+                title=kwargs["title"],
+                font=dict(family="Arial, Times New Roman", size=18),
+                showlegend=True,
+                scene=dict(
+                    xaxis=dict(
+                        tickfont=dict(size=14, family="Arial, Times New Roman"),
+                        title=kwargs["xlabel"],
+                    ),
+                    yaxis=dict(
+                        tickfont=dict(size=14, family="Arial, Times New Roman"),
+                        title=kwargs["ylabel"],
+                    ),
+                    zaxis=dict(
+                        tickfont=dict(size=14, family="Arial, Times New Roman"),
+                        title=kwargs["zlabel"],
+                    ),
                 ),
-                yaxis=dict(
-                    tickfont=dict(size=14, family="Arial, Times New Roman"),
-                    title=kwargs["ylabel"],
+            )
+            self.figure.update_traces(
+                contours_z=dict(show=True, usecolormap=True, project_z=True)
+            )
+            if kwargs["x_precision"] != None:
+                self.figure.update_scenes(xaxis_tickformat=f".{kwargs['x_precision']}f")
+            if kwargs["y_precision"] != None:
+                self.figure.update_scenes(yaxis_tickformat=f".{kwargs['y_precision']}f")
+            if kwargs["z_precision"] != None:
+                self.figure.update_scenes(zaxis_tickformat=f".{kwargs['z_precision']}f")
+            if kwargs["colorbar_location"]:
+                self.warn("colorbar_location parameter is not valid for plotly")
+        else:
+            self.figure.add_trace(
+                go.Surface(
+                    z=kwargs["data_list"],
+                    colorscale=kwargs["cmap"],
+                    showscale=True,
+                    colorbar={
+                        "title": {"text": kwargs["zlabel"], "side": "right"},
+                        "tickformat": f".{kwargs['z_precision']}f",
+                        "lenmode": "fraction",
+                        "len": 0.50,
+                        "xanchor": "left",
+                        "yanchor": "top",
+                    },
+                )
+            )
+            self.figure.update_layout(
+                legend_orientation="h",
+                title=kwargs["title"],
+                font=dict(family="Arial, Times New Roman", size=18),
+                showlegend=True,
+                scene=dict(
+                    xaxis=dict(
+                        tickfont=dict(size=14, family="Arial, Times New Roman"),
+                        title=kwargs["xlabel"],
+                    ),
+                    yaxis=dict(
+                        tickfont=dict(size=14, family="Arial, Times New Roman"),
+                        title=kwargs["ylabel"],
+                    ),
+                    zaxis=dict(
+                        tickfont=dict(size=14, family="Arial, Times New Roman"),
+                        title=kwargs["zlabel"],
+                    ),
                 ),
-                zaxis=dict(
-                    tickfont=dict(size=14, family="Arial, Times New Roman"),
-                    title=kwargs["zlabel"],
-                ),
-            ),
-        )
-        self.figure.update_traces(
-            contours_z=dict(show=True, usecolormap=True, project_z=True)
-        )
-        if kwargs["x_precision"] != None:
-            self.figure.update_scenes(xaxis_tickformat=f".{kwargs['x_precision']}f")
-        if kwargs["y_precision"] != None:
-            self.figure.update_scenes(yaxis_tickformat=f".{kwargs['y_precision']}f")
-        if kwargs["z_precision"] != None:
-            self.figure.update_scenes(zaxis_tickformat=f".{kwargs['z_precision']}f")
-        if kwargs["colorbar_location"]:
-            self.warn("colorbar_location parameter is not valid for plotly")
+            )
+            self.figure.update_traces(
+                contours_z=dict(show=True, usecolormap=True, project_z=True)
+            )
+            step = len(kwargs["xdata_list"])//self.nticks
+            step = [step, 1][step==0]
+            xdata_index = [i for i in range(0, len(kwargs["xdata_list"]), step)]
+            step = len(kwargs["ydata_list"])//self.nticks
+            step = [step, 1][step==0]
+            ydata_index = [i for i in range(0, len(kwargs["ydata_list"]), step)]
+            if kwargs["x_precision"] != None:
+                self.figure.update_scenes(
+                    xaxis_tickvals = xdata_index,
+                    xaxis_ticktext = [f"{kwargs['xdata_list'][x]:.{kwargs['x_precision']}f}" for x in xdata_index],
+                )
+            if kwargs["y_precision"] != None:
+                self.figure.update_scenes(
+                    yaxis_tickvals = ydata_index,
+                    yaxis_ticktext = [f"{kwargs['ydata_list'][y]:.{kwargs['y_precision']}f}" for y in ydata_index],
+                )
+            if kwargs["z_precision"] != None:
+                self.figure.update_scenes(zaxis_tickformat=f".{kwargs['z_precision']}f")
+            if kwargs["colorbar_location"]:
+                self.warn("colorbar_location parameter is not valid for plotly")
 
 
 class ContourPlotly(ParentPlotly):
@@ -658,26 +802,46 @@ class ContourPlotly(ParentPlotly):
 
         if len(kwargs["data_list"]) <= 1 or len(kwargs["data_list"][0]) <= 1:
             self.error("!!! contour unable to proper deal with 1 dimension data !!!")
-        self.figure.add_trace(
-            go.Contour(
-                x=kwargs["xdata_list"],
-                y=kwargs["ydata_list"],
-                z=kwargs["data_list"],
-                colorscale=kwargs["cmap"],
-                showscale=True,
-                colorbar={
-                    "title": {"text": kwargs["zlabel"], "side": "right"},
-                    "tickformat": f".{kwargs['z_precision']}f",
-                    "lenmode": "fraction",
-                    "len": 0.50,
-                    "xanchor": "left",
-                    "yanchor": "top",
-                },
-                contours=dict(showlines=False),
+
+        if not self.check_XY_repeat(**kwargs):
+            self.figure.add_trace(
+                go.Contour(
+                    x=kwargs["xdata_list"],
+                    y=kwargs["ydata_list"],
+                    z=kwargs["data_list"],
+                    colorscale=kwargs["cmap"],
+                    showscale=True,
+                    colorbar={
+                        "title": {"text": kwargs["zlabel"], "side": "right"},
+                        "tickformat": f".{kwargs['z_precision']}f",
+                        "lenmode": "fraction",
+                        "len": 0.50,
+                        "xanchor": "left",
+                        "yanchor": "top",
+                    },
+                    contours=dict(showlines=False),
+                )
             )
-        )
-
-        if kwargs["colorbar_location"]:
-            self.warn("colorbar_location parameter is not valid for plotly")
-
-        self.set_xyprecision_xyt_label(**kwargs)
+            if kwargs["colorbar_location"]:
+                self.warn("colorbar_location parameter is not valid for plotly")
+            self.set_xyprecision_xyt_label(**kwargs)
+        else:
+            self.figure.add_trace(
+                go.Contour(
+                    z=kwargs["data_list"],
+                    colorscale=kwargs["cmap"],
+                    showscale=True,
+                    colorbar={
+                        "title": {"text": kwargs["zlabel"], "side": "right"},
+                        "tickformat": f".{kwargs['z_precision']}f",
+                        "lenmode": "fraction",
+                        "len": 0.50,
+                        "xanchor": "left",
+                        "yanchor": "top",
+                    },
+                    contours=dict(showlines=False),
+                )
+            )
+            if kwargs["colorbar_location"]:
+                self.warn("colorbar_location parameter is not valid for plotly")
+            self.set_xytick_precision_xyt_label(**kwargs)

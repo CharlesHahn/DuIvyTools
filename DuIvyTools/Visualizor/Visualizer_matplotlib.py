@@ -79,6 +79,32 @@ class ParentMatplotlib(log):
         plt.xlabel(kwargs["xlabel"])
         plt.ylabel(kwargs["ylabel"])
         plt.title(kwargs["title"])
+    
+    def set_xytick_precision_xyt_label(self, **kwargs) -> None:
+        """set IMAGE x_precision, y_precision, xlabel, ylabel, title"""
+        if kwargs["x_precision"] == None:
+            kwargs["x_precision"] = 0
+        if kwargs["y_precision"] == None:
+            kwargs["y_precision"] = 0
+        ## set ticks: since matrix, the xtics should all be int, not float
+        xrange = len(kwargs["xdata_list"])
+        yrange = len(kwargs["ydata_list"])
+        xtics, _ = plt.xticks()
+        xtics = [int(x) for x in xtics if int(x) < xrange and int(x) >= 0]
+        plt.xticks(
+            xtics,
+            [f'{kwargs["xdata_list"][x]:.{kwargs["x_precision"]}f}' for x in xtics],
+        )
+        ytics, _ = plt.yticks()
+        ytics = [int(y) for y in ytics if int(y) < yrange and int(y) >= 0]
+        plt.yticks(
+            ytics,
+            [f'{kwargs["ydata_list"][y]:.{kwargs["y_precision"]}f}' for y in ytics],
+        )
+
+        plt.xlabel(kwargs["xlabel"])
+        plt.ylabel(kwargs["ylabel"])
+        plt.title(kwargs["title"])
 
 
 class LineMatplotlib(ParentMatplotlib):
@@ -515,10 +541,6 @@ class ImshowMatplotlib(ParentMatplotlib):
     def __init__(self, **kwargs) -> None:
         super().__init__()
 
-        ## set imshow origin to lower, reverse yaxis and data_list
-        kwargs["data_list"].reverse()
-        kwargs["ydata_list"].reverse()
-
         if kwargs["fig_type"] != "Continuous":
             color_map = mplcolors.ListedColormap(kwargs["color_list"])
             im = plt.imshow(
@@ -562,28 +584,7 @@ class ImshowMatplotlib(ParentMatplotlib):
                     im, label=kwargs["zlabel"], location=kwargs["colorbar_location"]
                 )
 
-        if kwargs["x_precision"] == None:
-            kwargs["x_precision"] = 0
-        if kwargs["y_precision"] == None:
-            kwargs["y_precision"] = 0
-
-        ## set ticks: since matrix, the xtics should all be int, not float
-        xtics, _ = plt.xticks()
-        xtics = [int(x) for x in xtics[1:-1]]
-        plt.xticks(
-            xtics,
-            [f'{kwargs["xdata_list"][x]:.{kwargs["x_precision"]}f}' for x in xtics],
-        )
-        ytics, _ = plt.yticks()
-        ytics = [int(y) for y in ytics[1:-1]]
-        plt.yticks(
-            ytics,
-            [f'{kwargs["ydata_list"][y]:.{kwargs["y_precision"]}f}' for y in ytics],
-        )
-
-        plt.xlabel(kwargs["xlabel"])
-        plt.ylabel(kwargs["ylabel"])
-        plt.title(kwargs["title"])
+        self.set_xytick_precision_xyt_label(**kwargs)
 
 
 class PcolormeshMatplotlib(ParentMatplotlib):
@@ -618,6 +619,10 @@ class PcolormeshMatplotlib(ParentMatplotlib):
 
         if len(kwargs["data_list"]) <= 1 or len(kwargs["data_list"][0]) <= 1:
             self.error("!!! pcolormesh unable to proper deal with 1 dimension data !!!")
+        # to avoid repeat series in X and Y data
+        xdata_index = [i for i in range(len(kwargs["xdata_list"]))]
+        ydata_index = [i for i in range(len(kwargs["ydata_list"]))]
+        xdata_index, ydata_index = np.meshgrid(xdata_index, ydata_index)
         if kwargs["fig_type"] != "Continuous":
             self.info(
                 f"""using user-defined colors, the original colors in xpm are: {kwargs["color_list"]}"""
@@ -629,10 +634,9 @@ class PcolormeshMatplotlib(ParentMatplotlib):
                 )
             colors = colors[: len(kwargs["legends"])]
             color_map = mplcolors.ListedColormap(colors)
-            ## TODO: repeat series in xdata_list or ydata_list cause error
             im = plt.pcolormesh(
-                kwargs["xdata_list"],
-                kwargs["ydata_list"],
+                xdata_index,
+                ydata_index,
                 kwargs["data_list"],
                 alpha=kwargs["alpha"],
                 cmap=color_map,
@@ -653,8 +657,8 @@ class PcolormeshMatplotlib(ParentMatplotlib):
                 plt.legend(handles=legend_patches)
         else:
             im = plt.pcolormesh(
-                kwargs["xdata_list"],
-                kwargs["ydata_list"],
+                xdata_index,
+                ydata_index,
                 kwargs["data_list"],
                 alpha=kwargs["alpha"],
                 cmap=kwargs["cmap"],
@@ -674,7 +678,7 @@ class PcolormeshMatplotlib(ParentMatplotlib):
                     im, label=kwargs["zlabel"], location=kwargs["colorbar_location"]
                 )
 
-        self.set_xyprecision_xyt_label(**kwargs)
+        self.set_xytick_precision_xyt_label(**kwargs)
 
 
 class ThreeDimensionMatplotlib(ParentMatplotlib):
@@ -711,10 +715,14 @@ class ThreeDimensionMatplotlib(ParentMatplotlib):
                 )
             kwargs["cmap"] = plt.rcParams["image.cmap"]
 
+        # to avoid repeat series in X and Y data
+        xdata_index = [i for i in range(len(kwargs["xdata_list"]))]
+        ydata_index = [i for i in range(len(kwargs["ydata_list"]))]
+        xdata_index, ydata_index = np.meshgrid(xdata_index, ydata_index)
         ax = self.figure.add_subplot(projection="3d")
         im = ax.plot_surface(
-            kwargs["xdata_list"],
-            kwargs["ydata_list"],
+            xdata_index,
+            ydata_index,
             kwargs["data_list"],
             alpha=kwargs["alpha"],
             cmap=kwargs["cmap"],
@@ -727,8 +735,8 @@ class ThreeDimensionMatplotlib(ParentMatplotlib):
             - np.floor(np.max(kwargs["data_list"]) - np.min(kwargs["data_list"])) / 30
         )
         ax.contourf(
-            kwargs["xdata_list"],
-            kwargs["ydata_list"],
+            xdata_index,
+            ydata_index,
             kwargs["data_list"],
             cmap=kwargs["cmap"],
             zdir="z",
@@ -749,7 +757,7 @@ class ThreeDimensionMatplotlib(ParentMatplotlib):
             )
 
         ax.set_zlabel(kwargs["zlabel"])
-        self.set_xyprecision_xyt_label(**kwargs)
+        self.set_xytick_precision_xyt_label(**kwargs)
 
 
 class ContourMatplotlib(ParentMatplotlib):
@@ -778,9 +786,13 @@ class ContourMatplotlib(ParentMatplotlib):
 
         if len(kwargs["data_list"]) <= 1 or len(kwargs["data_list"][0]) <= 1:
             self.error("!!! contour unable to proper deal with 1 dimension data !!!")
+        # to avoid repeat series in X and Y data
+        xdata_index = [i for i in range(len(kwargs["xdata_list"]))]
+        ydata_index = [i for i in range(len(kwargs["ydata_list"]))]
+        xdata_index, ydata_index = np.meshgrid(xdata_index, ydata_index)
         plt.contourf(
-            kwargs["xdata_list"],
-            kwargs["ydata_list"],
+            xdata_index,
+            ydata_index,
             kwargs["data_list"],
             cmap=kwargs["cmap"],
             vmin=kwargs["zmin"],
@@ -795,4 +807,4 @@ class ContourMatplotlib(ParentMatplotlib):
         else:
             plt.colorbar(label=kwargs["zlabel"], location=kwargs["colorbar_location"])
 
-        self.set_xyprecision_xyt_label(**kwargs)
+        self.set_xytick_precision_xyt_label(**kwargs)

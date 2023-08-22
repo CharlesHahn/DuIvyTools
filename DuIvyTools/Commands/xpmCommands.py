@@ -123,11 +123,9 @@ class xpm_show(Command):
             ip_fold (int): the multiple of interpolation
 
         Returns:
-            x_new_mg (List[float]): the meshgrided X data after interpolation
-            y_new_mg (List[float]): the meshgrided Y data after interpolation
-            matrix_new (List[List[float]]): the matrix values after interpolation
             x_new (List[float]): the X data after interpolation
             y_new (List[float]): the Y data after interpolation
+            matrix_new (List[List[float]]): the matrix values after interpolation
         """
         # interp2d : linear, cubic, quintic
         ip_func = interp2d(xaxis, yaxis, matrix, kind=method)
@@ -135,8 +133,7 @@ class xpm_show(Command):
         x_new = np.linspace(np.min(xaxis), np.max(xaxis), ip_fold * len(xaxis))
         y_new = np.linspace(np.min(yaxis), np.max(yaxis), ip_fold * len(yaxis))
         matrix_new = ip_func(x_new, y_new)
-        x_new_mg, y_new_mg = np.meshgrid(x_new, y_new)
-        return x_new_mg, y_new_mg, matrix_new, x_new, y_new
+        return x_new, y_new, matrix_new
 
     def hex_to_rgb(self, value):
         value = value.lstrip("#")
@@ -160,24 +157,12 @@ class xpm_show(Command):
         """
 
         if self.parm.xmin != None and not isinstance(self.parm.xmin, int):
-            self.warn(
-                f"the -xmin indicates setting the min x_index of image, which must be int. DIT converted it into {int(self.parm.xmin)}"
-            )
             self.parm.xmin = int(self.parm.xmin)
         if self.parm.xmax != None and not isinstance(self.parm.xmax, int):
-            self.warn(
-                f"the -xmax indicates setting the max x_index of image, which must be int. DIT converted it into {int(self.parm.xmax)}"
-            )
             self.parm.xmax = int(self.parm.xmax)
         if self.parm.ymin != None and not isinstance(self.parm.ymin, int):
-            self.warn(
-                f"the -ymin indicates setting the min y_index of image, which must be int. DIT converted it into {int(self.parm.ymin)}"
-            )
             self.parm.ymin = int(self.parm.ymin)
         if self.parm.ymax != None and not isinstance(self.parm.ymax, int):
-            self.warn(
-                f"the -ymax indicates setting the max y_index of image, which must be int. DIT converted it into {int(self.parm.ymax)}"
-            )
             self.parm.ymax = int(self.parm.ymax)
 
         if len(xaxis) != len(value_matrix[0]) or len(yaxis) != len(value_matrix):
@@ -239,6 +224,10 @@ class xpm_show(Command):
                 for x, _ in enumerate(xaxis):
                     v_lis.append(xpm.value_matrix[y][x] * self.parm.zshrink)
                 value_matrix.append(v_lis)
+            
+            ## top -> bottom ===>>> bottom to top
+            yaxis.reverse()
+            value_matrix.reverse()
 
             xaxis, yaxis, value_matrix = self.image_split(xaxis, yaxis, value_matrix)
 
@@ -275,14 +264,13 @@ class xpm_show(Command):
                             self.warn(
                                 f"you are applying interpolation to {self.file.type} type of XPM. It should not be, but DIT would do it. BE CAREFUL for what you get !"
                             )
-                        xaxis, yaxis, value_matrix, _, _ = self.calc_interpolation(
+                        xaxis, yaxis, value_matrix = self.calc_interpolation(
                             xaxis, yaxis, value_matrix, interpolation, ip_fold
                         )
                         kwargs["xdata_list"] = xaxis
                         kwargs["ydata_list"] = yaxis
                         kwargs["data_list"] = value_matrix
                     else:
-                        xaxis, yaxis = np.meshgrid(xaxis, yaxis)
                         kwargs["xdata_list"] = np.array(xaxis)
                         kwargs["ydata_list"] = np.array(yaxis)
                         kwargs["data_list"] = np.array(kwargs["data_list"])
@@ -306,7 +294,7 @@ class xpm_show(Command):
                         self.warn(
                             f"you are applying interpolation to {self.file.type} type of XPM. It should not be, but DIT would do it. BE CAREFUL for what you get !"
                         )
-                    _, _, value_matrix, xaxis, yaxis = self.calc_interpolation(
+                    xaxis, yaxis, value_matrix = self.calc_interpolation(
                         xaxis, yaxis, value_matrix, interpolation, ip_fold
                     )
                     kwargs["xdata_list"] = xaxis
@@ -328,7 +316,7 @@ class xpm_show(Command):
                         self.warn(
                             f"you are applying interpolation to {self.file.type} type of XPM. It should not be, but DIT would do it. BE CAREFUL for what you get !"
                         )
-                    _, _, value_matrix, xaxis, yaxis = self.calc_interpolation(
+                    xaxis, yaxis, value_matrix = self.calc_interpolation(
                         xaxis, yaxis, value_matrix, interpolation, ip_fold
                     )
                     kwargs["xdata_list"] = xaxis

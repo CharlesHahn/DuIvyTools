@@ -42,6 +42,8 @@ class Gnuplot(log):
                 "#FC8D62",
             ],
         }
+        self.ntics: int= 8
+
         self.term: str = None
         self.outfig: str = None
         self.title: str = None
@@ -72,6 +74,36 @@ class Gnuplot(log):
         self.mode: str = None
         self.xtitles: List[str] = None
         self.stds_list: List[List[str]] = None
+
+    def check_repeat_values(self, values) -> bool:
+        """True for repeat values exists in values"""
+        if len(list(set(values))) < len(values):
+            return True # for repeat values
+        else:
+            return False
+    
+    def set_xy_repeat_tick_precision(self, gpl :str) -> None:
+        """if repeat values in xaxis or yaxis, change to index of X and Y and set tics"""
+        if self.check_repeat_values(self.xdata):
+            self.info("repeated values detected in xaxis, use index and set ticks by DIT")
+            x_step = len(self.xdata)//self.ntics
+            x_step = [x_step, 1][x_step==0]
+            xdata_index = [i for i in range(0, len(self.xdata), x_step)]
+            gpl += """set xtics ("""
+            gpl += ",".join([f""""{self.xdata[i]:.{self.x_precision}f}" {i}""" for i in xdata_index])
+            gpl += """)\n"""
+            self.xdata = [i for i in range(len(self.xdata))]
+        if self.check_repeat_values(self.ydata):
+            self.info("repeated values detected in yaxis, use index and set ticks by DIT")
+            y_step = len(self.ydata)//self.ntics
+            y_step = [y_step, 1][y_step==0]
+            ydata_index = [i for i in range(0, len(self.ydata), y_step)]
+            gpl += """set ytics ("""
+            gpl += ",".join([f""""{self.ydata[i]:.{self.y_precision}f}" {i}""" for i in ydata_index])
+            gpl += """)\n"""
+            self.ydata = [i for i in range(len(self.ydata))]
+        
+        return gpl
 
     def dump2str(self) -> str:
         """dump gnuplot attributes to gnuplot input scripts string
@@ -146,6 +178,9 @@ class Gnuplot(log):
         gpl += "set cntrparam levels 10\n"
         # gpl += "set ylabel norotate offset -1,0\n"
         gpl += "set colorbox vertical origin 0.9, 0.2 size 0.03, 0.6 front noinvert noborder\n"
+
+        gpl = self.set_xy_repeat_tick_precision(gpl)
+
         gpl += f"\n$matrix << EOD\n"
         for y, y_value in enumerate(self.ydata):
             for x, x_value in enumerate(self.xdata):
@@ -171,6 +206,9 @@ class Gnuplot(log):
         gpl += "set ylabel norotate offset -1,0\n"
         gpl += "set contour base\n"
         gpl += "set colorbox vertical origin screen 0.9, 0.2 size screen 0.03, 0.6 front  noinvert noborder\n"
+
+        gpl = self.set_xy_repeat_tick_precision(gpl)
+
         gpl += f"\n$matrix << EOD\n"
         for y, y_value in enumerate(self.ydata):
             for x, x_value in enumerate(self.xdata):
@@ -193,6 +231,9 @@ class Gnuplot(log):
                 pal_line += f"""{index} "{color}","""
             pal_line = pal_line.strip(",") + ")"
             gpl += pal_line + "\n\n"
+
+            gpl = self.set_xy_repeat_tick_precision(gpl)
+
             gpl += f"\n$matrix << EOD\n"
             for y, y_value in enumerate(self.ydata):
                 for x, x_value in enumerate(self.xdata):
@@ -210,6 +251,9 @@ class Gnuplot(log):
                 gpl += f"""set cblabel "{self.zlabel}"\n"""
             if self.z_precision != None:
                 gpl += f"""set cbtics format "%.{self.z_precision}f"\n"""
+
+            gpl = self.set_xy_repeat_tick_precision(gpl)
+
             gpl += f"\n$matrix << EOD\n"
             for y, y_value in enumerate(self.ydata):
                 for x, x_value in enumerate(self.xdata):
@@ -743,18 +787,26 @@ class ImshowGnuplot(ParentGnuplot):
                 f"""Gnuplot engine can not handle data with 1 dimension ({len(kwargs["xdata_list"])}*{len(kwargs["ydata_list"])})"""
             )
 
-        data = kwargs["xdata_list"]
-        dot_len_x = (np.max(data) - np.min(data)) / (len(data) - 1)
-        data = kwargs["ydata_list"]
-        dot_len_y = (np.max(data) - np.min(data)) / (len(data) - 1)
-        if self.gnuplot.xmin == None:
-            self.gnuplot.xmin = np.min(kwargs["xdata_list"]) - 0.5 * dot_len_x
-        if self.gnuplot.xmax == None:
-            self.gnuplot.xmax = np.max(kwargs["xdata_list"]) + 0.5 * dot_len_x
-        if self.gnuplot.ymin == None:
-            self.gnuplot.ymin = np.min(kwargs["ydata_list"]) - 0.5 * dot_len_y
-        if self.gnuplot.ymax == None:
-            self.gnuplot.ymax = np.max(kwargs["ydata_list"]) + 0.5 * dot_len_y
+        if len(list(set(kwargs["xdata_list"]))) == len(kwargs["xdata_list"]):
+            data = kwargs["xdata_list"]
+            dot_len_x = (np.max(data) - np.min(data)) / (len(data) - 1)
+            if self.gnuplot.xmin == None:
+                self.gnuplot.xmin = np.min(kwargs["xdata_list"]) - 0.5 * dot_len_x
+            if self.gnuplot.xmax == None:
+                self.gnuplot.xmax = np.max(kwargs["xdata_list"]) + 0.5 * dot_len_x
+        else:
+            self.gnuplot.xmin = -0.5
+            self.gnuplot.xmax = len(kwargs["xdata_list"]) - 0.5
+        if len(list(set(kwargs["ydata_list"]))) == len(kwargs["ydata_list"]):
+            data = kwargs["ydata_list"]
+            dot_len_y = (np.max(data) - np.min(data)) / (len(data) - 1)
+            if self.gnuplot.ymin == None:
+                self.gnuplot.ymin = np.min(kwargs["ydata_list"]) - 0.5 * dot_len_y
+            if self.gnuplot.ymax == None:
+                self.gnuplot.ymax = np.max(kwargs["ydata_list"]) + 0.5 * dot_len_y
+        else:
+            self.gnuplot.ymin = -0.5
+            self.gnuplot.ymax = len(kwargs["ydata_list"]) - 0.5
 
         self.gnuplot.x_precision = kwargs["x_precision"]
         self.gnuplot.y_precision = kwargs["y_precision"]
