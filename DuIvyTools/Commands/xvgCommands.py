@@ -1291,33 +1291,55 @@ class xvg_box_compare(xvg_compare):
 
 class xvg_ave_bar(Command):
     """
-
+    Calculate the averages and standard errors of selected data columns of corresponding group of xvg files, and compare between groups of xvg files by bar plot.
+    IF you specified `-f 0_0.xvg,0_1.xvg,0_2.xvg 1_0.xvg,1_1.xvg,1_2.xvg -c 1,2`, DIt will calculate the averages and standard error of data columns 1 and 2 of 0_0.xvg, 0_1.xvg, and 0_2.xvg, and the ones of 1_0.xvg, 1_1.xvg, and 1_2.xvg. Then, the averages and standard errors will be presented in bar plot.
 
     :Parameters:
         -f, --input
+                specify several groups of xvg files for input. For each group, xvg files should be seperated by `,`
         -c, --columns
+                specify the indexs of data columns in one group, the selected column indexs will applied to all xvg files
         -l, --legends (optional)
+                specify the legends of figure
         -o, --output (optional)
+                specify the file name for saving figure
         -ns, --noshow (optional)
+                NOT to show figure
         -al, --additional_list (optional)
+                specify the X ticklabels of bar plot
         -x, --xlabel (optional)
+                specify the xlabel of figure
         -y, --ylabel (optional)
+                specify the ylabel of figure
         -t, --title (optional)
+                specify the title of figure
         -eg, --engine (optional)
+                specify the plot engine: matplotlib (default), plotly, gnuplot, plotext
         -b, --begin (optional)
+                specify the begin index of data to present
         -e, --end (optional)
+                specify the end index of data to present
         -dt, --dt (optional)
+                specify the index step of data to present
         -xmin, --xmin (optional)
+                specify the xmin value of figure canvas
         -xmax, --xmax (optional)
+                specify the xmax value of figure canvas
         -ymin, --ymin (optional)
+                specify the ymin value of figure canvas
         -ymax, --ymax (optional)
+                specify the ymax value of figure canvas
         --csv (optional)
+                specify the csv file name for saving averages and standard errors
         --x_precision (optional)
+                specify the precision of X ticklabels
         --y_precision (optional)
+                specify the precision of Y ticklabels
         --legend_location (optional)
+                specify the location of legends, inside or outside
 
     :Usage:
-    
+        dit xvg_ave_bar -f 0_0.xvg,0_1.xvg,0_2.xvg 1_0.xvg,1_1.xvg,1_2.xvg -c 1,2 -l MD_0 MD_1 -al data_1 data_2 -csv ave_bar.csv
     """
 
     def __init__(self, parm: Parameters) -> None:
