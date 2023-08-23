@@ -172,9 +172,6 @@ optional arguments:
 - ndx_split ## ndx group split into several group
 
 
-** mdpParser **
-
-** distribution to density map **
 
 ** style setting **
 

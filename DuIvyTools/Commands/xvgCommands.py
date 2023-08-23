@@ -8,6 +8,7 @@ import os
 from typing import List, Tuple
 
 import numpy as np
+from scipy.stats import gaussian_kde
 
 from Commands.Commands import Command
 from FileParser.xvgParser import XVG
@@ -686,13 +687,17 @@ class xvg_show_distribution(xvg_compare):
                 specify the precision of Y ticklabels
         --legend_location (optional)
                 specify the location of legends, inside or outside
-        -bin, --bin (optional)
-                specify the bin number of calculating distribution, default to 100
+        -al, --additional_list (optional)
+                specify the bin number of calculating distribution, default to 100. You should set a int number, like `-al 200`
+        -m, --mode (optional)
+                set the mode to be `pdf` to present Kernel Density Estimation of selected data. set to `cdf` for Cumulative Kernel Density Estimation
 
     :Usage:
         dit xvg_show_distribution -f RMSD.xvg Gyrate.xvg -c 1 1
-        dit xvg_show_distribution -f RMSD.xvg -c 1 -bin 50 -csv test.csv
+        dit xvg_show_distribution -f RMSD.xvg -c 1 -al 50 -csv test.csv
         dit xvg_show_distribution -f RMSD.xvg -c 1 -eg plotly
+        dit xvg_show_distribution -f RMSD.xvg Gyrate.xvg -c 1 1 -m pdf
+        dit xvg_show_distribution -f RMSD.xvg Gyrate.xvg -c 1 1 -m cdf -eg plotly
     """
 
     def __init__(self, parm: Parameters) -> None:
@@ -702,12 +707,20 @@ class xvg_show_distribution(xvg_compare):
         # self.info("in xvg_show_distribution")
         # print(self.parm.__dict__)
 
-        ## TODO: fill the curve to zero, KDE density map
         self.check_parm()
+        bin = 100
+        if self.parm.additional_list != None:
+            if self.parm.additional_list[0].isnumeric():
+                bin = int(self.parm.additional_list[0])
+                self.info(f"set bin of distribution to {bin}")
+            else:
+                self.warn(f"bin number of distribution can only be specified by the first value of `-al`, and it should be int type. Ignore it !!!")
+        if bin <= 0:
+            self.error("bin for distribution calculation can not be <= 0")
         begin, end, dt = self.parm.begin, self.parm.end, self.parm.dt
         xvgs = [XVG(xvg) for xvg in self.parm.input]
         self.file = xvgs[0]
-        legends, xdata_list, data_list = [], [], []
+        legends, xdata_list, data_list, lows_list = [], [], [], []
         for id, column_indexs in enumerate(self.parm.columns):
             xvg = xvgs[id]
             for column_index in column_indexs:
@@ -715,9 +728,18 @@ class xvg_show_distribution(xvg_compare):
                 data = xvg.data_columns[column_index][begin:end:dt]
                 if len(data) == 0:
                     self.error("wrong selection of begin, end, or dt, no data selected")
-                xdata, data = self.calc_distribution(data, self.parm.bin)
-                data_list.append(data)
+                if self.parm.mode == "pdf":
+                    xdata, ydata = self.calc_density(data, "pdf")
+                    ylabel = "kernel density estimation"
+                elif self.parm.mode == "cdf":
+                    xdata, ydata = self.calc_density(data, "cdf")
+                    ylabel = "cumulative kernel density estimation"
+                else:
+                    xdata, ydata = self.calc_distribution(data, bin)
+                    ylabel = "Frequency(%)"
+                data_list.append(ydata)
                 xdata_list.append(xdata)
+                lows_list.append([0 for _ in ydata])
                 legend = xvg.data_heads[column_index]
                 legends.append(f"{legend} - {xvg.xvgfile}")
         self.remove_latex()
@@ -732,12 +754,12 @@ class xvg_show_distribution(xvg_compare):
             "ymin": self.sel_parm(self.parm.ymin, None),
             "ymax": self.sel_parm(self.parm.ymax, None),
             "xlabel": self.sel_parm(self.parm.xlabel, "Distribution"),
-            "ylabel": self.sel_parm(self.parm.ylabel, "Frequency %"),
+            "ylabel": self.sel_parm(self.parm.ylabel, ylabel),
             "title": self.sel_parm(self.parm.title, "XVG Distribution"),
             "x_precision": self.parm.x_precision,
             "y_precision": self.parm.y_precision,
-            "highs": list(),
-            "lows": list(),
+            "highs": data_list,
+            "lows": lows_list,
             "alpha": self.sel_parm(self.parm.alpha, 0.4),
             "legend_location": self.sel_parm(self.parm.legend_location, "inside"),
         }
@@ -765,14 +787,16 @@ class xvg_show_distribution(xvg_compare):
         with open(self.parm.csv, "w") as fo:
             for leg in kwargs["legends"]:
                 fo.write(
-                    f"""Distribution_of_{leg.strip("$")},Frequency(%)_of_{leg.strip("$")},"""
+                    f"""{kwargs["xlabel"]}_of_{leg.strip("$")},{kwargs["ylabel"]}_of_{leg.strip("$")},"""
                 )
             fo.write("\n")
-            for r in range(self.parm.bin):
+            for r in range(len(kwargs["data_list"][0])):
+                line :str = ""
                 for c in range(len(kwargs["data_list"])):
-                    fo.write(f"""{kwargs["xdata"][c][r]:.8f},""")
-                    fo.write(f"""{kwargs["data_list"][c][r]:.8f},""")
-                fo.write("\n")
+                    x = kwargs["xdata_list"][c][r]
+                    y = kwargs["data_list"][c][r]
+                    line += f"""{x:.8f},{y:.8f},"""
+                fo.write(line.strip(",") + "\n")
         self.info(f"data has been dumped to {self.parm.csv} successfully")
 
     def calc_distribution(
@@ -805,6 +829,25 @@ class xvg_show_distribution(xvg_compare):
             frequency = [1]
             x_value = [min]
         return x_value, frequency
+
+    def calc_density(self, data:List[float], key:str="pdf") -> Tuple[List[float], List[float]]:
+        """calculate the density distribution of data by scify.gaussian_kde
+
+        Args:
+            data (List[float]): data
+
+        Returns:
+            xdata (List[float]): xdata
+            data (List[float]): distribution data
+        """
+        kernel = gaussian_kde(data)
+        xdata = np.linspace(np.min(data), np.max(data), len(data) * 1)
+        if key == "pdf":
+            ydata = kernel.pdf(xdata)
+        elif key == "cdf":
+            cdf = np.vectorize(lambda i: kernel.integrate_box_1d(-np.inf, i))
+            ydata = cdf(xdata)
+        return xdata, ydata
 
 
 class xvg_show_scatter(Command):
