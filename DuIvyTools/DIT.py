@@ -102,8 +102,7 @@ Have a good day !
         )
 
     def run(self) -> None:
-        """show help infos and invoke commands
-        """
+        """show help infos and invoke commands"""
         ## help infos
         if len(sys.argv) == 1:
             print(self.welcome_info)

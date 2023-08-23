@@ -15,6 +15,7 @@ from utils import log
 
 ## TODO maybe re-construction is needed for this module
 
+
 class Gnuplot(log):
     """Gnuplot class for plotting with gnuplot"""
 
@@ -42,7 +43,7 @@ class Gnuplot(log):
                 "#FC8D62",
             ],
         }
-        self.ntics: int= 8
+        self.ntics: int = 8
 
         self.term: str = None
         self.outfig: str = None
@@ -78,31 +79,39 @@ class Gnuplot(log):
     def check_repeat_values(self, values) -> bool:
         """True for repeat values exists in values"""
         if len(list(set(values))) < len(values):
-            return True # for repeat values
+            return True  # for repeat values
         else:
             return False
-    
-    def set_xy_repeat_tick_precision(self, gpl :str) -> None:
+
+    def set_xy_repeat_tick_precision(self, gpl: str) -> None:
         """if repeat values in xaxis or yaxis, change to index of X and Y and set tics"""
         if self.check_repeat_values(self.xdata):
-            self.info("repeated values detected in xaxis, use index and set ticks by DIT")
-            x_step = len(self.xdata)//self.ntics
-            x_step = [x_step, 1][x_step==0]
+            self.info(
+                "repeated values detected in xaxis, use index and set ticks by DIT"
+            )
+            x_step = len(self.xdata) // self.ntics
+            x_step = [x_step, 1][x_step == 0]
             xdata_index = [i for i in range(0, len(self.xdata), x_step)]
             gpl += """set xtics ("""
-            gpl += ",".join([f""""{self.xdata[i]:.{self.x_precision}f}" {i}""" for i in xdata_index])
+            gpl += ",".join(
+                [f""""{self.xdata[i]:.{self.x_precision}f}" {i}""" for i in xdata_index]
+            )
             gpl += """)\n"""
             self.xdata = [i for i in range(len(self.xdata))]
         if self.check_repeat_values(self.ydata):
-            self.info("repeated values detected in yaxis, use index and set ticks by DIT")
-            y_step = len(self.ydata)//self.ntics
-            y_step = [y_step, 1][y_step==0]
+            self.info(
+                "repeated values detected in yaxis, use index and set ticks by DIT"
+            )
+            y_step = len(self.ydata) // self.ntics
+            y_step = [y_step, 1][y_step == 0]
             ydata_index = [i for i in range(0, len(self.ydata), y_step)]
             gpl += """set ytics ("""
-            gpl += ",".join([f""""{self.ydata[i]:.{self.y_precision}f}" {i}""" for i in ydata_index])
+            gpl += ",".join(
+                [f""""{self.ydata[i]:.{self.y_precision}f}" {i}""" for i in ydata_index]
+            )
             gpl += """)\n"""
             self.ydata = [i for i in range(len(self.ydata))]
-        
+
         return gpl
 
     def dump2str(self) -> str:

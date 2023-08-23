@@ -14,6 +14,7 @@ from utils import log
 
 class XPM(log):
     """XPM class was designed to parse xpm file"""
+
     def __init__(
         self, xpmfile: str, is_file: bool = True, new_file: bool = False
     ) -> None:
@@ -299,6 +300,7 @@ class XPM(log):
 
 class XPMS(log):
     """XPMS class was designed to parse xpm file with multi-frames"""
+
     def __init__(self, xpmfile: str) -> None:
         self.xpmfile: str = xpmfile
         self.frames: list[XPM] = []

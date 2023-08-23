@@ -36,7 +36,7 @@ class ParentPlotly(log):
                 "#FC8D62",
             ],
         }
-        self.nticks:int = 7 # for tick location by hand
+        self.nticks: int = 7  # for tick location by hand
 
     def load_themes(self):
         ## TODO plotly theme and style file system
@@ -72,23 +72,28 @@ class ParentPlotly(log):
             self.figure.update_layout(xaxis_tickformat=f".{kwargs['x_precision']}f")
         if kwargs["y_precision"] != None:
             self.figure.update_layout(yaxis_tickformat=f".{kwargs['y_precision']}f")
-    
 
     def set_xytick_precision_xyt_label(self, **kwargs) -> None:
         """set Y tick, precision, Y tick, precision, xlabel, ylabel, title"""
-        step = len(kwargs["xdata_list"])//self.nticks
-        step = [step, 1][step==0]
+        step = len(kwargs["xdata_list"]) // self.nticks
+        step = [step, 1][step == 0]
         xdata_index = [i for i in range(0, len(kwargs["xdata_list"]), step)]
-        step = len(kwargs["ydata_list"])//self.nticks
-        step = [step, 1][step==0]
+        step = len(kwargs["ydata_list"]) // self.nticks
+        step = [step, 1][step == 0]
         ydata_index = [i for i in range(0, len(kwargs["ydata_list"]), step)]
         self.figure.update_xaxes(
-            tickvals = xdata_index,
-            ticktext = [f"{kwargs['xdata_list'][x]:.{kwargs['x_precision']}f}" for x in xdata_index]
+            tickvals=xdata_index,
+            ticktext=[
+                f"{kwargs['xdata_list'][x]:.{kwargs['x_precision']}f}"
+                for x in xdata_index
+            ],
         )
         self.figure.update_yaxes(
-            tickvals = ydata_index,
-            ticktext = [f"{kwargs['ydata_list'][y]:.{kwargs['y_precision']}f}" for y in ydata_index]
+            tickvals=ydata_index,
+            ticktext=[
+                f"{kwargs['ydata_list'][y]:.{kwargs['y_precision']}f}"
+                for y in ydata_index
+            ],
         )
         self.figure.update_layout(
             legend_orientation="h",
@@ -105,14 +110,14 @@ class ParentPlotly(log):
             self.figure.update_layout(xaxis_range=[kwargs["xmin"], kwargs["xmax"]])
         if kwargs["ymin"] != None or kwargs["ymax"] != None:
             self.figure.update_layout(yaxis_range=[kwargs["ymin"], kwargs["ymax"]])
-    
+
     def check_repeat_values(self, values) -> bool:
         """True for repeat values exists in values"""
         if len(list(set(values))) < len(values):
-            return True # for repeat values
+            return True  # for repeat values
         else:
             return False
-    
+
     def check_XY_repeat(self, **kwargs) -> bool:
         """True for repeat values exists in xdata_list or ydata_list"""
         if self.check_repeat_values(kwargs["xdata_list"]):
@@ -634,7 +639,6 @@ class PcolormeshPlotly(ParentPlotly):
                 self.set_xytick_precision_xyt_label(**kwargs)
 
 
-
 class ThreeDimensionPlotly(ParentPlotly):
     """A plotly 3d plot class for heatmap
 
@@ -752,21 +756,27 @@ class ThreeDimensionPlotly(ParentPlotly):
             self.figure.update_traces(
                 contours_z=dict(show=True, usecolormap=True, project_z=True)
             )
-            step = len(kwargs["xdata_list"])//self.nticks
-            step = [step, 1][step==0]
+            step = len(kwargs["xdata_list"]) // self.nticks
+            step = [step, 1][step == 0]
             xdata_index = [i for i in range(0, len(kwargs["xdata_list"]), step)]
-            step = len(kwargs["ydata_list"])//self.nticks
-            step = [step, 1][step==0]
+            step = len(kwargs["ydata_list"]) // self.nticks
+            step = [step, 1][step == 0]
             ydata_index = [i for i in range(0, len(kwargs["ydata_list"]), step)]
             if kwargs["x_precision"] != None:
                 self.figure.update_scenes(
-                    xaxis_tickvals = xdata_index,
-                    xaxis_ticktext = [f"{kwargs['xdata_list'][x]:.{kwargs['x_precision']}f}" for x in xdata_index],
+                    xaxis_tickvals=xdata_index,
+                    xaxis_ticktext=[
+                        f"{kwargs['xdata_list'][x]:.{kwargs['x_precision']}f}"
+                        for x in xdata_index
+                    ],
                 )
             if kwargs["y_precision"] != None:
                 self.figure.update_scenes(
-                    yaxis_tickvals = ydata_index,
-                    yaxis_ticktext = [f"{kwargs['ydata_list'][y]:.{kwargs['y_precision']}f}" for y in ydata_index],
+                    yaxis_tickvals=ydata_index,
+                    yaxis_ticktext=[
+                        f"{kwargs['ydata_list'][y]:.{kwargs['y_precision']}f}"
+                        for y in ydata_index
+                    ],
                 )
             if kwargs["z_precision"] != None:
                 self.figure.update_scenes(zaxis_tickformat=f".{kwargs['z_precision']}f")

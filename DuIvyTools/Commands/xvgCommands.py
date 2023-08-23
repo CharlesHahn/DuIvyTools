@@ -20,7 +20,7 @@ from Visualizor.Visualizer_plotly import *
 
 class xvg_show(Command):
     """
-    Visualize all data in xvg files. 
+    Visualize all data in xvg files.
 
     :Parameters:
         -f, --input
@@ -65,7 +65,7 @@ class xvg_show(Command):
                 specify the precision of Y ticklabels
 
     :Usage:
-        dit xvg_show -f RMSD.xvg 
+        dit xvg_show -f RMSD.xvg
         dit xvg_show -f RMSD.xvg -ns -o rmsd.png
         dit xvg_show -f RMSD.xvg -x Time(ns) -xs 0.001 --legend_location
         dit xvg_show -f gyrate.xvg -b 1000 -e 2001 --x_precision 2 --y_precision 2
@@ -134,7 +134,7 @@ class xvg_show(Command):
 class xvg_compare(Command):
     """
     Compare the data columns of different xvg files.
-    Moving averages and confidence intervals could be calculated and presented by `-smv`. 
+    Moving averages and confidence intervals could be calculated and presented by `-smv`.
     `-csv` allows users to dump data into csv file, by which users could convert any xvg files into csv files.
 
     :Parameters:
@@ -418,7 +418,7 @@ class xvg_energy_compute(Command):
         binding energy  = prolig energy - pro energy - lig energy
 
     IMPORTANT:
-        User need to specify three xvg data files: 
+        User need to specify three xvg data files:
             prolig.xvg, pro.xvg, lig.xvg.
         The xvg file used here should contain and ONLY contain five columns:
             Time, LJ(SR), Disper.corr., Coulomb(SR), Coul.recip.
@@ -585,6 +585,7 @@ class xvg_combine(Command):
     :Usage:
         dit xvg_combine -f RMSD.xvg Gyrate.xvg -c 0,1 1 -l RMSD Gyrate -x Time(ps)
     """
+
     def __init__(self, parm: Parameters) -> None:
         self.parm = parm
 
@@ -623,7 +624,7 @@ class xvg_combine(Command):
                 xvg.check_column_index(column_index)
                 out_xvg.data_heads.append(xvg.data_heads[column_index])
                 data = xvg.data_columns[column_index][begin:end:dt]
-                out_xvg.data_columns.append([d*self.parm.yshrink for d in data])
+                out_xvg.data_columns.append([d * self.parm.yshrink for d in data])
         if self.parm.title:
             out_xvg.title = self.parm.title
         else:
@@ -662,11 +663,11 @@ class xvg_show_distribution(xvg_compare):
         -eg, --engine (optional)
                 specify the plot engine: matplobli (default), plotly, gnuplot, plotext
         -b, --begin (optional)
-                specify the begin index of data to calculate distribution 
+                specify the begin index of data to calculate distribution
         -e, --end (optional)
-                specify the end index of data to calculate distribution 
+                specify the end index of data to calculate distribution
         -dt, --dt (optional)
-                specify the index step of data to calculate distribution 
+                specify the index step of data to calculate distribution
         -xmin, --xmin (optional)
                 specify the xmin value of figure canvas
         -xmax, --xmax (optional)
@@ -1036,7 +1037,7 @@ class xvg_show_stack(Command):
                 specify the location of legends, inside or outside
 
     :Usage:
-        dit xvg_show_stack -f dssp_sc.xvg -c 2-7 
+        dit xvg_show_stack -f dssp_sc.xvg -c 2-7
         dit xvg_show_stack -f dssp_sc.xvg -c 2-7 -xs 0.001 -x Time(ns) --x_precision 0
         dit xvg_show_stack -f dssp_sc.xvg -c 2-7 -eg plotly -b 1000 -e 2001
         dit xvg_show_stack -f dssp_sc.xvg -c 2-7 -eg gnuplot --alpha 0.4
@@ -1148,8 +1149,8 @@ class xvg_show_stack(Command):
 
 class xvg_box_compare(xvg_compare):
     """
-    Show the difference of xvg data by violin and scatter plot. 
-    The data selected will be drawn into violin plot with a scatter plot colored by the data of corresponding first column data in xvg file. If `-m withoutScatter` specified, only the violin plot will be shown. 
+    Show the difference of xvg data by violin and scatter plot.
+    The data selected will be drawn into violin plot with a scatter plot colored by the data of corresponding first column data in xvg file. If `-m withoutScatter` specified, only the violin plot will be shown.
 
     :Parameters:
         -f, --input
@@ -1212,7 +1213,7 @@ class xvg_box_compare(xvg_compare):
     :Usage:
         dit xvg_box_compare -f RMSD.xvg -c 1 -cmap jet --alpha 1.0
         dit xvg_box_compare -f RMSD.xvg gyrate.xvg -c 1 1,2,3,4 -m withoutScatter -l RMSD Gyrate Gx Gy Gz
-        dit xvg_box_compare -f RMSD.xvg -c 1 -cmap plasma -eg plotly -z Time(ns) --z_precision 0 -zs 0.001 
+        dit xvg_box_compare -f RMSD.xvg -c 1 -cmap plasma -eg plotly -z Time(ns) --z_precision 0 -zs 0.001
         dit xvg_box_compare -f RMSD.xvg gyrate.xvg -eg gnuplot -c 1 1,2,3,4 -l RMSD Gyrate Gx Gy Gz
     """
 

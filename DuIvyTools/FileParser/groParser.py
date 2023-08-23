@@ -11,6 +11,7 @@ from utils import log
 
 class Atom(object):
     """Atom class for parsing atom line in gro file"""
+
     def __init__(self, line: str) -> None:
         self.res_id = int(line[:5].strip())
         self.res_name = line[5:10].strip()

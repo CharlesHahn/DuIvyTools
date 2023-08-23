@@ -11,6 +11,7 @@ from utils import log
 
 class Atom(object):
     """Atom class for parsing atom line in pdb file"""
+
     def __init__(self, line: str) -> None:
         self.atom_id = int(line[6:11].strip())
         self.atom_name = line[12:16].strip()

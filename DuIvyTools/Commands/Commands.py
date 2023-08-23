@@ -13,6 +13,7 @@ from utils import log
 
 class Command(log):
     """Command class was desiged as parent class for all commands"""
+
     def __init__(self) -> None:
         pass
 

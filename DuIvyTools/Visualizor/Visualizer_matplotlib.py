@@ -79,7 +79,7 @@ class ParentMatplotlib(log):
         plt.xlabel(kwargs["xlabel"])
         plt.ylabel(kwargs["ylabel"])
         plt.title(kwargs["title"])
-    
+
     def set_xytick_precision_xyt_label(self, **kwargs) -> None:
         """set IMAGE x_precision, y_precision, xlabel, ylabel, title"""
         if kwargs["x_precision"] == None:

@@ -19,14 +19,14 @@ from Visualizor.Visualizer_plotly import *
 
 class xpm_show(Command):
     """
-    Visualize the xpm file. 
-    DIT support 4 plot engines (matplotlib, plotly, gnuplot, and plotext) and several modes to plot xpm into figures. 4 modes for matplotlib (imshow which is default, pcolormesh, 3d, and contour), and 3 modes for plotly and gnuplot (pcolormesh which is default, 3d, and contour). Plotext only support plotting simple and small size xpm in gray. 
-    Modes imshow and pcolormesh mainly show the matrix of xpm. For `Continuous` type xpms, matplotlib, plotly and gnuplot will NOT use its original colors, and the colormaps of each engine will be used. For matploblib and plotly, you can set colormaps by `-cmap`. For `Discrete` type of xpms, only pcolormesh of matploblib will NOT use its original colors. But you can set colors by mplstyle file or other style files.For the methods using its original colors, you can set colors by directly modifing the xpm file. 
+    Visualize the xpm file.
+    DIT support 4 plot engines (matplotlib, plotly, gnuplot, and plotext) and several modes to plot xpm into figures. 4 modes for matplotlib (imshow which is default, pcolormesh, 3d, and contour), and 3 modes for plotly and gnuplot (pcolormesh which is default, 3d, and contour). Plotext only support plotting simple and small size xpm in gray.
+    Modes imshow and pcolormesh mainly show the matrix of xpm. For `Continuous` type xpms, matplotlib, plotly and gnuplot will NOT use its original colors, and the colormaps of each engine will be used. For matploblib and plotly, you can set colormaps by `-cmap`. For `Discrete` type of xpms, only pcolormesh of matploblib will NOT use its original colors. But you can set colors by mplstyle file or other style files.For the methods using its original colors, you can set colors by directly modifing the xpm file.
     Mode 3d mainly plot a 3d figure for `Continuous` xpm. Mode contour plot a contour figure for `Continuous` xpm. Also, you can set colormaps by `-cmap`.
-    You can perform INTERPOLATION to data by specifing `-ip`. 
-    For imshow of matplotlib, the interpolation method was using the interpolation method of imshow function of matplobli, and there are lots of interpolation methods could be selected. If you do not know the names of interpolation methods, simply specify `-ip hhh`, then the error message will show you all names of interpolation methods for you to choose. 
+    You can perform INTERPOLATION to data by specifing `-ip`.
+    For imshow of matplotlib, the interpolation method was using the interpolation method of imshow function of matplobli, and there are lots of interpolation methods could be selected. If you do not know the names of interpolation methods, simply specify `-ip hhh`, then the error message will show you all names of interpolation methods for you to choose.
     For any other engines or modes, DIT use `scipy.interpolate.interp2d` to do the interpolation, so the methods for you to choose is `linear`, `cubic`, and `quintic`. Also, `-ip hhh` trick works. For this interpolation methods, you need to define a `--interpolation_fold` (default to 10).
-    DIT support performing xpm cutting by `-xmin`, `-xmax`, `-ymin`, and `-ymax`, like only show 100*100 pixels from a 132*10000 DSSP xpm by setting `-xmin 100 -xmax 200 -ymin 200 -ymax 300`. 
+    DIT support performing xpm cutting by `-xmin`, `-xmax`, `-ymin`, and `-ymax`, like only show 100*100 pixels from a 132*10000 DSSP xpm by setting `-xmin 100 -xmax 200 -ymin 200 -ymax 300`.
 
     :Parameters:
         -f, --input
@@ -85,8 +85,8 @@ class xpm_show(Command):
                 specify the location of colorbar, available for matplotlib: left, top, bottom, right
 
     :Usage:
-        dit xpm_show -f FEL.xpm 
-        dit xpm_show -f hbond.xpm 
+        dit xpm_show -f FEL.xpm
+        dit xpm_show -f hbond.xpm
         dit xpm_show -f DSSP.xpm -ns -o dssp.png
         dit xpm_show -f FEL.xpm -m pcolormesh -ip linear -ipf 5 -cmap solar
         dit xpm_show -f FEL.xpm -m 3d -x PC1 -y PC2 -z Energy -t FEL --alpha 0.5
@@ -98,7 +98,7 @@ class xpm_show(Command):
         dit xpm_show -f FEL.xpm -eg plotly -m 3d
         dit xpm_show -f FEL.xpm -eg plotly -m contour
         dit xpm_show -f DSSP.xpm -eg gnuplot --legend_location outside
-        dit xpm_show -f FEL.xpm -eg gnuplot -m 3d -ip cubic 
+        dit xpm_show -f FEL.xpm -eg gnuplot -m 3d -ip cubic
         dit xpm_show -f FEL.xpm -eg gnuplot -m contour -ns -o contour.png
     """
 
@@ -224,7 +224,7 @@ class xpm_show(Command):
                 for x, _ in enumerate(xaxis):
                     v_lis.append(xpm.value_matrix[y][x] * self.parm.zshrink)
                 value_matrix.append(v_lis)
-            
+
             ## top -> bottom ===>>> bottom to top
             yaxis.reverse()
             value_matrix.reverse()
@@ -357,9 +357,9 @@ class xpm2csv(Command):
         -x, --xlabel (optional)
                 specify the xlabel of XPM
         -y, --ylabel (optional)
-                specify the ylabel of XPM 
+                specify the ylabel of XPM
         -z, --zlabel (optional)
-                specify the zlabel of XPM 
+                specify the zlabel of XPM
         -xs, --xshrink (optional)
                 specify the shrink fold number of X values
         -ys, --yshrink (optional)
@@ -425,9 +425,9 @@ class xpm2dat(Command):
         -x, --xlabel (optional)
                 specify the xlabel of XPM
         -y, --ylabel (optional)
-                specify the ylabel of XPM 
+                specify the ylabel of XPM
         -z, --zlabel (optional)
-                specify the zlabel of XPM 
+                specify the zlabel of XPM
         -xs, --xshrink (optional)
                 specify the shrink fold number of X values
         -ys, --yshrink (optional)
@@ -502,7 +502,7 @@ class xpm2dat(Command):
 
 class xpm_diff(Command):
     """
-    Calculate the difference of two xpm files. 
+    Calculate the difference of two xpm files.
     By calculating the difference of matrix values of two xpms correspondingly (first xpm - second xpm), this command could be used for presentation the variation of two xpm files.
 
     :Parameters:
@@ -526,7 +526,6 @@ class xpm_diff(Command):
     :Usage:
         dit xpm_diff -f DCCM0.xpm DCCM1.xpm -o DCCM0-1.xpm
     """
-
 
     def __init__(self, parm: Parameters) -> None:
         self.parm = parm
@@ -643,7 +642,9 @@ class xpm_merge(Command):
                     out.value_matrix[h][w] = value
             out.refresh_by_value_matrix(is_Continuous=False)
 
-        out.title = self.sel_parm(self.parm.title, f"{xpm0.xpmfile}(left) / {xpm1.xpmfile}(right)")
+        out.title = self.sel_parm(
+            self.parm.title, f"{xpm0.xpmfile}(left) / {xpm1.xpmfile}(right)"
+        )
         out.xlabel = self.sel_parm(self.parm.xlabel, out.xlabel)
         out.ylabel = self.sel_parm(self.parm.ylabel, out.ylabel)
         out.legend = self.sel_parm(self.parm.zlabel, out.legend)

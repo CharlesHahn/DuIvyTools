@@ -16,6 +16,7 @@ from utils import log
 
 class XVG(log):
     """XVG class for parsing xvg file"""
+
     def __init__(
         self,
         xvgfile: Union[str, List[str]],
@@ -262,7 +263,7 @@ class XVG(log):
 
         Args:
             column_index (Union[int, List]): the user-input column index(s)
-        """        
+        """
         if isinstance(column_index, int):
             column_index = [column_index]
         elif isinstance(column_index, list):
@@ -280,6 +281,7 @@ class XVG(log):
 
 class XVGS(log):
     """XVGS class for parsing xvg file with multiframes"""
+
     def __init__(self, xvgfile: str) -> None:
         self.xvgfile: str = xvgfile
         self.frames: list[XVG] = []
