@@ -51,7 +51,7 @@ class XPM(log):
                     content = fo.read()
             else:
                 content = xpmfile
-            lines = [l.strip() for l in content.split("\n")]
+            lines = [l.strip() for l in content.strip().split("\n")]
             self.parse_xpm(lines)
             if is_file:
                 self.info(f"parsing data from {xpmfile} successfully !")
