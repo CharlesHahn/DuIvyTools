@@ -14,6 +14,7 @@ import numpy as np
 from utils import log
 
 ## TODO maybe re-construction is needed for this module
+## Gnuplot should support the functions like: plt.scatter() plt.lines(), plt.imshow()
 
 
 class Gnuplot(log):
@@ -437,7 +438,7 @@ class ParentGnuplot(log):
         os.remove(self.gpl_file)
         self.info(f"removed gnuplot scripts {self.gpl_file}")
 
-    def run(self) -> None:
+    def run_file(self) -> None:
         """run the gnuplot script to get figure"""
         inCmd = f"""echo load "{self.gpl_file}" | gnuplot"""
         p = subprocess.Popen(
@@ -453,6 +454,24 @@ class ParentGnuplot(log):
             self.info(f"gnuplot output -> {output}")
         if error:
             self.error(f"gnuplot error -> {error}")
+    
+    def run(self) -> None:
+        """run the gnuplot to get figure"""
+        gpl = self.gnuplot.dump2str()
+        cmd = gpl.encode()
+        p = subprocess.Popen(['gnuplot'], stdin=subprocess.PIPE)
+        p.stdin.write(cmd)
+        p.stdin.close()
+        self.info(f"running gnuplot at pid -> {p.pid}")
+        output, error = p.communicate()
+        p.wait()
+        status = ("Fail", "Success")[p.returncode == 0]
+        self.info(f"gnuplot status -> {status}")
+        if output:
+            self.info(f"gnuplot output -> {output.decode()}")
+        if error:
+            self.error(f"gnuplot error -> {error.decode()}")
+
 
     def final(self, outfig: str, noshow: bool) -> None:
         """deal with final process of plotting by gnuplot
@@ -471,10 +490,13 @@ class ParentGnuplot(log):
                 outfig = new_outfig
             self.outfig = outfig
         self.gnuplot.outfig = self.outfig
-        self.dump()
         if not noshow:
             self.run()
-            self.clean()
+            # self.dump()
+            # self.run_file()
+            # self.clean()
+        else:
+            self.dump()
 
 
 class LineGnuplot(ParentGnuplot):
