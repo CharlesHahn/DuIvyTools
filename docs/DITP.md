@@ -175,6 +175,10 @@ optional arguments:
 
 ** style setting **
 
+plotly style : https://plotly.com/python/templates/
+
+gnuplot style : 
+
 
 
 **angle vs time, circle plot**
