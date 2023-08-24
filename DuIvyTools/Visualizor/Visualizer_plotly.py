@@ -20,29 +20,26 @@ class ParentPlotly(log):
 
     def __init__(self):
         self.load_themes()
+        self.templates_name = "plotly"
         self.figure = go.Figure()
-        self.style = {
-            "color_cycle": [
-                "#38A7D0",
-                "#F67088",
-                "#66C2A5",
-                "#FC8D62",
-                "#8DA0CB",
-                "#E78AC3",
-                "#A6D854",
-                "#FFD92F",
-                "#E5C494",
-                "#B3B3B3",
-                "#66C2A5",
-                "#FC8D62",
-            ],
-        }
         self.nticks: int = 7  # for tick location by hand
+    
+
+    def get_color(self, id:int) -> str:
+        # colorcycle is by colorway in templates
+        colors = pio.templates[self.templates_name].layout.colorway
+        id %= len(colors)
+        return colors[id]
+
 
     def load_themes(self):
         ## TODO plotly theme and style file system
         # pio.templates.default = "seaborn"
         # print(pio.templates["plotly"].layout)
+
+        # https://github.com/AnnMarieW/dash-bootstrap-templates/tree/main/src/dash_bootstrap_templates/templates
+
+        # https://plotly.com/python/templates/#creating-themes
 
         data_file_path = os.path.realpath(
             os.path.join(os.getcwd(), os.path.dirname(__file__), "../")
@@ -51,8 +48,7 @@ class ParentPlotly(log):
             data_file_path, os.path.join("data", "plotly_templates")
         )
         files = [f for f in os.listdir(folder) if f.endswith(".json")]
-        print(files)
-        for file in files[:1]:
+        for file in files:
             name = file[:-5]
             print(os.path.join(folder, file))
             path = os.path.join(folder, file)
@@ -61,7 +57,9 @@ class ParentPlotly(log):
             pio.templates[name] = template
             print(name)
 
-        pio.templates.default = "bootstrap"
+        # pio.templates.default = "bootstrap"
+        pio.templates.default = "DIT"
+        self.templates_name = "DIT"
 
     def hex2rgb(self, hex: str) -> Tuple[float]:
         rgb = [int(hex.lstrip("#")[i : i + 2], 16) for i in (0, 2, 4)]
@@ -181,12 +179,12 @@ class LinePlotly(ParentPlotly):
                     x=kwargs["xdata_list"][i],
                     y=data,
                     name=kwargs["legends"][i],
-                    line=dict(color=self.style["color_cycle"][i]),
+                    line=dict(color=self.get_color(i)),
                     showlegend=(kwargs["legends"][i] != ""),
                 )
             )
             if len(kwargs["highs"]) != 0 and len(kwargs["lows"]) != 0:
-                rgb = self.hex2rgb(self.style["color_cycle"][i])
+                rgb = self.hex2rgb(self.get_color(i))
                 rgba = f"rgba({rgb[0]},{rgb[1]},{rgb[2]},{kwargs['alpha']})"
                 self.figure.add_trace(
                     go.Scatter(
@@ -243,7 +241,7 @@ class StackPlotly(ParentPlotly):
         kwargs["data_list"].reverse()  # first in, show at bottom
         kwargs["legends"].reverse()  # reverse as data
         for i, data in enumerate(kwargs["data_list"]):
-            rgb = self.hex2rgb(self.style["color_cycle"][i])
+            rgb = self.hex2rgb(self.get_color(i))
             rgba = f"rgba({rgb[0]},{rgb[1]},{rgb[2]},{kwargs['alpha']})"
             self.figure.add_trace(
                 go.Scatter(
@@ -294,6 +292,7 @@ class ScatterPlotly(ParentPlotly):
     def __init__(self, **kwargs) -> None:
         super().__init__()
 
+        ## TODO: two or more list cause colorbar error
         for i, data in enumerate(kwargs["data_list"]):
             self.figure.add_trace(
                 go.Scatter(
