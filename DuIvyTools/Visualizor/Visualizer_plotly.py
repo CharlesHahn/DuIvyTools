@@ -4,10 +4,11 @@ Visualizer_plotly module is part of DuIvyTools providing basic visualization too
 Written by DuIvy and provided to you by GPLv3 license.
 """
 
+import os
+import json
 from typing import Tuple
 
 import numpy as np
-import plotly.express as pe
 import plotly.graph_objs as go
 import plotly.io as pio
 
@@ -18,7 +19,7 @@ class ParentPlotly(log):
     """parent class of plotly visualizer class"""
 
     def __init__(self):
-        # pio.templates.default = "ggplot2"
+        self.load_themes()
         self.figure = go.Figure()
         self.style = {
             "color_cycle": [
@@ -40,7 +41,27 @@ class ParentPlotly(log):
 
     def load_themes(self):
         ## TODO plotly theme and style file system
-        pass
+        # pio.templates.default = "seaborn"
+        # print(pio.templates["plotly"].layout)
+
+        data_file_path = os.path.realpath(
+            os.path.join(os.getcwd(), os.path.dirname(__file__), "../")
+        )
+        folder = os.path.join(
+            data_file_path, os.path.join("data", "plotly_templates")
+        )
+        files = [f for f in os.listdir(folder) if f.endswith(".json")]
+        print(files)
+        for file in files[:1]:
+            name = file[:-5]
+            print(os.path.join(folder, file))
+            path = os.path.join(folder, file)
+            with open(path, 'r') as fo:
+                template = json.load(fo)
+            pio.templates[name] = template
+            print(name)
+
+        pio.templates.default = "bootstrap"
 
     def hex2rgb(self, hex: str) -> Tuple[float]:
         rgb = [int(hex.lstrip("#")[i : i + 2], 16) for i in (0, 2, 4)]
