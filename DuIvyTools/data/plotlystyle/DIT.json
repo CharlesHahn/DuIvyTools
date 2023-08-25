@@ -1,10 +1,100 @@
 {
+    "data": {
+        "bar": [
+            {
+                "error_x": {
+                    "color": "#2a3f5f"
+                },
+                "error_y": {
+                    "color": "#2a3f5f"
+                },
+                "marker": {
+                    "line": {
+                        "color": "white",
+                        "width": 0.5
+                    }
+                },
+                "type": "bar"
+            }
+        ],
+        "contour": [
+            {
+                "colorbar": {
+                    "outlinewidth": 0,
+                    "ticks": "",
+                    "x": 1.02,
+                    "y": 0.02,
+                    "xanchor": "left",
+                    "yanchor": "bottom",
+                    "len": 0.50,
+                    "lenmode": "fraction"
+                },
+                "type": "contour"
+            }
+        ],
+        "heatmap": [
+            {
+                "colorbar": {
+                    "outlinewidth": 0,
+                    "ticks": "",
+                    "x": 1.02,
+                    "y": 0.02,
+                    "xanchor": "left",
+                    "yanchor": "bottom",
+                    "len": 0.50,
+                    "lenmode": "fraction"
+                },
+                "type": "heatmap"
+            }
+        ],
+        "scatter": [
+            {
+                "marker": {
+                    "line": {
+                        "color": "#fff"
+                    },
+                    "colorbar": {
+                        "outlinewidth": 0,
+                        "ticks": "",
+                        "x": 1.02,
+                        "y": 0.02,
+                        "xanchor": "left",
+                        "yanchor": "bottom",
+                        "len": 0.50,
+                        "lenmode": "fraction"
+                    }
+                },
+                "type": "scatter"
+            }
+        ],
+        "surface": [
+            {
+                "colorbar": {
+                    "outlinewidth": 0,
+                    "ticks": "",
+                    "x": 1.02,
+                    "y": 0.02,
+                    "xanchor": "left",
+                    "yanchor": "bottom",
+                    "len": 0.50,
+                    "lenmode": "fraction"
+                },
+                "type": "surface"
+            }
+        ]
+    },
     "layout": {
         "coloraxis": {
-            "colorbar": {
-                "outlinewidth": 0,
-                "ticks": ""
-            }
+            "showscale": true
+        },
+        "showlegend": true,
+        "legend_orientation": "v",
+        "legend": {
+            "x": 1.0,
+            "y": 1.0,
+            "xanchor": "left",
+            "yanchor": "top",
+            "bgcolor": "rgba(0,0,0,0)"
         },
         "colorway": [
             "#38A7D0",
@@ -75,7 +165,7 @@
                 "ticks": "",
                 "zerolinecolor": "white",
                 "tickfont": {
-                    "size": 14, 
+                    "size": 14,
                     "family": "Arial, Times New Roman"
                 }
             },
@@ -88,7 +178,7 @@
                 "ticks": "",
                 "zerolinecolor": "white",
                 "tickfont": {
-                    "size": 14, 
+                    "size": 14,
                     "family": "Arial, Times New Roman"
                 }
             },
@@ -101,7 +191,7 @@
                 "ticks": "",
                 "zerolinecolor": "white",
                 "tickfont": {
-                    "size": 14, 
+                    "size": 14,
                     "family": "Arial, Times New Roman"
                 }
             }
