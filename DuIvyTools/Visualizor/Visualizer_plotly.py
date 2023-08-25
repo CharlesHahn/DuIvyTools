@@ -350,7 +350,7 @@ class ScatterPlotly(ParentPlotly):
                     showlegend=(len(kwargs["legends"]) > 1),
                     marker=dict(
                         colorbar={
-                            "title": {"text": kwargs["zlabel"], "side": "right"},
+                            "title": {"text": kwargs["zlabel"]},
                             "tickformat": f".{kwargs['z_precision']}f",
                         },
                         opacity=kwargs["alpha"],
@@ -454,7 +454,7 @@ class BoxPlotly(ParentPlotly):
                         showlegend=False,
                         marker=dict(
                             colorbar={
-                                "title": {"text": kwargs["zlabel"], "side": "right"},
+                                "title": {"text": kwargs["zlabel"]},
                                 "tickformat": f".{kwargs['z_precision']}f",
                             },
                             opacity=kwargs["alpha"],
@@ -613,7 +613,7 @@ class PcolormeshPlotly(ParentPlotly):
                         z=kwargs["data_list"],
                         colorscale=colorscale,
                         colorbar={
-                            "title": {"text": kwargs["zlabel"], "side": "right"},
+                            "title": {"text": kwargs["zlabel"]},
                             "ticktext": kwargs["legends"],
                             "tickvals": tickvals,
                         },
@@ -626,7 +626,7 @@ class PcolormeshPlotly(ParentPlotly):
                         z=kwargs["data_list"],
                         colorscale=colorscale,
                         colorbar={
-                            "title": {"text": kwargs["zlabel"], "side": "right"},
+                            "title": {"text": kwargs["zlabel"]},
                             "ticktext": kwargs["legends"],
                             "tickvals": tickvals,
                         },
@@ -642,7 +642,7 @@ class PcolormeshPlotly(ParentPlotly):
                         z=kwargs["data_list"],
                         colorscale=kwargs["cmap"],
                         colorbar={
-                            "title": {"text": kwargs["zlabel"], "side": "right"},
+                            "title": {"text": kwargs["zlabel"]},
                             "tickformat": f".{kwargs['z_precision']}f",
                         },
                     )
@@ -654,7 +654,7 @@ class PcolormeshPlotly(ParentPlotly):
                         z=kwargs["data_list"],
                         colorscale=kwargs["cmap"],
                         colorbar={
-                            "title": {"text": kwargs["zlabel"], "side": "right"},
+                            "title": {"text": kwargs["zlabel"]},
                             "tickformat": f".{kwargs['z_precision']}f",
                         },
                     )
@@ -698,7 +698,7 @@ class ThreeDimensionPlotly(ParentPlotly):
                     z=kwargs["data_list"],
                     colorscale=kwargs["cmap"],
                     colorbar={
-                        "title": {"text": kwargs["zlabel"], "side": "right"},
+                        "title": {"text": kwargs["zlabel"]},
                         "tickformat": f".{kwargs['z_precision']}f",
                     },
                 )
@@ -732,7 +732,7 @@ class ThreeDimensionPlotly(ParentPlotly):
                     z=kwargs["data_list"],
                     colorscale=kwargs["cmap"],
                     colorbar={
-                        "title": {"text": kwargs["zlabel"], "side": "right"},
+                        "title": {"text": kwargs["zlabel"]},
                         "tickformat": f".{kwargs['z_precision']}f",
                     },
                 )
@@ -816,7 +816,7 @@ class ContourPlotly(ParentPlotly):
                     z=kwargs["data_list"],
                     colorscale=kwargs["cmap"],
                     colorbar={
-                        "title": {"text": kwargs["zlabel"], "side": "right"},
+                        "title": {"text": kwargs["zlabel"]},
                         "tickformat": f".{kwargs['z_precision']}f",
                     },
                     contours=dict(showlines=False),
@@ -829,7 +829,7 @@ class ContourPlotly(ParentPlotly):
                     z=kwargs["data_list"],
                     colorscale=kwargs["cmap"],
                     colorbar={
-                        "title": {"text": kwargs["zlabel"], "side": "right"},
+                        "title": {"text": kwargs["zlabel"]},
                         "tickformat": f".{kwargs['z_precision']}f",
                     },
                     contours=dict(showlines=False),

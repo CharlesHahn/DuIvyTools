@@ -19,6 +19,7 @@
         ],
         "contour": [
             {
+                "showscale": true,
                 "colorbar": {
                     "outlinewidth": 0,
                     "ticks": "",
@@ -27,13 +28,17 @@
                     "xanchor": "left",
                     "yanchor": "bottom",
                     "len": 0.50,
-                    "lenmode": "fraction"
+                    "lenmode": "fraction",
+                    "title": {
+                        "side": "right"
+                    }
                 },
                 "type": "contour"
             }
         ],
         "heatmap": [
             {
+                "showscale": true,
                 "colorbar": {
                     "outlinewidth": 0,
                     "ticks": "",
@@ -42,7 +47,10 @@
                     "xanchor": "left",
                     "yanchor": "bottom",
                     "len": 0.50,
-                    "lenmode": "fraction"
+                    "lenmode": "fraction",
+                    "title": {
+                        "side": "right"
+                    }
                 },
                 "type": "heatmap"
             }
@@ -53,6 +61,7 @@
                     "line": {
                         "color": "#fff"
                     },
+                    "showscale": true,
                     "colorbar": {
                         "outlinewidth": 0,
                         "ticks": "",
@@ -61,7 +70,10 @@
                         "xanchor": "left",
                         "yanchor": "bottom",
                         "len": 0.50,
-                        "lenmode": "fraction"
+                        "lenmode": "fraction",
+                        "title": {
+                            "side": "right"
+                        }
                     }
                 },
                 "type": "scatter"
@@ -69,6 +81,7 @@
         ],
         "surface": [
             {
+                "showscale": true,
                 "colorbar": {
                     "outlinewidth": 0,
                     "ticks": "",
@@ -77,16 +90,16 @@
                     "xanchor": "left",
                     "yanchor": "bottom",
                     "len": 0.50,
-                    "lenmode": "fraction"
+                    "lenmode": "fraction",
+                    "title": {
+                        "side": "right"
+                    }
                 },
                 "type": "surface"
             }
         ]
     },
     "layout": {
-        "coloraxis": {
-            "showscale": true
-        },
         "showlegend": true,
         "legend_orientation": "v",
         "legend": {
