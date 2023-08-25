@@ -147,7 +147,7 @@ class show_style(Command):
             f"You can get one of the following style files for plot engine {self.parm.engine} by specifying the output parameter with same file name: \n"
         )
         for i in range(0, len(files), 5):
-            print("  ".join(files[i:i+5]))
+            print("  ".join(files[i : i + 5]))
         print("-" * 80)
         print(f">> The default style file for {self.parm.engine} is {default_output}")
         print("-" * 80)
@@ -164,7 +164,9 @@ class show_style(Command):
             self.parm.output = self.check_output_exist(self.parm.output)
             with open(self.parm.output, "w") as fo:
                 fo.write(content)
-            self.info(f"generated {self.parm.output} for {self.parm.engine} successfully")
+            self.info(
+                f"generated {self.parm.output} for {self.parm.engine} successfully"
+            )
 
 
 class find_center(Command):

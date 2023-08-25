@@ -211,7 +211,15 @@ class Parameters(log):
             "-m",
             "--mode",
             type=str,
-            choices=[None, "withoutScatter", "pcolormesh", "3d", "contour", "AllAtoms", "pdf", "cdf"],
+            choices=[
+                "withoutScatter",
+                "pcolormesh",
+                "3d",
+                "contour",
+                "AllAtoms",
+                "pdf",
+                "cdf",
+            ],
             help="additional parameter: 'withoutScatter' will NOT show scatter plot for 'xvg_box_compare'; 'imshow', 'pcolormesh', '3d', 'contour' were used for 'xpm_show' command; 'AllAtoms' were used for 'find_center' command; 'cdf' and 'pdf' are for 'xvg_show_distribution' command;",
         )
         parser.add_argument(

@@ -13,8 +13,10 @@ from utils import log
 class MDP(log):
     """class MDP are designed to parse key and values of mdp file"""
 
-    def __init__(self, mdpfile:str, is_file:bool=True, new_file:bool=False) -> None:
-        self.mdps :Dict[str, str]
+    def __init__(
+        self, mdpfile: str, is_file: bool = True, new_file: bool = False
+    ) -> None:
+        self.mdps: Dict[str, str]
         if new_file:
             self.mdpfile = mdpfile
         else:
@@ -23,8 +25,10 @@ class MDP(log):
                 if not os.path.exists(mdpfile):
                     self.error(f"No {mdpfile} detected ! check it !")
                 if mdpfile[-4:] != ".mdp":
-                    self.error(f"you must specify a file with suffix .mdp instead of {mdpfile}")
-                with open(mdpfile, 'r') as fo:
+                    self.error(
+                        f"you must specify a file with suffix .mdp instead of {mdpfile}"
+                    )
+                with open(mdpfile, "r") as fo:
                     content = fo.read()
             else:
                 content = mdpfile
@@ -32,7 +36,7 @@ class MDP(log):
             self.parse_mdp(lines)
             if is_file:
                 self.info(f"parsing data from {mdpfile} successfully !")
-    
+
     def parse_mdp(self, lines: List[str]) -> None:
         """parse mdp file into MDP"""
         for line in lines:
@@ -47,15 +51,19 @@ class MDP(log):
                 value = key_value[1].strip()
                 self[key] = value
             else:
-                self.error(f"Error occured when paring {self.mdpfile} at line: \n {line}")
+                self.error(
+                    f"Error occured when paring {self.mdpfile} at line: \n {line}"
+                )
 
-    def __setitem__(self, key:str, value:str) -> None:
+    def __setitem__(self, key: str, value: str) -> None:
         """set key and value in mdps, key and value must be string"""
         if not isinstance(key, str) or not isinstance(value, str):
-            self.error(f"Error in setitem, key {key} and value {value} must be string type")
+            self.error(
+                f"Error in setitem, key {key} and value {value} must be string type"
+            )
         self.mdps[key] = value
 
-    def __getitem__(self, key:str) -> Union[str, None]:
+    def __getitem__(self, key: str) -> Union[str, None]:
         """return value of specified key, or return None if no key in mdps"""
         if not isinstance(key, str):
             self.error(f"key {key} must be string type")
@@ -63,27 +71,26 @@ class MDP(log):
             return self.mdps[key]
         else:
             return None
-    
+
     def __len__(self) -> int:
         """return the number of key value pairs in mdps"""
         return len(self.mdps.keys())
-    
-    def __delitem__(self, key:str) -> None:
+
+    def __delitem__(self, key: str) -> None:
         """delete key value pair by key"""
         if not isinstance(key, str):
             self.error(f"key {key} must be string type")
         if key in self.mdps.keys():
             del self.mdps[key]
-            
+
     def __str__(self) -> str:
         """return all keys in self.mdps"""
-        output :str = ""
+        output: str = ""
         for key, value in self.mdps.items():
             output += f"{key:<25} = {value:<20} \n"
         return output
 
-    def save(self, mdpfile:str) -> None:
+    def save(self, mdpfile: str) -> None:
         """dump MDP to mdp file"""
-        with open(mdpfile, 'w') as fo:
+        with open(mdpfile, "w") as fo:
             fo.write(str(self))
-    

@@ -454,12 +454,12 @@ class ParentGnuplot(log):
             self.info(f"gnuplot output -> {output}")
         if error:
             self.error(f"gnuplot error -> {error}")
-    
+
     def run(self) -> None:
         """run the gnuplot to get figure"""
         gpl = self.gnuplot.dump2str()
         cmd = gpl.encode()
-        p = subprocess.Popen(['gnuplot'], stdin=subprocess.PIPE)
+        p = subprocess.Popen(["gnuplot"], stdin=subprocess.PIPE)
         p.stdin.write(cmd)
         p.stdin.close()
         self.info(f"running gnuplot at pid -> {p.pid}")
@@ -471,7 +471,6 @@ class ParentGnuplot(log):
             self.info(f"gnuplot output -> {output.decode()}")
         if error:
             self.error(f"gnuplot error -> {error.decode()}")
-
 
     def final(self, outfig: str, noshow: bool) -> None:
         """deal with final process of plotting by gnuplot

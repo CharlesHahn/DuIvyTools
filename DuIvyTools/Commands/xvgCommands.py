@@ -714,7 +714,9 @@ class xvg_show_distribution(xvg_compare):
                 bin = int(self.parm.additional_list[0])
                 self.info(f"set bin of distribution to {bin}")
             else:
-                self.warn(f"bin number of distribution can only be specified by the first value of `-al`, and it should be int type. Ignore it !!!")
+                self.warn(
+                    f"bin number of distribution can only be specified by the first value of `-al`, and it should be int type. Ignore it !!!"
+                )
         if bin <= 0:
             self.error("bin for distribution calculation can not be <= 0")
         begin, end, dt = self.parm.begin, self.parm.end, self.parm.dt
@@ -791,7 +793,7 @@ class xvg_show_distribution(xvg_compare):
                 )
             fo.write("\n")
             for r in range(len(kwargs["data_list"][0])):
-                line :str = ""
+                line: str = ""
                 for c in range(len(kwargs["data_list"])):
                     x = kwargs["xdata_list"][c][r]
                     y = kwargs["data_list"][c][r]
@@ -830,7 +832,9 @@ class xvg_show_distribution(xvg_compare):
             x_value = [min]
         return x_value, frequency
 
-    def calc_density(self, data:List[float], key:str="pdf") -> Tuple[List[float], List[float]]:
+    def calc_density(
+        self, data: List[float], key: str = "pdf"
+    ) -> Tuple[List[float], List[float]]:
         """calculate the density distribution of data by scify.gaussian_kde
 
         Args:

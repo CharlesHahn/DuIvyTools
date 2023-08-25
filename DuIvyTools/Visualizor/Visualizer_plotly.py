@@ -22,7 +22,7 @@ class ParentPlotly(log):
         self.load_themes()
         self.figure = go.Figure()
         self.nticks: int = 7  # for tick location by hand
-    
+
     def hex2rgb(self, hex: str) -> Tuple[float]:
         """convert hex color #FF00FF to rgb tuple form rgb(255, 0, 255)"""
         hex = hex.lstrip("#")
@@ -30,33 +30,64 @@ class ParentPlotly(log):
         res = f"rgb({res[0]},{res[1]},{res[2]})"
         return res
 
-    def get_color(self, id:int) -> str:
+    def get_color(self, id: int) -> str:
         """colorcycle is by colorway in templates"""
         colors = pio.templates[self.templates_name].layout.colorway
         if colors == None:
-            colors = ["#38A7D0", "#F67088", "#66C2A5", "#FC8D62", "#8DA0CB", "#E78AC3", "#A6D854", "#FFD92F", "#E5C494", "#B3B3B3", "#66C2A5", "#FC8D62"]
-        res = colors[id%len(colors)]
+            colors = [
+                "#38A7D0",
+                "#F67088",
+                "#66C2A5",
+                "#FC8D62",
+                "#8DA0CB",
+                "#E78AC3",
+                "#A6D854",
+                "#FFD92F",
+                "#E5C494",
+                "#B3B3B3",
+                "#66C2A5",
+                "#FC8D62",
+            ]
+        res = colors[id % len(colors)]
 
         if res[0] == "#" and len(res) == 7:
             res = self.hex2rgb(res)
         elif res.startswith("rgb(") and res.endswith(")"):
             pass
         else:
-            self.error("DIT plotly engine can only accept colors in hex or rgb form, like: '#F67088' or 'rgb(76, 114, 176)'. {res} is not supported.")
+            self.error(
+                "DIT plotly engine can only accept colors in hex or rgb form, like: '#F67088' or 'rgb(76, 114, 176)'. {res} is not supported."
+            )
         return res
-    
-    def set_templates(self, name:str, filename:str) -> None:
+
+    def set_templates(self, name: str, filename: str) -> None:
         """set the templates to pio.templates"""
-        plotly_templates_names = ['ggplot2', 'seaborn', 'simple_white', 'plotly', 'plotly_white', 'plotly_dark', 'presentation', 'xgridoff', 'ygridoff', 'gridon', 'none']
+        plotly_templates_names = [
+            "ggplot2",
+            "seaborn",
+            "simple_white",
+            "plotly",
+            "plotly_white",
+            "plotly_dark",
+            "presentation",
+            "xgridoff",
+            "ygridoff",
+            "gridon",
+            "none",
+        ]
         if name in plotly_templates_names:
-            self.error(f"The name {name} is not allowed. Change the file name of your template.")
+            self.error(
+                f"The name {name} is not allowed. Change the file name of your template."
+            )
         try:
-            with open(filename, 'r') as fo:
+            with open(filename, "r") as fo:
                 template = json.load(fo)
         except Exception as err:
-            self.error(f"unable to load plotly style template file {filename} by json, check the format of your file. \n" + err)
+            self.error(
+                f"unable to load plotly style template file {filename} by json, check the format of your file. \n"
+                + err
+            )
         pio.templates[name] = template
-
 
     def load_themes(self):
         """load default or user-defined templates"""
@@ -79,7 +110,7 @@ class ParentPlotly(log):
             dit_template = os.path.join(
                 data_file_path, os.path.join("data", "plotlystyle", "DIT.json")
             )
-            name = "DIT" 
+            name = "DIT"
             self.set_templates(name, dit_template)
             self.info(
                 "using default plotly style template, to inspect its content, use 'dit show_style -eg plotly'"
@@ -103,7 +134,7 @@ class ParentPlotly(log):
     def set_xyprecision_xyt_label(self, **kwargs) -> None:
         """set x_precision, y_precision, xlabel, ylabel, title"""
         self.figure.update_layout(
-            legend_orientation="v", # TODO: the legend location
+            legend_orientation="v",  # TODO: the legend location
             title=kwargs["title"],
             xaxis_title=kwargs["xlabel"],
             yaxis_title=kwargs["ylabel"],
