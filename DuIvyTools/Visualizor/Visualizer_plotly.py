@@ -77,7 +77,7 @@ class ParentPlotly(log):
                 os.path.join(os.getcwd(), os.path.dirname(__file__), "../")
             )
             dit_template = os.path.join(
-                data_file_path, os.path.join("data", "plotly_templates", "DIT.json")
+                data_file_path, os.path.join("data", "plotlystyle", "DIT.json")
             )
             name = "DIT" 
             self.set_templates(name, dit_template)

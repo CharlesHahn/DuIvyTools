@@ -71,16 +71,23 @@ class mdp_gen(Command):
 
 class show_style(Command):
     """
-    Generate the default mplstyle file (DIT.mplstyle) at current working directory.
-    You can type `dit show_style` to generate DIT.mplstyle. DIT provides DIT.mplstyle, science.mplstyle, nature.mplstyle, and a blank.mplstyle which contained all possible matplotlib parameters.
+    Generate the default style file at current working directory.
+    For matplotlib, DIT provides DIT.mplstyle (default), science.mplstyle, nature.mplstyle, and a blank.mplstyle which contained all possible matplotlib parameters.
+    For plotly and gnuplot, DIT provides several style files. DIT.json and DIT.gpl are the default style files for plotly and gnuplot.
 
     :Parameters:
         -o, --output (optional)
-                specify the name of mplstyle file to generate
+                specify the name of style file to generate
+        -eg, --engine (optional)
+                specify the plot engine to generate corresponding style file, default to matplotlib
 
     :Usage:
         dit show_style
-        dit show_style -o blank.mplstyle
+        dit show_style -o science.mplstyle
+        dit show_style -eg plotly
+        dit show_style -eg plotly -o bootstrap.json
+        dit show_style -eg gnuplot
+        dit show_style -eg gnuplot -o DIT.gpl
     """
 
     def __init__(self, parm: Parameters) -> None:
@@ -100,26 +107,64 @@ class show_style(Command):
         mplstyle_files = [
             f for f in os.listdir(mplstyle_path) if f.endswith(".mplstyle")
         ]
+        plotlystyle_path = os.path.realpath(
+            os.path.join(
+                os.getcwd(),
+                os.path.dirname(__file__),
+                os.path.join("..", "data", "plotlystyle"),
+            )
+        )
+        plotlystyle_files = [
+            f for f in os.listdir(plotlystyle_path) if f.endswith(".json")
+        ]
+        gnuplotstyle_path = os.path.realpath(
+            os.path.join(
+                os.getcwd(),
+                os.path.dirname(__file__),
+                os.path.join("..", "data", "gnuplotstyle"),
+            )
+        )
+        gnuplotstyle_files = [
+            f for f in os.listdir(gnuplotstyle_path) if f.endswith(".gpl")
+        ]
 
-        if self.parm.output != None and self.parm.output not in mplstyle_files:
-            self.warn(
+        if self.parm.engine == "plotly":
+            files = plotlystyle_files
+            path = plotlystyle_path
+            default_output = "DIT.json"
+        elif self.parm.engine == "gnuplot":
+            files = gnuplotstyle_files
+            path = gnuplotstyle_path
+            default_output = "DIT.gpl"
+        else:
+            files = mplstyle_files
+            path = mplstyle_path
+            default_output = "DIT.mplstyle"
+            self.parm.engine = "matplotlib"
+
+        print("-" * 80)
+        print(
+            f"You can get one of the following style files for plot engine {self.parm.engine} by specifying the output parameter with same file name: \n"
+        )
+        for i in range(0, len(files), 5):
+            print("  ".join(files[i:i+5]))
+        print("-" * 80)
+        print(f">> The default style file for {self.parm.engine} is {default_output}")
+        print("-" * 80)
+
+        if self.parm.output != None and self.parm.output not in files:
+            self.error(
                 f'the specified output file "{self.parm.output}" were unable to provide'
             )
-            print("-" * 70)
-            print(
-                "You can get one of the following mplstyle file by specifying the output parameter: \n"
-            )
-            print("  ".join(mplstyle_files))
-            print("-" * 70)
         elif self.parm.output == None:
-            self.parm.output = "DIT.mplstyle"
-        if self.parm.output != None and self.parm.output in mplstyle_files:
-            with open(os.path.join(mplstyle_path, self.parm.output), "r") as fo:
+            self.parm.output = default_output
+        if self.parm.output != None and self.parm.output in files:
+            with open(os.path.join(path, self.parm.output), "r") as fo:
                 content = fo.read()
             self.parm.output = self.check_output_exist(self.parm.output)
             with open(self.parm.output, "w") as fo:
                 fo.write(content)
-            self.info(f"generated {self.parm.output} successfully")
+            self.info(f"generated {self.parm.output} for {self.parm.engine} successfully")
 
 
 class find_center(Command):
