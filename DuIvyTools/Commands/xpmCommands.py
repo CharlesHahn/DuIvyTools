@@ -135,7 +135,7 @@ class xpm_show(Command):
         matrix_new = ip_func(x_new, y_new)
         return x_new, y_new, matrix_new
 
-    def hex_to_rgb(self, value):
+    def hex2rgb(self, value):
         value = value.lstrip("#")
         res = tuple(int(value[i : i + 2], 16) for i in (0, 2, 4))
         return res
@@ -337,7 +337,7 @@ class xpm_show(Command):
                     c_lis = []
                     for x, _ in enumerate(xaxis):
                         c = xpm.colors[xpm.chars.index(xpm.dot_matrix[y][x])]
-                        c_lis.append(self.hex_to_rgb(c))
+                        c_lis.append(self.hex2rgb(c))
                     color_matrix.append(c_lis)
                 kwargs["data_list"] = color_matrix
                 ImshowPlotext(**kwargs)

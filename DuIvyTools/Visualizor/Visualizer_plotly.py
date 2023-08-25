@@ -20,50 +20,73 @@ class ParentPlotly(log):
 
     def __init__(self):
         self.load_themes()
-        self.templates_name = "plotly"
         self.figure = go.Figure()
         self.nticks: int = 7  # for tick location by hand
     
+    def hex2rgb(self, hex: str) -> Tuple[float]:
+        """convert hex color #FF00FF to rgb tuple form rgb(255, 0, 255)"""
+        hex = hex.lstrip("#")
+        res = tuple(int(hex[i : i + 2], 16) for i in (0, 2, 4))
+        res = f"rgb({res[0]},{res[1]},{res[2]})"
+        return res
 
     def get_color(self, id:int) -> str:
-        # colorcycle is by colorway in templates
+        """colorcycle is by colorway in templates"""
         colors = pio.templates[self.templates_name].layout.colorway
-        id %= len(colors)
-        return colors[id]
+        if colors == None:
+            colors = ["#38A7D0", "#F67088", "#66C2A5", "#FC8D62", "#8DA0CB", "#E78AC3", "#A6D854", "#FFD92F", "#E5C494", "#B3B3B3", "#66C2A5", "#FC8D62"]
+        res = colors[id%len(colors)]
+
+        if res[0] == "#" and len(res) == 7:
+            res = self.hex2rgb(res)
+        elif res.startswith("rgb(") and res.endswith(")"):
+            pass
+        else:
+            self.error("DIT plotly engine can only accept colors in hex or rgb form, like: '#F67088' or 'rgb(76, 114, 176)'. {res} is not supported.")
+        return res
+    
+    def set_templates(self, name:str, filename:str) -> None:
+        """set the templates to pio.templates"""
+        plotly_templates_names = ['ggplot2', 'seaborn', 'simple_white', 'plotly', 'plotly_white', 'plotly_dark', 'presentation', 'xgridoff', 'ygridoff', 'gridon', 'none']
+        if name in plotly_templates_names:
+            self.error(f"The name {name} is not allowed. Change the file name of your template.")
+        try:
+            with open(filename, 'r') as fo:
+                template = json.load(fo)
+        except Exception as err:
+            self.error(f"unable to load plotly style template file {filename} by json, check the format of your file. \n" + err)
+        pio.templates[name] = template
 
 
     def load_themes(self):
-        ## TODO plotly theme and style file system
-        # pio.templates.default = "seaborn"
-        # print(pio.templates["plotly"].layout)
+        """load default or user-defined templates"""
 
-        # https://github.com/AnnMarieW/dash-bootstrap-templates/tree/main/src/dash_bootstrap_templates/templates
+        templates_files = [file for file in os.listdir() if file[-5:] == ".json"]
+        if len(templates_files) == 1:
+            name = templates_files[0][:-5]
+            self.set_templates(name, templates_files[0])
+            self.info(f"using plotly style template from {templates_files[0]}")
+        elif len(templates_files) > 1:
+            name = templates_files[0][:-5]
+            self.set_templates(name, templates_files[0])
+            self.info(
+                f"more than one plotly style templates detected, using the {templates_files[0]}"
+            )
+        else:
+            data_file_path = os.path.realpath(
+                os.path.join(os.getcwd(), os.path.dirname(__file__), "../")
+            )
+            dit_template = os.path.join(
+                data_file_path, os.path.join("data", "plotly_templates", "DIT.json")
+            )
+            name = "DIT" 
+            self.set_templates(name, dit_template)
+            self.info(
+                "using default plotly style template, to inspect its content, use 'dit show_style -eg plotly'"
+            )
 
-        # https://plotly.com/python/templates/#creating-themes
-
-        data_file_path = os.path.realpath(
-            os.path.join(os.getcwd(), os.path.dirname(__file__), "../")
-        )
-        folder = os.path.join(
-            data_file_path, os.path.join("data", "plotly_templates")
-        )
-        files = [f for f in os.listdir(folder) if f.endswith(".json")]
-        for file in files:
-            name = file[:-5]
-            print(os.path.join(folder, file))
-            path = os.path.join(folder, file)
-            with open(path, 'r') as fo:
-                template = json.load(fo)
-            pio.templates[name] = template
-            print(name)
-
-        # pio.templates.default = "bootstrap"
-        pio.templates.default = "DIT"
-        self.templates_name = "DIT"
-
-    def hex2rgb(self, hex: str) -> Tuple[float]:
-        rgb = [int(hex.lstrip("#")[i : i + 2], 16) for i in (0, 2, 4)]
-        return tuple(rgb)
+        pio.templates.default = name
+        self.templates_name = name
 
     def final(self, outfig: str, noshow: bool) -> None:
         """do final process of drawing figure with plotly
@@ -80,11 +103,10 @@ class ParentPlotly(log):
     def set_xyprecision_xyt_label(self, **kwargs) -> None:
         """set x_precision, y_precision, xlabel, ylabel, title"""
         self.figure.update_layout(
-            legend_orientation="h",
+            legend_orientation="v", # TODO: the legend location
             title=kwargs["title"],
             xaxis_title=kwargs["xlabel"],
             yaxis_title=kwargs["ylabel"],
-            font=dict(family="Arial, Times New Roman", size=18),
             showlegend=True,
         )
         if kwargs["x_precision"] != None:
@@ -115,11 +137,10 @@ class ParentPlotly(log):
             ],
         )
         self.figure.update_layout(
-            legend_orientation="h",
+            legend_orientation="v",
             title=kwargs["title"],
             xaxis_title=kwargs["xlabel"],
             yaxis_title=kwargs["ylabel"],
-            font=dict(family="Arial, Times New Roman", size=18),
             showlegend=True,
         )
 
@@ -184,8 +205,8 @@ class LinePlotly(ParentPlotly):
                 )
             )
             if len(kwargs["highs"]) != 0 and len(kwargs["lows"]) != 0:
-                rgb = self.hex2rgb(self.get_color(i))
-                rgba = f"rgba({rgb[0]},{rgb[1]},{rgb[2]},{kwargs['alpha']})"
+                rgb = self.get_color(i)
+                rgba = f"rgba({rgb[4:-1]},{kwargs['alpha']})"
                 self.figure.add_trace(
                     go.Scatter(
                         name=f"""high-{kwargs["legends"][i]}""",
@@ -241,8 +262,8 @@ class StackPlotly(ParentPlotly):
         kwargs["data_list"].reverse()  # first in, show at bottom
         kwargs["legends"].reverse()  # reverse as data
         for i, data in enumerate(kwargs["data_list"]):
-            rgb = self.hex2rgb(self.get_color(i))
-            rgba = f"rgba({rgb[0]},{rgb[1]},{rgb[2]},{kwargs['alpha']})"
+            rgb = self.get_color(i)
+            rgba = f"rgba({rgb[4:-1]},{kwargs['alpha']})"
             self.figure.add_trace(
                 go.Scatter(
                     x=kwargs["xdata_list"][i],
@@ -709,19 +730,15 @@ class ThreeDimensionPlotly(ParentPlotly):
             self.figure.update_layout(
                 legend_orientation="h",
                 title=kwargs["title"],
-                font=dict(family="Arial, Times New Roman", size=18),
                 showlegend=True,
                 scene=dict(
                     xaxis=dict(
-                        tickfont=dict(size=14, family="Arial, Times New Roman"),
                         title=kwargs["xlabel"],
                     ),
                     yaxis=dict(
-                        tickfont=dict(size=14, family="Arial, Times New Roman"),
                         title=kwargs["ylabel"],
                     ),
                     zaxis=dict(
-                        tickfont=dict(size=14, family="Arial, Times New Roman"),
                         title=kwargs["zlabel"],
                     ),
                 ),
@@ -756,19 +773,15 @@ class ThreeDimensionPlotly(ParentPlotly):
             self.figure.update_layout(
                 legend_orientation="h",
                 title=kwargs["title"],
-                font=dict(family="Arial, Times New Roman", size=18),
                 showlegend=True,
                 scene=dict(
                     xaxis=dict(
-                        tickfont=dict(size=14, family="Arial, Times New Roman"),
                         title=kwargs["xlabel"],
                     ),
                     yaxis=dict(
-                        tickfont=dict(size=14, family="Arial, Times New Roman"),
                         title=kwargs["ylabel"],
                     ),
                     zaxis=dict(
-                        tickfont=dict(size=14, family="Arial, Times New Roman"),
                         title=kwargs["zlabel"],
                     ),
                 ),

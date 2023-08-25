@@ -158,88 +158,68 @@
             "#FC8D62"
         ],
         "font": {
+            "family": "Arial, Times New Roman",
+            "size": 18,
             "color": "#2a3f5f"
-        },
-        "geo": {
-            "bgcolor": "white",
-            "lakecolor": "white",
-            "landcolor": "#E5ECF6",
-            "showlakes": true,
-            "showland": true,
-            "subunitcolor": "white"
         },
         "hoverlabel": {
             "align": "left"
         },
         "hovermode": "closest",
-        "mapbox": {
-            "style": "light"
-        },
         "paper_bgcolor": "white",
-        "plot_bgcolor": "#E5ECF6",
+        "plot_bgcolor": "white",
         "polar": {
             "angularaxis": {
                 "gridcolor": "white",
-                "linecolor": "white",
+                "linecolor": "black",
                 "ticks": ""
             },
-            "bgcolor": "#E5ECF6",
+            "bgcolor": "white",
             "radialaxis": {
                 "gridcolor": "white",
-                "linecolor": "white",
+                "linecolor": "black",
                 "ticks": ""
             }
         },
         "scene": {
             "xaxis": {
-                "backgroundcolor": "#E5ECF6",
-                "gridcolor": "white",
-                "gridwidth": 2,
-                "linecolor": "white",
+                "backgroundcolor": "white",
+                "linecolor": "black",
+                "linewidth": 2,
+                "showline": true,
                 "showbackground": true,
                 "ticks": "",
-                "zerolinecolor": "white"
+                "zerolinecolor": "white",
+                "tickfont": {
+                    "size": 14, 
+                    "family": "Arial, Times New Roman"
+                }
             },
             "yaxis": {
-                "backgroundcolor": "#E5ECF6",
-                "gridcolor": "white",
-                "gridwidth": 2,
-                "linecolor": "white",
+                "backgroundcolor": "white",
+                "linecolor": "black",
+                "linewidth": 2,
+                "showline": true,
                 "showbackground": true,
                 "ticks": "",
-                "zerolinecolor": "white"
+                "zerolinecolor": "white",
+                "tickfont": {
+                    "size": 14, 
+                    "family": "Arial, Times New Roman"
+                }
             },
             "zaxis": {
-                "backgroundcolor": "#E5ECF6",
-                "gridcolor": "white",
-                "gridwidth": 2,
-                "linecolor": "white",
+                "backgroundcolor": "white",
+                "linecolor": "black",
+                "linewidth": 2,
+                "showline": true,
                 "showbackground": true,
                 "ticks": "",
-                "zerolinecolor": "white"
-            }
-        },
-        "shapedefaults": {
-            "line": {
-                "color": "#2a3f5f"
-            }
-        },
-        "ternary": {
-            "aaxis": {
-                "gridcolor": "white",
-                "linecolor": "white",
-                "ticks": ""
-            },
-            "baxis": {
-                "gridcolor": "white",
-                "linecolor": "white",
-                "ticks": ""
-            },
-            "bgcolor": "#E5ECF6",
-            "caxis": {
-                "gridcolor": "white",
-                "linecolor": "white",
-                "ticks": ""
+                "zerolinecolor": "white",
+                "tickfont": {
+                    "size": 14, 
+                    "family": "Arial, Times New Roman"
+                }
             }
         },
         "title": {
@@ -247,25 +227,25 @@
         },
         "xaxis": {
             "automargin": true,
-            "gridcolor": "white",
-            "linecolor": "white",
-            "ticks": "",
+            "linecolor": "black",
+            "linewidth": 2,
             "title": {
                 "standoff": 15
             },
-            "zerolinecolor": "white",
-            "zerolinewidth": 2
+            "mirror": true,
+            "ticks": "",
+            "showline": true
         },
         "yaxis": {
             "automargin": true,
-            "gridcolor": "white",
-            "linecolor": "white",
-            "ticks": "",
+            "linecolor": "black",
+            "linewidth": 2,
             "title": {
                 "standoff": 15
             },
-            "zerolinecolor": "white",
-            "zerolinewidth": 2
+            "mirror": true,
+            "ticks": "",
+            "showline": true
         }
     }
 }

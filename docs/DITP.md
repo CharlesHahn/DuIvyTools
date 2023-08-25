@@ -175,9 +175,11 @@ optional arguments:
 
 ** style setting **
 
+providing some themes of plotly and gnuplot
+
 plotly style : https://plotly.com/python/templates/
 
-gnuplot style : 
+gnuplot style : User could define by themselves, set the DIT style
 
 
 
