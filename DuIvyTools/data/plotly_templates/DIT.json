@@ -1,15 +1,119 @@
 {
     "layout": {
-        "annotationdefaults": {
-            "arrowcolor": "#2a3f5f",
-            "arrowhead": 0,
-            "arrowwidth": 1
-        },
         "coloraxis": {
             "colorbar": {
                 "outlinewidth": 0,
                 "ticks": ""
             }
+        },
+        "colorway": [
+            "#38A7D0",
+            "#F67088",
+            "#66C2A5",
+            "#FC8D62",
+            "#8DA0CB",
+            "#E78AC3",
+            "#A6D854",
+            "#FFD92F",
+            "#E5C494",
+            "#B3B3B3",
+            "#66C2A5",
+            "#FC8D62"
+        ],
+        "font": {
+            "family": "Arial, Times New Roman",
+            "size": 18,
+            "color": "#2a3f5f"
+        },
+        "title": {
+            "x": 0.05
+        },
+        "xaxis": {
+            "automargin": true,
+            "linecolor": "black",
+            "linewidth": 2,
+            "title": {
+                "standoff": 15
+            },
+            "mirror": true,
+            "ticks": "",
+            "showline": true
+        },
+        "yaxis": {
+            "automargin": true,
+            "linecolor": "black",
+            "linewidth": 2,
+            "title": {
+                "standoff": 15
+            },
+            "mirror": true,
+            "ticks": "",
+            "showline": true
+        },
+        "paper_bgcolor": "white",
+        "plot_bgcolor": "white",
+        "polar": {
+            "angularaxis": {
+                "gridcolor": "white",
+                "linecolor": "black",
+                "ticks": ""
+            },
+            "bgcolor": "white",
+            "radialaxis": {
+                "gridcolor": "white",
+                "linecolor": "black",
+                "ticks": ""
+            }
+        },
+        "scene": {
+            "xaxis": {
+                "backgroundcolor": "white",
+                "linecolor": "black",
+                "linewidth": 2,
+                "showline": true,
+                "showbackground": true,
+                "ticks": "",
+                "zerolinecolor": "white",
+                "tickfont": {
+                    "size": 14, 
+                    "family": "Arial, Times New Roman"
+                }
+            },
+            "yaxis": {
+                "backgroundcolor": "white",
+                "linecolor": "black",
+                "linewidth": 2,
+                "showline": true,
+                "showbackground": true,
+                "ticks": "",
+                "zerolinecolor": "white",
+                "tickfont": {
+                    "size": 14, 
+                    "family": "Arial, Times New Roman"
+                }
+            },
+            "zaxis": {
+                "backgroundcolor": "white",
+                "linecolor": "black",
+                "linewidth": 2,
+                "showline": true,
+                "showbackground": true,
+                "ticks": "",
+                "zerolinecolor": "white",
+                "tickfont": {
+                    "size": 14, 
+                    "family": "Arial, Times New Roman"
+                }
+            }
+        },
+        "hoverlabel": {
+            "align": "left"
+        },
+        "hovermode": "closest",
+        "annotationdefaults": {
+            "arrowcolor": "#2a3f5f",
+            "arrowhead": 0,
+            "arrowwidth": 1
         },
         "colorscale": {
             "diverging": [
@@ -142,110 +246,6 @@
                     "#f0f921"
                 ]
             ]
-        },
-        "colorway": [
-            "#38A7D0",
-            "#F67088",
-            "#66C2A5",
-            "#FC8D62",
-            "#8DA0CB",
-            "#E78AC3",
-            "#A6D854",
-            "#FFD92F",
-            "#E5C494",
-            "#B3B3B3",
-            "#66C2A5",
-            "#FC8D62"
-        ],
-        "font": {
-            "family": "Arial, Times New Roman",
-            "size": 18,
-            "color": "#2a3f5f"
-        },
-        "hoverlabel": {
-            "align": "left"
-        },
-        "hovermode": "closest",
-        "paper_bgcolor": "white",
-        "plot_bgcolor": "white",
-        "polar": {
-            "angularaxis": {
-                "gridcolor": "white",
-                "linecolor": "black",
-                "ticks": ""
-            },
-            "bgcolor": "white",
-            "radialaxis": {
-                "gridcolor": "white",
-                "linecolor": "black",
-                "ticks": ""
-            }
-        },
-        "scene": {
-            "xaxis": {
-                "backgroundcolor": "white",
-                "linecolor": "black",
-                "linewidth": 2,
-                "showline": true,
-                "showbackground": true,
-                "ticks": "",
-                "zerolinecolor": "white",
-                "tickfont": {
-                    "size": 14, 
-                    "family": "Arial, Times New Roman"
-                }
-            },
-            "yaxis": {
-                "backgroundcolor": "white",
-                "linecolor": "black",
-                "linewidth": 2,
-                "showline": true,
-                "showbackground": true,
-                "ticks": "",
-                "zerolinecolor": "white",
-                "tickfont": {
-                    "size": 14, 
-                    "family": "Arial, Times New Roman"
-                }
-            },
-            "zaxis": {
-                "backgroundcolor": "white",
-                "linecolor": "black",
-                "linewidth": 2,
-                "showline": true,
-                "showbackground": true,
-                "ticks": "",
-                "zerolinecolor": "white",
-                "tickfont": {
-                    "size": 14, 
-                    "family": "Arial, Times New Roman"
-                }
-            }
-        },
-        "title": {
-            "x": 0.05
-        },
-        "xaxis": {
-            "automargin": true,
-            "linecolor": "black",
-            "linewidth": 2,
-            "title": {
-                "standoff": 15
-            },
-            "mirror": true,
-            "ticks": "",
-            "showline": true
-        },
-        "yaxis": {
-            "automargin": true,
-            "linecolor": "black",
-            "linewidth": 2,
-            "title": {
-                "standoff": 15
-            },
-            "mirror": true,
-            "ticks": "",
-            "showline": true
         }
     }
 }
