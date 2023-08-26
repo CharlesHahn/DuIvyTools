@@ -340,25 +340,41 @@ class ScatterPlotly(ParentPlotly):
         super().__init__()
 
         for i, data in enumerate(kwargs["data_list"]):
-            self.figure.add_trace(
-                go.Scatter(
-                    x=kwargs["xdata_list"][i],
-                    y=data,
-                    mode="markers",
-                    name=kwargs["legends"][i],
-                    showlegend=(len(kwargs["legends"]) > 1),
-                    marker=dict(
-                        colorbar={
-                            "title": {"text": kwargs["zlabel"]},
-                            "tickformat": f".{kwargs['z_precision']}f",
-                        },
-                        opacity=kwargs["alpha"],
-                        color=kwargs["color_list"][i],
-                        colorscale=kwargs["cmap"],
-                        symbol=i,
-                    ),
+            colors = kwargs["color_list"][i]
+            if colors != None:
+                self.figure.add_trace(
+                    go.Scatter(
+                        x=kwargs["xdata_list"][i],
+                        y=data,
+                        mode="markers",
+                        name=kwargs["legends"][i],
+                        showlegend=(len(kwargs["legends"]) > 1),
+                        marker=dict(
+                            colorbar={
+                                "title": {"text": kwargs["zlabel"]},
+                                "tickformat": f".{kwargs['z_precision']}f",
+                            },
+                            opacity=kwargs["alpha"],
+                            color=colors,
+                            colorscale=kwargs["cmap"],
+                            symbol=i,
+                        ),
+                    )
                 )
-            )
+            else:
+                self.figure.add_trace(
+                    go.Scatter(
+                        x=kwargs["xdata_list"][i],
+                        y=data,
+                        mode="markers",
+                        name=kwargs["legends"][i],
+                        showlegend=(len(kwargs["legends"]) > 1),
+                        marker=dict(
+                            opacity=kwargs["alpha"],
+                            symbol=i,
+                        ),
+                    )
+                )
         self.set_xyprecision_xyt_label(**kwargs)
         self.set_xy_min_max(**kwargs)
 

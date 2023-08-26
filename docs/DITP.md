@@ -172,6 +172,7 @@ optional arguments:
 - ndx_split ## ndx group split into several group
 
 
+scatter plot colorbar bug
 
 ** style setting **
 

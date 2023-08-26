@@ -192,9 +192,9 @@ class ScatterMatplotlib(ParentMatplotlib):
     def __init__(self, **kwargs) -> None:
         super().__init__()
 
-        shrink = 1.0
+        shrink = 1.0 
         if kwargs["legend_location"] == "outside" and kwargs["colorbar_location"] in [None,"right"]:
-            shrink = 0.5
+            shrink = 0.5 # avoid overlapping of colorbar and legends
         marker_str = "ov^<>8sp*h.HDdPX"
         for i, data in enumerate(kwargs["data_list"]):
             colors = kwargs["color_list"][i]
