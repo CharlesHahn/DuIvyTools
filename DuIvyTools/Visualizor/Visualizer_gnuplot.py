@@ -352,16 +352,27 @@ set colorbox vertical origin screen 0.9, 0.2 size screen 0.05, 0.6 front  noinve
         if self.alpha == None:
             self.alpha = 1.0
         gpl += f"set style fill transparent solid {self.alpha} noborder\n"
-        gpl += f"set style circle radius 0.02\n"
+        gpl += f"set style circle radius 0.01\n"
         if self.data and self.legends:
             for c in range(len(self.data)):
-                gpl += f"\n$data{c} << EOD\n"
-                for r in range(len(self.xdata[c])):
-                    gpl += f"""{self.xdata[c][r]} {self.data[c][r]} {self.color_list[c][r]}\n"""
-                gpl += "EOD\n\n"
+                colors = self.color_list[c]
+                if colors != None:
+                    gpl += f"\n$data{c} << EOD\n"
+                    for r in range(len(self.xdata[c])):
+                        gpl += f"""{self.xdata[c][r]} {self.data[c][r]} {colors[r]}\n"""
+                    gpl += "EOD\n\n"
+                else:
+                    gpl += f"\n$data{c} << EOD\n"
+                    for r in range(len(self.xdata[c])):
+                        gpl += f"""{self.xdata[c][r]} {self.data[c][r]} \n"""
+                    gpl += "EOD\n\n"
             gpl += f"plot [{self.xmin}:{self.xmax}][{self.ymin}:{self.ymax}] "
             for c in range(len(self.data)):
-                gpl += f"""$data{c} u 1:2:3 title "{self.legends[c]}" with circles palette, \\\n"""
+                colors = self.color_list[c]
+                if colors != None:
+                    gpl += f"""$data{c} u 1:2:3 title "{self.legends[c]}" with circles palette, \\\n"""
+                else:
+                    gpl += f"""$data{c} u 1:2 title "{self.legends[c]}" with circles, \\\n"""
             gpl += "\n"
 
         return gpl

@@ -182,7 +182,7 @@ class xvg_compare(Command):
         -ymax, --ymax (optional)
                 specify the ymax value of figure canvas
         --alpha (optional)
-                set the opacity of confidence intervals
+                set the opacity of confidence intervals, default to 0.4
         --legend_location (optional)
                 specify the location of legends, inside or outside
         --x_precision (optional)
@@ -908,7 +908,7 @@ class xvg_show_scatter(Command):
         -cmap, --colormap (optional)
                 specify the colormap for colorizing scatters
         --alpha (optional)
-                specify the opacity of scatters
+                specify the opacity of scatters, default to 1.0
         --x_precision (optional)
                 specify the precision of X ticklabels
         --y_precision (optional)
@@ -1081,7 +1081,7 @@ class xvg_show_stack(Command):
         --y_precision (optional)
                 specify the precision of Y ticklabels
         --alpha (optional)
-                set the opacity of confidence intervals
+                set the opacity of confidence intervals, default to 1.0
         --legend_location (optional)
                 specify the location of legends, inside or outside
 
