@@ -361,6 +361,8 @@
             {
                 "marker": {
                     "colorbar": {
+                        "len": 0.50,
+                        "lenmode": "fraction",
                         "outlinewidth": 0,
                         "ticks": ""
                     }

@@ -222,6 +222,8 @@
                 "marker": {
                     "colorbar": {
                         "outlinewidth": 0,
+                        "len": 0.50,
+                        "lenmode": "fraction",
                         "tickcolor": "rgb(237,237,237)",
                         "ticklen": 6,
                         "ticks": "inside"
