@@ -339,7 +339,6 @@ class ScatterPlotly(ParentPlotly):
     def __init__(self, **kwargs) -> None:
         super().__init__()
 
-        ## TODO: two or more list cause colorbar error
         for i, data in enumerate(kwargs["data_list"]):
             self.figure.add_trace(
                 go.Scatter(
@@ -596,10 +595,9 @@ class PcolormeshPlotly(ParentPlotly):
     def __init__(self, **kwargs) -> None:
         super().__init__()
 
-        ## TODO: using original colors, use user-defined?
         if kwargs["fig_type"] != "Continuous":
             colorscale, tickvals, length = [], [], len(kwargs["legends"])
-            for i in range(length):
+            for i in range(length): ## using original colors
                 colorscale.append([i / length, kwargs["color_list"][i]])
                 colorscale.append([(i + 1) / length, kwargs["color_list"][i]])
             for i in range(length):

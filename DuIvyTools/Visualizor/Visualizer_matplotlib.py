@@ -192,48 +192,45 @@ class ScatterMatplotlib(ParentMatplotlib):
     def __init__(self, **kwargs) -> None:
         super().__init__()
 
-        ## TODO think again, user to define marker by scatter.marker
-        marker_list = [
-            "o",
-            "v",
-            "^",
-            "<",
-            ">",
-            "8",
-            "s",
-            "p",
-            "*",
-            "h",
-            ".",
-            "H",
-            "D",
-            "d",
-            "P",
-            "X",
-        ]
+        shrink = 1.0
+        if kwargs["legend_location"] == "outside" and kwargs["colorbar_location"] in [None,"right"]:
+            shrink = 0.5
+        marker_str = "ov^<>8sp*h.HDdPX"
         for i, data in enumerate(kwargs["data_list"]):
-            plt.scatter(
-                kwargs["xdata_list"][i],
-                data,
-                c=kwargs["color_list"][i],
-                label=kwargs["legends"][i],
-                marker=marker_list[i],
-                cmap=kwargs["cmap"],
-                vmin=kwargs["zmin"],
-                vmax=kwargs["zmax"],
-                alpha=kwargs["alpha"],
-            )
-        if kwargs["z_precision"] != None:
-            plt.colorbar(
-                label=kwargs["zlabel"],
-                format=FormatStrFormatter(f"""%.{kwargs["z_precision"]}f"""),
-                location=kwargs["colorbar_location"],
-            )
-        else:
-            plt.colorbar(
-                label=kwargs["zlabel"],
-                location=kwargs["colorbar_location"],
-            )
+            colors = kwargs["color_list"][i]
+            if colors != None:
+                plt.scatter(
+                    kwargs["xdata_list"][i],
+                    data,
+                    c=kwargs["color_list"][i],
+                    label=kwargs["legends"][i],
+                    marker=marker_str[i],
+                    cmap=kwargs["cmap"],
+                    vmin=kwargs["zmin"],
+                    vmax=kwargs["zmax"],
+                    alpha=kwargs["alpha"],
+                )
+                if kwargs["z_precision"] != None:
+                    plt.colorbar(
+                        label=kwargs["zlabel"],
+                        format=FormatStrFormatter(f"""%.{kwargs["z_precision"]}f"""),
+                        location=kwargs["colorbar_location"],
+                        shrink = shrink,
+                    )
+                else:
+                    plt.colorbar(
+                        label=kwargs["zlabel"],
+                        location=kwargs["colorbar_location"],
+                        shrink = shrink,
+                    )
+            else:
+                plt.scatter(
+                    kwargs["xdata_list"][i],
+                    data,
+                    label=kwargs["legends"][i],
+                    marker=marker_str[i],
+                    alpha=kwargs["alpha"],
+                )
 
         if kwargs["xmin"] != None or kwargs["xmax"] != None:
             plt.xlim(kwargs["xmin"], kwargs["xmax"])

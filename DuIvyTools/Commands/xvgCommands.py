@@ -857,7 +857,8 @@ class xvg_show_distribution(xvg_compare):
 class xvg_show_scatter(Command):
     """
     Visualize selected data through scatter plot.
-    User can specify a third data column index to colorize the scatters.
+    User can specify a third data column index to colorize the scatters. 
+    !!! DIT do NOT suggest to draw two groups of selected data with colors, which may bring CONFUSION to colorbar. Exactly, commands like `dit xvg_show_scatter -f file1.xvg file2.xvg -c 1,2,0 2,3,1` may bring overlapping to colorbars and give you misunderstanding.
 
     :Parameters:
         -f, --input
@@ -986,7 +987,8 @@ class xvg_show_scatter(Command):
                 )
                 color_head = xvg.data_heads[column_indexs[2]]
             else:
-                color_list.append([1 for x in data_list[-1]])
+                # color_list.append([1 for x in data_list[-1]])
+                color_list.append(None)
             legends.append(xvg.xvgfile)
         legends = self.remove_latex_msgs(legends)
         xlabel = self.remove_latex_msgs([xlabel])[0]
