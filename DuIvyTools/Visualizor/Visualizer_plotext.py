@@ -165,7 +165,6 @@ class BarPlotext(ParentPlotext):
     def __init__(self, **kwargs) -> None:
         super().__init__()
 
-        ## TODO: error bar ???
         plt.simple_multiple_bar(
             kwargs["xtitles"],
             kwargs["data_list"],

@@ -151,7 +151,6 @@ class LineMatplotlib(ParentMatplotlib):
             plt.ylim(kwargs["ymin"], kwargs["ymax"])
 
         if kwargs["legend_location"] == "outside":
-            ## TODO hard code the legend location???
             plt.legend(bbox_to_anchor=(1.02, 1.00), loc="upper left")
         else:
             plt.legend()
@@ -192,9 +191,12 @@ class ScatterMatplotlib(ParentMatplotlib):
     def __init__(self, **kwargs) -> None:
         super().__init__()
 
-        shrink = 1.0 
-        if kwargs["legend_location"] == "outside" and kwargs["colorbar_location"] in [None,"right"]:
-            shrink = 0.5 # avoid overlapping of colorbar and legends
+        shrink = 1.0
+        if kwargs["legend_location"] == "outside" and kwargs["colorbar_location"] in [
+            None,
+            "right",
+        ]:
+            shrink = 0.5  # avoid overlapping of colorbar and legends
         marker_str = "ov^<>8sp*h.HDdPX"
         for i, data in enumerate(kwargs["data_list"]):
             colors = kwargs["color_list"][i]
@@ -215,13 +217,13 @@ class ScatterMatplotlib(ParentMatplotlib):
                         label=kwargs["zlabel"],
                         format=FormatStrFormatter(f"""%.{kwargs["z_precision"]}f"""),
                         location=kwargs["colorbar_location"],
-                        shrink = shrink,
+                        shrink=shrink,
                     )
                 else:
                     plt.colorbar(
                         label=kwargs["zlabel"],
                         location=kwargs["colorbar_location"],
-                        shrink = shrink,
+                        shrink=shrink,
                     )
             else:
                 plt.scatter(
@@ -344,7 +346,6 @@ class BarMatplotlib(ParentMatplotlib):
             plt.ylim(kwargs["ymin"], kwargs["ymax"])
 
         if kwargs["legend_location"] == "outside":
-            ## TODO hard code the legend location???
             plt.legend(bbox_to_anchor=(1.02, 1.00), loc="upper left")
         else:
             plt.legend()

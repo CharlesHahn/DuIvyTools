@@ -130,7 +130,6 @@ class ParentPlotly(log):
             self.warn("unable to save figure by DIT, please save figure by yourself")
         if noshow == False:
             self.figure.show()
-    
 
     def set_xyprecision_xyt_label(self, **kwargs) -> None:
         """set x_precision, y_precision, xlabel, ylabel, title"""
@@ -613,7 +612,7 @@ class PcolormeshPlotly(ParentPlotly):
 
         if kwargs["fig_type"] != "Continuous":
             colorscale, tickvals, length = [], [], len(kwargs["legends"])
-            for i in range(length): ## using original colors
+            for i in range(length):  ## using original colors
                 colorscale.append([i / length, kwargs["color_list"][i]])
                 colorscale.append([(i + 1) / length, kwargs["color_list"][i]])
             for i in range(length):

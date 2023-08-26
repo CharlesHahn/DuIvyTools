@@ -54,9 +54,9 @@ class Gnuplot(log):
         self.xtitles: List[str] = None
         self.stds_list: List[List[str]] = None
 
-    def use_style(self, file:str) -> None:
+    def use_style(self, file: str) -> None:
         """load gnuplot style file in to Gnuplot class"""
-        with open(file, 'r') as fo:
+        with open(file, "r") as fo:
             content = fo.read()
         self.style = content
 
@@ -369,9 +369,7 @@ set colorbox vertical origin screen 0.9, 0.2 size screen 0.05, 0.6 front  noinve
             gpl += "\n"
 
         if self.data and self.legends and len(self.highs) != 0 and len(self.lows) != 0:
-            gpl += (
-                f"""set style fill transparent solid {self.alpha} noborder\n"""
-            )
+            gpl += f"""set style fill transparent solid {self.alpha} noborder\n"""
             for c in range(len(self.data)):
                 gpl += f"\n$data{c} << EOD\n"
                 for r in range(len(self.xdata[c])):
@@ -415,7 +413,7 @@ class ParentGnuplot(log):
         self.gpl_file: str = f"DIT_gnuplot_script_{time_info}.gnu"
         self.gnuplot = Gnuplot()
         self.load_style()
-    
+
     def load_style(self):
         """load gnuplot style file"""
         style_files = [file for file in os.listdir() if file[-8:] == ".gpstyle"]

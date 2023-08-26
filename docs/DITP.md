@@ -172,10 +172,6 @@ optional arguments:
 - ndx_split ## ndx group split into several group
 
 
-** style setting **
-
-gnuplot style : User could define by themselves, set the DIT style
-
 
 **DOC**
 
@@ -183,15 +179,13 @@ gnuplot style : User could define by themselves, set the DIT style
 
 -[ ] angle vs time, circle plot
 -[ ] reconstruction of gnuplot engine
--[ ] seaborn engine 
 
 
 ### Procedures
 
-** move to procedure **
-
 - pipi_dist_ang
 - hbond
+- mdmat
 
 #### dock
 
