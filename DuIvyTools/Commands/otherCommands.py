@@ -72,8 +72,9 @@ class mdp_gen(Command):
 class show_style(Command):
     """
     Generate the default style file at current working directory.
-    For matplotlib, DIT provides DIT.mplstyle (default), science.mplstyle, nature.mplstyle, and a blank.mplstyle which contained all possible matplotlib parameters.
-    For plotly and gnuplot, DIT provides several style files. DIT.json and DIT.gpl are the default style files for plotly and gnuplot.
+    For matplotlib, DIT provides DIT.mplstyle (default), science.mplstyle, nature.mplstyle, and a blank.mplstyle which contained all possible matplotlib parameters. For more details about matplotlib style sheet, visit: https://matplotlib.org/stable/tutorials/introductory/customizing.html#the-matplotlibrc-file
+    For plotly, DIT provides several style files. DIT.json is the default style files for plotly. For more details about customizing plotly style with templates, visit: https://plotly.com/python/reference/index/. For more possible style templates, visit: https://github.com/AnnMarieW/dash-bootstrap-templates/tree/main/src/dash_bootstrap_templates/templates
+    For gnuplot, DIT provides DIT.gpl.
 
     :Parameters:
         -o, --output (optional)

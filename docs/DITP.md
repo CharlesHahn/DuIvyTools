@@ -174,19 +174,17 @@ optional arguments:
 
 ** style setting **
 
-providing some themes of plotly and gnuplot
-
-plotly style : https://plotly.com/python/templates/
-
 gnuplot style : User could define by themselves, set the DIT style
 
 
-
-**angle vs time, circle plot**
-
-**seaborn engine**
-
 **DOC**
+
+**TODO**
+
+-[ ] angle vs time, circle plot
+-[ ] reconstruction of gnuplot engine
+-[ ] seaborn engine 
+
 
 ### Procedures
 
