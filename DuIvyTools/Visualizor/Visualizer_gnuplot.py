@@ -21,32 +21,9 @@ class Gnuplot(log):
     """Gnuplot class for plotting with gnuplot"""
 
     def __init__(self) -> None:
-        self.style = {
-            "font": "Arial",
-            "fontsize": 14,
-            "fontscale": 1,
-            "linewidth": 2,
-            "pointscale": 1,
-            "width": 1400,
-            "height": 1000,
-            "color_cycle": [
-                "#38A7D0",
-                "#F67088",
-                "#66C2A5",
-                "#FC8D62",
-                "#8DA0CB",
-                "#E78AC3",
-                "#A6D854",
-                "#FFD92F",
-                "#E5C494",
-                "#B3B3B3",
-                "#66C2A5",
-                "#FC8D62",
-            ],
-        }
+        self.style: str = ""
         self.ntics: int = 8
 
-        self.term: str = None
         self.outfig: str = None
         self.title: str = None
         self.xlabel: str = None
@@ -76,6 +53,12 @@ class Gnuplot(log):
         self.mode: str = None
         self.xtitles: List[str] = None
         self.stds_list: List[List[str]] = None
+
+    def use_style(self, file:str) -> None:
+        """load gnuplot style file in to Gnuplot class"""
+        with open(file, 'r') as fo:
+            content = fo.read()
+        self.style = content
 
     def check_repeat_values(self, values) -> bool:
         """True for repeat values exists in values"""
@@ -122,8 +105,7 @@ class Gnuplot(log):
             str: result string for gnuplto input
         """
         gpl: str = ""
-        if self.term != None:
-            gpl += f"""set term {self.term}\n"""
+        gpl += self.style + "\n"
         if self.outfig != None:
             gpl += f"""set output "{self.outfig}"\n"""
         if self.title != None:
@@ -154,8 +136,6 @@ class Gnuplot(log):
             gpl += f"""set ytics format "%.{self.y_precision}f" \n"""
         if self.z_precision != None:
             gpl += f"""set ztics format "%.{self.z_precision}f" \n"""
-
-        gpl += f"""set term pngcairo enhanced truecolor font \"{self.style["font"]},{self.style["fontsize"]}\" fontscale {self.style["fontscale"]} linewidth {self.style["linewidth"]} pointscale {self.style["pointscale"]} size {self.style["width"]},{self.style["height"]} \n"""
 
         if self.plot_type == "line":
             gpl = self.line_plot(gpl)
@@ -278,7 +258,7 @@ class Gnuplot(log):
 
     def stack_plot(self, gpl: str) -> str:
         """dump data of stack line plot to string"""
-        gpl += f"""set style fill transparent solid {self.style["alpha"]} noborder\n"""
+        gpl += f"""set style fill transparent solid {self.alpha} noborder\n"""
         for c in range(len(self.data)):
             gpl += f"\n$data{c} << EOD\n"
             for r in range(len(self.xdata[c])):
@@ -286,7 +266,7 @@ class Gnuplot(log):
             gpl += "EOD\n\n"
         gpl += f"plot [{self.xmin}:{self.xmax}][{self.ymin}:{self.ymax}] "
         for c in range(len(self.data)):
-            gpl += f"""$data{c} using 1:3:4 with filledcurves lt rgb "{self.style["color_cycle"][c]}" title "{self.legends[c]}", \\\n"""
+            gpl += f"""$data{c} using 1:3:4 with filledcurves linestyle {c+1} title "{self.legends[c]}", \\\n"""
         gpl += "\n"
 
         return gpl
@@ -344,7 +324,6 @@ set colorbox vertical origin screen 0.9, 0.2 size screen 0.05, 0.6 front  noinve
     def scatter_plot(self, gpl: str) -> str:
         """dump data of scatter plot to string"""
         # TODO colorbar_location
-        # TODO cmap
         if self.zlabel != None:
             gpl += f"""set cblabel "{self.zlabel}"\n"""
         if self.z_precision != None:
@@ -352,7 +331,6 @@ set colorbox vertical origin screen 0.9, 0.2 size screen 0.05, 0.6 front  noinve
         if self.alpha == None:
             self.alpha = 1.0
         gpl += f"set style fill transparent solid {self.alpha} noborder\n"
-        gpl += f"set style circle radius 0.01\n"
         if self.data and self.legends:
             for c in range(len(self.data)):
                 colors = self.color_list[c]
@@ -370,9 +348,9 @@ set colorbox vertical origin screen 0.9, 0.2 size screen 0.05, 0.6 front  noinve
             for c in range(len(self.data)):
                 colors = self.color_list[c]
                 if colors != None:
-                    gpl += f"""$data{c} u 1:2:3 title "{self.legends[c]}" with circles palette, \\\n"""
+                    gpl += f"""$data{c} u 1:2:3 title "{self.legends[c]}" with points palette, \\\n"""
                 else:
-                    gpl += f"""$data{c} u 1:2 title "{self.legends[c]}" with circles, \\\n"""
+                    gpl += f"""$data{c} u 1:2 title "{self.legends[c]}" with points, \\\n"""
             gpl += "\n"
 
         return gpl
@@ -387,12 +365,12 @@ set colorbox vertical origin screen 0.9, 0.2 size screen 0.05, 0.6 front  noinve
                 gpl += "EOD\n\n"
             gpl += f"plot [{self.xmin}:{self.xmax}][{self.ymin}:{self.ymax}] "
             for c in range(len(self.data)):
-                gpl += f"""$data{c} u 1:2 title "{self.legends[c]}" with lines lt rgb "{self.style["color_cycle"][c]}", \\\n"""
+                gpl += f"""$data{c} u 1:2 title "{self.legends[c]}" with lines linestyle {c+1}, \\\n"""
             gpl += "\n"
 
         if self.data and self.legends and len(self.highs) != 0 and len(self.lows) != 0:
             gpl += (
-                f"""set style fill transparent solid {self.style["alpha"]} noborder\n"""
+                f"""set style fill transparent solid {self.alpha} noborder\n"""
             )
             for c in range(len(self.data)):
                 gpl += f"\n$data{c} << EOD\n"
@@ -401,7 +379,7 @@ set colorbox vertical origin screen 0.9, 0.2 size screen 0.05, 0.6 front  noinve
                 gpl += "EOD\n\n"
             gpl += f"plot [{self.xmin}:{self.xmax}][{self.ymin}:{self.ymax}] "
             for c in range(len(self.data)):
-                gpl += f"""$data{c} using 1:3:4 with filledcurves notitle lt rgb "{self.style["color_cycle"][c]}", $data{c} u 1:2 title "{self.legends[c]}" with lines lt rgb "{self.style["color_cycle"][c]}", \\\n"""
+                gpl += f"""$data{c} using 1:3:4 with filledcurves notitle linestyle {c+1}, $data{c} u 1:2 title "{self.legends[c]}" with lines linestyle {c+1}, \\\n"""
             gpl += "\n"
 
         return gpl
@@ -422,7 +400,7 @@ set colorbox vertical origin screen 0.9, 0.2 size screen 0.05, 0.6 front  noinve
             gpl += """set style fill solid border -1\n"""
             gpl += f"plot [{self.xmin}:{self.xmax}][{self.ymin}:{self.ymax}] "
             for c in range(len(self.data)):
-                gpl += f"""$data{c} u 2:3 title "{self.legends[c]}" with histogram lt rgb "{self.style["color_cycle"][c]}", \\\n"""
+                gpl += f"""$data{c} u 2:3 title "{self.legends[c]}" with histogram linestyle {c+1}, \\\n"""
             gpl += "\n"
 
         return gpl
@@ -434,8 +412,32 @@ class ParentGnuplot(log):
     def __init__(self) -> None:
         time_info = time.strftime("%Y%m%d%H%M%S", time.localtime())
         self.outfig: str = f"DIT_gnuplot_output_{time_info}.png"
-        self.gpl_file: str = f"DIT_gnuplot_script_dump_{time_info}.gpl"
+        self.gpl_file: str = f"DIT_gnuplot_script_{time_info}.gnu"
         self.gnuplot = Gnuplot()
+        self.load_style()
+    
+    def load_style(self):
+        """load gnuplot style file"""
+        style_files = [file for file in os.listdir() if file[-8:] == ".gpstyle"]
+        if len(style_files) == 1:
+            self.gnuplot.use_style(style_files[0])
+            self.info(f"using gnuplot style from {style_files[0]}")
+        elif len(style_files) > 1:
+            self.gnuplot.use_style(style_files[0])
+            self.info(
+                f"more than one gnuplot style files detected, using the {style_files[0]}"
+            )
+        else:
+            data_file_path = os.path.realpath(
+                os.path.join(os.getcwd(), os.path.dirname(__file__), "../")
+            )
+            mplstyle = os.path.join(
+                data_file_path, os.path.join("data", "gnuplotstyle", "DIT.gpstyle")
+            )
+            self.gnuplot.use_style(mplstyle)
+            self.info(
+                "using default gnuplot style sheet, to inspect its content, use 'dit show_style -eg gnuplot'"
+            )
 
     def dump(self) -> None:
         """dump gnuplot input scripts into a input file"""
@@ -537,7 +539,6 @@ class LineGnuplot(ParentGnuplot):
     def __init__(self, **kwargs) -> None:
         super().__init__()
 
-        self.gnuplot.term = "png"
         self.gnuplot.title = kwargs["title"]
         self.gnuplot.xlabel = kwargs["xlabel"]
         self.gnuplot.ylabel = kwargs["ylabel"]
@@ -562,7 +563,7 @@ class LineGnuplot(ParentGnuplot):
         self.gnuplot.legends = kwargs["legends"]
         self.gnuplot.highs = kwargs["highs"]
         self.gnuplot.lows = kwargs["lows"]
-        self.gnuplot.style["alpha"] = kwargs["alpha"]
+        self.gnuplot.alpha = kwargs["alpha"]
         self.gnuplot.legend_location = kwargs["legend_location"]
 
 
@@ -629,7 +630,6 @@ class ScatterGnuplot(ParentGnuplot):
     def __init__(self, **kwargs) -> None:
         super().__init__()
 
-        self.gnuplot.term = "png"
         self.gnuplot.title = kwargs["title"]
         self.gnuplot.xlabel = kwargs["xlabel"]
         self.gnuplot.ylabel = kwargs["ylabel"]
@@ -692,7 +692,6 @@ class BarGnuplot(ParentGnuplot):
     def __init__(self, **kwargs) -> None:
         super().__init__()
 
-        self.gnuplot.term = "png"
         self.gnuplot.title = kwargs["title"]
         self.gnuplot.xlabel = kwargs["xlabel"]
         self.gnuplot.ylabel = kwargs["ylabel"]
@@ -750,7 +749,6 @@ class BoxGnuplot(ParentGnuplot):
     def __init__(self, **kwargs) -> None:
         super().__init__()
 
-        self.gnuplot.term = "png"
         self.gnuplot.title = kwargs["title"]
         self.gnuplot.xlabel = kwargs["xlabel"]
         self.gnuplot.ylabel = kwargs["ylabel"]
@@ -817,7 +815,6 @@ class ImshowGnuplot(ParentGnuplot):
     def __init__(self, plot_type: str, /, **kwargs) -> None:
         super().__init__()
 
-        self.gnuplot.term = "png"
         self.gnuplot.title = kwargs["title"]
         self.gnuplot.xlabel = kwargs["xlabel"]
         self.gnuplot.ylabel = kwargs["ylabel"]

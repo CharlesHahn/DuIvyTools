@@ -19,7 +19,7 @@ class ParentPlotly(log):
     """parent class of plotly visualizer class"""
 
     def __init__(self):
-        self.load_themes()
+        self.load_style()
         self.figure = go.Figure()
         self.nticks: int = 7  # for tick location by hand
 
@@ -89,7 +89,7 @@ class ParentPlotly(log):
             )
         pio.templates[name] = template
 
-    def load_themes(self):
+    def load_style(self):
         """load default or user-defined templates"""
 
         templates_files = [file for file in os.listdir() if file[-5:] == ".json"]

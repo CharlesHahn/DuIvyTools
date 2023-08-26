@@ -74,7 +74,7 @@ class show_style(Command):
     Generate the default style file at current working directory.
     For matplotlib, DIT provides DIT.mplstyle (default), science.mplstyle, nature.mplstyle, and a blank.mplstyle which contained all possible matplotlib parameters. For more details about matplotlib style sheet, visit: https://matplotlib.org/stable/tutorials/introductory/customizing.html#the-matplotlibrc-file
     For plotly, DIT provides several style files. DIT.json is the default style files for plotly. For more details about customizing plotly style with templates, visit: https://plotly.com/python/reference/index/. For more possible style templates, visit: https://github.com/AnnMarieW/dash-bootstrap-templates/tree/main/src/dash_bootstrap_templates/templates
-    For gnuplot, DIT provides DIT.gpl.
+    For gnuplot, DIT provides DIT.gpstyle. For more colormaps or style files, visit: https://github.com/hesstobi/Gnuplot-Templates, https://github.com/Gnuplotting/gnuplot-palettes, or so many others. 
 
     :Parameters:
         -o, --output (optional)
@@ -88,7 +88,7 @@ class show_style(Command):
         dit show_style -eg plotly
         dit show_style -eg plotly -o bootstrap.json
         dit show_style -eg gnuplot
-        dit show_style -eg gnuplot -o DIT.gpl
+        dit show_style -eg gnuplot -o DIT.gpstyle
     """
 
     def __init__(self, parm: Parameters) -> None:
@@ -126,7 +126,7 @@ class show_style(Command):
             )
         )
         gnuplotstyle_files = [
-            f for f in os.listdir(gnuplotstyle_path) if f.endswith(".gpl")
+            f for f in os.listdir(gnuplotstyle_path) if f.endswith(".gpstyle")
         ]
 
         if self.parm.engine == "plotly":
@@ -136,7 +136,7 @@ class show_style(Command):
         elif self.parm.engine == "gnuplot":
             files = gnuplotstyle_files
             path = gnuplotstyle_path
-            default_output = "DIT.gpl"
+            default_output = "DIT.gpstyle"
         else:
             files = mplstyle_files
             path = mplstyle_path
