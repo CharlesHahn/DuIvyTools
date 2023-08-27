@@ -13,10 +13,10 @@ from scipy.stats import gaussian_kde
 from Commands.Commands import Command
 from FileParser.xvgParser import XVG
 from utils import Parameters
-from Visualizor.Visualizer_gnuplot import *
-from Visualizor.Visualizer_matplotlib import *
-from Visualizor.Visualizer_plotext import *
-from Visualizor.Visualizer_plotly import *
+from Visualizer.Visualizer_gnuplot import *
+from Visualizer.Visualizer_matplotlib import *
+from Visualizer.Visualizer_plotext import *
+from Visualizer.Visualizer_plotly import *
 
 
 class xvg_show(Command):

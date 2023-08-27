@@ -11,10 +11,10 @@ from scipy.interpolate import RectBivariateSpline, interp2d
 from Commands.Commands import Command
 from FileParser.xpmParser import XPM
 from utils import Parameters
-from Visualizor.Visualizer_gnuplot import *
-from Visualizor.Visualizer_matplotlib import *
-from Visualizor.Visualizer_plotext import *
-from Visualizor.Visualizer_plotly import *
+from Visualizer.Visualizer_gnuplot import *
+from Visualizer.Visualizer_matplotlib import *
+from Visualizer.Visualizer_plotext import *
+from Visualizer.Visualizer_plotly import *
 
 
 class xpm_show(Command):
