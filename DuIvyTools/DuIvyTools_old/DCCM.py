@@ -23,7 +23,7 @@ import logging
 # from pathlib import Path
 # dit_path = Path(os.path.dirname(__file__))
 # sys.path.append(dit_path)
-from DuIvyTools.XPM import XPM
+from XPM import XPM
 
 
 class DCCM(object):
