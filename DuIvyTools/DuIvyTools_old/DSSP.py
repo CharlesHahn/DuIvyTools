@@ -20,7 +20,7 @@ import matplotlib.pyplot as plt
 
 # dit_path = Path(os.path.dirname(__file__))
 # sys.path.append(str(dit_path))
-from DuIvyTools.XPM import XPM
+from XPM import XPM
 
 
 def dssp(

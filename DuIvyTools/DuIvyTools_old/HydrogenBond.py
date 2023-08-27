@@ -22,8 +22,8 @@ from pathlib import Path
 
 # dit_path = Path(os.path.dirname(__file__))
 # sys.path.append(str(dit_path))
-from DuIvyTools.XPM import XPM
-from DuIvyTools.XVG import XVG
+from XPM import XPM
+from XVG import XVG
 
 
 def gen_distang_script(donor_ndxs, hydrogen_ndxs, acceptor_ndxs, select):

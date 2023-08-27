@@ -15,7 +15,7 @@ import sys
 import argparse
 import logging
 
-from DuIvyTools.NDX import NDX
+from NDX import NDX
 
 
 def get_ndx(ndx_file: str = ""):

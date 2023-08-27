@@ -41,7 +41,7 @@ setup(
     extras_require={
         "test": TEST_REQUIRES + INSTALL_REQUIRES,
     },
-    package_data={"DuIvyTools":["DuIvyTools/*/*/*", "DuIvyTools_old/*/*"]},
+    package_data={"DuIvyTools":["DuIvyTools/*", "DuIvyTools/data/*/*", "DuIvyTools/Commands/*", "DuIvyTools/Visualizer/*", "DuIvyTools/FileParser/*", "DuIvyTools_old/*", "DuIvyTools_old/data/*"]},
     exclude_package_data={"DuIvyTools":["test/*"]},
     entry_points={"console_scripts": ["dit = DuIvyTools.DuIvyTools.DIT:main", "dit_old = DuIvyTools.DuIvyTools_old.DIT:main"]},
     classifiers=[
