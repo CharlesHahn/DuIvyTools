@@ -4,8 +4,13 @@ DIT module is part of DuIvyTools. This module provides log parent class.
 Written by DuIvy and provided to you by GPLv3 license.
 """
 
-import inspect
+import os
 import sys
+import inspect
+
+base = os.path.dirname(os.path.realpath(__file__))
+if base not in sys.path:
+    sys.path.insert(0, base)
 
 from Commands.otherCommands import *
 from Commands.xpmCommands import *
@@ -128,8 +133,10 @@ Have a good day !
         cmd = cmd(parm)
         cmd()
 
-
-if __name__ == "__main__":
+def main():
     dit = DIT()
     dit.run()
     dit.info("May you good day !")
+
+if __name__ == "__main__":
+    main()
