@@ -1,16 +1,8 @@
 """
-
- *******           **                  **********               **        
-/**////**         /**          **   **/////**///               /**        
-/**    /** **   **/** **    **//** **     /**  ******   ****** /**  ******
-/**    /**/**  /**/**/**   /** //***      /** **////** **////**/** **//// 
-/**    /**/**  /**/**//** /**   /**       /**/**   /**/**   /**/**//***** 
-/**    ** /**  /**/** //****    **        /**/**   /**/**   /**/** /////**
-/*******  //******/**  //**    **         /**//****** //****** *** ****** 
-///////    ////// //    //    //          //  //////   ////// /// //////  
-
-DuIvyTools is a simple analysis and visualization tool for GROMACS result files
+DuIvyTools is a simple analysis and visualization tool for GROMACS result files.
 written by CharlesHahn (https://github.com/CharlesHahn/DuIvyTools). 
+
+THIS PACKAGE (`DuIvyTools_old`) contains the content of the DuIvyTools v0.4.8. 
 
 Python modules
 ----------------
