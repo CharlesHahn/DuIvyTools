@@ -486,9 +486,20 @@ class RamachandranMatplotlib(ParentMatplotlib):
             plt.yticks([-180, -120, -60, 0, 60, 120, 180])
             plt.tick_params(left=False, bottom=False, top=False, right=False)
             if kwargs["title"] == None:
-                kwargs["title"] = key
+                title = key
+            else:
+                title = kwargs["title"]
 
-            self.set_xyprecision_xyt_label(**kwargs)
+            ax = plt.gca()
+            if kwargs["x_precision"] != None:
+                x_p = kwargs["x_precision"]
+                ax.xaxis.set_major_formatter(FormatStrFormatter(f"%.{x_p}f"))
+            if kwargs["y_precision"] != None:
+                y_p = kwargs["y_precision"]
+                ax.yaxis.set_major_formatter(FormatStrFormatter(f"%.{y_p}f"))
+            plt.xlabel(kwargs["xlabel"])
+            plt.ylabel(kwargs["ylabel"])
+            plt.title(title)
 
             plt.tight_layout()
             outfig = kwargs["outfig"]

@@ -570,12 +570,22 @@ class RamachandranPlotly(ParentPlotly):
                 )
             )
             if kwargs["title"] == None:
-                kwargs["title"] = key
+                title = key
+            else:
+                title = kwargs["title"]
             self.figure.update_layout(
                 xaxis_range=[-180, 180],
                 yaxis_range=[-180, 180],
             )
-            self.set_xyprecision_xyt_label(**kwargs)
+            self.figure.update_layout(
+                title=title,
+                xaxis_title=kwargs["xlabel"],
+                yaxis_title=kwargs["ylabel"],
+            )
+            if kwargs["x_precision"] != None:
+                self.figure.update_layout(xaxis_tickformat=f".{kwargs['x_precision']}f")
+            if kwargs["y_precision"] != None:
+                self.figure.update_layout(yaxis_tickformat=f".{kwargs['y_precision']}f")
 
             if outfig != None:
                 self.warn(
