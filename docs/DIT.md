@@ -470,7 +470,7 @@ dit xvg_show_distribution -f gyrate.xvg -c 1,2
 dit xvg_show_distribution -f gyrate.xvg -c 1,2 -m pdf -eg plotly
 ```
 
-![dit_xvg_show_distribution_plotly](static\dit_xvg_show_distribution_plotly.png)
+![dit_xvg_show_distribution_plotly](static/dit_xvg_show_distribution_plotly.png)
 
 
 
@@ -478,7 +478,7 @@ dit xvg_show_distribution -f gyrate.xvg -c 1,2 -m pdf -eg plotly
 dit xvg_show_distribution -f gyrate.xvg -c 1,2 -m cdf -eg gnuplot
 ```
 
-![dit_xvg_show_distribution_gnuplot](static\dit_xvg_show_distribution_gnuplot.png)
+![dit_xvg_show_distribution_gnuplot](static/dit_xvg_show_distribution_gnuplot.png)
 
 
 
@@ -492,7 +492,7 @@ dit xvg_show_distribution -f gyrate.xvg -c 1,2 -m cdf -eg gnuplot
 dit xvg_show_stack -f dssp_sc.xvg -c 2-7 -xs 0.001 -x "Time (ns)"
 ```
 
-![dit_xvg_show_stack](static\dit_xvg_show_stack.png)
+![dit_xvg_show_stack](static/dit_xvg_show_stack.png)
 
 
 
@@ -504,7 +504,7 @@ dit xvg_show_stack -f dssp_sc.xvg -c 2-7 -xs 0.001 -x "Time (ns)"
 dit xvg_show_scatter -f gyrate.xvg -c 1,2,0 -zs 0.001 -z Time(ns) -eg plotly --x_precision 2 --y_precision 2
 ```
 
-![dit_xvg_show_scatter_plotly](static\dit_xvg_show_scatter_plotly.png)
+![dit_xvg_show_scatter_plotly](static/dit_xvg_show_scatter_plotly.png)
 
 
 
@@ -530,7 +530,7 @@ dit xvg_energy_compute -f prolig.xvg pro.xvg lig.xvg -o results.xvg
 dit xvg_box_compare -f gyrate.xvg -c 1,2,3,4 -l Gyrate Gx Gy Gz -z Time(ns) -zs 0.001
 ```
 
-![dit_xvg_box_compare_matplotlib](static\dit_xvg_box_compare_matplotlib.png)
+![dit_xvg_box_compare_matplotlib](static/dit_xvg_box_compare_matplotlib.png)
 
 
 
@@ -538,7 +538,7 @@ dit xvg_box_compare -f gyrate.xvg -c 1,2,3,4 -l Gyrate Gx Gy Gz -z Time(ns) -zs 
 dit xvg_box_compare -f gyrate.xvg -c 1,2,3,4 -l Gyrate Gx Gy Gz -z Time(ns) -zs 0.001 -eg plotly
 ```
 
-![dit_xvg_box_compare_plotly](static\dit_xvg_box_compare_plotly.png)
+![dit_xvg_box_compare_plotly](static/dit_xvg_box_compare_plotly.png)
 
 
 
@@ -546,7 +546,7 @@ dit xvg_box_compare -f gyrate.xvg -c 1,2,3,4 -l Gyrate Gx Gy Gz -z Time(ns) -zs 
 dit xvg_box_compare -f gyrate.xvg -c 1,2,3,4 -l Gyrate Gx Gy Gz -z Time(ns) -zs 0.001 -eg gnuplot -ymin 2
 ```
 
-![dit_xvg_box_compare_gnuplot](static\dit_xvg_box_compare_gnuplot.png)
+![dit_xvg_box_compare_gnuplot](static/dit_xvg_box_compare_gnuplot.png)
 
 
 
@@ -570,7 +570,7 @@ dit xvg_combine -f RMSD.xvg Gyrate.xvg -c 0,1 1 -l RMSD Gyrate -x Time(ps)
 dit xvg_ave_bar -f bar_0_0.xvg,bar_0_1.xvg bar_1_0.xvg,bar_1_1.xvg -c 1,2 -l MD_0 MD_1 -al Hbond Pair -csv hhh.csv -y Number
 ```
 
-![dit_xvg_ave_bar_matplotlib](static\dit_xvg_ave_bar_matplotlib.png)
+![dit_xvg_ave_bar_matplotlib](static/dit_xvg_ave_bar_matplotlib.png)
 
 上述的命令实现的就是这样的一个需求。其中`-al`参数指定的是X轴的标签，`-csv`可以将计算得到的数据输出到csv文件中。
 
@@ -584,7 +584,7 @@ gmx的`rama`命令是可以得到蛋白质的二面角(phi和psi)数据的，`xv
 dit xvg_rama -f rama.xvg
 ```
 
-![dit_xvg_rama](static\dit_xvg_rama.png)
+![dit_xvg_rama](static/dit_xvg_rama.png)
 
 
 
@@ -602,31 +602,31 @@ DIT还支持使用`-xmin`、`-xmax`、`-ymin`、`-ymax`对图片进行切割，�
 dit xpm_show -f DSSP.xpm -xmin 1000 -xmax 2001
 ```
 
-![dit_xpm_show_dssp](static\dit_xpm_show_dssp.png)
+![dit_xpm_show_dssp](static/dit_xpm_show_dssp.png)
 
 ```bash
 dit xpm_show -f fel.xpm
 ```
 
-![dit_xpm_show_fel](static\dit_xpm_show_fel.png)
+![dit_xpm_show_fel](static/dit_xpm_show_fel.png)
 
 ```bash
 dit xpm_show -f fel.xpm -cmap Blues_r -ip bilinear
 ```
 
-![dit_xpm_show_fel2](static\dit_xpm_show_fel2.png)
+![dit_xpm_show_fel2](static/dit_xpm_show_fel2.png)
 
 ```dit
 dit xpm_show -f fel.xpm -m pcolormesh -ip linear -ipf 5 -cmap Greys_r
 ```
 
-![dit_xpm_show_fel3](static\dit_xpm_show_fel3.png)
+![dit_xpm_show_fel3](static/dit_xpm_show_fel3.png)
 
 ```bash
 dit xpm_show -f fel.xpm -m 3d --x_precision 1 --y_precision 2 --z_precision 0 -cmap summer --colorbar_location bottom 
 ```
 
-![dit_xpm_show_fel4](static\dit_xpm_show_fel4.png)
+![dit_xpm_show_fel4](static/dit_xpm_show_fel4.png)
 
 ```bash
 dit xpm_show -f fel.xpm -m contour -cmap jet 
@@ -638,13 +638,13 @@ dit xpm_show -f fel.xpm -m contour -cmap jet
 dit xpm_show -f fel.xpm -eg plotly -m 3d -cmap spectral
 ```
 
-![dit_xpm_show_fel6](static\dit_xpm_show_fel6.png)
+![dit_xpm_show_fel6](static/dit_xpm_show_fel6.png)
 
 ```bash
 dit xpm_show -f fel.xpm -eg gnuplot -m 3d
 ```
 
-![dit_xpm_show_fel7](static\dit_xpm_show_fel7.png)
+![dit_xpm_show_fel7](static/dit_xpm_show_fel7.png)
 
 
 
@@ -793,7 +793,7 @@ from DuIvyTools.DuIvyTools.Visualizer import Visualizer_matplotlib
 
 **命令模块**
 
-每一个命令都是一个类，用于处理命令逻辑和调用相应的绘图模块等。
+每一个命令都是一个类，用于处理命令逻辑和调用相应的绘图模块等。想要自己调用命令类可能会有些难，需要自己构造用户参数parm类才行。
 
 
 
