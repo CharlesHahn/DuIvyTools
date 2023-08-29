@@ -20,11 +20,6 @@ import matplotlib.pyplot as plt
 from matplotlib import colors
 import logging
 
-# from pathlib import Path
-# dit_path = Path(os.path.dirname(__file__))
-# sys.path.append(dit_path)
-from XPM import XPM
-
 
 class DCCM(object):
     """

@@ -5,11 +5,16 @@ Written by DuIvy and provided to you by GPLv3 license.
 """
 
 import os
-import subprocess
+import sys
 import time
+import subprocess
 from typing import List
 
 import numpy as np
+
+base = os.path.dirname(os.path.realpath(os.path.join(__file__, "..")))
+if base not in sys.path:
+    sys.path.insert(0, base)
 
 from utils import log
 

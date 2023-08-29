@@ -4,9 +4,15 @@ Visualizer_plotext module is part of DuIvyTools providing visualization tools ba
 Written by DuIvy and provided to you by GPLv3 license.
 """
 
+import os
+import sys
 from typing import Tuple
 
 import plotext as plt
+
+base = os.path.dirname(os.path.realpath(os.path.join(__file__, "..")))
+if base not in sys.path:
+    sys.path.insert(0, base)
 
 from utils import log
 

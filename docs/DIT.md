@@ -773,11 +773,35 @@ dit ndx_split -f index.ndx -al Protein 2 -o test.ndx
 
 ## 程序模块
 
-### 文件解析
+DIT以前的版本中，基本上每个命令就是单独的一个类，杂糅了命令的逻辑与绘图的部分在里面，同时还交织了用户参数的解析，基本上很难另外编程去调用，除了原本文件解析的模块。在DIT v0.5.0的版本中，这个问题得到了一定的改善。首先是绘图完全独立了出来，命令逻辑虽然不可避免地需要处理用户参数，但是现在有了统一的用户参数接口，所以也还算方便。命令的帮助也放弃了原来的独立模块思路，转而使用类的doc来实现，这样的话新增命令会方便很多。
+
+**文件解析**
+
+支持xvg、xpm、ndx、mdp、pdb以及gro文件的简单解析，得到一个文件类。
+
+```python
+from DuIvyTools.DuIvyTools.FileParser import   xvgParser,xpmParser,groParser,pdbParser,ndxParser,mdpParser
+```
+
+**绘图引擎**
+
+四种绘图引擎，主要实现了折线图、散点图、热力图等绘图方式，后续可能会视情况继续增加绘图种类。
+
+```python
+from DuIvyTools.DuIvyTools.Visualizer import Visualizer_matplotlib
+```
+
+**命令模块**
+
+每一个命令都是一个类，用于处理命令逻辑和调用相应的绘图模块等。
 
 
-### 绘图引擎
+
+## Cite DuIvyTools
 
 
-### 命令模块
+> DuIvyTools目前是基于GPLv3协议开源的。我欢迎大家在日常工作中使用和修改，但**不得以任何理由使用DuIvyTools牟利**，包括但不限于付费获取、商业使用等等。
 
+Cite DuIvyTools by：
+
+[![](https://zenodo.org/badge/DOI/10.5281/zenodo.6339993.svg)](https://doi.org/10.5281/zenodo.6339993)

@@ -18,8 +18,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-# dit_path = Path(os.path.dirname(__file__))
-# sys.path.append(str(dit_path))
+base = os.path.dirname(os.path.realpath(__file__))
+if base not in sys.path:
+    sys.path.insert(0, base)
+
 from XPM import XPM
 
 

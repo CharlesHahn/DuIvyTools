@@ -15,6 +15,10 @@ import sys
 import argparse
 import logging
 
+base = os.path.dirname(os.path.realpath(__file__))
+if base not in sys.path:
+    sys.path.insert(0, base)
+
 from NDX import NDX
 
 

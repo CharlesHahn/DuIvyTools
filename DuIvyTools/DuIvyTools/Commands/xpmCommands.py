@@ -4,9 +4,15 @@ xpmCommander module is part of DuIvyTools providing xpm related commands.
 Written by DuIvy and provided to you by GPLv3 license.
 """
 
+import os
+import sys
 from typing import List, Union
 
 from scipy.interpolate import RectBivariateSpline, interp2d
+
+base = os.path.dirname(os.path.realpath(os.path.join(__file__, "..")))
+if base not in sys.path:
+    sys.path.insert(0, base)
 
 from Commands.Commands import Command
 from FileParser.xpmParser import XPM
