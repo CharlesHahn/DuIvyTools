@@ -632,7 +632,7 @@ dit xpm_show -f fel.xpm -m 3d --x_precision 1 --y_precision 2 --z_precision 0 -c
 dit xpm_show -f fel.xpm -m contour -cmap jet 
 ```
 
-![dit_xpm_show_fel5](static\dit_xpm_show_fel5.png)
+![dit_xpm_show_fel5](static/dit_xpm_show_fel5.png)
 
 ```bash
 dit xpm_show -f fel.xpm -eg plotly -m 3d -cmap spectral
