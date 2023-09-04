@@ -139,6 +139,9 @@ def dssp(
 
     plt.xlabel(xpm.xpm_ylabel)
     plt.ylabel(xpm.xpm_xlabel)
+    ytics, _ = plt.yticks()
+    yticklabels= [xpm.xpm_xaxis[int(y)] for y in ytics[:-1]]
+    plt.yticks(ytics[:-1], yticklabels)
     plt.title("Stacked plot of " + xpm.xpm_title)
     plt.xlim(np.min(xpm.xpm_yaxis) - 0.5, np.max(xpm.xpm_yaxis) + 0.5)
     plt.ylim(ylim_min, ylim_max)
