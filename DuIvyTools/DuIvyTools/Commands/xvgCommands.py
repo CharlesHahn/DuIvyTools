@@ -406,7 +406,7 @@ class xvg_ave(Command):
             outstr += f"\n>>>>>>>>>>>>>> {xvg.xvgfile:^40} <<<<<<<<<<<<<<\n"
             outstr += "-" * 70 + "\n"
             outstr += "|" + " " * 28 + "|      Average      |      Std.Err      |\n"
-            outstr += "-" * 60 + "\n"
+            outstr += "-" * 70 + "\n"
             for l, a, s in zip(legends, aves, stderrs):
                 outstr += f"|{l:^28}|{a:^19.6f}|{s:^19.6f}|\n"
                 outstr += "-" * 70 + "\n"
@@ -647,7 +647,7 @@ class xvg_combine(Command):
 
 class xvg_show_distribution(xvg_compare):
     """
-    Show the distribution of selected xvg file data.
+    Show the distribution, kernel density estimation, or cumulative kernel density estimation of selected xvg file data.
 
     :Parameters:
         -f, --input

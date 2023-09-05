@@ -2,7 +2,31 @@
 
 ![](static/cover.png)
 
-历时两个月重构了DuIvyTools，目前的DIT v0.5.0与之前的DIT v0.4.8在功能上有诸多不兼容的地方，因而本次打包两个版本都打包在内，其中`dit`即是DuIvyTools v0.5.0，而`dito`则指向了之前的DuIvyTools v0.4.8。
+历时两个月的紧张开发，DuIvyTools终于基本重构完成。
+
+
+
+从用户层面讲，DIT v0.5.0 新增的特性如下：
+
+1. 新增了plotly、Gnuplot、以及plotext绘图引擎
+   1. plotly: 强交互性，用户可以通过plotly的格式控制文件精调图片的每个细节
+   2. Gnuplot: 老牌开源绘图软件，需要用户自行安装好Gnuplot并设置好环境变量（可通过`gnuplot`命令调用），出图质量较高且Gnuplot用户可以方便地自定义图片的每个细节
+   3. plotext: 命令行绘图，只支持最简单的数据可视化（折线图和尺寸较小的image）
+   4. 原有的matplotlib: 优化了一些绘图的细节，增加了对图像上元素的控制，colorbar、legend，colormap等都支持用户通过命令行或matplotlib的格式控制文件进行调整
+2. 所有命令统一使用一套命令参数，降低使用成本
+3. 更强更稳健的文件解析器
+
+
+
+从开发角度讲，DIT v0.5.0和之前的DIT v0.4.8基本上没有什么相同点了。为了程序的简洁可靠，一些v0.4.8中的复杂逻辑的命令被删除了（`hbond`，`pipi_dist_ang`, `dssp`），但同时为了对用户保留原有的功能，现在的打包中也包含了修复了部分bug的v0.4.8以对v0.5.0中删除的功能进行补充。这两个版本在安装之后，可以分别使用`dit` (v0.5.0) 和 `dito` (v0.4.8) 调用，互不干扰。在后续的版本中，`dito` v0.4.8将被删除。
+
+
+
+在DIT使用过程中，如果您遇到任何程序问题或者疑问，都请在DuIvy飞书群中新建话题并提问和讨论，很抱歉因为工作繁忙我可能不会及时回复，但是我每天会抽时间查看并尝试解决问题。
+
+![Feishu(Lark)](static/feishu.png)
+
+
 
 ## Installation
 
@@ -12,9 +36,13 @@ DIT可以通过源码安装(https://github.com/CharlesHahn/DuIvyTools)，也可�
 pip install DuIvyTools
 ```
 
+
+
 ## 命令行
 
-`dit`还是同之前一样，是一个基于命令行的软件。用户在命令行里输入命令，对数据进行操作和绘图。
+`dit`是一个基于命令行的软件。用户在命令行里输入命令，对数据进行操作和绘图。
+
+
 
 ### 帮助信息
 
@@ -72,13 +100,13 @@ Cite DuIvyTools by DOI at https://doi.org/10.5281/zenodo.6339993
 Have a good day !
 ```
 
-还可以通过`dit -h`可以获取dit中的所有参数，以及通过`dit <command> -h`可以获得具体命令的相关信息和输入参数。
+还可以通过`dit -h`可以获取DIT中的所有参数，以及通过`dit <command> -h`可以获得具体命令的相关信息和输入参数。
 
 
 
 ### 参数介绍
 
-以下是dit中的全部参数：
+以下是DIT中的全部参数：
 
 ```bash
 DuIvyTools: A Simple MD Analysis Tool
@@ -165,33 +193,33 @@ optional arguments:
 
 `-o`参数用于指定输出文件的名字；在对数据进行可视化的时候，此参数一般用于指定输出图片的名字；如果是数据处理的命令，则此参数一般用于指定输出文件的名字。
 
-`-ns` 如果需要不显示图片，则加上该参数。对于gnuplot绘图引擎，加上该参数会直接输出gnuplot的输入脚本。
+`-ns` 如果需要不显示图片，则加上该参数。对于Gnuplot绘图引擎，加上该参数DIT会直接输出Gnuplot的输入脚本。
 
 `-c`  选择数据列，这个参数通常在xvg文件相关的操作中用得多。比如说`-c 1-7,10  0,1,4` 表示选择第一组xvg文件的第1到6列数据，第10组数据，以及选择第二组文件的第0列，1列和第4列数据。**注意，该参数的计数都是从0开始的。** 同时，短横`-`两端的列序号，是左边包含右边不包含的，所以上面的`1-7`是第1到第6列，不包括第7列。在某些情况下，该参数也用于数据的生成，比如说`dssp`命令中将之用于用户指定残基的序号。
 
-`-l` 指定绘图的legends，不同的命令中关于指定legends的数量有不同的要求。如果你想不显示legend，可以将之设置为“”，例如`-l "" "" ""`即可不显示legend。同时也支持latex语法。
+`-l` 指定绘图的legends，不同的命令中关于指定legends的数量有不同的要求。如果你想不显示legend，可以将之设置为“”，例如`-l "" "" ""`即可不显示legend。同时也支持简单的latex语法，如`-l "$nm^2$" "$\Delta G_{energy}$"`。
 
 `-b`, `-e`, `-dt`  这三个参数用于指定数据的哪些行用于数据处理和绘图。如`-b 100 -e 201 -dt 2`这句的意思是只对第100行到第200行（包括）的偶数行数据进行处理。同样的，这里的行索引也是从0开始计数的。在`dssp`命令中，这三个参数也用于时间序列的生成。
 
-`-x`, `-y`, `-z` 这三个参数用于指定数据的X，Y，和Z的label。常见的图只包含两个数据维度，对于有颜色标签的散点图、3D图、热力图等则可能需要指定第三个维度的标签，也即`-z`。如果你想不显示，可以将之设置为“”。同时也支持latex语法。
+`-x`, `-y`, `-z` 这三个参数用于指定数据的X，Y，和Z的label。常见的图只包含两个数据维度，对于有颜色标签的散点图、3D图、热力图等则可能需要指定第三个维度的标签，也即`-z`。如果你想不显示，可以将之设置为“”。同时也支持latex语法，如`-Z "$\Delta G_{energy}$"`。
 
 `-t`  指定图片的title。如果你想不显示，可以将之设置为“”。同时也支持latex语法。
 
-`-xmin`, `-xmax`, `-ymin`, `-ymax`, `-zmin`, `-zmax` 这一组参数通常用于指定数据的截断。`-xmin`, `-xmax`, `-ymin`, `-ymax`常用于指定xvg数据生成图片的X和Y轴的上下界数值；对于xpm数据则是用于指定对xpm图片的切割。是的，dit支持只可视化xpm图片的一部分。 `-zmin`, `-zmax` 则通常用于指定第三个数据维度（通常是colorbar）的数据上下界。
+`-xmin`, `-xmax`, `-ymin`, `-ymax`, `-zmin`, `-zmax` 这一组参数通常用于指定数据的截断。`-xmin`, `-xmax`, `-ymin`, `-ymax`常用于指定xvg数据生成图片的X和Y轴的上下界数值；对于xpm数据则是用于指定对xpm图片的切割。是的，DIT支持只可视化xpm图片的一部分。 `-zmin`, `-zmax` 则通常用于指定第三个数据维度（通常是colorbar）的数据上下界。
 
-`--x_precision`, `--y_precision`, `--z_precision`  设置三个数据维度的数据呈现精度，如`--x_precision 2` 则是X轴数据标签都显示2位小数点后的数字。`--z_precision`通常用于指定colorbar等第三个数据维度的数据呈现精度。
+`--x_precision`, `--y_precision`, `--z_precision`  用于设置三个数据维度的数据呈现精度，如`--x_precision 2` 则是X轴数据标签都显示2位小数点后的数字。`--z_precision`通常用于指定colorbar等第三个数据维度的数据呈现精度。
 
 `-xs`, `-ys`, `-zs` 对三个维度的数据进行缩放，如`-xs 0.001` ，则所有第一个数据维度的数据都会被乘以0.001。
 
-`-smv`, `-ws`, `-cf` 这一组参数用于绘制xvg数据的滑动平均值，分别是指定绘制滑动平均值，设置滑动平均的窗口大小，设置置信区间的可信度。
+`-smv`, `-ws`, `-cf` 这一组参数用于绘制xvg数据的滑动平均，分别是指定是否绘制滑动平均值，设置滑动平均的窗口大小，设置置信区间的可信度。
 
 `--alpha` 通常用于指定绘图的透明度。
 
-`-csv` 对于已经有绘图的命令，此参数可用于将一些数据导出成csv文件；例如`xvg_compare`搭配这个参数可以将xvg数据转换成csv数据。
+`-csv` 对于已经有绘图的命令，此参数可用于将一些数据导出成csv文件；如`xvg_compare`命令搭配这个参数可以将xvg数据转换成csv数据。
 
-`-eg` 用于指定绘图引擎，目前dit支持四种绘图引擎，matplotlib、plotly、gnuplot（需要自行安装并添加环境变量，保证在命令行中`gnuplot`可以调用），以及plotext（用于直接在命令行中绘制简单的图形）。默认的绘图引擎是matplotlib。
+`-eg` 用于指定绘图引擎，目前DIT支持四种绘图引擎，matplotlib、plotly、gnuplot（需要自行安装并添加环境变量，保证在命令行中`gnuplot`可以调用），以及plotext（用于直接在命令行中绘制简单的图形）。默认的绘图引擎是matplotlib。
 
-`-cmap` 用于指定绘图的colormap，对于matplotlib和plotly有效。
+`-cmap` 用于指定绘图的colormap，对于matplotlib和plotly有效。如果开始不清楚具体的可选参数，可以随便写，报错信息里面会列出所有可能的colormap参数。
 
 `--colorbar_location` 用于指定colorbar的位置，目前只对matplotlib有效。
 
@@ -207,114 +235,12 @@ optional arguments:
 
 
 
-
-
-### 绘图样式
-
-除了上文提到的可以通过命令行参数进行部分绘图样式的调整（X和Y的精度、colormap颜色和位置、图例位置等），每种绘图引擎还有些独立的样式控制方式。
-
-对于各个绘图引擎，可以通过`dit show_style`命令得到相关的DIT默认的格式控制文件。将自己调整过的格式控制文件放置在当前工作目录，DIT就会自动读取并应用。
-
-#### matplotlib
-
-matplotlib支持使用mplstyle文件进行格式控制，请参考：https://matplotlib.org/stable/tutorials/introductory/customizing.html#the-matplotlibrc-file 。以下是DIT中默认的mplstyle：
-
-```bash
-## Matplotlib style for DuIvyTools
-## https://matplotlib.org/stable/tutorials/introductory/customizing.html#the-matplotlibrc-file
-
-axes.labelsize:     12
-axes.linewidth:     1
-xtick.labelsize:    12
-ytick.labelsize:    12
-ytick.left:         True
-ytick.direction:    in
-xtick.bottom:       True
-xtick.direction:    in
-lines.linewidth:    2
-legend.fontsize:    12
-legend.loc:         best
-legend.fancybox:    False
-legend.frameon:     False
-font.family:        Arial
-font.size:          12
-image.cmap:         coolwarm
-image.aspect:       auto # for fitting into axes
-figure.dpi:         100
-savefig.dpi:        300
-axes.prop_cycle:    cycler('color', ['38A7D0', 'F67088', '66C2A5', 'FC8D62', '8DA0CB', 'E78AC3', 'A6D854', 'FFD92F', 'E5C494', 'B3B3B3', '66C2A5', 'FC8D62'])
-```
-
-用户可以通过在mplstyle文件中设置这些参数的取值或者根据上述链接增加新的参数来控制matplotlib引擎出图的样式。
-
-
-
-#### plotly
-
-plotly就厉害了，**基本上所有呈现在你眼前的东西都可以通过template文件修改**。实际上就是记录了参数和取值的json文件。一些自定义plotly样式的信息：https://plotly.com/python/reference/index/. 一些可能可用的templates文件: https://github.com/AnnMarieW/dash-bootstrap-templates/tree/main/src/dash_bootstrap_templates/templates 。
-
-DIT的默认样式文件较长，这里就不直接列出了。其中data里面记录的是对应于每一种绘图类型的样式控制，layout里面记录的则是整体的一些样式。
-
-
-
-#### gnuplot
-
-Gnuplot，顶牛的一款科研绘图软件，开源软件的一个成功范例。
-
-Gnuplot的所有东西都可以通过它的输入脚本进行调整，DIT也支持直接输出绘图的gnuplot脚本。因而，用户可以直接修改gnuplot脚本来精调图片。
-
-DIT本身只对Gnuplot设置了非常简单的信息：
-
-```gnuplot
-# define line styles
-set style line 1 lt 1 lc rgb "#38A7D0"
-set style line 2 lt 1 lc rgb "#F67088"
-set style line 3 lt 1 lc rgb "#66C2A5"
-set style line 4 lt 1 lc rgb "#FC8D62"
-set style line 5 lt 1 lc rgb "#8DA0CB"
-set style line 6 lt 1 lc rgb "#E78AC3"
-set style line 7 lt 1 lc rgb "#A6D854"
-set style line 8 lt 1 lc rgb "#FFD92F"
-set style line 9 lt 1 lc rgb "#E5C494"
-set style line 10 lt 1 lc rgb "#B3B3B3"
-set style line 11 lt 1 lc rgb "#66C2A5"
-set style line 12 lt 1 lc rgb "#FC8D62"
-# define palette
-set palette defined ( 0 '#2166AC',\
-                    1 '#4393C3',\
-                    2 '#92C5DE',\
-                    3 '#D1E5F0',\
-                    4 '#FDDBC7',\
-                    5 '#F4A582',\
-                    6 '#D6604D',\
-                    7 '#B2182B' )
-
-set term pngcairo enhanced truecolor font "Arial, 14" fontscale 1 linewidth 2 pointscale 1 size 1400,1000
-```
-
-关于一些可用的gnuplot样式设置，可以参考：
-
-- https://github.com/hesstobi/Gnuplot-Templates
-- https://github.com/Gnuplotting/gnuplot-palettes
-
-
-
-目前DIT对gnuplot的调用还不是很理想，绘图数据和绘图样式还杂糅在一起。现今似乎还没有特别理想的从python中调用gnuplot的库，未来可能打算自己整一个。希望到时候，能对DIT中的这部分代码有一个比较好的改进。
-
-
-
-#### plotext
-
-plotext已经是我能找到的较好的可以进行命令行绘图的工具了，支持格式调整？不太可能。要是觉得不好看，把眼镜摘掉，可能图看起来就会好一些……
-
-
-
 ### 命令详情
 
-因为每一个命令的详细信息、可用参数、使用示例都可以通过`dit <command> -h`获得，比如：
+每一个命令的详细信息、可用参数、使用示例都可以通过`dit <command> -h`获得，比如：
 
 ```bash
-λ dit xpm_show -h
+$ dit xpm_show -h
 ====== command: xpm_show ======
 
     Visualize the xpm file.
@@ -402,6 +328,8 @@ plotext已经是我能找到的较好的可以进行命令行绘图的工具了�
 
 因而下文的介绍都是极其简略的，某些命令在之前版本的DIT中也存在，可以相互参考。
 
+
+
 #### xvg_show
 
 绘制一个或多个xvg文件中的所有数据。
@@ -438,6 +366,8 @@ plotext的图像是字符串，这里就不贴了。
 dit xvg_compare -f energy.xvg -c 1,3 -l LJ(SR) Coulomb(SR) -xs 0.001 -x Time(ns) -smv -ns -csv data.csv
 ```
 
+旧版本DIT中的`xvg2csv`和`xvg_mvave`命令在v0.5.0当中被去掉了，但是其功能完全可以由这里的`-csv`参数来实现。
+
 
 
 #### xvg_ave
@@ -445,18 +375,23 @@ dit xvg_compare -f energy.xvg -c 1,3 -l LJ(SR) Coulomb(SR) -xs 0.001 -x Time(ns)
 计算xvg中每一列数据的的平均值和标准误差。
 
 ```bash
-dit xvg_ave -f rmsd.xvg -b 1000 -e 2001
+$ dit xvg_ave -f rmsd.xvg -b 1000 -e 2001
+
+>>>>>>>>>>>>>>                 rmsd.xvg                 <<<<<<<<<<<<<<
+----------------------------------------------------------------------
+|                            |      Average      |      Std.Err      |
+----------------------------------------------------------------------
+|         Time (ps)          |   15000.000000    |    2891.081113    |
+----------------------------------------------------------------------
+|         RMSD (nm)          |     0.388980      |     0.038187      |
+----------------------------------------------------------------------
 ```
 
 
 
 #### xvg_show_distribution
 
-呈现数据的分布，默认是展示数据列的distribution。
-
-如果将`-m`设置为`pdf`，则呈现Kernel Density Estimation，如果是`cdf`，则呈现的是Cumulative kernel Density Estimation。
-
-
+呈现数据的分布，默认是展示数据列的distribution。如果将`-m`设置为`pdf`，则呈现Kernel Density Estimation；如果是`cdf`，则呈现的是Cumulative kernel Density Estimation。
 
 ```bash
 dit xvg_show_distribution -f gyrate.xvg -c 1,2 
@@ -482,8 +417,6 @@ dit xvg_show_distribution -f gyrate.xvg -c 1,2 -m cdf -eg gnuplot
 
 
 
-
-
 #### xvg_show_stack
 
 对于选择的数据列，绘制堆积折线图。
@@ -506,11 +439,15 @@ dit xvg_show_scatter -f gyrate.xvg -c 1,2,0 -zs 0.001 -z Time(ns) -eg plotly --x
 
 ![dit_xvg_show_scatter_plotly](static/dit_xvg_show_scatter_plotly.png)
 
+这里虽然选择的是第0列（时间），但是在散点图中，其为着色的数据，也即被认为是第三个数据维度，故而对其的调整要应用`-zs 0.001 -z Time(ns)`。
+
 
 
 #### xvg_energy_compute
 
-分子间相互作用，如果你用基于相互作用原理的方法计算的话（相互作用能 = 复合物能量 - 分子A能量 - 分子B能量），这个命令可以帮你快速执行这一过程。
+此命令同时也存在于以前的DIT版本中，可前往参考。
+
+分子间相互作用，如果用基于相互作用原理的方法计算的话（相互作用能 = 复合物能量 - 分子A能量 - 分子B能量），这个命令可以帮你快速执行这一过程。
 
 输入三个文件，复合物能量文件、分子A能量文件、分子B能量文件；每个文件应包含且只包含五列数据（时间、LJ(SR)、Disper.corr.、Coulomb(SR)、Coul.recip.），顺序也要正确。这个脚本会读入这三个文件，然后执行计算，输出计算结果到xvg文件。
 
@@ -550,6 +487,18 @@ dit xvg_box_compare -f gyrate.xvg -c 1,2,3,4 -l Gyrate Gx Gy Gz -z Time(ns) -zs 
 
 
 
+如果想要不显示散点图，只需要设置`-m withoutScatter`即可：
+
+```bash
+dit xvg_box_compare -f gyrate.xvg -c 1,2,3,4 -l Gyrate Gx Gy Gz -z Time(ns) -zs 0.001 -m withoutScatter 
+```
+
+![dit_xvg_box_compare_matplotlib](static/dit_xvg_box_compare_matplotlib2.png)
+
+
+
+
+
 #### xvg_combine
 
 此命令用于从多个xvg文件中读取数据并按照用户的选择组合成一个新的xvg文件。
@@ -578,7 +527,7 @@ dit xvg_ave_bar -f bar_0_0.xvg,bar_0_1.xvg bar_1_0.xvg,bar_1_1.xvg -c 1,2 -l MD_
 
 #### xvg_rama
 
-gmx的`rama`命令是可以得到蛋白质的二面角(phi和psi)数据的，`xvg_rama`命令就是把这样的数据转换成拉式图。
+`gmx rama`命令可以得到蛋白质的二面角(phi和psi)数据，`xvg_rama`命令就是把这样的数据转换成拉式图。
 
 ```bash
 dit xvg_rama -f rama.xvg
@@ -592,9 +541,9 @@ dit xvg_rama -f rama.xvg
 
 此命令支持四种绘图引擎(matplotlib, plotly, gnuplot, plotext)，也有四种绘图模式(imshow, pcolormesh, 3d, contour)。四种模式matplotlib都支持，plotly和gnuplot支持pcolormesh、3d和contour；plotext就没有模式可以选择了，也只能绘制尺寸较小的图片。
 
-对于Discrete类型的xpm文件，matplotlib的imshow，以及plotly和gnuplot的pcolormesh模式都是使用xpm本身的颜色进行绘图。对于Continuous类型的xpm文件，则是都调用colormap进行着色。colormap可以在命令行里进行设置，也可以通过各自绘图引擎的格式控制进行设置。
+对于**Discrete**类型的xpm文件，matplotlib的imshow，以及plotly和gnuplot的pcolormesh模式都是使用xpm本身的颜色进行绘图。对于**Continuous**类型的xpm文件，则是都调用colormap进行着色。colormap可以在命令行里进行设置，也可以通过各自绘图引擎的格式控制进行设置。
 
-用户可以对数据进行插值，一般是对Continuous类型的xpm图片进行插值，但是DIT并不做限制，因而需要**用户自己保证出图的物理意义**。对于matplotlib的imshow，使用的插值方式是imshow函数内置的插值方式，不知道写什么参数的话，随便赋值，比如说`-ip hhh`，出来的报错信息里就会列出你当前matplotlib的imshow函数支持哪些插值方式。对于其它的模式，scipy的interp2d被用于插值，同时用户还可以通过`-ipf`设置插值倍数。
+用户可以对数据进行插值，一般是对Continuous类型的xpm图片进行插值，但是DIT并不做限制，因而需要**用户自己保证出图的物理意义**。对于matplotlib的imshow，使用的插值方式是imshow函数内置的插值方式，不知道写什么参数的话，随便赋值，比如说`-ip hhh`，出来的报错信息里就会列出你当前matplotlib的imshow函数支持哪些插值方式。对于其它的模式，则使用scipy的interp2d进行插值，同时用户还可以通过`-ipf`设置插值倍数。
 
 DIT还支持使用`-xmin`、`-xmax`、`-ymin`、`-ymax`对图片进行切割，只显示被选中的区域。注意这里赋值使用的是图片横竖像素的index。
 
@@ -680,7 +629,7 @@ dit xpm_diff -f DCCM0.xpm DCCM1.xpm -o DCCM0-1.xpm
 
 #### xpm_merge
 
-因着某些XPM矩阵图是沿对角线对称的，有的时候需要将两张不同xpm矩阵图沿对角线一半一半拼接起来以节省篇幅。此命令可以将两个相同尺寸，相同物理含义，相同X和Y轴的xpm图片进行一半一半的对角线拼接。
+因着某些XPM矩阵图是沿对角线对称的，有的时候需要将两张不同xpm矩阵图沿对角线一半一半拼接起来以节省篇幅。此命令可以将两个相同尺寸，相同X和Y轴的xpm图片进行一半一半的对角线拼接。
 
 ```bash
 dit xpm_merge -f DCCM0.xpm DCCM1.xpm -o DCCM0-1.xpm
@@ -693,6 +642,7 @@ dit xpm_merge -f DCCM0.xpm DCCM1.xpm -o DCCM0-1.xpm
 此命令可以提供简单生物体系模拟常见的gromacs的mdp控制文件。
 
 ```bash
+dit mdp_gen 
 dit mdp_gen -o nvt.mdp
 ```
 
@@ -700,9 +650,9 @@ dit mdp_gen -o nvt.mdp
 
 #### show_style
 
-此命令会生成不同绘图引擎的格式控制文件。可以通过`-eg`指定绘图引擎，默认给出的是DIT正在使用的默认格式控制文件。也可以通过`-o`参数生成其它的格式控制文件。只需要将自己调整过的格式控制文件放置在当前的工作目录，DIT启动之后就会加载该文件到对应的引擎并应用到绘图上。
+此命令会生成不同绘图引擎的格式控制文件。可以通过`-eg`指定绘图引擎，默认给出的是DIT默认使用的格式控制文件。也可以通过`-o`参数生成DIT内置的其它格式控制文件。用户只需要将自己调整过的格式控制文件放置在当前的工作目录，DIT启动之后就会加载该文件到对应的引擎并应用到绘图上。
 
-**`dit show_style -h`命令的信息中给出了一些可供参考的调整格式的网页链接或者格式模板，用户可以参考。
+`dit show_style -h`命令的信息中给出了一些可供参考的调整格式的网页链接或者格式模板，用户可以参考。
 
 ```bash
 dit show_style
@@ -717,7 +667,7 @@ dit show_style -eg plotly -o DIT_plotly.json
 
 `find_center`命令主要用于寻找gro文件中组分的几何中心。
 用户可以通过指定索引文件和索引组以寻找特定组的几何中心。如果参数中不包括索引文件，则默认寻找整个gro文件所有原子的几何中心。
-`-m AllAtoms`参数的意思是是否在全体原子中寻找指定原子组的几何中心。有的时候，距离指定原子组的几何中心的原子不一定出现在该组中，所以加了这么个参数。
+`-m AllAtoms`参数的意思是是否在全体原子中寻找指定原子组的几何中心。有的时候，距离指定原子组的几何中心最近的原子不一定出现在该组中，所以加了这么个参数。
 
 ```bash
 dit find_center -f test.gro
@@ -729,7 +679,7 @@ dit find_center -f test.gro index.ndx -m AllAtoms
 
 #### dccm_ascii
 
-`gmx covar`命令支持以`-ascii`的方式导出协方差矩阵的数据，此命令可以读入此数据会生成动态互相关矩阵的xpm文件。
+`gmx covar`命令支持以`-ascii`的方式导出协方差矩阵的数据，此命令可以读入该数据并生成动态互相关矩阵的xpm文件。
 
 ```bash
 dit dccm_ascii -f covar.dat -o dccm.xpm
@@ -750,7 +700,7 @@ dit dssp -f dssp.dat -c 1-42,1-42,1-42 -b 1000 -e 2001 -dt 10 -x "Time (ps)"
 
 #### ndx_add
 
-通过`-c`和`-al`参数，给gmx的index文件新增一个组。
+有的时候需要给index索引文件添加一个新的组，这里DIT可以通过`-c`和`-al`参数，给gmx的index文件新增一个组。
 
 ```bash
 dit ndx_add -f index.ndx -o test.ndx -al lig -c 1-10
@@ -768,6 +718,280 @@ dit ndx_split -f index.ndx -al 1 2
 dit ndx_split -f index.ndx -al Protein 2
 dit ndx_split -f index.ndx -al Protein 2 -o test.ndx
 ```
+
+
+
+### 绘图样式
+
+除了上文提到的可以通过命令行参数进行部分绘图样式的调整（X和Y的精度、colormap颜色和位置、legend位置等），每种绘图引擎还有些独立的样式控制方式。
+
+对于各个绘图引擎，可以通过`dit show_style`命令得到对应的DIT默认的格式控制文件。将自己调整过的格式控制文件放置在当前工作目录，DIT就会自动读取并应用。
+
+#### matplotlib
+
+matplotlib支持使用mplstyle文件进行格式控制，请参考：https://matplotlib.org/stable/tutorials/introductory/customizing.html#the-matplotlibrc-file 。以下是DIT中默认的mplstyle：
+
+```bash
+## Matplotlib style for DuIvyTools
+## https://matplotlib.org/stable/tutorials/introductory/customizing.html#the-matplotlibrc-file
+
+axes.labelsize:     12
+axes.linewidth:     1
+xtick.labelsize:    12
+ytick.labelsize:    12
+ytick.left:         True
+ytick.direction:    in
+xtick.bottom:       True
+xtick.direction:    in
+lines.linewidth:    2
+legend.fontsize:    12
+legend.loc:         best
+legend.fancybox:    False
+legend.frameon:     False
+font.family:        Arial
+font.size:          12
+image.cmap:         coolwarm
+image.aspect:       auto # for fitting into axes
+figure.dpi:         100
+savefig.dpi:        300
+axes.prop_cycle:    cycler('color', ['38A7D0', 'F67088', '66C2A5', 'FC8D62', '8DA0CB', 'E78AC3', 'A6D854', 'FFD92F', 'E5C494', 'B3B3B3', '66C2A5', 'FC8D62'])
+```
+
+用户可以通过在mplstyle文件中设置这些参数的取值或者根据上述链接增加新的参数来控制matplotlib引擎出图的样式。
+
+下面对其中部分默认参数做简单的解释：
+
+`legend.loc`：当`-legend_location`为默认设置的时候，用户可以通过此文件的此参数控制legend的位置，默认的best会让绘图引擎自动选择legend的位置。用户可以根据https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.legend.html的说明自行设置legend的位置，比如设置成`upper right`。
+
+`axes.prop_cycle`参数后面定义了绘图引擎默认的颜色循环，也即折线图、堆积折线图等图所使用的颜色。如果用户想要修改折线图的颜色，除了直接使用matplotlib的出图GUI的设置进行修改，还可以在这里自行定义。比如说我的图上有三条折线并且我想要调整它们的颜色，则只需要将前三个颜色值修改一下即可。
+
+
+
+#### plotly
+
+plotly就厉害了，**基本上所有呈现在你眼前的东西都可以通过template文件修改**。实际上其template文件就是记录了参数和取值的json文件。
+
+一些自定义plotly样式的信息：https://plotly.com/python/reference/index/. 一些可能可用的templates文件: https://github.com/AnnMarieW/dash-bootstrap-templates/tree/main/src/dash_bootstrap_templates/templates 。
+
+DIT的plotly默认样式文件较长，这里就不直接列出了，只在下面做一点点简单的介绍。
+
+plotly的格式控制json文件主要分为两块：data和layout。
+
+```json
+{
+  "data":{
+    ...
+  },
+  "layout": {
+    ...
+  }
+}
+```
+
+其中data里面记录的是对应于每一种绘图类型的样式控制，layout里面记录的则是整体的一些样式。
+
+比如关于data里面contour类型的图的样式控制如下：
+
+```json
+        "contour": [
+            {
+                "showscale": true,
+                "colorbar": {
+                    "outlinewidth": 0,
+                    "ticks": "",
+                    "x": 1.02,
+                    "y": 0.02,
+                    "xanchor": "left",
+                    "yanchor": "bottom",
+                    "len": 0.50,
+                    "lenmode": "fraction",
+                    "title": {
+                        "side": "right"
+                    }
+                },
+                "type": "contour"
+            }
+        ],
+```
+
+比如这里定义了一大段关于colorbar的设置，包括其位置和长度等。
+
+一个重要的问题：我怎么知道该有哪些参数又有哪些取值呢？
+
+首先，可以去查plotly关于contour的文档，https://plotly.github.io/plotly.py-docs/generated/plotly.graph_objects.Contour.html，其中就有关于各个参数的介绍等等信息；其次，你可以随便新增一个参数和取值，然后运行，得到的报错信息里面就会给你列出所有可能的取值以及相关的信息。
+
+还有layout的示例：
+
+```json
+"layout": {
+        "showlegend": true,
+        "legend_orientation": "v",
+        "legend": {
+            "x": 1.0,
+            "y": 1.0,
+            "xanchor": "left",
+            "yanchor": "top",
+            "bgcolor": "rgba(0,0,0,0)"
+        },
+        "colorway": [
+            "#38A7D0",
+            "#F67088",
+            "#66C2A5",
+            "#FC8D62",
+            "#8DA0CB",
+            "#E78AC3",
+            "#A6D854",
+            "#FFD92F",
+            "#E5C494",
+            "#B3B3B3",
+            "#66C2A5",
+            "#FC8D62"
+        ],
+        "font": {
+            "family": "Arial, Times New Roman",
+            "size": 18,
+            "color": "#2a3f5f"
+        },
+        "title": {
+            "x": 0.05
+        },
+        "xaxis": {
+            "automargin": true,
+            "linecolor": "black",
+            "linewidth": 2,
+            "title": {
+                "standoff": 15
+            },
+            "mirror": true,
+            "ticks": "",
+            "showline": true
+        },
+        "yaxis": {
+            "automargin": true,
+            "linecolor": "black",
+            "linewidth": 2,
+            "title": {
+                "standoff": 15
+            },
+            "mirror": true,
+            "ticks": "",
+            "showline": true
+        },
+        "paper_bgcolor": "white",
+        "plot_bgcolor": "white",
+        "polar": {
+            "angularaxis": {
+                "gridcolor": "white",
+                "linecolor": "black",
+                "ticks": ""
+            },
+            "bgcolor": "white",
+            "radialaxis": {
+                "gridcolor": "white",
+                "linecolor": "black",
+                "ticks": ""
+            }
+        },
+        "scene": {
+            "xaxis": {
+                "backgroundcolor": "white",
+                "linecolor": "black",
+                "linewidth": 2,
+                "showline": true,
+                "showbackground": true,
+                "ticks": "",
+                "zerolinecolor": "white",
+                "tickfont": {
+                    "size": 14,
+                    "family": "Arial, Times New Roman"
+                }
+            },
+            "yaxis": {
+                "backgroundcolor": "white",
+                "linecolor": "black",
+                "linewidth": 2,
+                "showline": true,
+                "showbackground": true,
+                "ticks": "",
+                "zerolinecolor": "white",
+                "tickfont": {
+                    "size": 14,
+                    "family": "Arial, Times New Roman"
+                }
+            },
+            "zaxis": {
+                "backgroundcolor": "white",
+                "linecolor": "black",
+                "linewidth": 2,
+                "showline": true,
+                "showbackground": true,
+                "ticks": "",
+                "zerolinecolor": "white",
+                "tickfont": {
+                    "size": 14,
+                    "family": "Arial, Times New Roman"
+                }
+            }
+        },
+```
+
+这里简单地介绍下各个重要的参数：
+
+`legend`表示的自然就是legend的位置了，`colorway`表示的是颜色循环，要修改折线图等图的颜色可以在这里进行。`xaxis`和`yaxis`自然就是X和Y周的信息了。`scene`中的`xaxis`、`yaxis`和`zaxis`表示的是3维图中的X、Y和Z轴信息。
+
+总的来说，plotly的格式自由度是最高的，当然调整出一张漂亮的图还是需要用户对plotly有一些了解。
+
+
+
+#### gnuplot
+
+Gnuplot，顶牛的一款科研绘图软件，开源软件的一个成功范例。
+
+Gnuplot的所有东西都可以通过它的输入脚本进行调整，DIT也支持直接输出绘图的gnuplot脚本。因而，用户可以直接修改gnuplot脚本来精调图片。
+
+DIT本身只对gnuplot设置了非常简单的信息：
+
+```gnuplot
+# define line styles
+set style line 1 lt 1 lc rgb "#38A7D0"
+set style line 2 lt 1 lc rgb "#F67088"
+set style line 3 lt 1 lc rgb "#66C2A5"
+set style line 4 lt 1 lc rgb "#FC8D62"
+set style line 5 lt 1 lc rgb "#8DA0CB"
+set style line 6 lt 1 lc rgb "#E78AC3"
+set style line 7 lt 1 lc rgb "#A6D854"
+set style line 8 lt 1 lc rgb "#FFD92F"
+set style line 9 lt 1 lc rgb "#E5C494"
+set style line 10 lt 1 lc rgb "#B3B3B3"
+set style line 11 lt 1 lc rgb "#66C2A5"
+set style line 12 lt 1 lc rgb "#FC8D62"
+# define palette
+set palette defined ( 0 '#2166AC',\
+                    1 '#4393C3',\
+                    2 '#92C5DE',\
+                    3 '#D1E5F0',\
+                    4 '#FDDBC7',\
+                    5 '#F4A582',\
+                    6 '#D6604D',\
+                    7 '#B2182B' )
+
+set term pngcairo enhanced truecolor font "Arial, 14" fontscale 1 linewidth 2 pointscale 1 size 1400,1000
+```
+
+如果用户需要修改线型（颜色，款式等）和colormap的颜色，可以直接在这个格式控制文件里面修改。
+
+关于一些可用的gnuplot样式设置，可以参考：
+
+- https://github.com/hesstobi/Gnuplot-Templates
+- https://github.com/Gnuplotting/gnuplot-palettes
+
+目前DIT对gnuplot的调用还不是很理想，绘图数据和绘图样式部分还杂糅在一起。现今似乎还没有特别理想的从python中调用gnuplot的库，未来可能打算自己整一个。希望到时候，能对DIT中的这部分代码有一个比较好的改进。
+
+
+
+#### plotext
+
+plotext已经是我能找到的较好的可以进行命令行绘图的工具了，支持格式调整？不太可能。要是觉得不好看，把眼镜摘掉，可能图看起来就会好一些……
 
 
 
@@ -793,7 +1017,7 @@ from DuIvyTools.DuIvyTools.Visualizer import Visualizer_matplotlib
 
 **命令模块**
 
-每一个命令都是一个类，用于处理命令逻辑和调用相应的绘图模块等。想要自己调用命令类可能会有些难，需要自己构造用户参数parm类才行。
+每一个命令都是一个类，用于处理命令逻辑和调用相应的绘图模块等。想要自己调用命令类可能会有些难，需要自己构造用户参数parm类才行，不如直接命令行里调用DIT了。
 
 
 

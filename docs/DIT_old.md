@@ -1,5 +1,15 @@
+# DuIvyTools v0.4.8
+
+
 
 ![](static/cover.png)
+
+
+
+**本文介绍的是v0.4.8及以前的旧版本DIT**。
+
+如果你使用的是v0.5.0，请将下文中所有的`dit`替换成`dito`执行命令。
+
 
 
 ## Installation
@@ -10,7 +20,7 @@ DIT可以通过源码安装(https://github.com/CharlesHahn/DuIvyTools)，也可�
 pip install DuIvyTools
 ```
 
-目前DIT版本为v0.4.8
+目前DIT版本为v0.5.0。
 
 
 
