@@ -6,7 +6,8 @@ DuIvyTools
 [![Documentation Status](https://readthedocs.org/projects/duivytools/badge/?version=latest)](https://duivytools.readthedocs.io/zh_CN/latest/?badge=latest)
 [![commits-since](https://img.shields.io/github/commits-since/CharlesHahn/DuIvyTools/v0.4.8.svg)](https://github.com/CharlesHahn/DuIvyTools/compare/v0.4.8...master)
 [![Python Version](https://img.shields.io/pypi/pyversions/DuIvyTools.svg)](https://pypi.org/project/DuIvyTools)
-[![Documentation Status](https://readthedocs.org/projects/duivytools/badge/?version=latest)](https://duivytools.readthedocs.io/en/latest/?badge=latest)
+
+
 
 ```
   *******           **                  **********               **
@@ -100,7 +101,6 @@ If you used DuIvyTools in your research, cite it by doi please.
 
 - [ ] python unittest
 - [ ] better docs
-
 
 
 ## Others

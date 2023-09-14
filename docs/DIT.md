@@ -1029,3 +1029,11 @@ from DuIvyTools.DuIvyTools.Visualizer import Visualizer_matplotlib
 Cite DuIvyTools by：
 
 [![](https://zenodo.org/badge/DOI/10.5281/zenodo.6339993.svg)](https://doi.org/10.5281/zenodo.6339993)
+
+
+
+## Reward
+
+A lot of time and money have been spent for developing DuIvyTools and improve it. If possible, **REWARD** to help me improve it. 
+
+![reward](static/reward.png)
