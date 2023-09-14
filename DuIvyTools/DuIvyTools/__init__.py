@@ -8,11 +8,9 @@
 /*******  //******/**  //**    **         /**//****** //****** *** ****** 
 ///////    ////// //    //    //          //  //////   ////// /// //////  
 
-DuIvyTools is a simple analysis and visualization tool for GROMACS result files
-written by 杜艾维 (https://github.com/CharlesHahn/DuIvyTools). 
+DuIvyTools (v0.5.0) is a simple analysis and visualization tool for GROMACS result files, written by 杜艾维 (https://github.com/CharlesHahn/DuIvyTools). 
 
-DuIvyTools package contains two DuIvyTools actually now. One is `DuIvyTools` which is the newest DuIvyTools v0.5 and noted as `dit`, the other is the `DuIvyTools_old` which is v0.4.8 and noted as `dito`.
-Since reconstruction were done for v0.5.0 and some features were dropped, the v0.4.8 were kept in package to keep integrity temporarily. 
+DuIvyTools contains three modules: `Commands` for providing several commands to deal with data and visualization, `FileParser` for providing parser of several type of files (.gro, .mdp, .ndx, .pdb, .xpm, .xvg), `Visualizer` for providing several visualization class, including four plot engine (matplotlib, plotly, gnuplot, and plotext) and several type of plots.
 
 This package is provided to you under GPLv3 License.
 """

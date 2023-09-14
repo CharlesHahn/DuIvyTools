@@ -1,0 +1,23 @@
+## Matplotlib style for DuIvyTools
+## https://matplotlib.org/stable/tutorials/introductory/customizing.html#the-matplotlibrc-file
+
+axes.labelsize:     12
+axes.linewidth:     1
+xtick.labelsize:    12
+ytick.labelsize:    12
+ytick.left:         True
+ytick.direction:    in
+xtick.bottom:       True
+xtick.direction:    in
+lines.linewidth:    2
+legend.fontsize:    12
+legend.loc:         best
+legend.fancybox:    False
+legend.frameon:     False
+font.family:        Arial
+font.size:          12
+image.cmap:         coolwarm
+image.aspect:       auto # for fitting into axes
+figure.dpi:         100
+savefig.dpi:        300
+axes.prop_cycle:    cycler('color', ['38A7D0', 'F67088', '66C2A5', 'FC8D62', '8DA0CB', 'E78AC3', 'A6D854', 'FFD92F', 'E5C494', 'B3B3B3', '66C2A5', 'FC8D62'])

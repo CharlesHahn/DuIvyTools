@@ -5,7 +5,7 @@ date : 20220220
 
 from setuptools import setup
 
-INSTALL_REQUIRES = ["matplotlib", "numpy", "scipy", "argparse"]
+INSTALL_REQUIRES = ["matplotlib", "plotly", "numpy", "pandas", "scipy", "argparse", "colorama", "plotext"]
 
 TEST_REQUIRES = [
     # testing and coverage
@@ -18,7 +18,7 @@ TEST_REQUIRES = [
 ]
 
 
-__version__ = "0.4.8"
+__version__ = "0.5.0"
 long_description = ""
 
 with open("README.md", "r") as fo:
@@ -28,9 +28,9 @@ with open("README.md", "r") as fo:
 setup(
     name="DuIvyTools",
     version=__version__,
-    author="CharlesHahn",
+    author="CharlesHahn,杜艾维",
     author_email="",
-    description="A tool for GROMACS results analysis and visualization",
+    description="A simple tool for GROMACS results analysis and visualization",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/CharlesHahn/DuIvyTools",
@@ -41,9 +41,10 @@ setup(
     extras_require={
         "test": TEST_REQUIRES + INSTALL_REQUIRES,
     },
-    package_data={"DuIvyTools":["data/*"]},
+    package_data={"DuIvyTools":["DuIvyTools/*", "DuIvyTools/data/*/*", "DuIvyTools/Commands/*", "DuIvyTools/Visualizer/*", "DuIvyTools/FileParser/*", "DuIvyTools_old/*", "DuIvyTools_old/data/*"]},
+    # package_data={"DuIvyTools":["DuIvyTools/*", "DuIvyTools_old/*"]},
     exclude_package_data={"DuIvyTools":["test/*"]},
-    entry_points={"console_scripts": ["dit = DuIvyTools.DIT:main"]},
+    entry_points={"console_scripts": ["dit = DuIvyTools.DuIvyTools.DIT:main", "dito = DuIvyTools.DuIvyTools_old.DIT:main"]},
     classifiers=[
         # Trove classifiers
         # (https://pypi.python.org/pypi?%3Aaction=list_classifiers)

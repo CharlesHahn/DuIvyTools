@@ -6,7 +6,8 @@ DuIvyTools
 [![Documentation Status](https://readthedocs.org/projects/duivytools/badge/?version=latest)](https://duivytools.readthedocs.io/zh_CN/latest/?badge=latest)
 [![commits-since](https://img.shields.io/github/commits-since/CharlesHahn/DuIvyTools/v0.4.8.svg)](https://github.com/CharlesHahn/DuIvyTools/compare/v0.4.8...master)
 [![Python Version](https://img.shields.io/pypi/pyversions/DuIvyTools.svg)](https://pypi.org/project/DuIvyTools)
-[![Documentation Status](https://readthedocs.org/projects/duivytools/badge/?version=latest)](https://duivytools.readthedocs.io/en/latest/?badge=latest)
+
+
 
 ```
   *******           **                  **********               **
@@ -20,11 +21,7 @@ DuIvyTools
 ```
 
 DuIvyTools (DIT) is a simple analysis and visualization tool for GROMACS result
-files (.xvg, .xpm, .ndx, .mdp). 
-
-This tool can perform data visualization and convertion, and may be able to 
-cover daily simple tasks when analyzing results of molecular dynamics 
-simulations by GROMACS. 
+files, designed for fasten your analysis of molecular dynamics simulations. 
 
 ## Intro
 
@@ -33,13 +30,15 @@ parameters, like:
 
 ```bash
 dit xvg_show -f test.xvg
-dit xpm_show -f test.xpm -ip
+dit xpm_show -f test.xpm
 ```
 
-Type `dit help` for more messages.
+Type `dit` for the commands supported. Type `dit <comman> -h` for detailed help information of each command. 
 
-visit https://github.com/CharlesHahn/DuIvy/tree/master/Articles/20220310-DIT 
-for more introductions in Chinese.
+The tutorials (in Chinese) of DIT can be found at https://duivytools.readthedocs.io/
+
+If you got any problem using DIT or suggestions, feel free to issue or contact me by 飞书 (Lark): https://applink.feishu.cn/client/chat/chatter/add_by_link?link_token=a22q9297-2060-43d5-8b28-73637c82cad6
+
 
 
 ## Install
@@ -52,53 +51,61 @@ pip install DuIvyTools
 
 ## Commands
 
-This tool contains quite a lot commands.
+DuIvyTools provides about 30 commands for visualization and processing of GMX result files like .xvg or .xpm.
 
 ```
-For XVG files:
-    xvg_show, xvg_compare, xvg_ave, xvg_mvave, xvg2csv, xvg_rama
-    xvg_show_distribution, xvg_show_stack, xvg_show_scatter
-    xvg_energy_compute, xvg_combine, xvg_ave_bar, xvg_box
-For XPM files:
-    xpm_show, xpm2csv, xpm2dat, xpm2gpl
-For NDX files:
-    ndx_show, ndx_rm_dup, ndx_rm, ndx_preserve
-    ndx_add, ndx_combine, ndx_rename
-For MDP files:
-    mdp_gen
+All commands are shown below:
+XVG:
+    xvg_show              : easily show xvg file
+    xvg_compare           : visualize xvg data
+    xvg_ave               : calculate the averages of xvg data
+    xvg_energy_compute    : calculate eneries between protein and ligand
+    xvg_combine           : combine data of xvg files
+    xvg_show_distribution : show distribution of xvg data
+    xvg_show_scatter      : show xvg data by scatter plot
+    xvg_show_stack        : show xvg data by stack area plot
+    xvg_box_compare       : compare xvg data by violin and scatter plots
+    xvg_ave_bar           : calculate and show the averages of parallelism
+    xvg_rama              : draw ramachandran plot from xvg data
+XPM:
+    xpm_show              : visualize xpm data
+    xpm2csv               : convert xpm data into csv file in form (x, y, z)
+    xpm2dat               : convert xpm data into dat file in form (N*N)
+    xpm_diff              : calculate the difference of xpms
+    xpm_merge             : merge two xpm by half and half
 Others:
-    find_center, pipi_dist_ang, hbond, mol_map, dccm_ascii, dssp
-Matplotlib Style:
-    show_style
+    mdp_gen               : generate mdp file templates
+    show_style            : show figure control style files
+    find_center           : find geometric center of one group of atoms
+    dccm_ascii            : convert dccm from ascii data file to xpm
+    dssp                  : generate xpm and xvg from ascii file of gmx2023
+    ndx_add               : new a index group to ndx file
+    ndx_split             : split one index group into several groups
+    ndx_show              : show the groupnames of index file
 
-You can type `dit help <command>` or `dit <command> -h` for more help messages 
-about each command, like: `dit help xvg_show` or `dit xvg_show -h`. 
+You can type `dit <command> -h` for detailed help messages about each command, like: `dit xvg_show -h`.
+
+All possible parameters could be inspected by `dit -h` or `dit --help`.
+
 ```
 
+## Cite
 
-## Cite 
+If you used DuIvyTools in your research, cite it by doi please.
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6339993.svg)](https://doi.org/10.5281/zenodo.6339993)
 
 
-# To fix
 
-- [ ] hbond -g hbond.log : hbond atom names in it
-- [ ] xpm x and y precision(after dot)
+## Todo
 
-## further features in v0.5.0
+- [ ] python unittest
+- [ ] better docs
 
-- [ ] ! the parsing of files should be isolated from figure plotting
-- [ ] ! re-design all arguments parsing part
-- [ ] ! plotting engines: matplotlib, plotext, gnuplot
-- [ ] ! Procedures
-- [ ] ! tidy help info and documentation
-- [ ] mdmat dmf.xpm
-- [ ] Discrete xpm to csv, convert notes to numbers
-- [ ] Control over the number of digits after the decimal point
-- [ ] better output (color, error ... ),绘图质量参考desmond
-- [ ] use plotext to create plot in terminal !
-- [ ] python test
-- [ ] latex or format parser for matplotlib
-- [ ] volume occupancy of ligand during MD
-- [ ] build a GUI maybe (webapp?)
+
+## Others
+
+A lot of time and money have been spent for developing DuIvyTools and improve it. If possible, **REWARD** to help me improve it. 
+
+
+![reward](docs/static/reward.png)

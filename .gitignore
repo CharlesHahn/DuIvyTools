@@ -2,7 +2,9 @@ test/*
 build/*
 dist/*
 *.egg-info
-DuIvyTools/__pycache__/*
+DuIvyTools/DuIvyTools/__pycache__/*
+DuIvyTools/DuIvyTools/*/__pycache__/*
+DuIvyTools/DuIvyTools_old/__pycache__/*
 Tests/__pycache__/*
 .pytest_cash/*
 docs/_build/*
