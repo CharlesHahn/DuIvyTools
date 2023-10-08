@@ -61,8 +61,8 @@ html_theme = 'sphinx_rtd_theme' ## https://sphinx-themes.org/
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['static']
 
-from recommonmark.parser import CommonMarkParser
-source_parsers = {
-    ".md": CommonMarkParser,
-}
+# from recommonmark.parser import CommonMarkParser
+# source_parsers = {
+#     ".md": CommonMarkParser,
+# }
 source_suffix = [".rst", ".md"]
