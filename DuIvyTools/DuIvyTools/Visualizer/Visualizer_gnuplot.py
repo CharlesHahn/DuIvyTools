@@ -815,7 +815,7 @@ class ImshowGnuplot(ParentGnuplot):
         cmap :str
     """
 
-    def __init__(self, plot_type: str, /, **kwargs) -> None:
+    def __init__(self, plot_type: str, **kwargs) -> None:
         super().__init__()
 
         self.gnuplot.title = kwargs["title"]
