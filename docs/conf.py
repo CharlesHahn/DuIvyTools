@@ -20,7 +20,7 @@
 project = 'DuIvyTools'
 copyright = '2023, CharlesHahn, 杜艾维'
 author = 'CharlesHahn'
-# version = '0.0.0'
+version = '0.5.0'
 release = '0.5.0'
 
 
