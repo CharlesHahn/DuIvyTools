@@ -29,8 +29,7 @@ release = '0.5.0'
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-# extensions = ['recommonmark', "sphinx.ext.mathjax"]
-extensions = ['myst_parser']
+extensions = ['recommonmark', "sphinx.ext.mathjax"]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['templates']
@@ -61,8 +60,9 @@ html_theme = 'sphinx_rtd_theme' ## https://sphinx-themes.org/
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['static']
 
-# from recommonmark.parser import CommonMarkParser
-# source_parsers = {
-#     ".md": CommonMarkParser,
-# }
+from recommonmark.parser import CommonMarkParser
+source_parsers = {
+    ".md": CommonMarkParser,
+}
 source_suffix = [".rst", ".md"]
+
