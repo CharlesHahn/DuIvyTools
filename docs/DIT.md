@@ -1024,7 +1024,9 @@ from DuIvyTools.DuIvyTools.Visualizer import Visualizer_matplotlib
 ## Cite DuIvyTools
 
 
-> DuIvyTools目前是基于GPLv3协议开源的。我欢迎大家在日常工作中使用和修改，但**不得以任何理由使用DuIvyTools牟利**，包括但不限于付费获取、商业使用等等。
+> DuIvyTools目前是基于GPLv3协议开源的，同时也已申请软件著作权。
+>
+> 我欢迎大家在日常工作中使用和修改，但**不得以任何理由使用DuIvyTools牟利**，包括但不限于付费获取、商业使用等等。
 
 Cite DuIvyTools by：
 
