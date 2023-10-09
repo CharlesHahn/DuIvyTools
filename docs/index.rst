@@ -10,6 +10,7 @@ Welcome to DuIvyTools's documentation!
    :maxdepth: 2
 
    DIT.md
+   DIT_old.md
 
 
 

@@ -18,10 +18,10 @@
 # -- Project information -----------------------------------------------------
 
 project = 'DuIvyTools'
-copyright = '2022, CharlesHahn'
+copyright = '2023, CharlesHahn, 杜艾维'
 author = 'CharlesHahn'
-# version = '0.0.0'
-release = '0.4.7'
+version = '0.5.0'
+release = '0.5.0'
 
 
 # -- General configuration ---------------------------------------------------
@@ -65,3 +65,4 @@ source_parsers = {
     ".md": CommonMarkParser,
 }
 source_suffix = [".rst", ".md"]
+

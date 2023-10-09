@@ -1,5 +1,31 @@
+# DuIvyTools v0.5.0
 
 ![](static/cover.png)
+
+历时两个月的紧张开发，DuIvyTools终于基本重构完成。
+
+
+
+从用户层面讲，DIT v0.5.0 新增的特性如下：
+
+1. 新增了plotly、Gnuplot、以及plotext绘图引擎
+   1. plotly: 强交互性，用户可以通过plotly的格式控制文件精调图片的每个细节
+   2. Gnuplot: 老牌开源绘图软件，需要用户自行安装好Gnuplot并设置好环境变量（可通过`gnuplot`命令调用），出图质量较高且Gnuplot用户可以方便地自定义图片的每个细节
+   3. plotext: 命令行绘图，只支持最简单的数据可视化（折线图和尺寸较小的image）
+   4. 原有的matplotlib: 优化了一些绘图的细节，增加了对图像上元素的控制，colorbar、legend，colormap等都支持用户通过命令行或matplotlib的格式控制文件进行调整
+2. 所有命令统一使用一套命令参数，降低使用成本
+3. 更强更稳健的文件解析器
+
+
+
+从开发角度讲，DIT v0.5.0和之前的DIT v0.4.8基本上没有什么相同点了。为了程序的简洁可靠，一些v0.4.8中的复杂逻辑的命令被删除了（`hbond`，`pipi_dist_ang`, `dssp`），但同时为了对用户保留原有的功能，现在的打包中也包含了修复了部分bug的v0.4.8以对v0.5.0中删除的功能进行补充。这两个版本在安装之后，可以分别使用`dit` (v0.5.0) 和 `dito` (v0.4.8) 调用，互不干扰。在后续的版本中，`dito` v0.4.8将被删除。
+
+
+
+在DIT使用过程中，如果您遇到任何程序问题或者疑问，都请在DuIvy飞书群中新建话题并提问和讨论，很抱歉因为工作繁忙我可能不会及时回复，但是我每天会抽时间查看并尝试解决问题。
+
+![Feishu(Lark)](static/feishu.png)
+
 
 
 ## Installation
@@ -10,45 +36,19 @@ DIT可以通过源码安装(https://github.com/CharlesHahn/DuIvyTools)，也可�
 pip install DuIvyTools
 ```
 
-目前DIT版本为v0.4.8
+
+
+## 命令行
+
+`dit`是一个基于命令行的软件。用户在命令行里输入命令，对数据进行操作和绘图。
 
 
 
-## HELP
+### 帮助信息
 
-跟GROMACS类似，DIT专门有个`help`命令可以输出各个命令的详细信息。以`xvg_show`举例，可以通过如下命令获取帮助信息：
-
-```bash
-dit help xvg_show
-```
-
-得到的帮助信息如下：
+用户可以通过`dit`命令获取所有可用的命令的名字及简短的信息：
 
 ```bash
-xvg_show: draw xvg data into line figures.
-
-:examples:
-    dit xvg_show -f test.xvg
-
-:parameters:
-    -f, --input
-            specify the xvg file for input
-```
-
-帮助信息主要分为三部分：第一部分简单介绍命令的功能，第二部分有一两句示例，第三部分则是命令的参数和参数的解释。
-
-当然，为了照顾使用习惯，也可以使用如下方式获得同样的命令帮助信息：
-
-```bash
-dit xvg_show -h
-dit xvg_show --help
-dit xvg_show help
-```
-
-除此之外，单独输入`dit help`会输出DIT支持的所有命令名，方便查找和使用：
-
-```bash
-$ dit help
  *******           **                  **********               **
 /**////**         /**          **   **/////**///               /**
 /**    /** **   **/** **    **//** **     /**  ******   ****** /**  ******
@@ -58,183 +58,396 @@ $ dit help
 /*******  //******/**  //**    **         /**//****** //****** *** ******
 ///////    ////// //    //    //          //  //////   ////// /// //////
 
-DuIvyTools is a simple analysis and visualization tool for GROMACS result files written by CharlesHahn (https://github.com/CharlesHahn/DuIvyTools).
+DuIvyTools is a simple analysis and visualization tool for GROMACS result files written by 杜艾维 (https://github.com/CharlesHahn/DuIvyTools).
 
-DuIvyTools provides about 30 commands for visualization and processing of GMX
-result files like .xvg or .xpm.
+DuIvyTools provides about 30 commands for visualization and processing of GMX result files like .xvg or .xpm.
 
-All commands are shown below, type `dit help xvg_show` or `dit xvg_show -h` to show help messages:
-    XVG:
-        xvg_show, xvg_compare, xvg_ave, xvg_mvave, xvg2csv, xvg_rama
-        xvg_show_distribution, xvg_show_stack, xvg_show_scatter
-        xvg_energy_compute, xvg_combine, xvg_ave_bar, xvg_box
-    XPM:
-        xpm_show, xpm2csv, xpm2gpl
-    NDX:
-        ndx_show, ndx_rm_dup, ndx_rm, ndx_preserve
-        ndx_add, ndx_combine, ndx_rename
-    MDP:
-        mdp_gen
-    Others:
-        find_center, pipi_dist_ang, hbond, mol_map, dccm_ascii
-    Matplotlib Style:
-        show_style
+All commands are shown below:
+XVG:
+    xvg_show              : easily show xvg file
+    xvg_compare           : visualize xvg data
+    xvg_ave               : calculate the averages of xvg data
+    xvg_energy_compute    : calculate eneries between protein and ligand
+    xvg_combine           : combine data of xvg files
+    xvg_show_distribution : show distribution of xvg data
+    xvg_show_scatter      : show xvg data by scatter plot
+    xvg_show_stack        : show xvg data by stack area plot
+    xvg_box_compare       : compare xvg data by violin and scatter plots
+    xvg_ave_bar           : calculate and show the averages of parallelism
+    xvg_rama              : draw ramachandran plot from xvg data
+XPM:
+    xpm_show              : visualize xpm data
+    xpm2csv               : convert xpm data into csv file in form (x, y, z)
+    xpm2dat               : convert xpm data into dat file in form (N*N)
+    xpm_diff              : calculate the difference of xpms
+    xpm_merge             : merge two xpm by half and half
+Others:
+    mdp_gen               : generate mdp file templates
+    show_style            : show figure control style files
+    find_center           : find geometric center of one group of atoms
+    dccm_ascii            : convert dccm from ascii data file to xpm
+    dssp                  : generate xpm and xvg from ascii file of gmx2023
+    ndx_add               : new a index group to ndx file
+    ndx_split             : split one index group into several groups
+    ndx_show              : show the groupnames of index file
 
-You can type `dit help <command>` or `dit <command> -h` for more help messages
-about each command, like: `dit help xvg_show` or `dit xvg_show -h`.
+You can type `dit <command> -h` for detailed help messages about each command, like: `dit xvg_show -h`.
 
-And you can also modify the style of figures by adding (only) one mplstyle file to your working directory. DIT will apply it to custom figures. You could
-modify mplstyle file based on the template generated by "dit show_style", or
-select one from style folder of DuIvyTools github repo
-(https://github.com/CharlesHahn/DuIvyTools).
+All possible parameters could be inspected by `dit -h` or `dit --help`.
+
+Cite DuIvyTools by DOI at https://doi.org/10.5281/zenodo.6339993
 
 Have a good day !
 ```
 
-
-
-## XVG
-
-XVG模块目前包含了13个命令，命令以xvg开头，都是用于处理xvg格式的文件的。
+还可以通过`dit -h`可以获取DIT中的所有参数，以及通过`dit <command> -h`可以获得具体命令的相关信息和输入参数。
 
 
 
-### xvg_show
+### 参数介绍
 
-读文件绘图，默认第0列是X值，第1列及之后的是数据。如果有多列数据，就绘制成子图的样式。
-
-**注意，DIT中列和行的计数都是从0开始的！**
+以下是DIT中的全部参数：
 
 ```bash
-dit xvg_show -f rmsd.xvg
+DuIvyTools: A Simple MD Analysis Tool
+
+positional arguments:
+  cmd                   command of DIT to run
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -f INPUT [INPUT ...], --input INPUT [INPUT ...]
+                        specify the input file or files
+  -o OUTPUT, --output OUTPUT
+                        specify the output file
+  -ns, --noshow         not to show figure
+  -c COLUMNS [COLUMNS ...], --columns COLUMNS [COLUMNS ...]
+                        select the column indexs for visualization or calculation, or input numerical list
+  -l LEGENDS [LEGENDS ...], --legends LEGENDS [LEGENDS ...]
+                        specify the legends of figure or data
+  -b BEGIN, --begin BEGIN
+                        specify the index for beginning (include)
+  -e END, --end END     specify the index for ending (not include)
+  -dt DT, --dt DT       specify the index step, default to 1
+  -x XLABEL, --xlabel XLABEL
+                        specify the xlabel of figure or data
+  -y YLABEL, --ylabel YLABEL
+                        specify the ylabel of figure or data
+  -z ZLABEL, --zlabel ZLABEL
+                        specify the zlabel of figure or data
+  -t TITLE, --title TITLE
+                        specify the title of figure or data
+  -xmin XMIN, --xmin XMIN
+                        specify the X value limitation, x_min
+  -xmax XMAX, --xmax XMAX
+                        specify the X value limitation, x_max
+  -ymin YMIN, --ymin YMIN
+                        specify the Y value limitation, y_min
+  -ymax YMAX, --ymax YMAX
+                        specify the Y value limitation, y_max
+  -zmin ZMIN, --zmin ZMIN
+                        specify the Z value limitation, z_min
+  -zmax ZMAX, --zmax ZMAX
+                        specify the Z value limitation, z_max
+  --x_precision X_PRECISION
+                        specify the precision of X values for visualization
+  --y_precision Y_PRECISION
+                        specify the precision of Y values for visualization
+  --z_precision Z_PRECISION
+                        specify the precision of Z values for visualization
+  -xs XSHRINK, --xshrink XSHRINK
+                        modify X values by multipling xshrink, default to 1.0
+  -ys YSHRINK, --yshrink YSHRINK
+                        modify Y values by multipling yshrink, default to 1.0
+  -zs ZSHRINK, --zshrink ZSHRINK
+                        modify Z values by multipling zshrink, default to 1.0
+  -smv, --showMV        whether to show moving averages of data
+  -ws WINDOWSIZE, --windowsize WINDOWSIZE
+                        window size for moving average calculation, default to 50
+  -cf CONFIDENCE, --confidence CONFIDENCE
+                        confidence for confidence interval calculation, default to 0.95
+  --alpha ALPHA         the alpha of figure items
+  -csv CSV, --csv CSV   store data into csv file
+  -eg {matplotlib,plotext,plotly,gnuplot}, --engine {matplotlib,plotext,plotly,gnuplot}
+                        specify the engine for plotting: 'matplotlib', 'plotext', 'plotly', 'gnuplot'
+  -cmap COLORMAP, --colormap COLORMAP
+                        specify the colormap applied for figures, available for 'matplotlib' and 'plotly' engine
+  --colorbar_location {None,left,top,bottom,right}
+                        the location of colorbar, also determining the orientation of colorbar, ['left', 'top', 'bottom', 'right'], available for 'matplotlib'
+  --legend_location {inside,outside}
+                        the location of legend box, ['inside', 'outside'], available for 'matplotlib' and 'gnuplot'
+  -m {withoutScatter,pcolormesh,3d,contour,AllAtoms,pdf,cdf}, --mode {withoutScatter,pcolormesh,3d,contour,AllAtoms,pdf,cdf}
+                        additional parameter: 'withoutScatter' will NOT show scatter plot for 'xvg_box_compare'; 'imshow', 'pcolormesh', '3d', 'contour' were used for 'xpm_show' command; 'AllAtoms' were used
+                        for 'find_center' command; 'cdf' and 'pdf' are for 'xvg_show_distribution' command;
+  -al ADDITIONAL_LIST [ADDITIONAL_LIST ...], --additional_list ADDITIONAL_LIST [ADDITIONAL_LIST ...]
+                        additional parameters. Used to set xtitles for 'xvg_ave_bar'
+  -ip INTERPOLATION, --interpolation INTERPOLATION
+                        specify the interpolation method, default to None
+  -ipf INTERPOLATION_FOLD, --interpolation_fold INTERPOLATION_FOLD
+                        specify the interpolation fold, default to 10
 ```
 
-![](static/xvg_show.png)
+下面依次介绍各个参数：
+
+`-f`参数主要用于输入文件，具体输入文件的类型在不同的命令中有所不同，主要以xvg文件和xpm文件为主。可以同时输入多组文件，每组文件之间用空格隔开，组内文件用逗号隔开。
+
+`-o`参数用于指定输出文件的名字；在对数据进行可视化的时候，此参数一般用于指定输出图片的名字；如果是数据处理的命令，则此参数一般用于指定输出文件的名字。
+
+`-ns` 如果需要不显示图片，则加上该参数。对于Gnuplot绘图引擎，加上该参数DIT会直接输出Gnuplot的输入脚本。
+
+`-c`  选择数据列，这个参数通常在xvg文件相关的操作中用得多。比如说`-c 1-7,10  0,1,4` 表示选择第一组xvg文件的第1到6列数据，第10组数据，以及选择第二组文件的第0列，1列和第4列数据。**注意，该参数的计数都是从0开始的。** 同时，短横`-`两端的列序号，是左边包含右边不包含的，所以上面的`1-7`是第1到第6列，不包括第7列。在某些情况下，该参数也用于数据的生成，比如说`dssp`命令中将之用于用户指定残基的序号。
+
+`-l` 指定绘图的legends，不同的命令中关于指定legends的数量有不同的要求。如果你想不显示legend，可以将之设置为“”，例如`-l "" "" ""`即可不显示legend。同时也支持简单的latex语法，如`-l "$nm^2$" "$\Delta G_{energy}$"`。
+
+`-b`, `-e`, `-dt`  这三个参数用于指定数据的哪些行用于数据处理和绘图。如`-b 100 -e 201 -dt 2`这句的意思是只对第100行到第200行（包括）的偶数行数据进行处理。同样的，这里的行索引也是从0开始计数的。在`dssp`命令中，这三个参数也用于时间序列的生成。
+
+`-x`, `-y`, `-z` 这三个参数用于指定数据的X，Y，和Z的label。常见的图只包含两个数据维度，对于有颜色标签的散点图、3D图、热力图等则可能需要指定第三个维度的标签，也即`-z`。如果你想不显示，可以将之设置为“”。同时也支持latex语法，如`-Z "$\Delta G_{energy}$"`。
+
+`-t`  指定图片的title。如果你想不显示，可以将之设置为“”。同时也支持latex语法。
+
+`-xmin`, `-xmax`, `-ymin`, `-ymax`, `-zmin`, `-zmax` 这一组参数通常用于指定数据的截断。`-xmin`, `-xmax`, `-ymin`, `-ymax`常用于指定xvg数据生成图片的X和Y轴的上下界数值；对于xpm数据则是用于指定对xpm图片的切割。是的，DIT支持只可视化xpm图片的一部分。 `-zmin`, `-zmax` 则通常用于指定第三个数据维度（通常是colorbar）的数据上下界。
+
+`--x_precision`, `--y_precision`, `--z_precision`  用于设置三个数据维度的数据呈现精度，如`--x_precision 2` 则是X轴数据标签都显示2位小数点后的数字。`--z_precision`通常用于指定colorbar等第三个数据维度的数据呈现精度。
+
+`-xs`, `-ys`, `-zs` 对三个维度的数据进行缩放，如`-xs 0.001` ，则所有第一个数据维度的数据都会被乘以0.001。
+
+`-smv`, `-ws`, `-cf` 这一组参数用于绘制xvg数据的滑动平均，分别是指定是否绘制滑动平均值，设置滑动平均的窗口大小，设置置信区间的可信度。
+
+`--alpha` 通常用于指定绘图的透明度。
+
+`-csv` 对于已经有绘图的命令，此参数可用于将一些数据导出成csv文件；如`xvg_compare`命令搭配这个参数可以将xvg数据转换成csv数据。
+
+`-eg` 用于指定绘图引擎，目前DIT支持四种绘图引擎，matplotlib、plotly、gnuplot（需要自行安装并添加环境变量，保证在命令行中`gnuplot`可以调用），以及plotext（用于直接在命令行中绘制简单的图形）。默认的绘图引擎是matplotlib。
+
+`-cmap` 用于指定绘图的colormap，对于matplotlib和plotly有效。如果开始不清楚具体的可选参数，可以随便写，报错信息里面会列出所有可能的colormap参数。
+
+`--colorbar_location` 用于指定colorbar的位置，目前只对matplotlib有效。
+
+`--legend_location`  用于指定图例的位置，目前对matplotlib和gnuplot有效。
+
+`-m` 选择模式，对于不同的命令，该参数有不同的值可以选择。
+
+`-al` 一个附加的参数，具体的输入要视命令而定。
+
+`-ip` 是否对xpm文件进行插值，可以选择不同的插值方法。
+
+`-ipf` 如果执行了插值，指定插值的倍数，默认是10。
 
 
 
-### xvg_compare
+### 命令详情
 
-比起`xvg_show`，我很推荐使用`xvg_compare`。即使不需要数据的比较，这个命令的灵活性也更大些。
-
-`xvg_compare`，提供一个或几个文件，提供一组列索引，即可把索引到的列的数据都绘制出来。
+每一个命令的详细信息、可用参数、使用示例都可以通过`dit <command> -h`获得，比如：
 
 ```bash
-dit xvg_compare -f rmsd.xvg gyrate.xvg -c 1 1,2
+$ dit xpm_show -h
+====== command: xpm_show ======
+
+    Visualize the xpm file.
+    DIT support 4 plot engines (matplotlib, plotly, gnuplot, and plotext) and several modes to plot xpm into figures. 4 modes for matplotlib (imshow which is default, pcolormesh, 3d, and contour), and 3 modes for plotly and gnuplot (pcolormesh which is default, 3d, and contour). Plotext only support plotting simple and small size xpm in gray.
+    Modes imshow and pcolormesh mainly show the matrix of xpm. For `Continuous` type xpms, matplotlib, plotly and gnuplot will NOT use its original colors, and the colormaps of each engine will be used. For matploblib and plotly, you can set colormaps by `-cmap`. For `Discrete` type of xpms, only pcolormesh of matploblib will NOT use its original colors. But you can set colors by mplstyle file or other style files.For the methods using its original colors, you can set colors by directly modifing the xpm file.
+    Mode 3d mainly plot a 3d figure for `Continuous` xpm. Mode contour plot a contour figure for `Continuous` xpm. Also, you can set colormaps by `-cmap`.
+    You can perform INTERPOLATION to data by specifing `-ip`.
+    For imshow of matplotlib, the interpolation method was using the interpolation method of imshow function of matplobli, and there are lots of interpolation methods could be selected. If you do not know the names of interpolation methods, simply specify `-ip hhh`, then the error message will show you all names of interpolation methods for you to choose.
+    For any other engines or modes, DIT use `scipy.interpolate.interp2d` to do the interpolation, so the methods for you to choose is `linear`, `cubic`, and `quintic`. Also, `-ip hhh` trick works. For this interpolation methods, you need to define a `--interpolation_fold` (default to 10).
+    DIT support performing xpm cutting by `-xmin`, `-xmax`, `-ymin`, and `-ymax`, like only show 100*100 pixels from a 132*10000 DSSP xpm by setting `-xmin 100 -xmax 200 -ymin 200 -ymax 300`.
+
+    :Parameters:
+        -f, --input
+                specify the input xpm file (or files)
+        -o, --output (optional)
+                specify the file name for saving figures
+        -ns, --noshow (optional)
+                whether not to show figures. When applied to gnuplot, DIT will generate a gnuplot input script
+        -x, --xlabel (optional)
+                specify the xlabel of figure
+        -y, --ylabel (optional)
+                specify the ylabel of figure
+        -z, --zlabel (optional)
+                specify the zlabel of figure
+        -t, --title (optional)
+                specify the title of figure
+        -xs, --xshrink (optional)
+                specify the shrink fold number of X values
+        -ys, --yshrink (optional)
+                specify the shrink fold number of Y values
+        -zs, --zshrink (optional)
+                specify the shrink fold number of Z values
+        -xmin, --xmin (optional)
+                specify the xmin index of xpm matrix to show
+        -xmax, --xmax (optional)
+                specify the xmax index of xpm matrix to show
+        -ymin, --ymin (optional)
+                specify the ymin index of xpm matrix to show
+        -ymax, --ymax (optional)
+                specify the ymax index of xpm matrix to show
+        -zmin, --zmin (optional)
+                specify the min value of colorbar to show
+        -zmax, --zmax (optional)
+                specify the max value of colorbar to show
+        -m, --mode (optional)
+                specify the mode of visualization: imshow, pcolormesh, 3d, contour
+        -eg, --engine (optional)
+                specify the plot engine: matplotlib (default), plotly, gnuplot, plotext
+        -cmap, --colormap (optional)
+                specify the colormap for visualization
+        -ip, --interpolation (optional)
+                specify the interpolation method
+        -ipf, --interpolation_fold (optional)
+                specify the multiple of interpolation
+        --alpha (optional)
+                specify the alpha of figure
+        --x_precision (optional)
+                specify the precision of X ticklabels
+        --y_precision (optional)
+                specify the precision of Y ticklabels
+        --z_precision (optional)
+                specify the precision of Z ticklabels
+        --legend_location (optional)
+                specify the location of legend, inside or outside
+        --colorbar_location (optional)
+                specify the location of colorbar, available for matplotlib: left, top, bottom, right
+
+    :Usage:
+        dit xpm_show -f FEL.xpm
+        dit xpm_show -f hbond.xpm
+        dit xpm_show -f DSSP.xpm -ns -o dssp.png
+        dit xpm_show -f FEL.xpm -m pcolormesh -ip linear -ipf 5 -cmap solar
+        dit xpm_show -f FEL.xpm -m 3d -x PC1 -y PC2 -z Energy -t FEL --alpha 0.5
+        dit xpm_show -f FEL.xpm -m 3d --x_precision 1 --y_precision 2 --z_precision 0
+        dit xpm_show -f FEL.xpm -m contour -cmap jet --colorbar_location bottom
+        dit xpm_show -f FEL.xpm -m contour -cmap jet -zmin 0 -zmax 20
+        dit xpm_show -f DSSP.xpm -xs 0.001 -x Time(ns) --legend_location outside
+        dit xpm_show -f DSSP.xpm -eg plotly -xmin 1000 -xmax 2001 -ymin 50 -ymax 101
+        dit xpm_show -f FEL.xpm -eg plotly -m 3d
+        dit xpm_show -f FEL.xpm -eg plotly -m contour
+        dit xpm_show -f DSSP.xpm -eg gnuplot --legend_location outside
+        dit xpm_show -f FEL.xpm -eg gnuplot -m 3d -ip cubic
+        dit xpm_show -f FEL.xpm -eg gnuplot -m contour -ns -o contour.png
 ```
 
-![](static/xvg_compare.png)
+因而下文的介绍都是极其简略的，某些命令在之前版本的DIT中也存在，可以相互参考。
 
-这里的索引可能有些奇怪，为啥是`1 1,2`。这里实际上是两个索引（一个索引是1，还有一个是索引组1,2）。前面赋给了两个文件，所以这里索引（索引组）的数量得和前面的文件的数量对应，也即是两个索引。索引（索引组）之间用空格隔开。同一个索引组里的索引，如1,2，用逗号隔开。第一个索引1对应第一个输入文件的第一列数据，在这里也就是RMSD；第二个索引1,2对应第二个输入文件，也即Gyrate数据的Rg和RgX这两列数据。
 
-这样的索引的赋值方法，可以使得在每一个输入文件里选择不同的列进行比较。
 
-需要注意的是，输入文件的第0列不一定要完全相同。这里的折线图的绘制，默认就是以对应文件的第0列为X值的。RMSD的第1列数据是以rmsd.xvg的第0列数据作为X值，Gyrate的第1,2列数据是以gyrate.xvg的第0列作为X值的。
+#### xvg_show
 
-`xvg_compare`这个命令还有其它的参数。虽然legend、xlabel、ylabel等都可以自动解析和赋值，大多数情况下也还能看，但是也可以通过参数手动赋值。
+绘制一个或多个xvg文件中的所有数据。
 
-`-l`参数可以用于图例的赋值，参数的数量和选择的列的数量要保持一致，且不需要对应文件了。目前还不支持在图例里有空格，空格在这里是区分不同图例的标志。我会在下一个小版本里改进，用一个标识符表示空格。
+
+
+#### xvg_compare
+
+对一个或多个xvg文件中的数据进行折线图的比较；可以通过`-c`选择数据列，可以设置滑动平均。
 
 ```bash
-dit xvg_compare -f rmsd.xvg gyrate.xvg -c 1 1,2 -l RMSD gyrate gyrate_X -x Time(ns) -y (nm) -t hhh
+dit xvg_compare -f energy.xvg -c 1,3 -l LJ(SR) Coulomb(SR) -xs 0.001 -x Time(ns) -smv
 ```
 
-还可以通过`-s`、`-e`，也就是start和end来设定每一列数据的使用范围，也即起止行数，比如说`-s 10 -e 100`就是指只使用每一列数据的第11个到第100个（包含）数据。
-
-这个方法里面还包括了求滑动平均的选项，声明一下`-smv`就可以了。求滑动平均有两个参数需要解释下：窗口宽度(windowsize)和置信度(confidence)，默认是50和0.9，当然也可以自己赋值确定。
+![xvg_compare matplotlib](static/dit_xvg_compare_matplotlib.png)
 
 ```bash
-dit xvg_compare -f energy.xvg -c 1,3 -l LJ(SR) Coulomb(SR) -smv
+dit xvg_compare -f energy.xvg -c 1,3 -l LJ(SR) Coulomb(SR) -xs 0.001 -x Time(ns) -smv -eg plotly
 ```
 
-![](static/xvg_compare_2.png)
-
-滑动平均的计算有点儿慢现在，后续再优化吧。
-
-
-
-### xvg_ave
-
-`xvg_ave`就是用来求每一列数据的平均的，当然你也可以声明起止行数。用来求平衡时期的某些数据的平均值还是挺好用的。
+![xvg_compare matplotlib](static/dit_xvg_compare_plotly.png)
 
 ```bash
-$ dit xvg_ave -f rmsd.xvg -s 2000 -e 4000
-Info -> read rmsd.xvg successfully.
-
-                       Time (ps)       RMSD (nm)
-             ave      29995.0000          0.4281
-             std       5773.5020          0.0473
+dit xvg_compare -f energy.xvg -c 1,3 -l LJ(SR) Coulomb(SR) -xs 0.001 -x Time(ns) -smv -eg gnuplot
 ```
 
-需要注意的是，`-s`声明的起始行是被包括在计算数据中的，而`-e`声明的行则不被包括。如果你要计算到列的末尾，那就只声明`-s`就行了。比如说这里的rmsd.xvg一共就4000行，声明了`-e 4000`之后，实际上只从2000行计算到了3999行，最后一行没有被包括。再次说明，DIT中列和行的计数，都是从0开始的。
+![xvg_compare matplotlib](static/dit_xvg_compare_gnuplot.png)
 
+plotext的图像是字符串，这里就不贴了。
 
-
-### xvg_mvave
-
-给定一个xvg文件，求出每一列数据的滑动平均数据，并输出到csv文件。
-
-
-
-### xvg2csv
-
-把xvg数据文件转化成csv文件，声明输入输出文件就可以了。不再赘述。
-
-
-
-### xvg_rama
-
-gmx的`rama`命令是可以得到蛋白质的二面角(phi和psi)数据的，`xvg_rama`命令就是把这样的数据转换成拉式图。这个命令的大部分内容借鉴自PyRAMA项目。
-
-```
-dit xvg_rama -f rama.xvg
-```
-
-![](static/xvg_rama.png)
-
-
-
-### xvg_show_distribution
-
-`xvg_show`展示数据的变化，`xvg_show_distribution`展示数据的分布，如果有多列数据的话，也是会绘制成组图。
+如果需要输出数据到csv的话，可以使用类如：
 
 ```bash
-dit xvg_show_distribution -f gyrate.xvg
+dit xvg_compare -f energy.xvg -c 1,3 -l LJ(SR) Coulomb(SR) -xs 0.001 -x Time(ns) -smv -ns -csv data.csv
 ```
 
-![](static/xvg_show_distribution.png)
-
-可以通过`-bin`参数定义要求的分布的格子数，默认是100。最大的数据会归到最大的bin里面，这也就导致了第一个图时间的分布最后有个小的抬头。
+旧版本DIT中的`xvg2csv`和`xvg_mvave`命令在v0.5.0当中被去掉了，但是其功能完全可以由这里的`-csv`参数来实现。
 
 
 
-### xvg_show_stack
+#### xvg_ave
 
-`xvg_show_stack`命令主要是绘制**堆积折线图**的。有时候需要绘制蛋白质二级结构含量的变化，就可以用这种堆积折线图对`do_dssp`命令得到的二级结构含量xvg文件进行绘图。
+计算xvg中每一列数据的的平均值和标准误差。
 
 ```bash
-dit xvg_show_stack -f dssp_sc.xvg -c 2 3 4 5 6 
+$ dit xvg_ave -f rmsd.xvg -b 1000 -e 2001
+
+>>>>>>>>>>>>>>                 rmsd.xvg                 <<<<<<<<<<<<<<
+----------------------------------------------------------------------
+|                            |      Average      |      Std.Err      |
+----------------------------------------------------------------------
+|         Time (ps)          |   15000.000000    |    2891.081113    |
+----------------------------------------------------------------------
+|         RMSD (nm)          |     0.388980      |     0.038187      |
+----------------------------------------------------------------------
 ```
 
-![](static/xvg_show_stack.png)
-
-用`-c`参数指定要堆积的列，程序会自动将选中的列绘制为堆积折线图。
 
 
+#### xvg_show_distribution
 
-### xvg_show_scatter
-
-不消说，`xvg_show_scatter`是绘制散点图的，通过`-xi`、`-yi`指定两列，分别为X值和Y值，然后绘制成散点图。
+呈现数据的分布，默认是展示数据列的distribution。如果将`-m`设置为`pdf`，则呈现Kernel Density Estimation；如果是`cdf`，则呈现的是Cumulative kernel Density Estimation。
 
 ```bash
-dit xvg_show_scatter -f rama.xvg -xi 0 -yi 1
+dit xvg_show_distribution -f gyrate.xvg -c 1,2 
 ```
 
+![dit_xvg_show_distribution_matplotlib](static/dit_xvg_show_distribution_matplotlib.png)
 
 
-### xvg_energy_compute
 
-分子间相互作用，如果你用基于相互作用原理的方法计算的话（相互作用能 = 复合物能量 - 分子A能量 - 分子B能量），这个命令可以帮你快速执行这一过程。
+```bash
+dit xvg_show_distribution -f gyrate.xvg -c 1,2 -m pdf -eg plotly
+```
+
+![dit_xvg_show_distribution_plotly](static/dit_xvg_show_distribution_plotly.png)
+
+
+
+```bash
+dit xvg_show_distribution -f gyrate.xvg -c 1,2 -m cdf -eg gnuplot
+```
+
+![dit_xvg_show_distribution_gnuplot](static/dit_xvg_show_distribution_gnuplot.png)
+
+
+
+#### xvg_show_stack
+
+对于选择的数据列，绘制堆积折线图。
+
+```bash
+dit xvg_show_stack -f dssp_sc.xvg -c 2-7 -xs 0.001 -x "Time (ns)"
+```
+
+![dit_xvg_show_stack](static/dit_xvg_show_stack.png)
+
+
+
+#### xvg_show_scatter
+
+选择两列或者三列数据（第三列用于着色），绘制散点图。
+
+```bash
+dit xvg_show_scatter -f gyrate.xvg -c 1,2,0 -zs 0.001 -z Time(ns) -eg plotly --x_precision 2 --y_precision 2
+```
+
+![dit_xvg_show_scatter_plotly](static/dit_xvg_show_scatter_plotly.png)
+
+这里虽然选择的是第0列（时间），但是在散点图中，其为着色的数据，也即被认为是第三个数据维度，故而对其的调整要应用`-zs 0.001 -z Time(ns)`。
+
+
+
+#### xvg_energy_compute
+
+此命令同时也存在于以前的DIT版本中，可前往参考。
+
+分子间相互作用，如果用基于相互作用原理的方法计算的话（相互作用能 = 复合物能量 - 分子A能量 - 分子B能量），这个命令可以帮你快速执行这一过程。
 
 输入三个文件，复合物能量文件、分子A能量文件、分子B能量文件；每个文件应包含且只包含五列数据（时间、LJ(SR)、Disper.corr.、Coulomb(SR)、Coul.recip.），顺序也要正确。这个脚本会读入这三个文件，然后执行计算，输出计算结果到xvg文件。
 
@@ -246,536 +459,583 @@ dit xvg_energy_compute -f prolig.xvg pro.xvg lig.xvg -o results.xvg
 
 
 
-### xvg_combine
+#### xvg_box_compare
 
-`xvg_combine`和`xvg_compare`的命令输入方式类似，功能也类似。`xvg_compare`将你选中的数据绘制出来，`xvg_combine`则是将你选中的数据重新输出到一个新的xvg文件中。
+跟`xvg_compare`类似，`xvg_box_compare`也是进行数据比较的。此命令会将用户选中的数据列以小提琴图和散点图的形式呈现出来。
 
 ```bash
-dit xvg_combine -f f1.xvg f2.xvg -c 1,2 2,3 -o res.xvg
+dit xvg_box_compare -f gyrate.xvg -c 1,2,3,4 -l Gyrate Gx Gy Gz -z Time(ns) -zs 0.001
+```
+
+![dit_xvg_box_compare_matplotlib](static/dit_xvg_box_compare_matplotlib.png)
+
+
+
+```bash
+dit xvg_box_compare -f gyrate.xvg -c 1,2,3,4 -l Gyrate Gx Gy Gz -z Time(ns) -zs 0.001 -eg plotly
+```
+
+![dit_xvg_box_compare_plotly](static/dit_xvg_box_compare_plotly.png)
+
+
+
+```bash
+dit xvg_box_compare -f gyrate.xvg -c 1,2,3,4 -l Gyrate Gx Gy Gz -z Time(ns) -zs 0.001 -eg gnuplot -ymin 2
+```
+
+![dit_xvg_box_compare_gnuplot](static/dit_xvg_box_compare_gnuplot.png)
+
+
+
+如果想要不显示散点图，只需要设置`-m withoutScatter`即可：
+
+```bash
+dit xvg_box_compare -f gyrate.xvg -c 1,2,3,4 -l Gyrate Gx Gy Gz -z Time(ns) -zs 0.001 -m withoutScatter 
+```
+
+![dit_xvg_box_compare_matplotlib](static/dit_xvg_box_compare_matplotlib2.png)
+
+
+
+
+
+#### xvg_combine
+
+此命令用于从多个xvg文件中读取数据并按照用户的选择组合成一个新的xvg文件。
+
+```bash
+dit xvg_combine -f RMSD.xvg Gyrate.xvg -c 0,1 1 -l RMSD Gyrate -x Time(ps)
 ```
 
 
 
-### xvg_ave_bar
-
-`xvg_ave_bar`就可复杂了，光是说起来就得费一番口舌。
+#### xvg_ave_bar
 
 我们假设这样一个场景：你模拟了三个不同的配体分别与蛋白的相互作用，每一个体系都进行了三次平行模拟，这样你就一共有9个模拟轨迹，相应的有9个蛋白与配体的氢键数量随时间变化的xvg文件。现在咱们需要把每一个模拟体系的稳定时期的平均氢键数量计算出来，然后做体系之间的比较。
 
 按照通常的做法，我们需要先对每一个xvg文件中稳定时期的氢键数目求个平均值，一共有9个平均值。然后把同样体系的三次平行的平均值再求个平均，以及误差。最后把三个体系的平均值和误差作成柱状图。
 
-没错，`xvg_ave_bar`大概就是干这个活儿的。
-
-先看示例，再具体解释各个参数的含义。
-
 ```bash
-dit xvg_ave_bar -f f1_1.xvg,f1_2.xvg,f1_3.xvg f2_1.xvg,f2_2.xvg,f2_3.xvg -c 2 3 5 -l A B -y number
+dit xvg_ave_bar -f bar_0_0.xvg,bar_0_1.xvg bar_1_0.xvg,bar_1_1.xvg -c 1,2 -l MD_0 MD_1 -al Hbond Pair -csv hhh.csv -y Number
 ```
 
-![](static/xvg_ave_bar.png)
+![dit_xvg_ave_bar_matplotlib](static/dit_xvg_ave_bar_matplotlib.png)
 
-上图绘制的是两个体系（各有三次平行模拟）的蛋白的二级结构含量图。
-
-首先需要解释的是`-f`参数，这个参数读入若干个文件组，文件组和文件组之间用空格隔开；一个文件组就表示一个体系。每一个文件组内部可以有多个文件，文件名和文件名之间用逗号隔开，这表示一个模拟体系的多次平行模拟。程序会自动对同一个文件组内的多个平行模拟的数据文件求平均和误差，然后绘图进行不同文件组之间的比较。上图有两个体系，A和B，每个体系内有3个平行模拟的数据文件。
-
-`-c`参数呢就是选择要对比的数据列了，这个参数的值会应用到每一个文件中。比如这里，就是选择了每一个文件的2、3、5列进行绘图，因而最终的图上会有三个X值。
-
-`-l`参数是用于手动指定图例的，图例的数量要和文件组的数量一致！
-
-`-xt`参数用于指定在X轴上显示的内容，数量与选择的列数一致。
-
-还可以指定xlabel、ylabel、title、要包括的数据的起止等等。
-
-值得一提的是，有一个`-ac`参数，指定了这个参数，搭配`-o`参数指定输出文件名，可以把计算得到的平均值和误差等数据输出到文件中，默认是输出到屏幕上的。
+上述的命令实现的就是这样的一个需求。其中`-al`参数指定的是X轴的标签，`-csv`可以将计算得到的数据输出到csv文件中。
 
 
 
-### xvg_box
+#### xvg_rama
 
-`xvg_box`会对数据绘制箱型图，比较数据分布情况。
+`gmx rama`命令可以得到蛋白质的二面角(phi和psi)数据，`xvg_rama`命令就是把这样的数据转换成拉式图。
 
 ```bash
-dit xvg_box -f f1.xvg f2.xvg -c 1 2 3 -xt Rg Rg_x Rg_y
+dit xvg_rama -f rama.xvg
 ```
 
-![](static/xvg_box.png)
-
-`-f`参数指定几个文件，然后`-c`选定几个列（选定的列索引会应用到所有指定的文件中），就可以绘制出箱型图。
-
-需要注意的是，这里需要保证每个xvg数据文件里面的相应的列表达的是同一个意思，比如这里的文件的第1列都是Rg，之后两个列都是Rg_x和Rg_y。程序不会检查有没有对应上。
-
-`-xt`参数用于声明X轴上显示的值，数量与-c一致。还可以指定xlabel等等。
-
-我想这个功能估摸着是用不到的，写得草率。
+![dit_xvg_rama](static/dit_xvg_rama.png)
 
 
 
-## XPM
+#### xpm_show
 
-XPM模块包含3个命令，都是处理XPM文件的；命令以xpm打头。
+此命令支持四种绘图引擎(matplotlib, plotly, gnuplot, plotext)，也有四种绘图模式(imshow, pcolormesh, 3d, contour)。四种模式matplotlib都支持，plotly和gnuplot支持pcolormesh、3d和contour；plotext就没有模式可以选择了，也只能绘制尺寸较小的图片。
 
+对于**Discrete**类型的xpm文件，matplotlib的imshow，以及plotly和gnuplot的pcolormesh模式都是使用xpm本身的颜色进行绘图。对于**Continuous**类型的xpm文件，则是都调用colormap进行着色。colormap可以在命令行里进行设置，也可以通过各自绘图引擎的格式控制进行设置。
 
+用户可以对数据进行插值，一般是对Continuous类型的xpm图片进行插值，但是DIT并不做限制，因而需要**用户自己保证出图的物理意义**。对于matplotlib的imshow，使用的插值方式是imshow函数内置的插值方式，不知道写什么参数的话，随便赋值，比如说`-ip hhh`，出来的报错信息里就会列出你当前matplotlib的imshow函数支持哪些插值方式。对于其它的模式，则使用scipy的interp2d进行插值，同时用户还可以通过`-ipf`设置插值倍数。
 
-### xpm_show
-
-`xpm_show`用于可视化xpm文件，`-ip`指定要不要插值，`-pcm`指定要不要使用pcolormesh函数绘图，`-3d`指定要不要绘制3d图，`-o`参数可以用于保存图片文件，`-ns`参数可以指定不显示图片。
+DIT还支持使用`-xmin`、`-xmax`、`-ymin`、`-ymax`对图片进行切割，只显示被选中的区域。注意这里赋值使用的是图片横竖像素的index。
 
 ```bash
-dit xpm_show -f test.xpm -ip
+dit xpm_show -f DSSP.xpm -xmin 1000 -xmax 2001
 ```
 
-![](static/xpm_show.png)
+![dit_xpm_show_dssp](static/dit_xpm_show_dssp.png)
 
 ```bash
-dit xpm_show -f test.xpm -3d
+dit xpm_show -f fel.xpm
 ```
 
-![](static/xpm_show_2.png)
-
-基本上所有GMX生成的XPM图都可以用`xpm_show`可视化，包括dssp的图和hbmap的图。
-
-
-
-### xpm2csv
-
-`xpm2csv`可以将xpm文件转化为csv文件，也即三列数据(x, y, v)，横纵坐标以及对应的像素点的值。
+![dit_xpm_show_fel](static/dit_xpm_show_fel.png)
 
 ```bash
-dit xpm2csv -f test.xpm -o test.csv
+dit xpm_show -f fel.xpm -cmap Blues_r -ip bilinear
 ```
 
+![dit_xpm_show_fel2](static/dit_xpm_show_fel2.png)
 
-
-### xpm2gpl
-
-Gnuplot是一个很好的绘图软件，它可以通过脚本进行绘图。`xpm2gpl`命令则是把xpm文件转化为gnuplot的绘图脚本gpl文件（不一定后缀得是gpl，只是这里为了方便定义为了gpl）。用Gnuplot绘制出来的蛋白质二级结构变化图是很好看的。
-
-```bash
-dit xpm2gpl -f test.xpm -o test.gpl
+```dit
+dit xpm_show -f fel.xpm -m pcolormesh -ip linear -ipf 5 -cmap Greys_r
 ```
 
-### xpm2dat
-
-将xpm文件转化为M\*N的dat文件。目前只支持分立数据的xpm文件。输出文件的第一行为注释，依次为数据第一行的标题，数据第二行的标题，以及数据M\*N矩阵的标题。
-数据的第一行为xaxis数据，也即xpm图片的x轴数据。
-数据的第二行为yaxis数据，也即xpm图片的y轴数据，顺序为从下到上。
-后面的数据皆为M\*N的数据矩阵的数据。数据的顺序和xpm文件中的顺序一致，矩阵中上面的数据对应着yaxis中后面的数据。
+![dit_xpm_show_fel3](static/dit_xpm_show_fel3.png)
 
 ```bash
-dit xpm2dat -f test.xpm -o test.dat
+dit xpm_show -f fel.xpm -m 3d --x_precision 1 --y_precision 2 --z_precision 0 -cmap summer --colorbar_location bottom 
 ```
 
-
-## NDX
-
-NDX模块共7个命令，以ndx开头，用于处理ndx文件。
-
-**我比较推荐你使用gmx的`make_ndx`命令处理ndx文件，功能更丰富，也更好用**。
-
-### ndx_show
-
-`ndx_show`命令会输出ndx文件中所有的索引组的名字。
+![dit_xpm_show_fel4](static/dit_xpm_show_fel4.png)
 
 ```bash
-dit ndx_show -f test.ndx
+dit xpm_show -f fel.xpm -m contour -cmap jet 
+```
+
+![dit_xpm_show_fel5](static/dit_xpm_show_fel5.png)
+
+```bash
+dit xpm_show -f fel.xpm -eg plotly -m 3d -cmap spectral
+```
+
+![dit_xpm_show_fel6](static/dit_xpm_show_fel6.png)
+
+```bash
+dit xpm_show -f fel.xpm -eg gnuplot -m 3d
+```
+
+![dit_xpm_show_fel7](static/dit_xpm_show_fel7.png)
+
+
+
+#### xpm2csv
+
+此命令将xpm数据以（X, Y, Z）的格式转换为csv文件。
+
+```bash
+dit xpm2csv -f fel.xpm -o fel.csv
 ```
 
 
 
-### ndx_rm_dup
+#### xpm2dat
 
-`ndx_rm_dup`命令会删除ndx文件中所有重复的索引组。这里的重复的索引组是指不仅名字一样，索引也一样的组。
+此命令将xpm数据转换成M*N的dat文件。
 
 ```bash
-dit ndx_rm_dup -f test.ndx -o res.ndx
+dit xpm2dat -f fel.xpm -o fel.dat
 ```
 
 
 
-### ndx_rm
+#### xpm_diff
 
-`ndx_rm`用于移除索引文件中的某些索引组，你可以通过`-gl`参数指定几个索引组的名字，`ndx_rm`会把这些指定的索引组移除，保留其它的索引组。还可以通过`-int`参数激活互动模式，可以在互动模式里决定是否删除某一个索引组。
+对两个相同尺寸相同物理含义的xpm图片进行**减**的操作，以获得两个图片的差值。比如说可以用于呈现模拟前后残基接触矩阵的差异，或者比较不同DSSP的差异。
 
 ```bash
-dit ndx_rm -f test.ndx -o res.ndx -gl Protein Ligand
-dit ndx_rm -f test.ndx -o res.ndx -int
+dit xpm_diff -f DCCM0.xpm DCCM1.xpm -o DCCM0-1.xpm
 ```
 
 
 
-### ndx_preserve
+#### xpm_merge
 
-`ndx_preserve`和`ndx_rm`基本类似，只是被选中的索引组不再被删除，而是被保留；未被选中的索引组才会被删除。同样也有互动模式。
-
-
-
-### ndx_add
-
-`ndx_add`可以给索引文件增加一个索引组，需要你通过`-gn`执行索引组的名字，`-s`、`-e`、`-t`三个参数指定索引数字的起始、结束和步长。如果你熟悉python的range函数的话，应该很好理解这三个参数的作用。
+因着某些XPM矩阵图是沿对角线对称的，有的时候需要将两张不同xpm矩阵图沿对角线一半一半拼接起来以节省篇幅。此命令可以将两个相同尺寸，相同X和Y轴的xpm图片进行一半一半的对角线拼接。
 
 ```bash
-dit ndx_add -f test.ndx -o res.ndx -gn hhh -s 10 -e 100 -t 2
+dit xpm_merge -f DCCM0.xpm DCCM1.xpm -o DCCM0-1.xpm
 ```
 
-上述的命令添加一个叫hhh的索引组，数字是从10开始一直到100（不包括）的偶数。`-t`也可以缺省，默认步长是1。
-
-有的时候（比如做dPCA）需要自己手写一个索引组，因而`ndx_add`或许还有点儿用途。
 
 
+#### mdp_gen
 
-### ndx_combine
-
-`ndx_combine`可以组合几个索引组到一个新的索引组，需要指定`-gn`和`-gl`两个参数。
-
-
-
-### ndx_rename
-
-`ndx_rename`主要是给索引组改名字的，可以`-int`互动模式更改，也可以指定旧名字`-on`和新名字`-nn`来更改名字。
-
-
-
-## MDP
-
-MDP模块就一个命令了。
-
-### mdp_gen
-
-`mdp_gen`命令可以帮助你在当前工作目录生成一个模板mdp文件。有个`-a`参数，用于指定mdp文件的用途，根据用途不同，会生成不同的文件内容。目前`-a`可以接受如下几个参数中的一个：ions、em、nvt、npt、md、blank。比如说：
+此命令可以提供简单生物体系模拟常见的gromacs的mdp控制文件。
 
 ```bash
-dit mdp_gen -o npt.mdp -a npt
+dit mdp_gen 
+dit mdp_gen -o nvt.mdp
 ```
 
-上述命令会在当前目录生成一个可用于npt的mdp模板文件。
-
-**需要说明的是，这里生成的mdp模板文件不一定适合你的体系，请生成之后一定打开自行设置和调整相关的参数**。这个命令只是帮你免去把mdp文件复制来复制去的工夫。
-
-这里的这几个mdp模板文件实际上都存储在DuIvyTools这个第三方包目录的data文件夹下，你也可以根据你的需要直接修改这里的文件。
-
-这部分功能后续也将继续优化，我希望能集合大家用于不同模拟方向的mdp文件，凑在一起，方便大家使用。
 
 
-## Other Modules
+#### show_style
 
-### show_style
+此命令会生成不同绘图引擎的格式控制文件。可以通过`-eg`指定绘图引擎，默认给出的是DIT默认使用的格式控制文件。也可以通过`-o`参数生成DIT内置的其它格式控制文件。用户只需要将自己调整过的格式控制文件放置在当前的工作目录，DIT启动之后就会加载该文件到对应的引擎并应用到绘图上。
+
+`dit show_style -h`命令的信息中给出了一些可供参考的调整格式的网页链接或者格式模板，用户可以参考。
 
 ```bash
 dit show_style
+dit show_style -eg plotly
+dit show_style -eg gnuplot 
+dit show_style -eg plotly -o DIT_plotly.json
 ```
 
-`show_style`命令是v0.4.7新加入到DIT，执行这个命令会在当前工作目录生成一份DIT默认的matplotlib style sheet，也即绘图的样式控制文件。用户可以根据自己需要更改。
-
-matplotlib style相关的参数可以参考 https://matplotlib.org/stable/tutorials/introductory/customizing.html#the-matplotlibrc-file
-
-当然，用户也可以自己找一个样式控制文件（.mplstyle）置于当前工作目录，DIT会优先读取并绘图。
 
 
-### find_center
-
-```bash
-find_center: to find the atom which is nearest to center of atom group.
-
-:examples:
-    dit find_center -f test.gro
-    dit find_center -f test.gro -n index.ndx
-    dit find_center -f test.gro -n index.ndx -aa
-
-:parameters:
-    -f, --input
-            the gro file which contains one frame of molecule coordinates
-    -n, --index
-            the index file which you could select group from
-    -aa, --AllAtoms
-            if to find center of one group atoms in all atoms
-```
+#### find_center
 
 `find_center`命令主要用于寻找gro文件中组分的几何中心。
 用户可以通过指定索引文件和索引组以寻找特定组的几何中心。如果参数中不包括索引文件，则默认寻找整个gro文件所有原子的几何中心。
-`-aa`参数的意思是是否在全体原子中寻找指定原子组的几何中心。有的时候，距离指定原子组的几何中心的原子不一定出现在该组中，所以加了这么个参数。
-
-
-### pipi_dist_ang
+`-m AllAtoms`参数的意思是是否在全体原子中寻找指定原子组的几何中心。有的时候，距离指定原子组的几何中心最近的原子不一定出现在该组中，所以加了这么个参数。
 
 ```bash
-pipi_dist_ang: to calculate the distance and angles between two rings or between one ring and one vector defined by atom group or command line.
-
-:examples:
-    dit pipi_dist_ang -f test.gro -n test.ndx
-    dit pipi_dist_ang -f test.gro -n test.ndx -select ring1 ring2
-    dit pipi_dist_ang -f test.gro -n test.ndx -select ring1 -vg
-    dit pipi_dist_ang -f test.gro -n test.ndx -select ring1 -vec 6 6 6
-
-:parameters:
-    -f, --input
-            the gro file which contains frames of molecule coordinates
-    -n, --index
-            the index file which contains atom index groups of rings or vector groups
-    -b
-            the frame number to start calculation, default=0
-    -dt
-            the frame interval, default=1
-    -o, --output
-            the output filename to save results
-    -vg
-            whether to get vector from index group, default=False
-    -vec
-            specify the vector by command line, eg. -vec 6 6 6
-    -select
-            select the groups from command line
+dit find_center -f test.gro
+dit find_center -f test.gro index.ndx
+dit find_center -f test.gro index.ndx -m AllAtoms
 ```
 
-`pipi_dist_ang`主要是用于计算两个环（5-7元环）的几何中心距离以及环法向的夹角。
-用户通过在索引文件中新增原子组，并在其中定义相应的环的原子序号，就可以利用此命令计算环与环的距离和角度了。DIT会读入指定的原子索引，然后计算得到几何中心以及法向向量，之后得到距离和角度。
-
-此命令还支持自定义一个向量，以计算特定环的法向与指定向量的角度变化。用户可以通过`-vec`参数在命令行中指定向量，也可以直接在索引文件中新建一个包含两个原子的组，两个原子的坐标即可形成一个向量。
 
 
+#### dccm_ascii
 
-### hbond
+`gmx covar`命令支持以`-ascii`的方式导出协方差矩阵的数据，此命令可以读入该数据并生成动态互相关矩阵的xpm文件。
 
 ```bash
-hbond: A useful method to process hbond related files generated by `gmx hbond`,
-        you can get hbond occupancy figure and table infos from `dit hbond`. 
-        note: the hbond names will show on figure only when number of hbonds 
-              less than 10. 
-
-:examples:
-    dit hbond -f md.gro -n hbond.ndx -m hbmap.xpm 
-    dit hbond -f md.gro -n hbond.ndx -m hbmap.xpm -c 5 7 
-    dit hbond -f md.gro -n hbond.ndx -m hbmap.xpm -c 5 7 0-3
-    dit hbond -f md.gro -n hbond.ndx -m hbmap.xpm -o test.png -csv test.csv -ns
-    dit hbond -f md.gro -n hbond.ndx -m hbmap.xpm -hnf d_resname(d_resnum)@d_atomname(d_atomnum)->h_atomname(h_atomnum)...a_resname(a_resnum)@a_atomname(a_atomnum) 
-    dit hbond -f md.gro -n hbond.ndx -m hbmap.xpm -hnf "d_resname@d_atomname -> h_atomname ... a_resname@a_atomname" 
-    dit hbond -f md.gro -n hbond.ndx -m hbmap.xpm -hnf "d_atomname@h_atomname -> a_atomname" 
-    dit hbond -f md.gro -n hbond.ndx -m hbmap.xpm -hnf "number" 
-    dit hbond -f md.gro -n hbond.ndx -m hbmap.xpm -hnf id -so AND0,2,5-7
-    dit hbond -f md.gro -n hbond.ndx -m hbmap.xpm -hnf id -so OR0,2,5-7
-
-:parameters:
-    -f, --input
-            the gro file which contains one frame of molecule coordinates, 
-            used to get atom names.
-    -n, --index
-            the index file generated by `gmx hbond`
-    -m, --map
-            the hbond map file (hbmap.xpm) generated by `gmx hbond`
-    -c, --select (optional)
-            select the hbond id to only show the selected hbonds
-    -o, --output (optional)
-            the figure name you want to save
-    -csv, --csv (optional)
-            save the table infos into a csv whose name is specified here
-    -ns, --noshow (optional)
-            whether not to show figure, useful on computer without gui
-    -hnf, --hbond_name_format (optional)
-            define the hbond name format by user! 
-            Each atom has four features: resname, resnum, atomname, atomnum. 
-            Distinguish donor, hydrogen, acceptor by adding one prefix to each
-            feature, like: d_resname, a_resnum, h_atomname. So you may able to
-            define hbond name style by: 
-            'd_resname(d_resnum)@d_atomname(d_atomnum)->h_atomname(h_atomnum)...a_resname(a_resnum)@a_atomname(a_atomnum)' 
-            which is the default style, or also you could specify 
-            'd_atomname@h_atomname...a_atomname' 
-            or some format you would like.
-            Or you could just set hnf to be 'number' or 'id' to show hbond id on figure
-    -genscript, --genscript (optional)
-            whether to generate scripts for calculating distance and angle of hbonds
-    )
-    -cda, --calc_distance_angle (optional)
-            whether to calculate distance and angle of hbonds from distance xvg file and angle xvg file
-    -distancefile, --distancefile (optional)
-            distance file of hbonds for input
-    -anglefile, --anglefile (optional)
-            angle file of hbonds for input
-    -xs, --xshrink (optional)
-            specify a factor for multiplication of x-axis. default == 1.0
-            For instance, if "-xs 0.001" is specified, all x-axis value of xvg
-            will multiply this value. x-axis 1000 will be shown as 1. 
-            Useful for converting the unit (ps) of time into (ns). Don't forget
-            to change xlabel too after specifing -xs.
-    -x, --xlabel (optional)
-            specify the xlabel of figures
-    -so, --set_operation (optional)
-            use AND or OR to perform set operation on hbonds, eg. `AND1,2,5-6`  
-            or `OR0,2-4,7`. The AND set or OR set of hbonds whose ids were after
-            key words will be calculated and shown in occupancy figure.  
+dit dccm_ascii -f covar.dat -o dccm.xpm
 ```
 
-`hbond`命令主要用于生成氢键占有率图、给出氢键占有率信息。
 
-`gmx hbond`命令执行结束之后会生成氢键的索引文件、氢键数量的xvg文件以及氢键占有率的xpm文件，而`dit hbond`命令需要读入一个体系的gro文件、氢键索引文件、氢键xpm文件。索引文件和gro文件主要用于获取形成氢键的原子的名称等信息，而xpm文件则包含了氢键占有率的信息。此命令会依赖这三个文件， 绘制出氢键占有率图，并在命令行中输出每个氢键的占有率。
 
-用户可以通过`-hnf`参数自定义氢键的名称格式。每个原子包含四种属性：`resname`、`resnum`、`atomname`、`atomnum`，而前缀`d_`、`a_`、`h_`则分别代表了供体、受体、氢原子。用户将这些关键词组合在一起，即可定义自己需要的氢键名称格式。当然，也可以将`-hnf`设定为`number`，这将让DIT直接输出氢键的序号作为氢键的名字。
+#### dssp
 
-`-genscript`、`-cda`、`-distancefile`以及`-anglefile`是为了计算**氢键的角度和距离**而设置的。
-
-使用步骤如下：
-1. 首先使用`gmx hbond`命令得到氢键的xpm文件，hbond.ndx索引文件。**此处一定记得加上`-merge no`这个参数，来避免同一供体上不同氢原子被合并**
-2. 使用`dit hbond`绘制占有率图，给出占有率图表等信息，同时加上`-genscript`生成计算氢键距离和角度的索引文件以及控制脚本。命令可以为`dit hbond -f test.gro -n hbond.ndx -m hbond.xpm -genscript`，当然，还可以通过`-c`参数选择要计算的氢键。
-3. 得到计算距离和角度的索引（hbdist.ndx和hbang.ndx）之后，通过运行生成的计算脚本（run_hbdist.sh和run_hbang.sh）调用gmx来生成相应的距离和角度的xvg文件。当然，这个计算脚本需要根据你的情况调整一下其中的文件名等内容。
-4. 通过命令`dit hbond -f test.gro -n hbond.ndx -m hbond.xpm -cda -distancefile hbdist.xvg -anglefile hbang.xvg -csv hhh.csv`即可计算得到氢键距离和时间的折线图以及相应的统计表格，包含了氢键平均距离和平均角度。自然这个距离和角度的平均是在氢键形成的情况下统计的。最后的结果还可以通过`-csv`参数输出到文档。
-
-上述过程能够看到的图表有：
-
-氢键占有率图：
-![hbond_occupancy](static/hbond_0.png)
-
-氢键距离随时间变化图：
-![hbond_distance](static/hbond_1.png)
-
-氢键角度随时间变化图：
-![hbond_angle](static/hbond_2.png)
-
-得到的表格如下：
-```bash
--------------------------------------------------------------------------------------------------------------------
-id donor->hydrogen...acceptor                           occupancy(%) Present/Frames   Distance (nm)       Angle (°)
--------------------------------------------------------------------------------------------------------------------
-0  GLN(102)@NE2(1616)->HE22(1618)...rol(163)@N1(2605)           4.60     46/1001     0.3219 ± 0.0167  17.91 ± 7.05
-1  SER(117)@OG(1822)->HG(1823)...rol(163)@N1(2605)              0.60      6/1001     0.3102 ± 0.0218  12.75 ± 5.86
-2  rol(163)@N(2602)->H6(2618)...ALA(99)@O(1570)                 0.10      1/1001     0.3400 ± nan     23.03 ± nan
-3  rol(163)@N(2602)->H6(2618)...GLN(102)@OE1(1615)             18.98    190/1001     0.3088 ± 0.0175  20.56 ± 7.38
-4  rol(163)@N(2602)->H6(2618)...VAL(111)@O(1749)                0.10      1/1001     0.3230 ± nan     15.73 ± nan
--------------------------------------------------------------------------------------------------------------------
-```
-
-`dit hbond`还有一个功能，可以对氢键的占有率图进行操作，可以对氢键进行集合操作，例如求出**多个氢键同时存在**的占有率，或者**多个氢键任一一个存在**的占有率。这些操作通过`-so`（`-set_operation`）参数进行。此参数接受的参数格式为`AND`或者`OR`开头，后面接逗号分隔的氢键id，例如`AND2,4-6,7`或者`OR0-4,6`。这里的数字指代的是氢键id，可以通过`-hnf id`看到氢键的id。id从0开始计数，这里的`AND2,4-6,7`即为对第3、第5到第7（包括）和第8个氢键执行`AND`操作，得到的就是这些氢键同时存在的占有率。
-
-下面是两个例子：
-```bash
-dit hbond -f test.gro -n hbond.ndx -m hbond.xpm -hnf id
-```
-
-![hbond_id](static/hbond_3.png)
+该命令和DIT v0.4.8中的`dssp`命令完全不同，该命令读取GROMACS2023的`dssp`命令生成的dat文件，并处理成GROMACS2022及更老版本中常见的DSSP的xpm和sc.xvg文件。
 
 ```bash
-dit hbond -f test.gro -n hbond.ndx -m hbond.xpm -hnf id -so AND0,3
+dit dssp -f dssp.dat -o dssp.xpm
+dit dssp -f dssp.dat -c 1-42,1-42,1-42 -b 1000 -e 2001 -dt 10 -x "Time (ps)"
 ```
 
-![hbond_id](static/hbond_4.png)
 
-图上的-1指代的氢键即为集合操作之后的结果，如果没有设置`-hnf id`的话，这里会显示为`AND0,3`。同时表格也会给出相关的占有率信息。
+
+#### ndx_add
+
+有的时候需要给index索引文件添加一个新的组，这里DIT可以通过`-c`和`-al`参数，给gmx的index文件新增一个组。
 
 ```bash
-dit hbond -f test.gro -n hbond.ndx -m hbond.xpm -hnf id -so OR0-2,4
+dit ndx_add -f index.ndx -o test.ndx -al lig -c 1-10
+dit ndx_add -al lig mol -c 1-10-3,11-21 21-42
 ```
 
-![hbond_id](static/hbond_5.png)
 
 
-### dssp
+#### ndx_split
 
-`dssp`命令用于处理`gmx do_dssp`命令得到的xpm文件。共有3个小功能：
-1. 绘制此xpm文件。用户也可通过`dit xpm_show`来可视化此文件
-2. 绘制残基二级结构占比随时间的变化图。用户也可通过`gmx do_dssp`命令得到的二级结构含量变化文件使用`dit xvg_show_stack`得到。同时会在当前文件夹生成residue_occupancy_data.csv
-3. 绘制时间二级结构占比随残基的变化图。也即考察在整个分析采样过程中，某一个残基所形成的二级结构的时间占比。同时会在当前文件夹生成time_occupancy_data.csv
+将一个index索引组均匀切分成几个组。
 
 ```bash
-dssp: read in one xpm of secondary structure file, output the DSSP plot, 
-      residue occupancy vs time figure, time occupancy vs residue figure. 
-
-:examples:
-    dit dssp -f dssp.xpm 
-    dit dssp -f dssp.xpm -xs 0.001 -x Time(ns)
-
-:parameters:
-    -f, --input 
-            input xpm of secondary structure
-    -x, --xlabel (optional)
-            specify the xlabel of xpm
-    -y, --ylabel (optional)
-            specify the ylabel of xpm
-    -t, --title (optional)
-            specify the title of xpm
-    -xs, --xshrink (optional)
-            specify a factor for multiplication of x-axis. default == 1.0
-            For instance, if "-xs 0.001" is specified, all x-axis value of xvg
-            will multiply this value. x-axis 1000 will be shown as 1. 
-            Useful for converting the unit (ps) of time into (ns). Don't forget
-            to change xlabel too after specifing -xs.
+dit ndx_split -f index.ndx -al 1 2
+dit ndx_split -f index.ndx -al Protein 2
+dit ndx_split -f index.ndx -al Protein 2 -o test.ndx
 ```
 
-例如对于dssp.xpm，执行：
+
+
+### 绘图样式
+
+除了上文提到的可以通过命令行参数进行部分绘图样式的调整（X和Y的精度、colormap颜色和位置、legend位置等），每种绘图引擎还有些独立的样式控制方式。
+
+对于各个绘图引擎，可以通过`dit show_style`命令得到对应的DIT默认的格式控制文件。将自己调整过的格式控制文件放置在当前工作目录，DIT就会自动读取并应用。
+
+#### matplotlib
+
+matplotlib支持使用mplstyle文件进行格式控制，请参考：https://matplotlib.org/stable/tutorials/introductory/customizing.html#the-matplotlibrc-file 。以下是DIT中默认的mplstyle：
 
 ```bash
-dit dssp -f dssp.xpm -xs 0.001 -x Time(ns)
+## Matplotlib style for DuIvyTools
+## https://matplotlib.org/stable/tutorials/introductory/customizing.html#the-matplotlibrc-file
+
+axes.labelsize:     12
+axes.linewidth:     1
+xtick.labelsize:    12
+ytick.labelsize:    12
+ytick.left:         True
+ytick.direction:    in
+xtick.bottom:       True
+xtick.direction:    in
+lines.linewidth:    2
+legend.fontsize:    12
+legend.loc:         best
+legend.fancybox:    False
+legend.frameon:     False
+font.family:        Arial
+font.size:          12
+image.cmap:         coolwarm
+image.aspect:       auto # for fitting into axes
+figure.dpi:         100
+savefig.dpi:        300
+axes.prop_cycle:    cycler('color', ['38A7D0', 'F67088', '66C2A5', 'FC8D62', '8DA0CB', 'E78AC3', 'A6D854', 'FFD92F', 'E5C494', 'B3B3B3', '66C2A5', 'FC8D62'])
 ```
 
-首先得到xpm文件的可视化图：
-![dssp](static/DSSP_0.png)
+用户可以通过在mplstyle文件中设置这些参数的取值或者根据上述链接增加新的参数来控制matplotlib引擎出图的样式。
 
-然后得到残基二级结构含量随时间的变化图：
-![residue_vs_time](static/DSSP_1.png)
+下面对其中部分默认参数做简单的解释：
 
-最后得到时间二级结构含量随残基的变化图：
-![time_vs_residue](static/DSSP_2.png)
+`legend.loc`：当`-legend_location`为默认设置的时候，用户可以通过此文件的此参数控制legend的位置，默认的best会让绘图引擎自动选择legend的位置。用户可以根据https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.legend.html的说明自行设置legend的位置，比如设置成`upper right`。
+
+`axes.prop_cycle`参数后面定义了绘图引擎默认的颜色循环，也即折线图、堆积折线图等图所使用的颜色。如果用户想要修改折线图的颜色，除了直接使用matplotlib的出图GUI的设置进行修改，还可以在这里自行定义。比如说我的图上有三条折线并且我想要调整它们的颜色，则只需要将前三个颜色值修改一下即可。
 
 
-### mol_map
 
-**此命令不建议使用，算法上仍有一些问题需要解决。**
+#### plotly
 
-如果两个分子构象完全相同，但是每个原子的坐标不同，可以通过此命令将两个分子的坐标替换，也即将分子从一个坐标转换到另一个坐标。
+plotly就厉害了，**基本上所有呈现在你眼前的东西都可以通过template文件修改**。实际上其template文件就是记录了参数和取值的json文件。
 
-### dccm_ascii
+一些自定义plotly样式的信息：https://plotly.com/python/reference/index/. 一些可能可用的templates文件: https://github.com/AnnMarieW/dash-bootstrap-templates/tree/main/src/dash_bootstrap_templates/templates 。
 
-```bash
-dccm_ascii: generate dynamic cross correlation matrix (DCCM) from dat file
-            generated by `gmx covar`.
+DIT的plotly默认样式文件较长，这里就不直接列出了，只在下面做一点点简单的介绍。
 
-:examples:
-    dit dccm_ascii -f covapic.dat
-    dit dccm_ascii -f covapic.dat -m gaussian -o res.png -noshow
-    dit dccm_ascii -f covapic.dat -x Res -y Res -t DCCM
+plotly的格式控制json文件主要分为两块：data和layout。
 
-:parameters:
-    -f, --input
-            the dat file generated by `gmx covar` which stored the covarience
-            matrix information
-    -o, --output
-            specify the output figure name
-    -m, --mode
-            specify the figure style, "origin", "gaussian", "bio3d"(default)
-    -ns, --noshow
-            whether not to show figure
-    -x, --xlabel
-            specify the xlabel of figure
-    -y, --ylabel
-            specify the ylabel of figure
-    -t, --title
-            specify the title of figure
+```json
+{
+  "data":{
+    ...
+  },
+  "layout": {
+    ...
+  }
+}
 ```
 
-`dccm_ascii`命令的主要功能是将`gmx covar`命令生成的协方差矩阵的dat文本文件转换成动态互相关矩阵。此命令读取协方差矩阵数据处理成DCCM数据之后绘图，可选的绘图样式有三种，`origin`、`gaussian`以及用matplotlib模仿的`bio3d`的绘图风格。
+其中data里面记录的是对应于每一种绘图类型的样式控制，layout里面记录的则是整体的一些样式。
+
+比如关于data里面contour类型的图的样式控制如下：
+
+```json
+        "contour": [
+            {
+                "showscale": true,
+                "colorbar": {
+                    "outlinewidth": 0,
+                    "ticks": "",
+                    "x": 1.02,
+                    "y": 0.02,
+                    "xanchor": "left",
+                    "yanchor": "bottom",
+                    "len": 0.50,
+                    "lenmode": "fraction",
+                    "title": {
+                        "side": "right"
+                    }
+                },
+                "type": "contour"
+            }
+        ],
+```
+
+比如这里定义了一大段关于colorbar的设置，包括其位置和长度等。
+
+一个重要的问题：我怎么知道该有哪些参数又有哪些取值呢？
+
+首先，可以去查plotly关于contour的文档，https://plotly.github.io/plotly.py-docs/generated/plotly.graph_objects.Contour.html，其中就有关于各个参数的介绍等等信息；其次，你可以随便新增一个参数和取值，然后运行，得到的报错信息里面就会给你列出所有可能的取值以及相关的信息。
+
+还有layout的示例：
+
+```json
+"layout": {
+        "showlegend": true,
+        "legend_orientation": "v",
+        "legend": {
+            "x": 1.0,
+            "y": 1.0,
+            "xanchor": "left",
+            "yanchor": "top",
+            "bgcolor": "rgba(0,0,0,0)"
+        },
+        "colorway": [
+            "#38A7D0",
+            "#F67088",
+            "#66C2A5",
+            "#FC8D62",
+            "#8DA0CB",
+            "#E78AC3",
+            "#A6D854",
+            "#FFD92F",
+            "#E5C494",
+            "#B3B3B3",
+            "#66C2A5",
+            "#FC8D62"
+        ],
+        "font": {
+            "family": "Arial, Times New Roman",
+            "size": 18,
+            "color": "#2a3f5f"
+        },
+        "title": {
+            "x": 0.05
+        },
+        "xaxis": {
+            "automargin": true,
+            "linecolor": "black",
+            "linewidth": 2,
+            "title": {
+                "standoff": 15
+            },
+            "mirror": true,
+            "ticks": "",
+            "showline": true
+        },
+        "yaxis": {
+            "automargin": true,
+            "linecolor": "black",
+            "linewidth": 2,
+            "title": {
+                "standoff": 15
+            },
+            "mirror": true,
+            "ticks": "",
+            "showline": true
+        },
+        "paper_bgcolor": "white",
+        "plot_bgcolor": "white",
+        "polar": {
+            "angularaxis": {
+                "gridcolor": "white",
+                "linecolor": "black",
+                "ticks": ""
+            },
+            "bgcolor": "white",
+            "radialaxis": {
+                "gridcolor": "white",
+                "linecolor": "black",
+                "ticks": ""
+            }
+        },
+        "scene": {
+            "xaxis": {
+                "backgroundcolor": "white",
+                "linecolor": "black",
+                "linewidth": 2,
+                "showline": true,
+                "showbackground": true,
+                "ticks": "",
+                "zerolinecolor": "white",
+                "tickfont": {
+                    "size": 14,
+                    "family": "Arial, Times New Roman"
+                }
+            },
+            "yaxis": {
+                "backgroundcolor": "white",
+                "linecolor": "black",
+                "linewidth": 2,
+                "showline": true,
+                "showbackground": true,
+                "ticks": "",
+                "zerolinecolor": "white",
+                "tickfont": {
+                    "size": 14,
+                    "family": "Arial, Times New Roman"
+                }
+            },
+            "zaxis": {
+                "backgroundcolor": "white",
+                "linecolor": "black",
+                "linewidth": 2,
+                "showline": true,
+                "showbackground": true,
+                "ticks": "",
+                "zerolinecolor": "white",
+                "tickfont": {
+                    "size": 14,
+                    "family": "Arial, Times New Roman"
+                }
+            }
+        },
+```
+
+这里简单地介绍下各个重要的参数：
+
+`legend`表示的自然就是legend的位置了，`colorway`表示的是颜色循环，要修改折线图等图的颜色可以在这里进行。`xaxis`和`yaxis`自然就是X和Y周的信息了。`scene`中的`xaxis`、`yaxis`和`zaxis`表示的是3维图中的X、Y和Z轴信息。
+
+总的来说，plotly的格式自由度是最高的，当然调整出一张漂亮的图还是需要用户对plotly有一些了解。
 
 
-### show_style
 
-使用`show_style`在当前工作目录中生成DIT在用的绘图格式文件，可以通过修改该文件来控制绘图的相关格式，如字体字号等等。
+#### gnuplot
+
+Gnuplot，顶牛的一款科研绘图软件，开源软件的一个成功范例。
+
+Gnuplot的所有东西都可以通过它的输入脚本进行调整，DIT也支持直接输出绘图的gnuplot脚本。因而，用户可以直接修改gnuplot脚本来精调图片。
+
+DIT本身只对gnuplot设置了非常简单的信息：
+
+```gnuplot
+# define line styles
+set style line 1 lt 1 lc rgb "#38A7D0"
+set style line 2 lt 1 lc rgb "#F67088"
+set style line 3 lt 1 lc rgb "#66C2A5"
+set style line 4 lt 1 lc rgb "#FC8D62"
+set style line 5 lt 1 lc rgb "#8DA0CB"
+set style line 6 lt 1 lc rgb "#E78AC3"
+set style line 7 lt 1 lc rgb "#A6D854"
+set style line 8 lt 1 lc rgb "#FFD92F"
+set style line 9 lt 1 lc rgb "#E5C494"
+set style line 10 lt 1 lc rgb "#B3B3B3"
+set style line 11 lt 1 lc rgb "#66C2A5"
+set style line 12 lt 1 lc rgb "#FC8D62"
+# define palette
+set palette defined ( 0 '#2166AC',\
+                    1 '#4393C3',\
+                    2 '#92C5DE',\
+                    3 '#D1E5F0',\
+                    4 '#FDDBC7',\
+                    5 '#F4A582',\
+                    6 '#D6604D',\
+                    7 '#B2182B' )
+
+set term pngcairo enhanced truecolor font "Arial, 14" fontscale 1 linewidth 2 pointscale 1 size 1400,1000
+```
+
+如果用户需要修改线型（颜色，款式等）和colormap的颜色，可以直接在这个格式控制文件里面修改。
+
+关于一些可用的gnuplot样式设置，可以参考：
+
+- https://github.com/hesstobi/Gnuplot-Templates
+- https://github.com/Gnuplotting/gnuplot-palettes
+
+目前DIT对gnuplot的调用还不是很理想，绘图数据和绘图样式部分还杂糅在一起。现今似乎还没有特别理想的从python中调用gnuplot的库，未来可能打算自己整一个。希望到时候，能对DIT中的这部分代码有一个比较好的改进。
 
 
-## future features
 
-v0.4.8的版本发布之后，后续只会有bug修复的内容更新，不会再有新的功能。22年3月发布DIT以来，已经经历了几次小的版本迭代，笔者越来越感觉早期设计的逻辑框架不是很顺手。早期预期的功能没有这么多，因而核心的功能写得不够简洁明白，后面的一些东西也就不好加上去了，也无法确保程序的正确性。
-因而，在v0.4.8之后，我会着手开发v0.5.0。这一版本会将DIT完全重构一遍，以下方面将会被优先考虑到：
-1. 各类文件的解析与数据转换将被独立出来
-2. 所有的命令行参数将被重新设计
-3. 增加更多绘图引擎，除了matplotlib之外，还有plotext和gunuplot等
-4. 增加对分析流程的支持
-5. 帮助信息和文档将更详细清晰
-6. 更好的命令行信息输出
-7. 更完善的单元测试
-8. 增加对残基接触矩阵的支持
-9. ......
+#### plotext
+
+plotext已经是我能找到的较好的可以进行命令行绘图的工具了，支持格式调整？不太可能。要是觉得不好看，把眼镜摘掉，可能图看起来就会好一些……
+
+
+
+## 程序模块
+
+DIT以前的版本中，基本上每个命令就是单独的一个类，杂糅了命令的逻辑与绘图的部分在里面，同时还交织了用户参数的解析，基本上很难另外编程去调用，除了原本文件解析的模块。在DIT v0.5.0的版本中，这个问题得到了一定的改善。首先是绘图完全独立了出来，命令逻辑虽然不可避免地需要处理用户参数，但是现在有了统一的用户参数接口，所以也还算方便。命令的帮助也放弃了原来的独立模块思路，转而使用类的doc来实现，这样的话新增命令会方便很多。
+
+**文件解析**
+
+支持xvg、xpm、ndx、mdp、pdb以及gro文件的简单解析，得到一个文件类。
+
+```python
+from DuIvyTools.DuIvyTools.FileParser import   xvgParser,xpmParser,groParser,pdbParser,ndxParser,mdpParser
+```
+
+**绘图引擎**
+
+四种绘图引擎，主要实现了折线图、散点图、热力图等绘图方式，后续可能会视情况继续增加绘图种类。
+
+```python
+from DuIvyTools.DuIvyTools.Visualizer import Visualizer_matplotlib
+```
+
+**命令模块**
+
+每一个命令都是一个类，用于处理命令逻辑和调用相应的绘图模块等。想要自己调用命令类可能会有些难，需要自己构造用户参数parm类才行，不如直接命令行里调用DIT了。
+
 
 
 ## Cite DuIvyTools
 
 
-> DuIvyTools目前是基于GPLv3协议开源的。我欢迎大家在日常工作中使用和修改，但**不得以任何理由使用DuIvyTools牟利**，包括但不限于付费获取、商业使用等等。
+> DuIvyTools目前是基于GPLv3协议开源的，同时也已申请软件著作权。
+>
+> 我欢迎大家在日常工作中使用和修改，但**不得以任何理由使用DuIvyTools牟利**，包括但不限于付费获取、商业使用等等。
 
 Cite DuIvyTools by：
 
 [![](https://zenodo.org/badge/DOI/10.5281/zenodo.6339993.svg)](https://doi.org/10.5281/zenodo.6339993)
 
+
+
+## Reward
+
+A lot of time and money have been spent for developing DuIvyTools and improve it. If possible, **REWARD** to help me improve it. 
+
+![reward](static/reward.png)
