@@ -450,11 +450,20 @@ def hbond(
     plt.title(xpm.xpm_title)
     plt.xlabel(xpm.xpm_xlabel)
     plt.ylabel(xpm.xpm_ylabel)
-    if xpm.xpm_height <= 20 and hnf == "number":
+    # if xpm.xpm_height <= 20 and hnf == "number":
+    #     plt.yticks([i for i in range(len(select))], [i for i in range(len(select))])
+    # elif xpm.xpm_height <= 20 and hnf == "id":
+    #     plt.yticks([i for i in range(len(select))], select)
+    # elif xpm.xpm_height <= 20 and hnf != "number" and hnf != "id":
+    #     plt.yticks([i for i in range(len(select))], hbond_names)
+    # else:
+    #     logging.warning("DIT can only show hbond name when hbond number <= 20 !")
+
+    if len(xpm_datamatrix) <= 20 and hnf == "number":
         plt.yticks([i for i in range(len(select))], [i for i in range(len(select))])
-    elif xpm.xpm_height <= 20 and hnf == "id":
+    elif len(xpm_datamatrix) <= 20 and hnf == "id":
         plt.yticks([i for i in range(len(select))], select)
-    elif xpm.xpm_height <= 20 and hnf != "number" and hnf != "id":
+    elif len(xpm_datamatrix) <= 20 and hnf != "number" and hnf != "id":
         plt.yticks([i for i in range(len(select))], hbond_names)
     else:
         logging.warning("DIT can only show hbond name when hbond number <= 20 !")
