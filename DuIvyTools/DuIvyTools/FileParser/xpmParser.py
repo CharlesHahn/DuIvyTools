@@ -106,6 +106,7 @@ class XPM(log):
 
             items = line.strip().split()
             ## for char-color-note part
+            ## TODO len==7 may cause error, some with extra space /* "  2.8" */
             if len(items) == 7 and items[1] == "c":
                 self.colors.append(items[2])
                 self.notes.append(items[5].strip('"'))

@@ -74,7 +74,7 @@ class Command(log):
             res = res.replace("\\N", "}")
             latex_found_flag = True
         if "\\S" in res and "\\N" in res:
-            res = res.replace("\\s", "^{")
+            res = res.replace("\\S", "^{")
             res = res.replace("\\N", "}")
             latex_found_flag = True
         if "^" in res:
