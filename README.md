@@ -101,6 +101,7 @@ If you used DuIvyTools in your research, cite it by doi please.
 
 - [ ] python unittest
 - [ ] better docs
+- [ ] unequal number of x and y ticks in xpm like fel.xpm
 
 
 ## Others

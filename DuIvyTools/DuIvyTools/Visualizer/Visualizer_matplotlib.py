@@ -562,6 +562,8 @@ class ImshowMatplotlib(ParentMatplotlib):
                 alpha=kwargs["alpha"],
                 cmap=color_map,
                 origin="lower",
+                aspect="auto",
+                interpolation="none" # default interpolation is nearst, set it do none
             )
             legend_patches = []
             for ind, note in enumerate(kwargs["legends"]):
