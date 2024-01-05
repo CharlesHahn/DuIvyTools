@@ -21,7 +21,7 @@ class MDP(log):
     def __init__(
         self, mdpfile: str, is_file: bool = True, new_file: bool = False
     ) -> None:
-        self.mdps: Dict[str, str]
+        self.mdps: Dict[str, str] = {}
         if new_file:
             self.mdpfile = mdpfile
         else:
