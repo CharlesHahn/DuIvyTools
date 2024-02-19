@@ -102,6 +102,13 @@ If you used DuIvyTools in your research, cite it by doi please.
 - [ ] python unittest
 - [ ] better docs
 - [ ] unequal number of x and y ticks in xpm like fel.xpm
+- [ ] to set the tickintervals
+- [ ] easy API for draw lines with stddev (data, stddev two columns) in xvg file
+- [ ] add xpm.comments
+- [ ] to specify the figsize by commands
+- [ ] add a command to do AND/OR set operation to hbond or sltbr existance map
+
+- [ ] add inter-classes to ease the use of plotting xpm or xvg data 
 
 
 ## Others

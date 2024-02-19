@@ -221,6 +221,7 @@ class XPM(log):
         Args:
             is_Continuous (bool, optional): set the type of xpm. Defaults to True.
         """
+        ## TODO to improve to deal predefined notes, chars, colors
         out_value_list = sorted(list(set(chain(*self.value_matrix))))
         self.notes = out_value_list
         colors, l = [], len(out_value_list)
