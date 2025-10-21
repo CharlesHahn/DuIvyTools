@@ -80,7 +80,7 @@ class ParentPlotly(log):
             "gridon",
             "none",
         ]
-        if name in plotly_templates_names:
+        if name in plotly_templates_names: ## TODO ??? why not allow??
             self.error(
                 f"The name {name} is not allowed. Change the file name of your template."
             )
