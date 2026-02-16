@@ -9,3 +9,4 @@ Tests/__pycache__/*
 .pytest_cash/*
 docs/_build/*
 IFLOW.md
+AGENTS.md
