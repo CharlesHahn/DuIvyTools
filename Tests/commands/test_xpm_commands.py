@@ -27,21 +27,21 @@ from Commands.xpmCommands import xpm_show, xpm2csv, xpm2dat, xpm_diff, xpm_merge
 # ============================================================================
 
 @pytest.fixture
-def xpm_test_dir():
-    """Return xpm test directory path."""
-    return os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "xpm_test"))
+def xpm_fixtures_path():
+    """Return xpm fixtures directory path."""
+    return os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "fixtures", "xpm"))
 
 
 @pytest.fixture
-def continuous_xpm_file(xpm_test_dir):
+def continuous_xpm_file(xpm_fixtures_path):
     """Return a continuous XPM file path (Gibbs free energy)."""
-    return os.path.join(xpm_test_dir, "gibbs.xpm")
+    return os.path.join(xpm_fixtures_path, "gibbs.xpm")
 
 
 @pytest.fixture
-def discrete_xpm_file(xpm_test_dir):
+def discrete_xpm_file(xpm_fixtures_path):
     """Return a discrete XPM file path (hydrogen bond)."""
-    return os.path.join(xpm_test_dir, "hbond.xpm")
+    return os.path.join(xpm_fixtures_path, "hbond.xpm")
 
 
 class MockParameters:

@@ -29,21 +29,21 @@ from Commands.otherCommands import mdp_gen, show_style, dccm_ascii, ndx_add
 # ============================================================================
 
 @pytest.fixture
-def test_data_dir():
-    """Return test data directory path."""
-    return os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "test_data"))
+def fixtures_path():
+    """Return fixtures base directory path."""
+    return os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "fixtures"))
 
 
 @pytest.fixture
-def find_center_test_dir():
-    """Return find_center test directory path."""
-    return os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "find_center_test"))
+def gro_fixtures_path():
+    """Return gro fixtures directory path."""
+    return os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "fixtures", "gro"))
 
 
 @pytest.fixture
-def ndx_test_dir():
-    """Return ndx test directory path."""
-    return os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "ndx_test"))
+def ndx_fixtures_path():
+    """Return ndx fixtures directory path."""
+    return os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "fixtures", "ndx"))
 
 
 class MockParameters:
@@ -168,9 +168,9 @@ class TestDccmAscii:
         with pytest.raises(SystemExit):
             cmd()
     
-    def test_dccm_ascii_no_output(self, test_data_dir):
+    def test_dccm_ascii_no_output(self, fixtures_path):
         """Test error when no output file specified."""
-        covar_file = os.path.join(test_data_dir, "covapic.dat")
+        covar_file = os.path.join(fixtures_path, "dccm", "covapic.dat")
         parm = MockParameters(input=[covar_file], output=None)
         cmd = dccm_ascii(parm)
         
@@ -185,9 +185,9 @@ class TestDccmAscii:
         with pytest.raises(SystemExit):
             cmd()
     
-    def test_dccm_ascii_basic(self, test_data_dir, tmp_path):
+    def test_dccm_ascii_basic(self, fixtures_path, tmp_path):
         """Test basic dccm_ascii execution."""
-        covar_file = os.path.join(test_data_dir, "covapic.dat")
+        covar_file = os.path.join(fixtures_path, "dccm", "covapic.dat")
         output_file = tmp_path / "dccm.xpm"
         
         parm = MockParameters(
@@ -261,9 +261,9 @@ class TestNdxAdd:
         
         assert output_file.exists()
     
-    def test_ndx_add_to_existing(self, ndx_test_dir, tmp_path):
+    def test_ndx_add_to_existing(self, ndx_fixtures_path, tmp_path):
         """Test adding group to existing NDX file."""
-        ndx_file = os.path.join(ndx_test_dir, "hbond.ndx")
+        ndx_file = os.path.join(ndx_fixtures_path, "hbond.ndx")
         output_file = tmp_path / "output.ndx"
         
         parm = MockParameters(

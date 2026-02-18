@@ -42,33 +42,33 @@ from Commands.xvgCommands import (
 # ============================================================================
 
 @pytest.fixture
-def xvg_test_dir():
-    """Return xvg test directory path."""
-    return os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "xvg_test"))
+def xvg_fixtures_path():
+    """Return xvg fixtures directory path."""
+    return os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "fixtures", "xvg"))
 
 
 @pytest.fixture
-def sample_xvg_file(xvg_test_dir):
+def sample_xvg_file(xvg_fixtures_path):
     """Return a sample xvg file path."""
-    return os.path.join(xvg_test_dir, "gyrate.xvg")
+    return os.path.join(xvg_fixtures_path, "gyrate.xvg")
 
 
 @pytest.fixture
-def sample_xvg_files(xvg_test_dir):
+def sample_xvg_files(xvg_fixtures_path):
     """Return multiple sample xvg file paths."""
     return [
-        os.path.join(xvg_test_dir, "gyrate.xvg"),
-        os.path.join(xvg_test_dir, "rmsd.xvg"),
+        os.path.join(xvg_fixtures_path, "gyrate.xvg"),
+        os.path.join(xvg_fixtures_path, "rmsd.xvg"),
     ]
 
 
 @pytest.fixture
-def energy_xvg_files(xvg_test_dir):
+def energy_xvg_files(xvg_fixtures_path):
     """Return energy xvg file paths."""
     return [
-        os.path.join(xvg_test_dir, "prolig_energy.xvg"),
-        os.path.join(xvg_test_dir, "pro_energy.xvg"),
-        os.path.join(xvg_test_dir, "lig_energy.xvg"),
+        os.path.join(xvg_fixtures_path, "prolig_energy.xvg"),
+        os.path.join(xvg_fixtures_path, "pro_energy.xvg"),
+        os.path.join(xvg_fixtures_path, "lig_energy.xvg"),
     ]
 
 
