@@ -6,7 +6,7 @@ DuIvyTools/DuIvyTools/__pycache__/*
 DuIvyTools/DuIvyTools/*/__pycache__/*
 DuIvyTools/DuIvyTools_old/__pycache__/*
 Tests/__pycache__/*
-Tests/parsers/__pycache__/*
+Tests/*/__pycache__/*
 .pytest_cash/*
 docs/_build/*
 IFLOW.md
