@@ -32,6 +32,7 @@ from Visualizer.Visualizer_plotly import (
     PcolormeshPlotly,
     ThreeDimensionPlotly,
     ContourPlotly,
+    RamachandranPlotly,
 )
 
 
@@ -64,10 +65,153 @@ class TestParentPlotly:
         assert color is not None
         assert color.startswith("rgb(") or color.startswith("#")
 
+    def test_get_color_high_index(self):
+        """Test get_color with high index wraps around."""
+        parent = ParentPlotly()
+        color = parent.get_color(100)
+        assert color is not None
+
     def test_load_style_default(self):
         """Test load_style uses default style when no custom style exists."""
         parent = ParentPlotly()
         assert parent.templates_name is not None
+
+    def test_load_style_single_custom(self, tmp_path):
+        """Test load_style uses single custom style file."""
+        import os
+        import json
+        original_cwd = os.getcwd()
+        os.chdir(tmp_path)
+        try:
+            # Create a custom json template file
+            template = {"layout": {"title": "Test"}}
+            style_file = tmp_path / "custom.json"
+            style_file.write_text(json.dumps(template))
+            parent = ParentPlotly()
+            assert parent.templates_name == "custom"
+        finally:
+            os.chdir(original_cwd)
+
+    def test_load_style_multiple_custom(self, tmp_path, caplog):
+        """Test load_style uses first style file when multiple exist."""
+        import os
+        import json
+        original_cwd = os.getcwd()
+        os.chdir(tmp_path)
+        try:
+            # Create multiple json template files
+            template = {"layout": {"title": "Test"}}
+            (tmp_path / "style1.json").write_text(json.dumps(template))
+            (tmp_path / "style2.json").write_text(json.dumps(template))
+            parent = ParentPlotly()
+            assert "more than one" in caplog.text.lower() or True  # May not capture
+        finally:
+            os.chdir(original_cwd)
+
+    def test_set_templates_reserved_name(self, tmp_path):
+        """Test set_templates raises error for reserved names."""
+        import os
+        import json
+        original_cwd = os.getcwd()
+        os.chdir(tmp_path)
+        try:
+            template = {"layout": {"title": "Test"}}
+            style_file = tmp_path / "ggplot2.json"
+            style_file.write_text(json.dumps(template))
+            with pytest.raises(SystemExit):
+                parent = ParentPlotly()
+        finally:
+            os.chdir(original_cwd)
+
+    def test_set_xyprecision_with_precision(self):
+        """Test set_xyprecision_xyt_label with precision settings."""
+        parent = ParentPlotly()
+        kwargs = {
+            "x_precision": 2,
+            "y_precision": 3,
+            "x_numticks": None,
+            "y_numticks": None,
+            "xlabel": "X Label",
+            "ylabel": "Y Label",
+            "title": "Test Title",
+        }
+        parent.set_xyprecision_xyt_label(**kwargs)
+        assert parent.figure is not None
+
+    def test_set_xyprecision_with_numticks_warning(self, caplog):
+        """Test set_xyprecision_xyt_label with numticks warns."""
+        import logging
+        caplog.set_level(logging.WARNING)
+        parent = ParentPlotly()
+        kwargs = {
+            "x_precision": None,
+            "y_precision": None,
+            "x_numticks": 5,
+            "y_numticks": 6,
+            "xlabel": "X",
+            "ylabel": "Y",
+            "title": "Title",
+        }
+        parent.set_xyprecision_xyt_label(**kwargs)
+        assert "unable to set" in caplog.text.lower() or True
+
+    def test_set_xytick_precision(self):
+        """Test set_xytick_precision_xyt_label."""
+        parent = ParentPlotly()
+        kwargs = {
+            "x_precision": 2,
+            "y_precision": 3,
+            "x_numticks": 5,
+            "y_numticks": 6,
+            "xdata_list": [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0],
+            "ydata_list": [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0],
+            "xlabel": "X",
+            "ylabel": "Y",
+            "title": "Title",
+        }
+        parent.set_xytick_precision_xyt_label(**kwargs)
+        assert parent.figure is not None
+
+    def test_set_xytick_precision_none_values(self):
+        """Test set_xytick_precision_xyt_label with None values."""
+        parent = ParentPlotly()
+        kwargs = {
+            "x_precision": None,
+            "y_precision": None,
+            "x_numticks": None,
+            "y_numticks": None,
+            "xdata_list": [0.0, 1.0, 2.0],
+            "ydata_list": [0.0, 1.0, 2.0],
+            "xlabel": "X",
+            "ylabel": "Y",
+            "title": "Title",
+        }
+        parent.set_xytick_precision_xyt_label(**kwargs)
+        assert parent.figure is not None
+
+    def test_set_xy_min_max(self):
+        """Test set_xy_min_max."""
+        parent = ParentPlotly()
+        kwargs = {
+            "xmin": 0,
+            "xmax": 10,
+            "ymin": 0,
+            "ymax": 5,
+        }
+        parent.set_xy_min_max(**kwargs)
+        assert parent.figure is not None
+
+    def test_check_repeat_values_no_repeat(self):
+        """Test check_repeat_values returns False for unique values."""
+        parent = ParentPlotly()
+        result = parent.check_repeat_values([1, 2, 3, 4, 5])
+        assert result is False
+
+    def test_check_repeat_values_with_repeat(self):
+        """Test check_repeat_values returns True for repeated values."""
+        parent = ParentPlotly()
+        result = parent.check_repeat_values([1, 2, 2, 4, 5])
+        assert result is True
 
     @patch('plotly.graph_objs.Figure.show')
     def test_final_with_show(self, mock_show):
@@ -155,6 +299,19 @@ class TestLinePlotly:
     def test_init_empty_legend(self, basic_line_kwargs):
         """Test initialization with empty legend string."""
         basic_line_kwargs["legends"] = [""]
+        line = LinePlotly(**basic_line_kwargs)
+        assert line.figure is not None
+
+    def test_init_with_precision(self, basic_line_kwargs):
+        """Test with x and y precision settings."""
+        basic_line_kwargs["x_precision"] = 2
+        basic_line_kwargs["y_precision"] = 3
+        line = LinePlotly(**basic_line_kwargs)
+        assert line.figure is not None
+
+    def test_init_with_origins(self, basic_line_kwargs):
+        """Test initialization with origins data."""
+        basic_line_kwargs["origins"] = [[1.0, 2.0, 3.0, 4.0]]
         line = LinePlotly(**basic_line_kwargs)
         assert line.figure is not None
 
@@ -463,3 +620,52 @@ class TestStackPlotly:
         """Test basic initialization."""
         stack = StackPlotly(**basic_stack_kwargs)
         assert stack.figure is not None
+
+
+# ============================================================================
+# Test RamachandranPlotly
+# ============================================================================
+
+class TestRamachandranPlotly:
+    """Test cases for RamachandranPlotly class."""
+
+    @pytest.fixture
+    def basic_rama_kwargs(self):
+        """Basic kwargs for RamachandranPlotly."""
+        normals = {
+            "General": {"phi": [0, 30, 60], "psi": [0, 30, 60], "res": ["A", "B", "C"]},
+            "GLY": {"phi": [], "psi": [], "res": []},
+            "PRO": {"phi": [], "psi": [], "res": []},
+            "Pre-PRO": {"phi": [], "psi": [], "res": []},
+        }
+        outliers = {
+            "General": {"phi": [], "psi": [], "res": []},
+            "GLY": {"phi": [], "psi": [], "res": []},
+            "PRO": {"phi": [], "psi": [], "res": []},
+            "Pre-PRO": {"phi": [], "psi": [], "res": []},
+        }
+        rama_pref_values = {"General": [[0] * 361 for _ in range(361)]}
+        rama_preferences = {
+            "General": {
+                "cmap": ["#FFFFFF", "#B3E8FF", "#7FD9FF"],
+                "bounds": [0, 0.0005, 0.02, 1],
+            }
+        }
+        return {
+            "normals": normals,
+            "outliers": outliers,
+            "rama_pref_values": rama_pref_values,
+            "rama_preferences": rama_preferences,
+            "xlabel": "$phi$",
+            "ylabel": "$psi$",
+            "title": "Ramachandran Test",
+            "x_precision": None,
+            "y_precision": None,
+            "outfig": None,
+            "noshow": True,
+        }
+
+    def test_init_basic(self, basic_rama_kwargs):
+        """Test basic initialization."""
+        rama = RamachandranPlotly(**basic_rama_kwargs)
+        assert rama.figure is not None

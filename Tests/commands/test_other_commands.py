@@ -9,6 +9,7 @@ Tests for:
 - dssp: process DSSP data
 - ndx_add: add index groups
 - ndx_split: split index groups
+- ndx_show: show index group names
 """
 
 import os
@@ -21,7 +22,7 @@ SRC_PATH = os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "..", 
 if SRC_PATH not in sys.path:
     sys.path.insert(0, SRC_PATH)
 
-from Commands.otherCommands import mdp_gen, show_style, dccm_ascii, ndx_add
+from Commands.otherCommands import mdp_gen, show_style, dccm_ascii, ndx_add, find_center, dssp, ndx_split, ndx_show
 
 
 # ============================================================================
@@ -44,6 +45,12 @@ def gro_fixtures_path():
 def ndx_fixtures_path():
     """Return ndx fixtures directory path."""
     return os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "fixtures", "ndx"))
+
+
+@pytest.fixture
+def dssp_fixtures_path():
+    """Return dssp fixtures directory path."""
+    return os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "fixtures", "dssp"))
 
 
 class MockParameters:
@@ -276,3 +283,298 @@ class TestNdxAdd:
         cmd()
         
         assert output_file.exists()
+
+
+# ============================================================================
+# Test find_center
+# ============================================================================
+
+class TestFindCenter:
+    """Test cases for find_center command."""
+    
+    def test_find_center_no_input(self):
+        """Test error when no input file specified."""
+        parm = MockParameters(input=None)
+        cmd = find_center(parm)
+        
+        with pytest.raises(SystemExit):
+            cmd()
+    
+    def test_find_center_no_gro_file(self):
+        """Test error when no GRO file in input."""
+        parm = MockParameters(input=['test.txt'])
+        cmd = find_center(parm)
+        
+        with pytest.raises(SystemExit):
+            cmd()
+    
+    def test_find_center_gro_only(self, gro_fixtures_path, capsys):
+        """Test find_center with GRO file only (no index)."""
+        gro_file = os.path.join(gro_fixtures_path, "test.gro")
+        parm = MockParameters(input=[gro_file])
+        cmd = find_center(parm)
+        cmd()
+        
+        captured = capsys.readouterr()
+        # Should output atom info (ResID Name Atom) when finding nearest atom
+        assert "ResID" in captured.out or "SOL" in captured.out or "center" in captured.out.lower()
+    
+    def test_find_center_with_mode_all_atoms(self, gro_fixtures_path, capsys):
+        """Test find_center with AllAtoms mode."""
+        gro_file = os.path.join(gro_fixtures_path, "test.gro")
+        parm = MockParameters(input=[gro_file], mode="AllAtoms")
+        cmd = find_center(parm)
+        cmd()
+        
+        captured = capsys.readouterr()
+        # Should output atom info
+        assert "ResID" in captured.out or "SOL" in captured.out or "center" in captured.out.lower()
+    
+    def test_find_center_with_ndx_interactive(self, gro_fixtures_path, ndx_fixtures_path, capsys):
+        """Test find_center with index file (interactive input)."""
+        gro_file = os.path.join(gro_fixtures_path, "test.gro")
+        ndx_file = os.path.join(ndx_fixtures_path, "hbond.ndx")
+        
+        parm = MockParameters(input=[gro_file, ndx_file])
+        cmd = find_center(parm)
+        
+        # Mock the input() function to return "Protein" (select by name)
+        with patch('builtins.input', return_value='Protein'):
+            cmd()
+        
+        captured = capsys.readouterr()
+        # Should show group names and output atom info
+        assert "Protein" in captured.out or "ResID" in captured.out or "center" in captured.out.lower()
+    
+    def test_find_center_with_ndx_numeric_selection(self, gro_fixtures_path, ndx_fixtures_path, capsys):
+        """Test find_center with numeric group selection."""
+        gro_file = os.path.join(gro_fixtures_path, "test.gro")
+        ndx_file = os.path.join(ndx_fixtures_path, "hbond.ndx")
+        
+        parm = MockParameters(input=[gro_file, ndx_file])
+        cmd = find_center(parm)
+        
+        # Mock input to return "0" (first group by index)
+        with patch('builtins.input', return_value='0'):
+            cmd()
+        
+        captured = capsys.readouterr()
+        # Should have output atom info
+        assert "ResID" in captured.out or "selected" in captured.out.lower() or "center" in captured.out.lower()
+
+
+# ============================================================================
+# Test dssp
+# ============================================================================
+
+class TestDssp:
+    """Test cases for dssp command."""
+    
+    def test_dssp_no_input(self):
+        """Test error when no input file specified."""
+        parm = MockParameters(input=None)
+        cmd = dssp(parm)
+        
+        with pytest.raises(SystemExit):
+            cmd()
+    
+    def test_dssp_file_not_exists(self):
+        """Test error when input file does not exist."""
+        parm = MockParameters(input=['nonexistent.dat'])
+        cmd = dssp(parm)
+        
+        with pytest.raises(SystemExit):
+            cmd()
+    
+    def test_dssp_basic(self, dssp_fixtures_path, tmp_path):
+        """Test basic dssp processing."""
+        dssp_file = os.path.join(dssp_fixtures_path, "2023dssp.dat")
+        
+        # Change to temp directory for output
+        original_cwd = os.getcwd()
+        os.chdir(tmp_path)
+        
+        try:
+            parm = MockParameters(input=[dssp_file])
+            cmd = dssp(parm)
+            cmd()
+            
+            # Should generate xpm and xvg files
+            files = os.listdir(tmp_path)
+            assert any(f.endswith('.xpm') for f in files)
+            assert any(f.endswith('.xvg') for f in files)
+        finally:
+            os.chdir(original_cwd)
+    
+    def test_dssp_with_output(self, dssp_fixtures_path, tmp_path):
+        """Test dssp with custom output name."""
+        dssp_file = os.path.join(dssp_fixtures_path, "2023dssp.dat")
+        output_file = tmp_path / "custom_dssp.xpm"
+        
+        original_cwd = os.getcwd()
+        os.chdir(tmp_path)
+        
+        try:
+            parm = MockParameters(input=[dssp_file], output=str(output_file))
+            cmd = dssp(parm)
+            cmd()
+            
+            files = os.listdir(tmp_path)
+            assert any('custom_dssp' in f for f in files)
+        finally:
+            os.chdir(original_cwd)
+    
+    def test_dssp_with_labels(self, dssp_fixtures_path, tmp_path):
+        """Test dssp with custom labels."""
+        dssp_file = os.path.join(dssp_fixtures_path, "2023dssp.dat")
+        
+        original_cwd = os.getcwd()
+        os.chdir(tmp_path)
+        
+        try:
+            parm = MockParameters(
+                input=[dssp_file],
+                xlabel="Time (ps)",
+                ylabel="Residue No.",
+                title="Secondary Structure"
+            )
+            cmd = dssp(parm)
+            cmd()
+            
+            files = os.listdir(tmp_path)
+            assert any(f.endswith('.xpm') for f in files)
+        finally:
+            os.chdir(original_cwd)
+
+
+# ============================================================================
+# Test ndx_split
+# ============================================================================
+
+class TestNdxSplit:
+    """Test cases for ndx_split command."""
+    
+    def test_ndx_split_no_additional_list(self):
+        """Test error when no additional_list specified."""
+        parm = MockParameters(additional_list=None)
+        cmd = ndx_split(parm)
+        
+        with pytest.raises(SystemExit):
+            cmd()
+    
+    def test_ndx_split_wrong_format(self):
+        """Test error with wrong additional_list format."""
+        parm = MockParameters(additional_list=['OnlyOneValue'])
+        cmd = ndx_split(parm)
+        
+        with pytest.raises(SystemExit):
+            cmd()
+    
+    def test_ndx_split_basic(self, tmp_path):
+        """Test basic ndx_split execution."""
+        # Create a test ndx file with a group that can be split
+        ndx_file = tmp_path / "test.ndx"
+        ndx_file.write_text("[ TestGroup ]\n1 2 3 4 5 6 7 8 9 10\n")
+        output_file = tmp_path / "split.ndx"
+        
+        parm = MockParameters(
+            input=[str(ndx_file)],
+            additional_list=['TestGroup', '2'],
+            output=str(output_file)
+        )
+        cmd = ndx_split(parm)
+        cmd()
+        
+        assert output_file.exists()
+    
+    def test_ndx_split_by_index(self, tmp_path):
+        """Test ndx_split by group index instead of name."""
+        ndx_file = tmp_path / "test.ndx"
+        ndx_file.write_text("[ TestGroup ]\n1 2 3 4 5 6 7 8 9 10\n")
+        output_file = tmp_path / "split.ndx"
+        
+        # Use index '0' to refer to first group
+        parm = MockParameters(
+            input=[str(ndx_file)],
+            additional_list=['0', '2'],
+            output=str(output_file)
+        )
+        cmd = ndx_split(parm)
+        cmd()
+        
+        assert output_file.exists()
+    
+    def test_ndx_split_unequal_division(self, tmp_path):
+        """Test error when cannot equally divide group."""
+        ndx_file = tmp_path / "test.ndx"
+        ndx_file.write_text("[ TestGroup ]\n1 2 3 4 5 6 7 8 9 10\n")
+        output_file = tmp_path / "split.ndx"
+        
+        # Try to split 10 atoms into 3 groups (10 % 3 != 0)
+        parm = MockParameters(
+            input=[str(ndx_file)],
+            additional_list=['TestGroup', '3'],
+            output=str(output_file)
+        )
+        cmd = ndx_split(parm)
+        
+        with pytest.raises(SystemExit):
+            cmd()
+    
+    def test_ndx_split_nonexistent_group(self, tmp_path):
+        """Test ndx_split with nonexistent group."""
+        ndx_file = tmp_path / "test.ndx"
+        ndx_file.write_text("[ TestGroup ]\n1 2 3 4\n")
+        
+        parm = MockParameters(
+            input=[str(ndx_file)],
+            additional_list=['NonExistent', '2'],
+            output=str(tmp_path / "split.ndx")
+        )
+        cmd = ndx_split(parm)
+        
+        # This should fail because the group doesn't exist
+        # The ndx parser returns (None, None) for non-existent groups
+        # which causes a TypeError when checking len(indexs)
+        with pytest.raises((SystemExit, TypeError)):
+            cmd()
+
+
+# ============================================================================
+# Test ndx_show
+# ============================================================================
+
+class TestNdxShow:
+    """Test cases for ndx_show command."""
+    
+    def test_ndx_show_no_input(self):
+        """Test error when no input file specified."""
+        parm = MockParameters(input=None)
+        cmd = ndx_show(parm)
+        
+        with pytest.raises(SystemExit):
+            cmd()
+    
+    def test_ndx_show_basic(self, ndx_fixtures_path, capsys):
+        """Test basic ndx_show execution."""
+        ndx_file = os.path.join(ndx_fixtures_path, "hbond.ndx")
+        parm = MockParameters(input=[ndx_file])
+        cmd = ndx_show(parm)
+        cmd()
+        
+        captured = capsys.readouterr()
+        assert "Protein" in captured.out
+        assert "1ZIN" in captured.out
+    
+    def test_ndx_show_multiple_files(self, ndx_fixtures_path, capsys):
+        """Test ndx_show with multiple index files."""
+        ndx_file1 = os.path.join(ndx_fixtures_path, "hbond.ndx")
+        ndx_file2 = os.path.join(ndx_fixtures_path, "index.ndx")
+        
+        parm = MockParameters(input=[ndx_file1, ndx_file2])
+        cmd = ndx_show(parm)
+        cmd()
+        
+        captured = capsys.readouterr()
+        # Should show groups from both files
+        assert "Protein" in captured.out

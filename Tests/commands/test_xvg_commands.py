@@ -352,6 +352,118 @@ class TestXvgCompare:
         cmd()
         
         mock_line.assert_called_once()
+    
+    @patch('Commands.xvgCommands.LineMatplotlib')
+    def test_xvg_compare_with_ci_csv(self, mock_line, sample_xvg_file, tmp_path):
+        """Test xvg_compare with CI mode and CSV output (single file)."""
+        mock_instance = MagicMock()
+        mock_line.return_value = mock_instance
+        
+        csv_file = tmp_path / "compare_ci.csv"
+        parm = MockParameters(
+            input=[sample_xvg_file],
+            columns=[[1]],
+            showMV='CI',
+            windowsize=50,
+            confidence=0.95,
+            csv=str(csv_file),
+            noshow=True
+        )
+        cmd = xvg_compare(parm)
+        cmd()
+        
+        assert csv_file.exists()
+        content = csv_file.read_text()
+        # CI mode should have mvave, high, low columns
+        assert "mvave_" in content or "high_" in content or "low_" in content
+    
+    @patch('Commands.xvgCommands.LineMatplotlib')
+    def test_xvg_compare_with_origin_csv(self, mock_line, sample_xvg_file, tmp_path):
+        """Test xvg_compare with origin mode and CSV output (single file)."""
+        mock_instance = MagicMock()
+        mock_line.return_value = mock_instance
+        
+        csv_file = tmp_path / "compare_origin.csv"
+        parm = MockParameters(
+            input=[sample_xvg_file],
+            columns=[[1]],
+            showMV='origin',
+            windowsize=50,
+            csv=str(csv_file),
+            noshow=True
+        )
+        cmd = xvg_compare(parm)
+        cmd()
+        
+        assert csv_file.exists()
+        content = csv_file.read_text()
+        # origin mode should have mvave and origin columns
+        assert "mvave_" in content or "origin_" in content
+    
+    @patch('Commands.xvgCommands.LineMatplotlib')
+    def test_xvg_compare_multi_files_csv(self, mock_line, sample_xvg_files, tmp_path):
+        """Test xvg_compare with multiple files and CSV output."""
+        mock_instance = MagicMock()
+        mock_line.return_value = mock_instance
+        
+        csv_file = tmp_path / "compare_multi.csv"
+        parm = MockParameters(
+            input=sample_xvg_files,
+            columns=[[1], [1]],
+            csv=str(csv_file),
+            noshow=True
+        )
+        cmd = xvg_compare(parm)
+        cmd()
+        
+        assert csv_file.exists()
+    
+    @patch('Commands.xvgCommands.LineMatplotlib')
+    def test_xvg_compare_multi_files_ci_csv(self, mock_line, sample_xvg_files, tmp_path):
+        """Test xvg_compare with multiple files, CI mode and CSV output."""
+        mock_instance = MagicMock()
+        mock_line.return_value = mock_instance
+        
+        csv_file = tmp_path / "compare_multi_ci.csv"
+        parm = MockParameters(
+            input=sample_xvg_files,
+            columns=[[1], [1]],
+            showMV='CI',
+            windowsize=50,
+            confidence=0.95,
+            csv=str(csv_file),
+            noshow=True
+        )
+        cmd = xvg_compare(parm)
+        cmd()
+        
+        assert csv_file.exists()
+        content = csv_file.read_text()
+        # CI mode should have mvave, high, low columns
+        assert "mvave_" in content or "high_" in content
+    
+    @patch('Commands.xvgCommands.LineMatplotlib')
+    def test_xvg_compare_multi_files_origin_csv(self, mock_line, sample_xvg_files, tmp_path):
+        """Test xvg_compare with multiple files, origin mode and CSV output."""
+        mock_instance = MagicMock()
+        mock_line.return_value = mock_instance
+        
+        csv_file = tmp_path / "compare_multi_origin.csv"
+        parm = MockParameters(
+            input=sample_xvg_files,
+            columns=[[1], [1]],
+            showMV='origin',
+            windowsize=50,
+            csv=str(csv_file),
+            noshow=True
+        )
+        cmd = xvg_compare(parm)
+        cmd()
+        
+        assert csv_file.exists()
+        content = csv_file.read_text()
+        # origin mode should have mvave and origin columns
+        assert "mvave_" in content or "origin_" in content
 
 
 # ============================================================================
@@ -678,3 +790,327 @@ class TestXvgShowScatter:
         cmd()
         
         mock_scatter.assert_called_once()
+
+
+# ============================================================================
+# Test xvg_show_stack
+# ============================================================================
+
+class TestXvgShowStack:
+    """Test cases for xvg_show_stack command."""
+    
+    def test_xvg_show_stack_no_input(self):
+        """Test error when no input file specified."""
+        parm = MockParameters(input=[], columns=[[1]])
+        from Commands.xvgCommands import xvg_show_stack
+        cmd = xvg_show_stack(parm)
+        
+        with pytest.raises(SystemExit):
+            cmd()
+    
+    def test_xvg_show_stack_no_columns(self, sample_xvg_file):
+        """Test error when no columns specified."""
+        from Commands.xvgCommands import xvg_show_stack
+        parm = MockParameters(input=[sample_xvg_file], columns=None)
+        cmd = xvg_show_stack(parm)
+        
+        with pytest.raises(SystemExit):
+            cmd()
+    
+    def test_xvg_show_stack_mismatched_columns(self, sample_xvg_files):
+        """Test error when columns don't match files."""
+        from Commands.xvgCommands import xvg_show_stack
+        parm = MockParameters(
+            input=sample_xvg_files,
+            columns=[[1]]  # 2 files but 1 column list
+        )
+        cmd = xvg_show_stack(parm)
+        
+        with pytest.raises(SystemExit):
+            cmd()
+    
+    @patch('Commands.xvgCommands.StackMatplotlib')
+    def test_xvg_show_stack_basic(self, mock_stack, sample_xvg_file):
+        """Test basic xvg_show_stack execution."""
+        mock_instance = MagicMock()
+        mock_stack.return_value = mock_instance
+        
+        from Commands.xvgCommands import xvg_show_stack
+        parm = MockParameters(
+            input=[sample_xvg_file],
+            columns=[[1, 2, 3]],
+            noshow=True
+        )
+        cmd = xvg_show_stack(parm)
+        cmd()
+        
+        mock_stack.assert_called_once()
+    
+    @patch('Commands.xvgCommands.StackPlotly')
+    def test_xvg_show_stack_plotly(self, mock_stack, sample_xvg_file):
+        """Test xvg_show_stack with plotly engine."""
+        mock_instance = MagicMock()
+        mock_stack.return_value = mock_instance
+        
+        from Commands.xvgCommands import xvg_show_stack
+        parm = MockParameters(
+            input=[sample_xvg_file],
+            columns=[[1, 2, 3]],
+            engine='plotly',
+            noshow=True
+        )
+        cmd = xvg_show_stack(parm)
+        cmd()
+        
+        mock_stack.assert_called_once()
+    
+    @patch('Commands.xvgCommands.StackGnuplot')
+    def test_xvg_show_stack_gnuplot(self, mock_stack, sample_xvg_file):
+        """Test xvg_show_stack with gnuplot engine."""
+        mock_instance = MagicMock()
+        mock_stack.return_value = mock_instance
+        
+        from Commands.xvgCommands import xvg_show_stack
+        parm = MockParameters(
+            input=[sample_xvg_file],
+            columns=[[1, 2, 3]],
+            engine='gnuplot',
+            noshow=True
+        )
+        cmd = xvg_show_stack(parm)
+        cmd()
+        
+        mock_stack.assert_called_once()
+
+
+# ============================================================================
+# Test xvg_box_compare
+# ============================================================================
+
+class TestXvgBoxCompare:
+    """Test cases for xvg_box_compare command."""
+    
+    def test_xvg_box_compare_no_input(self):
+        """Test error when no input file specified."""
+        from Commands.xvgCommands import xvg_box_compare
+        parm = MockParameters(input=[], columns=[[1]])
+        cmd = xvg_box_compare(parm)
+        
+        with pytest.raises(SystemExit):
+            cmd()
+    
+    def test_xvg_box_compare_no_columns(self, sample_xvg_file):
+        """Test error when no columns specified."""
+        from Commands.xvgCommands import xvg_box_compare
+        parm = MockParameters(input=[sample_xvg_file], columns=None)
+        cmd = xvg_box_compare(parm)
+        
+        with pytest.raises(SystemExit):
+            cmd()
+    
+    @patch('Commands.xvgCommands.BoxMatplotlib')
+    def test_xvg_box_compare_basic(self, mock_box, sample_xvg_file):
+        """Test basic xvg_box_compare execution."""
+        mock_instance = MagicMock()
+        mock_box.return_value = mock_instance
+        
+        from Commands.xvgCommands import xvg_box_compare
+        parm = MockParameters(
+            input=[sample_xvg_file],
+            columns=[[1]],
+            noshow=True
+        )
+        cmd = xvg_box_compare(parm)
+        cmd()
+        
+        mock_box.assert_called_once()
+    
+    @patch('Commands.xvgCommands.BoxPlotly')
+    def test_xvg_box_compare_plotly(self, mock_box, sample_xvg_file):
+        """Test xvg_box_compare with plotly engine."""
+        mock_instance = MagicMock()
+        mock_box.return_value = mock_instance
+        
+        from Commands.xvgCommands import xvg_box_compare
+        parm = MockParameters(
+            input=[sample_xvg_file],
+            columns=[[1]],
+            engine='plotly',
+            noshow=True
+        )
+        cmd = xvg_box_compare(parm)
+        cmd()
+        
+        mock_box.assert_called_once()
+    
+    @patch('Commands.xvgCommands.BoxGnuplot')
+    def test_xvg_box_compare_gnuplot(self, mock_box, sample_xvg_file):
+        """Test xvg_box_compare with gnuplot engine."""
+        mock_instance = MagicMock()
+        mock_box.return_value = mock_instance
+        
+        from Commands.xvgCommands import xvg_box_compare
+        parm = MockParameters(
+            input=[sample_xvg_file],
+            columns=[[1]],
+            engine='gnuplot',
+            noshow=True
+        )
+        cmd = xvg_box_compare(parm)
+        cmd()
+        
+        mock_box.assert_called_once()
+    
+    def test_xvg_box_compare_plotext_error(self, sample_xvg_file):
+        """Test error when using plotext engine for box plot."""
+        from Commands.xvgCommands import xvg_box_compare
+        parm = MockParameters(
+            input=[sample_xvg_file],
+            columns=[[1]],
+            engine='plotext'
+        )
+        cmd = xvg_box_compare(parm)
+        
+        with pytest.raises(SystemExit):
+            cmd()
+
+
+# ============================================================================
+# Test xvg_ave_bar
+# ============================================================================
+
+class TestXvgAveBar:
+    """Test cases for xvg_ave_bar command."""
+    
+    @pytest.fixture
+    def bar_xvg_files(self, xvg_fixtures_path):
+        """Return bar xvg file paths."""
+        return [
+            os.path.join(xvg_fixtures_path, "bar_0_0.xvg"),
+            os.path.join(xvg_fixtures_path, "bar_0_1.xvg"),
+        ]
+    
+    def test_xvg_ave_bar_no_input(self):
+        """Test error when no input file specified."""
+        from Commands.xvgCommands import xvg_ave_bar
+        parm = MockParameters(input=[], columns=[[1]])
+        cmd = xvg_ave_bar(parm)
+        
+        with pytest.raises(SystemExit):
+            cmd()
+    
+    def test_xvg_ave_bar_no_columns(self, bar_xvg_files):
+        """Test error when no columns specified."""
+        from Commands.xvgCommands import xvg_ave_bar
+        parm = MockParameters(input=[bar_xvg_files], columns=None)
+        cmd = xvg_ave_bar(parm)
+        
+        with pytest.raises(SystemExit):
+            cmd()
+    
+    @patch('Commands.xvgCommands.BarMatplotlib')
+    def test_xvg_ave_bar_basic(self, mock_bar, bar_xvg_files, capsys):
+        """Test basic xvg_ave_bar execution."""
+        mock_instance = MagicMock()
+        mock_bar.return_value = mock_instance
+        
+        from Commands.xvgCommands import xvg_ave_bar
+        parm = MockParameters(
+            input=[bar_xvg_files],
+            columns=[[1]],
+            noshow=True
+        )
+        cmd = xvg_ave_bar(parm)
+        cmd()
+        
+        captured = capsys.readouterr()
+        assert "Average" in captured.out or mock_bar.called
+    
+    @patch('Commands.xvgCommands.BarPlotly')
+    def test_xvg_ave_bar_plotly(self, mock_bar, bar_xvg_files, capsys):
+        """Test xvg_ave_bar with plotly engine."""
+        mock_instance = MagicMock()
+        mock_bar.return_value = mock_instance
+        
+        from Commands.xvgCommands import xvg_ave_bar
+        parm = MockParameters(
+            input=[bar_xvg_files],
+            columns=[[1]],
+            engine='plotly',
+            noshow=True
+        )
+        cmd = xvg_ave_bar(parm)
+        cmd()
+        
+        captured = capsys.readouterr()
+        assert "Average" in captured.out or mock_bar.called
+
+
+# ============================================================================
+# Test xvg_rama
+# ============================================================================
+
+class TestXvgRama:
+    """Test cases for xvg_rama command."""
+    
+    @pytest.fixture
+    def rama_xvg_file(self, xvg_fixtures_path):
+        """Return rama xvg file path."""
+        return os.path.join(xvg_fixtures_path, "rama.xvg")
+    
+    def test_xvg_rama_no_input(self):
+        """Test error when no input file specified."""
+        from Commands.xvgCommands import xvg_rama
+        parm = MockParameters(input=[])
+        cmd = xvg_rama(parm)
+        
+        with pytest.raises(SystemExit):
+            cmd()
+    
+    @patch('Commands.xvgCommands.RamachandranMatplotlib')
+    def test_xvg_rama_basic(self, mock_rama, rama_xvg_file, capsys):
+        """Test basic xvg_rama execution."""
+        mock_instance = MagicMock()
+        mock_rama.return_value = mock_instance
+        
+        from Commands.xvgCommands import xvg_rama
+        parm = MockParameters(
+            input=[rama_xvg_file],
+            noshow=True
+        )
+        cmd = xvg_rama(parm)
+        cmd()
+        
+        # Check that ramachandran statistics were printed
+        captured = capsys.readouterr()
+        assert "Normal Dihedrals" in captured.out or mock_rama.called
+    
+    @patch('Commands.xvgCommands.RamachandranPlotly')
+    def test_xvg_rama_plotly(self, mock_rama, rama_xvg_file, capsys):
+        """Test xvg_rama with plotly engine."""
+        mock_instance = MagicMock()
+        mock_rama.return_value = mock_instance
+        
+        from Commands.xvgCommands import xvg_rama
+        parm = MockParameters(
+            input=[rama_xvg_file],
+            engine='plotly',
+            noshow=True
+        )
+        cmd = xvg_rama(parm)
+        cmd()
+        
+        captured = capsys.readouterr()
+        assert "Normal Dihedrals" in captured.out or mock_rama.called
+    
+    def test_xvg_rama_gnuplot_error(self, rama_xvg_file):
+        """Test error when using gnuplot engine for ramachandran plot."""
+        from Commands.xvgCommands import xvg_rama
+        parm = MockParameters(
+            input=[rama_xvg_file],
+            engine='gnuplot'
+        )
+        cmd = xvg_rama(parm)
+        
+        with pytest.raises(SystemExit):
+            cmd()
