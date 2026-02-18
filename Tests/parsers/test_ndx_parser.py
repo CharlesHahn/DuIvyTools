@@ -149,16 +149,37 @@ class TestNDXSetItem:
         assert ndx["NewGroup"][1] == [1, 2, 3, 4, 5]
 
     def test_ndx_setitem_by_name_existing(self):
-        """Test setting existing group by name."""
-        # NOTE: There's a bug in ndxParser.py line 96: get_id_by_name() missing argument
-        # This test documents the expected behavior but skips if bug exists
+        """Test setting existing group by name (updates indexs)."""
         ndx = NDX("output.ndx", new_file=True)
         
         ndx["TestGroup"] = [1, 2, 3]
+        ndx["TestGroup"] = [4, 5, 6, 7]  # Update existing group
         
-        # Due to source code bug, setting existing group will fail
-        # We test that the group was added correctly
-        assert len(ndx["TestGroup"][1]) == 3
+        # Should still have only 1 group
+        assert len(ndx) == 1
+        # Indexs should be updated
+        assert ndx["TestGroup"][1] == [4, 5, 6, 7]
+
+    def test_ndx_setitem_by_int(self):
+        """Test setting group by integer index."""
+        ndx = NDX("output.ndx", new_file=True)
+        ndx.add("Group1", [1, 2, 3])
+        ndx.add("Group2", [4, 5, 6])
+        
+        # Update first group by index
+        ndx[0] = [10, 20, 30]
+        
+        assert ndx[0][1] == [10, 20, 30]
+        # Name should not change
+        assert ndx[0][0] == "Group1"
+
+    def test_ndx_setitem_by_int_out_of_range(self):
+        """Test error when setting by invalid integer index."""
+        ndx = NDX("output.ndx", new_file=True)
+        ndx.add("Group1", [1, 2, 3])
+        
+        with pytest.raises(SystemExit):
+            ndx[10] = [1, 2, 3]
 
 
 class TestNDXDelItem:

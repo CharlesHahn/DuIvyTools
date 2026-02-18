@@ -262,12 +262,28 @@ class TestMDPEdgeCases:
         
         assert mdp["somekey"] == ""
 
-    def test_mdp_multiple_equals(self, tmp_path):
-        """Test error when line has multiple equals signs."""
-        # MDP parser has a bug when is_file=False, use actual file
+    def test_mdp_multiple_equals_from_file(self, tmp_path):
+        """Test error when line has multiple equals signs from file."""
         content = "key = value = extra\n"
         mdp_file = tmp_path / "test.mdp"
         mdp_file.write_text(content)
         
         with pytest.raises(SystemExit):
             MDP(str(mdp_file))
+
+    def test_mdp_multiple_equals_from_string(self):
+        """Test error when line has multiple equals signs from string (is_file=False)."""
+        # This test verifies the bug fix: self.mdpfile should be set even when is_file=False
+        content = "key = value = extra\n"
+        
+        with pytest.raises(SystemExit):
+            MDP(content, is_file=False)
+
+    def test_mdp_mdpfile_set_from_string(self):
+        """Test that mdpfile is set when is_file=False."""
+        content = "integrator = md\n"
+        mdp = MDP(content, is_file=False)
+        
+        # mdpfile should be set to the content string when is_file=False
+        assert hasattr(mdp, "mdpfile")
+        assert mdp.mdpfile == content

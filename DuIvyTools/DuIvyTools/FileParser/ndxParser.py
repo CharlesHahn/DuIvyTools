@@ -84,18 +84,16 @@ class NDX(log):
         if isinstance(key, int):
             if key >= len(self):
                 self.error("key over range for setting item of NDX")
-            self.names[id] = key
-            self.indexs[id] = indexs
-            self.column_nums[id] = 15
+            self.indexs[key] = indexs
+            self.column_nums[key] = 15
         elif isinstance(key, str):
             if key not in self.names:
                 self.indexs.append(indexs)
                 self.names.append(key)
                 self.column_nums.append(15)
             else:
-                ids = self.get_id_by_name()
+                ids = self.get_id_by_name(key)
                 for id in ids:
-                    self.names[id] = key
                     self.indexs[id] = indexs
                     self.column_nums[id] = 15
         else:

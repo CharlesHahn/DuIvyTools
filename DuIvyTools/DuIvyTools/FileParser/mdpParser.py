@@ -22,11 +22,11 @@ class MDP(log):
         self, mdpfile: str, is_file: bool = True, new_file: bool = False
     ) -> None:
         self.mdps: Dict[str, str] = {}
+        self.mdpfile = mdpfile  # always set mdpfile for error messages
         if new_file:
-            self.mdpfile = mdpfile
+            pass  # mdpfile already set above
         else:
             if is_file:
-                self.mdpfile = mdpfile
                 if not os.path.exists(mdpfile):
                     self.error(f"No {mdpfile} detected ! check it !")
                 if mdpfile[-4:] != ".mdp":
