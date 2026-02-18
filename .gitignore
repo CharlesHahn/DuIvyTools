@@ -2,6 +2,8 @@ test/*
 build/*
 dist/*
 *.egg-info
+.coverage
+htmlcov/*
 DuIvyTools/DuIvyTools/__pycache__/*
 DuIvyTools/DuIvyTools/*/__pycache__/*
 DuIvyTools/DuIvyTools_old/__pycache__/*
