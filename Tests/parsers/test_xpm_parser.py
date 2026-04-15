@@ -285,9 +285,44 @@ class TestXPMSubtraction:
         """Test that subtraction of Discrete XPM raises error."""
         xpm1 = XPM(sample_xpm_discrete)
         xpm2 = XPM(sample_xpm_discrete)
-        
+
         with pytest.raises(SystemExit):
             _ = xpm1 - xpm2
+
+    def test_xpm_subtraction_preserves_original(self, sample_xpm_continuous):
+        """BUG-01: __sub__ must NOT modify the original XPM's value_matrix."""
+        xpm1 = XPM(sample_xpm_continuous)
+        xpm2 = XPM(sample_xpm_continuous)
+
+        # snapshot original values
+        original_snapshot = [[v for v in row] for row in xpm1.value_matrix]
+
+        # modify xpm2 so diff is non-zero
+        for h in range(xpm2.height):
+            for w in range(xpm2.width):
+                xpm2.value_matrix[h][w] += 5.0
+
+        xpm_diff = xpm1 - xpm2
+
+        # verify original is unchanged
+        for h in range(xpm1.height):
+            for w in range(xpm1.width):
+                assert xpm1.value_matrix[h][w] == original_snapshot[h][w], (
+                    f"original value_matrix[{h}][{w}] was corrupted by __sub__"
+                )
+
+    def test_xpm_subtraction_preserves_xaxis_yaxis(self, sample_xpm_continuous):
+        """BUG-01: __sub__ must NOT share xaxis/yaxis references with result."""
+        xpm1 = XPM(sample_xpm_continuous)
+        xpm2 = XPM(sample_xpm_continuous)
+        original_xaxis = list(xpm1.xaxis)
+        original_yaxis = list(xpm1.yaxis)
+
+        xpm_diff = xpm1 - xpm2
+
+        # xpm_diff may modify its own xaxis/yaxis, but xpm1's must be intact
+        assert xpm1.xaxis == original_xaxis
+        assert xpm1.yaxis == original_yaxis
 
 
 class TestXPMRefreshByValueMatrix:

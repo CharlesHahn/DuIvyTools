@@ -112,7 +112,11 @@ class XVG(log):
         self.data_columns[0] = [float(c) for c in self.data_columns[0]]
         if len(self.legends) == 0 and len(self.data_columns) > 1:
             self.data_heads.append(self.ylabel)
-            self.data_columns[1] = [float(c) for c in self.data_columns[1]]
+            for ci in range(1, self.column_num):
+                try:
+                    self.data_columns[ci] = [float(c) for c in self.data_columns[ci]]
+                except ValueError:
+                    pass
 
         if len(self.legends) > 0 and self.column_num > len(self.legends):
             items = [item.strip() for item in self.ylabel.split(",")]

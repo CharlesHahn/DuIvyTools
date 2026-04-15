@@ -474,3 +474,24 @@ class TestXVGEdgeCases:
         xvg = XVG(lines, is_file=False)
         
         assert xvg.ylabel == "(nm), (nm), (nm)"
+
+    def test_xvg_no_legend_multi_column_all_float(self):
+        """BUG-09: Multi-column XVG with no legends must have all data columns as float, not string."""
+        lines = [
+            '@    title "No Legend Multi-Col"\n',
+            '@    xaxis label "X"\n',
+            '@    yaxis label "Y"\n',
+            '1.0 2.0 3.0 4.0\n',
+            '5.0 6.0 7.0 8.0\n',
+        ]
+        xvg = XVG(lines, is_file=False)
+
+        assert xvg.column_num == 4
+        # ALL data columns must be float
+        for c in range(xvg.column_num):
+            assert isinstance(xvg.data_columns[c][0], float), (
+                f"data_columns[{c}][0] is {type(xvg.data_columns[c][0]).__name__}, expected float"
+            )
+        # arithmetic must work without TypeError
+        result = xvg.data_columns[3][0] + xvg.data_columns[3][1]
+        assert result == 12.0

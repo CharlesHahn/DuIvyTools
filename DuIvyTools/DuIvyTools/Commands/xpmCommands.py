@@ -4,6 +4,7 @@ xpmCommander module is part of DuIvyTools providing xpm related commands.
 Written by DuIvy and provided to you by GPLv3 license.
 """
 
+import copy
 import os
 import sys
 from typing import List, Union
@@ -684,7 +685,10 @@ class xpm_merge(Command):
 
         out = XPM(self.parm.output, is_file=False, new_file=True)
         for key, value in xpm0.__dict__.items():
-            out.__dict__[key] = value
+            if key in ("value_matrix", "xaxis", "yaxis", "dot_matrix", "datalines"):
+                out.__dict__[key] = copy.deepcopy(value)
+            else:
+                out.__dict__[key] = value
         if out.type == "Continuous":
             for h in range(xpm0.height):
                 for w in range(xpm0.width):
