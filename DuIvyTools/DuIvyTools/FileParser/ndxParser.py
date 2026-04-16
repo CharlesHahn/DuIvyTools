@@ -45,7 +45,7 @@ class NDX(log):
                 else:
                     try:
                         line_list = [int(i) for i in line.split()]
-                        if len(self.indexs[-1]) == 0:
+                        if len(self.indexs) == 0 or len(self.indexs[-1]) == 0:
                             self.column_nums[-1] = len(line_list)
                         self.indexs[-1] += line_list
                     except:

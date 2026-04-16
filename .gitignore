@@ -13,3 +13,9 @@ Tests/*/__pycache__/*
 docs/_build/*
 IFLOW.md
 AGENTS.md
+CLAUDE.md
+.claude/
+.ai/
+DIT.*.gpstyle
+DIT.*.json
+DIT.*.mplstyle

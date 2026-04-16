@@ -61,7 +61,7 @@ class ParentPlotly(log):
             pass
         else:
             self.error(
-                "DIT plotly engine can only accept colors in hex or rgb form, like: '#F67088' or 'rgb(76, 114, 176)'. {res} is not supported."
+                f"DIT plotly engine can only accept colors in hex or rgb form, like: '#F67088' or 'rgb(76, 114, 176)'. {res} is not supported."
             )
         return res
 
@@ -445,7 +445,7 @@ class BarPlotly(ParentPlotly):
                 )
             )
         self.figure.update_xaxes(
-            tickvals=[i for i in range(len(kwargs["data_list"]))],
+            tickvals=[i for i in range(len(kwargs["data_list"][0]))],
             ticktext=kwargs["xtitles"],
         )
 

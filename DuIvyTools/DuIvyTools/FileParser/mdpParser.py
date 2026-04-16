@@ -45,7 +45,7 @@ class MDP(log):
     def parse_mdp(self, lines: List[str]) -> None:
         """parse mdp file into MDP"""
         for line in lines:
-            key_value = line.split(";")[0].strip().split("=")
+            key_value = line.split(";")[0].strip().split("=", 1)
             if len(key_value) == 1:
                 key = key_value[0].strip()
                 key = key.replace("_", "-")

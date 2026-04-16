@@ -46,7 +46,8 @@ class ParentPlotext(log):
     def final(self, outfig: str, noshow: bool) -> None:
         if outfig != None:
             self.info(f"unable to save figure with plotext engine\n")
-        plt.show()
+        if not noshow:
+            plt.show()
 
 
 class LinePlotext(ParentPlotext):
@@ -135,7 +136,7 @@ class ScatterPlotext(ParentPlotext):
                 kwargs["xdata_list"][i],
                 data,
                 label=kwargs["legends"][i],
-                color=kwargs["color_list"],
+                color=kwargs["color_list"][i] if kwargs["color_list"] else None,
             )
 
         if kwargs["xmin"] != None or kwargs["xmax"] != None:

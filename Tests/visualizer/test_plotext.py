@@ -72,11 +72,11 @@ class TestParentPlotext:
     @patch.object(plt, 'show')
     @patch.object(ParentPlotext, 'info')
     def test_final_with_outfig(self, mock_info, mock_show):
-        """Test final method with output file (should warn)."""
+        """Test final method with output file (should warn and not show when noshow=True)."""
         parent = ParentPlotext()
         parent.final(outfig="test.txt", noshow=True)
         mock_info.assert_called_once()
-        mock_show.assert_called_once()
+        mock_show.assert_not_called()
 
     @patch.object(plt, 'show')
     def test_final_without_outfig(self, mock_show):

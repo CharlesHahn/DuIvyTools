@@ -371,9 +371,9 @@ set colorbox vertical origin screen 0.9, 0.2 size screen 0.05, 0.6 front  noinve
         if (
             self.data
             and self.legends
-            and len(self.highs) == 0
-            and len(self.lows) == 0
-            and len(self.origins) == 0
+            and (self.highs is None or len(self.highs) == 0)
+            and (self.lows is None or len(self.lows) == 0)
+            and (self.origins is None or len(self.origins) == 0)
         ):
             for c in range(len(self.data)):
                 gpl += f"\n$data{c} << EOD\n"
@@ -389,9 +389,9 @@ set colorbox vertical origin screen 0.9, 0.2 size screen 0.05, 0.6 front  noinve
         if (
             self.data
             and self.legends
-            and len(self.highs) != 0
-            and len(self.lows) != 0
-            and len(self.origins) == 0
+            and (self.highs is not None and len(self.highs) != 0)
+            and (self.lows is not None and len(self.lows) != 0)
+            and (self.origins is None or len(self.origins) == 0)
         ):
             gpl += f"""set style fill transparent solid {self.alpha} noborder\n"""
             for c in range(len(self.data)):
@@ -408,9 +408,9 @@ set colorbox vertical origin screen 0.9, 0.2 size screen 0.05, 0.6 front  noinve
         if (
             self.data
             and self.legends
-            and len(self.highs) == 0
-            and len(self.lows) == 0
-            and len(self.origins) != 0
+            and (self.highs is None or len(self.highs) == 0)
+            and (self.lows is None or len(self.lows) == 0)
+            and (self.origins is not None and len(self.origins) != 0)
         ):
             for c in range(len(self.data)):
                 gpl += f"\n$data{c} << EOD\n"
@@ -873,7 +873,10 @@ class ImshowGnuplot(ParentGnuplot):
 
         if len(list(set(kwargs["xdata_list"]))) == len(kwargs["xdata_list"]):
             data = kwargs["xdata_list"]
-            dot_len_x = (np.max(data) - np.min(data)) / (len(data) - 1)
+            if len(data) > 1:
+                dot_len_x = (np.max(data) - np.min(data)) / (len(data) - 1)
+            else:
+                dot_len_x = 0
             if self.gnuplot.xmin == None:
                 self.gnuplot.xmin = np.min(kwargs["xdata_list"]) - 0.5 * dot_len_x
             if self.gnuplot.xmax == None:
@@ -883,7 +886,10 @@ class ImshowGnuplot(ParentGnuplot):
             self.gnuplot.xmax = len(kwargs["xdata_list"]) - 0.5
         if len(list(set(kwargs["ydata_list"]))) == len(kwargs["ydata_list"]):
             data = kwargs["ydata_list"]
-            dot_len_y = (np.max(data) - np.min(data)) / (len(data) - 1)
+            if len(data) > 1:
+                dot_len_y = (np.max(data) - np.min(data)) / (len(data) - 1)
+            else:
+                dot_len_y = 0
             if self.gnuplot.ymin == None:
                 self.gnuplot.ymin = np.min(kwargs["ydata_list"]) - 0.5 * dot_len_y
             if self.gnuplot.ymax == None:

@@ -263,21 +263,20 @@ class TestMDPEdgeCases:
         assert mdp["somekey"] == ""
 
     def test_mdp_multiple_equals_from_file(self, tmp_path):
-        """Test error when line has multiple equals signs from file."""
+        """Test that lines with multiple equals signs are parsed correctly (split on first '=' only)."""
         content = "key = value = extra\n"
         mdp_file = tmp_path / "test.mdp"
         mdp_file.write_text(content)
-        
-        with pytest.raises(SystemExit):
-            MDP(str(mdp_file))
+
+        mdp = MDP(str(mdp_file))
+        assert mdp["key"] == "value = extra"
 
     def test_mdp_multiple_equals_from_string(self):
-        """Test error when line has multiple equals signs from string (is_file=False)."""
-        # This test verifies the bug fix: self.mdpfile should be set even when is_file=False
+        """Test that lines with multiple equals signs are parsed correctly from string."""
         content = "key = value = extra\n"
-        
-        with pytest.raises(SystemExit):
-            MDP(content, is_file=False)
+
+        mdp = MDP(content, is_file=False)
+        assert mdp["key"] == "value = extra"
 
     def test_mdp_mdpfile_set_from_string(self):
         """Test that mdpfile is set when is_file=False."""
