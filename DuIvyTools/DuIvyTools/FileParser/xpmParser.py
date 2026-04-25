@@ -179,17 +179,19 @@ class XPM(log):
 
         self.yaxis.reverse()  # IMPORTANT! from high to low now
 
+        char_to_index = {char: idx for idx, char in enumerate(self.chars)}
+
         for dataline in self.datalines:
             dot_list: List[str] = []
             value_list: List[float] = []
             for i in range(0, self.width * self.char_per_pixel, self.char_per_pixel):
                 dot = dataline[i : i + self.char_per_pixel]
                 dot_list.append(dot)
+                idx = char_to_index[dot]
                 if self.type == "Continuous":
-                    value = self.notes[self.chars.index(dot)]
+                    value = self.notes[idx]
                 else:
-                    # for Discrete, value store the index of chars|notes|colors
-                    value = self.chars.index(dot)
+                    value = idx
                 value_list.append(value)
             self.dot_matrix.append(dot_list)
             self.value_matrix.append(value_list)
