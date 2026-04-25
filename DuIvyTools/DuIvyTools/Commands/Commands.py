@@ -31,7 +31,7 @@ class Command(log):
         if len(args) < 1:
             self.critical("wrong length of parameters selcetion")
         for item in args:
-            if item != None:
+            if item is not None:
                 return item
         else:
             return args[0]
@@ -46,10 +46,10 @@ class Command(log):
             Any: value of class properties
         """
         value = self.parm.__dict__.get(key, None)
-        if value != None:
+        if value is not None:
             return value
         value = self.file.__dict__.get(key, None)
-        if value != None:
+        if value is not None:
             return value
         return None
 

@@ -322,14 +322,14 @@ class Parameters(log):
     def __check_convert(self) -> None:
         """check part of parameters and deal with parameter format"""
         ## deal parameters
-        if self.input != None and "," in "".join(self.input):
+        if self.input is not None and "," in "".join(self.input):
             self.input = [fs.strip(",").split(",") for fs in self.input]
         column_select = []
-        if self.columns != None:
+        if self.columns is not None:
             for columns in self.columns:
                 column_select.append(self.__parse_column(columns))
         self.columns = column_select
-        if self.legends != None and "," in "".join(self.legends):
+        if self.legends is not None and "," in "".join(self.legends):
             self.legends = [ls.strip(",").split(",") for ls in self.legends]
         ## check parameters
         if self.begin and self.begin < 0:

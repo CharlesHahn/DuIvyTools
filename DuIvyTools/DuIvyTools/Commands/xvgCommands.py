@@ -269,7 +269,7 @@ class xvg_compare(Command):
                 self.error("files should be seperated by space not ,")
         if len(self.parm.input) != len(self.parm.columns):
             self.error(f"columns must contain {len(self.parm.input)} list")
-        if self.parm.legends != None and len(self.parm.legends) != sum(
+        if self.parm.legends is not None and len(self.parm.legends) != sum(
             [len(c) for c in self.parm.columns]
         ):
             self.error("number of legends you input can not pair to columns you select")
@@ -279,7 +279,7 @@ class xvg_compare(Command):
         # print(self.parm.__dict__)
 
         self.check_parm()
-        if self.parm.title == None:
+        if self.parm.title is None:
             self.parm.title = "XVG Comparison"
 
         ## draw data relative to its original xdata
@@ -743,7 +743,7 @@ class xvg_combine(Command):
         if len(self.parm.input) != len(self.parm.columns):
             self.error(f"columns must contain {len(self.parm.input)} list")
         if (
-            self.parm.legends != None
+            self.parm.legends is not None
             and len(self.parm.legends) != sum([len(c) for c in self.parm.columns]) - 1
         ):
             self.error("number of legends you input can not pair to columns you select")
@@ -856,7 +856,7 @@ class xvg_show_distribution(xvg_compare):
 
         self.check_parm()
         bin = 100
-        if self.parm.additional_list != None:
+        if self.parm.additional_list is not None:
             if self.parm.additional_list[0].isnumeric():
                 bin = int(self.parm.additional_list[0])
                 self.info(f"set bin of distribution to {bin}")
@@ -1114,7 +1114,7 @@ class xvg_show_scatter(Command):
                 )
         if len(self.parm.input) != len(self.parm.columns):
             self.error(f"columns must contain {len(self.parm.input)} list")
-        if self.parm.legends != None and len(self.parm.legends) != len(self.parm.input):
+        if self.parm.legends is not None and len(self.parm.legends) != len(self.parm.input):
             self.error(
                 "for scatter plot, the number of legends must pair to the number of files"
             )
@@ -1288,7 +1288,7 @@ class xvg_show_stack(Command):
                 self.error("files should be seperated by space not ,")
         if len(self.parm.input) != len(self.parm.columns):
             self.error(f"columns must contain {len(self.parm.input)} list")
-        if self.parm.legends != None:
+        if self.parm.legends is not None:
             for id, column_indexs in enumerate(self.parm.columns):
                 if len(self.parm.legends) != len(column_indexs):
                     self.error(
@@ -1618,11 +1618,11 @@ class xvg_ave_bar(Command):
         if len(self.parm.columns) > 1:
             self.warn(f"only the first column list ({self.parm.columns[0]}) were used")
         self.parm.columns = self.parm.columns[0]
-        if self.parm.legends != None and len(self.parm.legends) != len(self.parm.input):
+        if self.parm.legends is not None and len(self.parm.legends) != len(self.parm.input):
             self.error(
                 f"number of legends ({len(self.parm.legends)}) you input can not pair to the number of file groups ({len(self.parm.input)})"
             )
-        if self.parm.additional_list != None and len(self.parm.additional_list) != len(
+        if self.parm.additional_list is not None and len(self.parm.additional_list) != len(
             self.parm.columns
         ):
             self.error(

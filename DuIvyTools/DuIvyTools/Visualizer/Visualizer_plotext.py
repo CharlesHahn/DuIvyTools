@@ -44,7 +44,7 @@ class ParentPlotext(log):
         return tuple(rgb)
 
     def final(self, outfig: str, noshow: bool) -> None:
-        if outfig != None:
+        if outfig is not None:
             self.info(f"unable to save figure with plotext engine\n")
         if not noshow:
             plt.show()
@@ -85,18 +85,18 @@ class LinePlotext(ParentPlotext):
             # plt.plot(kwargs["xdata"], data, label=kwargs["legends"][i], color=self.hex2rgb(self.style["color_cycle"][i]))
             plt.plot(kwargs["xdata_list"][i], data, label=kwargs["legends"][i])
 
-        if kwargs["xmin"] != None or kwargs["xmax"] != None:
+        if kwargs["xmin"] is not None or kwargs["xmax"] is not None:
             plt.xlim(kwargs["xmin"], kwargs["xmax"])
-        if kwargs["ymin"] != None or kwargs["ymax"] != None:
+        if kwargs["ymin"] is not None or kwargs["ymax"] is not None:
             plt.ylim(kwargs["ymin"], kwargs["ymax"])
 
         plt.xlabel(kwargs["xlabel"])
         plt.ylabel(kwargs["ylabel"])
         plt.title(kwargs["title"])
 
-        if kwargs["x_precision"] != None:
+        if kwargs["x_precision"] is not None:
             self.warn("unable to apply x_precision to plotext engine")
-        if kwargs["y_precision"] != None:
+        if kwargs["y_precision"] is not None:
             self.warn("unable to apply y_precision to plotext engine")
 
 
@@ -139,18 +139,18 @@ class ScatterPlotext(ParentPlotext):
                 color=kwargs["color_list"][i] if kwargs["color_list"] else None,
             )
 
-        if kwargs["xmin"] != None or kwargs["xmax"] != None:
+        if kwargs["xmin"] is not None or kwargs["xmax"] is not None:
             plt.xlim(kwargs["xmin"], kwargs["xmax"])
-        if kwargs["ymin"] != None or kwargs["ymax"] != None:
+        if kwargs["ymin"] is not None or kwargs["ymax"] is not None:
             plt.ylim(kwargs["ymin"], kwargs["ymax"])
 
         plt.xlabel(kwargs["xlabel"])
         plt.ylabel(kwargs["ylabel"])
         plt.title(kwargs["title"])
 
-        if kwargs["x_precision"] != None:
+        if kwargs["x_precision"] is not None:
             self.warn("unable to apply x_precision to plotext engine")
-        if kwargs["y_precision"] != None:
+        if kwargs["y_precision"] is not None:
             self.warn("unable to apply y_precision to plotext engine")
 
         for key in ["cmap", "colorbar_location", "z_precision", "zlabel", "color_list"]:

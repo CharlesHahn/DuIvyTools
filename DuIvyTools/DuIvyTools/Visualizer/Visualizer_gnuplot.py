@@ -80,7 +80,7 @@ class Gnuplot(log):
             self.info(
                 "repeated values detected in xaxis, use index and set ticks by DIT"
             )
-            if self.x_precision == None:
+            if self.x_precision is None:
                 self.x_precision = 0
             x_step = len(self.xdata) // self.xntics
             x_step = [x_step, 1][x_step == 0]
@@ -95,7 +95,7 @@ class Gnuplot(log):
             self.info(
                 "repeated values detected in yaxis, use index and set ticks by DIT"
             )
-            if self.y_precision == None:
+            if self.y_precision is None:
                 self.y_precision = 0
             y_step = len(self.ydata) // self.yntics
             y_step = [y_step, 1][y_step == 0]
@@ -117,35 +117,35 @@ class Gnuplot(log):
         """
         gpl: str = ""
         gpl += self.style + "\n"
-        if self.outfig != None:
+        if self.outfig is not None:
             gpl += f"""set output "{self.outfig}"\n"""
-        if self.title != None:
+        if self.title is not None:
             gpl += f"""set title "{self.title}"\n"""
-        if self.xlabel != None:
+        if self.xlabel is not None:
             gpl += f"""set xlabel "{self.xlabel}"\n"""
-        if self.ylabel != None:
+        if self.ylabel is not None:
             gpl += f"""set ylabel "{self.ylabel}"\n"""
-        if self.zlabel != None:
+        if self.zlabel is not None:
             gpl += f"""set zlabel "{self.zlabel}"\n"""
         if self.legend_location == "inside":
             gpl += f"""set key inside\n"""
         elif self.legend_location == "outside":
             gpl += f"""set key outside reverse Left\n"""
 
-        if self.xmin == None:
+        if self.xmin is None:
             self.xmin = ""
-        if self.xmax == None:
+        if self.xmax is None:
             self.xmax = ""
-        if self.ymin == None:
+        if self.ymin is None:
             self.ymin = ""
-        if self.ymax == None:
+        if self.ymax is None:
             self.ymax = ""
 
-        if self.x_precision != None:
+        if self.x_precision is not None:
             gpl += f"""set xtics format "%.{self.x_precision}f" \n"""
-        if self.y_precision != None:
+        if self.y_precision is not None:
             gpl += f"""set ytics format "%.{self.y_precision}f" \n"""
-        if self.z_precision != None:
+        if self.z_precision is not None:
             gpl += f"""set ztics format "%.{self.z_precision}f" \n"""
 
         if self.plot_type == "line":
@@ -169,9 +169,9 @@ class Gnuplot(log):
 
     def threeDimension(self, gpl: str) -> str:
         """dump data of 3d plot to string"""
-        if self.zlabel != None:
+        if self.zlabel is not None:
             gpl += f"""set cblabel "{self.zlabel}"\n"""
-        if self.z_precision != None:
+        if self.z_precision is not None:
             gpl += f"""set cbtics format "%.{self.z_precision}f"\n"""
         gpl += "set pm3d implicit at s\n"
         gpl += "set colorbox user\n"
@@ -197,9 +197,9 @@ class Gnuplot(log):
 
     def contour(self, gpl: str) -> str:
         """dump data of contour plot to string"""
-        if self.zlabel != None:
+        if self.zlabel is not None:
             gpl += f"""set cblabel "{self.zlabel}"\n"""
-        if self.z_precision != None:
+        if self.z_precision is not None:
             gpl += f"""set cbtics format "%.{self.z_precision}f"\n"""
         gpl += "set pm3d implicit at s\n"
         gpl += "set colorbox user\n"
@@ -248,9 +248,9 @@ class Gnuplot(log):
             gpl = gpl.strip("\n").strip("\\").strip().strip(",")
 
         else:
-            if self.zlabel != None:
+            if self.zlabel is not None:
                 gpl += f"""set cblabel "{self.zlabel}"\n"""
-            if self.z_precision != None:
+            if self.z_precision is not None:
                 gpl += f"""set cbtics format "%.{self.z_precision}f"\n"""
 
             gpl = self.set_xy_repeat_tick_precision(gpl)
@@ -314,9 +314,9 @@ set colorbox vertical origin screen 0.9, 0.2 size screen 0.05, 0.6 front  noinve
             loc = 1.0
             if self.mode != "withoutScatter":
                 loc = 0.75
-                if self.zlabel != None:
+                if self.zlabel is not None:
                     gpl += f"""set cblabel "{self.zlabel}"\n"""
-                if self.z_precision != None:
+                if self.z_precision is not None:
                     gpl += f"""set cbtics format "%.{self.z_precision}f"\n"""
                 gpl += f"plot [{self.xmin}:{self.xmax}][{self.ymin}:{self.ymax}] "
                 for c in range(len(self.data)):
@@ -335,17 +335,17 @@ set colorbox vertical origin screen 0.9, 0.2 size screen 0.05, 0.6 front  noinve
     def scatter_plot(self, gpl: str) -> str:
         """dump data of scatter plot to string"""
         # TODO colorbar_location
-        if self.zlabel != None:
+        if self.zlabel is not None:
             gpl += f"""set cblabel "{self.zlabel}"\n"""
-        if self.z_precision != None:
+        if self.z_precision is not None:
             gpl += f"""set cbtics format "%.{self.z_precision}f"\n"""
-        if self.alpha == None:
+        if self.alpha is None:
             self.alpha = 1.0
         gpl += f"set style fill transparent solid {self.alpha} noborder\n"
         if self.data and self.legends:
             for c in range(len(self.data)):
                 colors = self.color_list[c]
-                if colors != None:
+                if colors is not None:
                     gpl += f"\n$data{c} << EOD\n"
                     for r in range(len(self.xdata[c])):
                         gpl += f"""{self.xdata[c][r]} {self.data[c][r]} {colors[r]}\n"""
@@ -358,7 +358,7 @@ set colorbox vertical origin screen 0.9, 0.2 size screen 0.05, 0.6 front  noinve
             gpl += f"plot [{self.xmin}:{self.xmax}][{self.ymin}:{self.ymax}] "
             for c in range(len(self.data)):
                 colors = self.color_list[c]
-                if colors != None:
+                if colors is not None:
                     gpl += f"""$data{c} u 1:2:3 title "{self.legends[c]}" with points palette, \\\n"""
                 else:
                     gpl += f"""$data{c} u 1:2 title "{self.legends[c]}" with points, \\\n"""
@@ -531,7 +531,7 @@ class ParentGnuplot(log):
             outfig (str): the user specified output figure name
             noshow (bool): True for not delete the gnuplot scripts file
         """
-        if outfig != None:
+        if outfig is not None:
             if os.path.exists(outfig):
                 time_info = time.strftime("%Y%m%d%H%M%S", time.localtime())
                 new_outfig = f'{".".join(outfig.split(".")[:-1])}_{time_info}.{outfig.split(".")[-1]}'
@@ -583,15 +583,15 @@ class LineGnuplot(ParentGnuplot):
         self.gnuplot.xlabel = kwargs["xlabel"]
         self.gnuplot.ylabel = kwargs["ylabel"]
 
-        if kwargs["xmin"] != None or kwargs["xmax"] != None:
+        if kwargs["xmin"] is not None or kwargs["xmax"] is not None:
             self.gnuplot.xmin = kwargs["xmin"]
             self.gnuplot.xmax = kwargs["xmax"]
-        if kwargs["ymin"] != None or kwargs["ymax"] != None:
+        if kwargs["ymin"] is not None or kwargs["ymax"] is not None:
             self.gnuplot.ymin = kwargs["ymin"]
             self.gnuplot.ymax = kwargs["ymax"]
-        if kwargs["x_precision"] != None:
+        if kwargs["x_precision"] is not None:
             self.gnuplot.x_precision = kwargs["x_precision"]
-        if kwargs["y_precision"] != None:
+        if kwargs["y_precision"] is not None:
             self.gnuplot.y_precision = kwargs["y_precision"]
 
         if len(kwargs["legends"]) != len(kwargs["data_list"]):
@@ -678,10 +678,10 @@ class ScatterGnuplot(ParentGnuplot):
         self.gnuplot.xlabel = kwargs["xlabel"]
         self.gnuplot.ylabel = kwargs["ylabel"]
 
-        if kwargs["xmin"] != None or kwargs["xmax"] != None:
+        if kwargs["xmin"] is not None or kwargs["xmax"] is not None:
             self.gnuplot.xmin = kwargs["xmin"]
             self.gnuplot.xmax = kwargs["xmax"]
-        if kwargs["ymin"] != None or kwargs["ymax"] != None:
+        if kwargs["ymin"] is not None or kwargs["ymax"] is not None:
             self.gnuplot.ymin = kwargs["ymin"]
             self.gnuplot.ymax = kwargs["ymax"]
         self.gnuplot.x_precision = kwargs["x_precision"]
@@ -740,15 +740,15 @@ class BarGnuplot(ParentGnuplot):
         self.gnuplot.xlabel = kwargs["xlabel"]
         self.gnuplot.ylabel = kwargs["ylabel"]
 
-        if kwargs["xmin"] != None or kwargs["xmax"] != None:
+        if kwargs["xmin"] is not None or kwargs["xmax"] is not None:
             self.gnuplot.xmin = kwargs["xmin"]
             self.gnuplot.xmax = kwargs["xmax"]
-        if kwargs["ymin"] != None or kwargs["ymax"] != None:
+        if kwargs["ymin"] is not None or kwargs["ymax"] is not None:
             self.gnuplot.ymin = kwargs["ymin"]
             self.gnuplot.ymax = kwargs["ymax"]
-        if kwargs["x_precision"] != None:
+        if kwargs["x_precision"] is not None:
             self.gnuplot.x_precision = kwargs["x_precision"]
-        if kwargs["y_precision"] != None:
+        if kwargs["y_precision"] is not None:
             self.gnuplot.y_precision = kwargs["y_precision"]
 
         if len(kwargs["legends"]) != len(kwargs["data_list"]):
@@ -797,10 +797,10 @@ class BoxGnuplot(ParentGnuplot):
         self.gnuplot.xlabel = kwargs["xlabel"]
         self.gnuplot.ylabel = kwargs["ylabel"]
 
-        if kwargs["xmin"] != None or kwargs["xmax"] != None:
+        if kwargs["xmin"] is not None or kwargs["xmax"] is not None:
             self.gnuplot.xmin = kwargs["xmin"]
             self.gnuplot.xmax = kwargs["xmax"]
-        if kwargs["ymin"] != None or kwargs["ymax"] != None:
+        if kwargs["ymin"] is not None or kwargs["ymax"] is not None:
             self.gnuplot.ymin = kwargs["ymin"]
             self.gnuplot.ymax = kwargs["ymax"]
         self.gnuplot.x_precision = kwargs["x_precision"]
@@ -877,9 +877,9 @@ class ImshowGnuplot(ParentGnuplot):
                 dot_len_x = (np.max(data) - np.min(data)) / (len(data) - 1)
             else:
                 dot_len_x = 0
-            if self.gnuplot.xmin == None:
+            if self.gnuplot.xmin is None:
                 self.gnuplot.xmin = np.min(kwargs["xdata_list"]) - 0.5 * dot_len_x
-            if self.gnuplot.xmax == None:
+            if self.gnuplot.xmax is None:
                 self.gnuplot.xmax = np.max(kwargs["xdata_list"]) + 0.5 * dot_len_x
         else:
             self.gnuplot.xmin = -0.5
@@ -890,9 +890,9 @@ class ImshowGnuplot(ParentGnuplot):
                 dot_len_y = (np.max(data) - np.min(data)) / (len(data) - 1)
             else:
                 dot_len_y = 0
-            if self.gnuplot.ymin == None:
+            if self.gnuplot.ymin is None:
                 self.gnuplot.ymin = np.min(kwargs["ydata_list"]) - 0.5 * dot_len_y
-            if self.gnuplot.ymax == None:
+            if self.gnuplot.ymax is None:
                 self.gnuplot.ymax = np.max(kwargs["ydata_list"]) + 0.5 * dot_len_y
         else:
             self.gnuplot.ymin = -0.5
@@ -919,7 +919,7 @@ class ImshowGnuplot(ParentGnuplot):
         if kwargs["colorbar_location"]:
             self.warn("DIT is unable to set colorbar location for gnuplot now.")
 
-        if kwargs["x_numticks"] != None:
+        if kwargs["x_numticks"] is not None:
             self.gnuplot.xntics = kwargs["x_numticks"]
-        if kwargs["y_numticks"] != None:
+        if kwargs["y_numticks"] is not None:
             self.gnuplot.yntics = kwargs["y_numticks"]

@@ -38,7 +38,7 @@ class ParentPlotly(log):
     def get_color(self, id: int) -> str:
         """colorcycle is by colorway in templates"""
         colors = pio.templates[self.templates_name].layout.colorway
-        if colors == None:
+        if colors is None:
             colors = [
                 "#38A7D0",
                 "#F67088",
@@ -131,7 +131,7 @@ class ParentPlotly(log):
             outfig (str): the user specified output figure name
             noshow (bool): True for no display the figure
         """
-        if outfig != None:
+        if outfig is not None:
             self.warn("unable to save figure by DIT, please save figure by yourself")
         if noshow == False:
             self.figure.show()
@@ -143,22 +143,22 @@ class ParentPlotly(log):
             xaxis_title=kwargs["xlabel"],
             yaxis_title=kwargs["ylabel"],
         )
-        if kwargs["x_precision"] != None:
+        if kwargs["x_precision"] is not None:
             self.figure.update_layout(xaxis_tickformat=f".{kwargs['x_precision']}f")
-        if kwargs["y_precision"] != None:
+        if kwargs["y_precision"] is not None:
             self.figure.update_layout(yaxis_tickformat=f".{kwargs['y_precision']}f")
-        if kwargs["x_numticks"] != None or kwargs["y_numticks"] != None:
+        if kwargs["x_numticks"] is not None or kwargs["y_numticks"] is not None:
             self.warn(
                 "unable to set x_numticks and y_numticks on plotly, set it by plotly json template: tickvals and ticktext"
             )
 
     def set_xytick_precision_xyt_label(self, **kwargs) -> None:
         """set Y tick, precision, Y tick, precision, xlabel, ylabel, title"""
-        x_nticks = (self.nticks, kwargs["x_numticks"])[kwargs["x_numticks"] != None]
-        y_nticks = (self.nticks, kwargs["y_numticks"])[kwargs["y_numticks"] != None]
-        if kwargs["x_precision"] == None:
+        x_nticks = (self.nticks, kwargs["x_numticks"])[kwargs["x_numticks"] is not None]
+        y_nticks = (self.nticks, kwargs["y_numticks"])[kwargs["y_numticks"] is not None]
+        if kwargs["x_precision"] is None:
             kwargs["x_precision"] = 0
-        if kwargs["y_precision"] == None:
+        if kwargs["y_precision"] is None:
             kwargs["y_precision"] = 0
         step = len(kwargs["xdata_list"]) // x_nticks
         step = [step, 1][step == 0]
@@ -188,9 +188,9 @@ class ParentPlotly(log):
 
     def set_xy_min_max(self, **kwargs) -> None:
         """set xmin, xmax, ymin, ymax"""
-        if kwargs["xmin"] != None or kwargs["xmax"] != None:
+        if kwargs["xmin"] is not None or kwargs["xmax"] is not None:
             self.figure.update_layout(xaxis_range=[kwargs["xmin"], kwargs["xmax"]])
-        if kwargs["ymin"] != None or kwargs["ymax"] != None:
+        if kwargs["ymin"] is not None or kwargs["ymax"] is not None:
             self.figure.update_layout(yaxis_range=[kwargs["ymin"], kwargs["ymax"]])
 
     def check_repeat_values(self, values) -> bool:
@@ -367,7 +367,7 @@ class ScatterPlotly(ParentPlotly):
 
         for i, data in enumerate(kwargs["data_list"]):
             colors = kwargs["color_list"][i]
-            if colors != None:
+            if colors is not None:
                 self.figure.add_trace(
                     go.Scatter(
                         x=kwargs["xdata_list"][i],
@@ -596,7 +596,7 @@ class RamachandranPlotly(ParentPlotly):
                     ),
                 )
             )
-            if kwargs["title"] == None:
+            if kwargs["title"] is None:
                 title = key
             else:
                 title = kwargs["title"]
@@ -609,12 +609,12 @@ class RamachandranPlotly(ParentPlotly):
                 xaxis_title=kwargs["xlabel"],
                 yaxis_title=kwargs["ylabel"],
             )
-            if kwargs["x_precision"] != None:
+            if kwargs["x_precision"] is not None:
                 self.figure.update_layout(xaxis_tickformat=f".{kwargs['x_precision']}f")
-            if kwargs["y_precision"] != None:
+            if kwargs["y_precision"] is not None:
                 self.figure.update_layout(yaxis_tickformat=f".{kwargs['y_precision']}f")
 
-            if outfig != None:
+            if outfig is not None:
                 self.warn(
                     "unable to save figure by DIT, please save figure by yourself"
                 )
@@ -774,11 +774,11 @@ class ThreeDimensionPlotly(ParentPlotly):
             self.figure.update_traces(
                 contours_z=dict(show=True, usecolormap=True, project_z=True)
             )
-            if kwargs["x_precision"] != None:
+            if kwargs["x_precision"] is not None:
                 self.figure.update_scenes(xaxis_tickformat=f".{kwargs['x_precision']}f")
-            if kwargs["y_precision"] != None:
+            if kwargs["y_precision"] is not None:
                 self.figure.update_scenes(yaxis_tickformat=f".{kwargs['y_precision']}f")
-            if kwargs["z_precision"] != None:
+            if kwargs["z_precision"] is not None:
                 self.figure.update_scenes(zaxis_tickformat=f".{kwargs['z_precision']}f")
         else:
             self.figure.add_trace(
@@ -808,12 +808,12 @@ class ThreeDimensionPlotly(ParentPlotly):
             self.figure.update_traces(
                 contours_z=dict(show=True, usecolormap=True, project_z=True)
             )
-            if kwargs["x_precision"] == None:
+            if kwargs["x_precision"] is None:
                 kwargs["x_precision"] = 0
-            if kwargs["y_precision"] == None:
+            if kwargs["y_precision"] is None:
                 kwargs["y_precision"] = 0
-            x_nticks = (self.nticks, kwargs["x_numticks"])[kwargs["x_numticks"] != None]
-            y_nticks = (self.nticks, kwargs["y_numticks"])[kwargs["y_numticks"] != None]
+            x_nticks = (self.nticks, kwargs["x_numticks"])[kwargs["x_numticks"] is not None]
+            y_nticks = (self.nticks, kwargs["y_numticks"])[kwargs["y_numticks"] is not None]
             step = len(kwargs["xdata_list"]) // x_nticks
             step = [step, 1][step == 0]
             xdata_index = [i for i in range(0, len(kwargs["xdata_list"]), step)]
@@ -834,7 +834,7 @@ class ThreeDimensionPlotly(ParentPlotly):
                     for y in ydata_index
                 ],
             )
-            if kwargs["z_precision"] != None:
+            if kwargs["z_precision"] is not None:
                 self.figure.update_scenes(zaxis_tickformat=f".{kwargs['z_precision']}f")
 
 

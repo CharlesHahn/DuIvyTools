@@ -53,12 +53,12 @@ class mdp_gen(Command):
             )
         )
         mdp_files = [f for f in os.listdir(mdp_path) if f.endswith(".mdp")]
-        if self.parm.output != None and self.parm.output not in mdp_files:
+        if self.parm.output is not None and self.parm.output not in mdp_files:
             self.warn(
                 f'the specified output file "{self.parm.output}" were unable to provide'
             )
             self.parm.output = None
-        if self.parm.output == None:
+        if self.parm.output is None:
             print("-" * 70)
             print(
                 "You can get one of the following mdp file by specifying the output parameter: \n"
@@ -158,13 +158,13 @@ class show_style(Command):
         print(f">> The default style file for {self.parm.engine} is {default_output}")
         print("-" * 80)
 
-        if self.parm.output != None and self.parm.output not in files:
+        if self.parm.output is not None and self.parm.output not in files:
             self.error(
                 f'the specified output file "{self.parm.output}" were unable to provide'
             )
-        elif self.parm.output == None:
+        elif self.parm.output is None:
             self.parm.output = default_output
-        if self.parm.output != None and self.parm.output in files:
+        if self.parm.output is not None and self.parm.output in files:
             with open(os.path.join(path, self.parm.output), "r") as fo:
                 content = fo.read()
             self.parm.output = self.check_output_exist(self.parm.output)
@@ -200,7 +200,7 @@ class find_center(Command):
         # print(self.parm.__dict__)
 
         ## read user input
-        if self.parm.input == None:
+        if self.parm.input is None:
             self.error(
                 "you must specify a gro file (or with an index file) for finding atom group center"
             )
@@ -229,12 +229,12 @@ class find_center(Command):
             ndx = NDX(indexfile)
             print(ndx.show_names)
             indexs: Union[List[int], None] = None
-            while indexs == None:
+            while indexs is None:
                 key = input("==> select a group to calculate center: ")
                 if key.isnumeric():  # if key could be int, treat as group id
                     key = int(key)
                 name, indexs = ndx[key]
-                if indexs == None:
+                if indexs is None:
                     print(">>> wrong selection, no atom indexs fetched <<<")
                 else:
                     print(f">>> selected group {name}")
@@ -335,7 +335,7 @@ class dccm_ascii(Command):
         covar = results["sum"].to_numpy()
         covar = covar.reshape(resnum, resnum)
         ## convert covar to corr
-        if self.parm.z_precision == None:
+        if self.parm.z_precision is None:
             self.parm.z_precision = 3
         corr = np.zeros((resnum, resnum))
         for i in range(resnum):
@@ -617,7 +617,7 @@ class ndx_add(Command):
         # self.info("in ndx_add")
         # print(self.parm.__dict__)
 
-        if self.parm.additional_list != None:
+        if self.parm.additional_list is not None:
             groupnames = [l for l in self.parm.additional_list]
         else:
             self.error("you must specify additional_list to provide groupnames")
@@ -634,7 +634,7 @@ class ndx_add(Command):
         else:
             outname = "dit_index.ndx"
         outname = self.check_output_exist(outname)
-        if self.parm.input == None:
+        if self.parm.input is None:
             ndx = NDX(outname, new_file=True)
         else:
             ndx = NDX(self.parm.input[0])
@@ -675,7 +675,7 @@ class ndx_split(Command):
         # self.info("in ndx_split")
         # print(self.parm.__dict__)
 
-        if self.parm.additional_list == None:
+        if self.parm.additional_list is None:
             self.error(
                 "you must specify additional_list to provide groupname and split_fold, like: Protein 2"
             )
@@ -694,7 +694,7 @@ class ndx_split(Command):
         else:
             outname = "dit_index.ndx"
         outname = self.check_output_exist(outname)
-        if self.parm.input == None:
+        if self.parm.input is None:
             ndx = NDX(outname, new_file=True)
         else:
             ndx = NDX(self.parm.input[0])
@@ -736,7 +736,7 @@ class ndx_show(Command):
         # self.info("in ndx_show")
         # print(self.parm.__dict__)
 
-        if self.parm.input == None:
+        if self.parm.input is None:
             self.error("you have to specify a index file to show grounames")
         else:
             for ndxfile in self.parm.input:

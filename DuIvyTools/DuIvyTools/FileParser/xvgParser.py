@@ -41,7 +41,7 @@ class XVG(log):
         self.column_num: int = 0
         self.row_num: int = 0
         self.data_heads: List[str] = []
-        self.data_columns: List[float, str] = []
+        self.data_columns: List[Union[float, str]] = []
         self.data_noheads: List[str] = []
 
         if new_file:
@@ -265,10 +265,10 @@ class XVG(log):
         Returns:
             Tuple[float]: legend, average, std, ste
         """
-        if (begin != None and end != None) and (begin >= end):
+        if (begin is not None and end is not None) and (begin >= end):
             self.error("start index should be less than end index")
-        if (begin != None and begin >= self.row_num) or (
-            end != None and end >= self.row_num
+        if (begin is not None and begin >= self.row_num) or (
+            end is not None and end >= self.row_num
         ):
             self.error(
                 f"start or end index should be less than the number of rows {self.row_num} in xvg file"

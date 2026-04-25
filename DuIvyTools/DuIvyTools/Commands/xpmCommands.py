@@ -9,7 +9,7 @@ import os
 import sys
 from typing import List, Union
 
-from scipy.interpolate import RectBivariateSpline, interp2d
+from scipy.interpolate import RectBivariateSpline
 
 base = os.path.dirname(os.path.realpath(os.path.join(__file__, "..")))
 if base not in sys.path:
@@ -32,7 +32,7 @@ class xpm_show(Command):
     Mode 3d mainly plot a 3d figure for `Continuous` xpm. Mode contour plot a contour figure for `Continuous` xpm. Also, you can set colormaps by `-cmap`.
     You can perform INTERPOLATION to data by specifing `-ip`.
     For imshow of matplotlib, the interpolation method was using the interpolation method of imshow function of matplobli, and there are lots of interpolation methods could be selected. If you do not know the names of interpolation methods, simply specify `-ip hhh`, then the error message will show you all names of interpolation methods for you to choose.
-    For any other engines or modes, DIT use `scipy.interpolate.interp2d` to do the interpolation, so the methods for you to choose is `linear`, `cubic`, and `quintic`. Also, `-ip hhh` trick works. For this interpolation methods, you need to define a `--interpolation_fold` (default to 10).
+    For any other engines or modes, DIT use `scipy.interpolate.RectBivariateSpline` to do the interpolation, so the methods for you to choose is `linear`, `cubic`, and `quintic`. Also, `-ip hhh` trick works. For this interpolation methods, you need to define a `--interpolation_fold` (default to 10).
     DIT support performing xpm cutting by `-xmin`, `-xmax`, `-ymin`, and `-ymax`, like only show 100*100 pixels from a 132*10000 DSSP xpm by setting `-xmin 100 -xmax 200 -ymin 200 -ymax 300`.
 
     :Parameters:
@@ -150,12 +150,46 @@ class xpm_show(Command):
             y_new (List[float]): the Y data after interpolation
             matrix_new (List[List[float]]): the matrix values after interpolation
         """
-        # interp2d : linear, cubic, quintic
-        ip_func = interp2d(xaxis, yaxis, matrix, kind=method)
-        # ip_func = RectBivariateSpline(xaxis, yaxis, matrix)#, kx=3, ky=3)
+        # RectBivariateSpline : linear(1), cubic(3), quintic(5)
+        kind_map = {"linear": 1, "cubic": 3, "quintic": 5}
+        if method not in kind_map:
+            self.error(
+                f"interpolation method '{method}' is not supported. "
+                f"Supported methods: {', '.join(kind_map.keys())}"
+            )
+        k = kind_map[method]
+
+        # RectBivariateSpline requires strictly increasing x and y
+        # yaxis may be descending (high to low) or ascending depending on caller
+        if np.all(np.diff(yaxis) < 0):
+            yaxis = yaxis[::-1]
+            matrix = matrix[::-1]
+
+        # xaxis/yaxis may contain duplicate values (e.g. when length > pixels),
+        # deduplicate while keeping corresponding matrix rows/columns
+        x_arr = np.array(xaxis)
+        x_unique, x_idx = np.unique(x_arr, return_index=True)
+        x_idx_sorted = np.sort(x_idx)
+        xaxis_clean = x_arr[x_idx_sorted]
+        matrix_np = np.array(matrix)
+        matrix_cols = matrix_np[:, x_idx_sorted]
+
+        y_arr = np.array(yaxis)
+        y_unique, y_idx = np.unique(y_arr, return_index=True)
+        y_idx_sorted = np.sort(y_idx)
+        yaxis_clean = y_arr[y_idx_sorted]
+        matrix_clean = matrix_cols[y_idx_sorted, :]
+
+        # RectBivariateSpline expects z transposed relative to interp2d
+        ip_func = RectBivariateSpline(
+            xaxis_clean, yaxis_clean, matrix_clean.T, kx=k, ky=k
+        )
+
         x_new = np.linspace(np.min(xaxis), np.max(xaxis), ip_fold * len(xaxis))
         y_new = np.linspace(np.min(yaxis), np.max(yaxis), ip_fold * len(yaxis))
-        matrix_new = ip_func(x_new, y_new)
+
+        # transpose result back to match original orientation
+        matrix_new = ip_func(x_new, y_new).T
         return x_new, y_new, matrix_new
 
     def hex2rgb(self, value):
@@ -179,13 +213,13 @@ class xpm_show(Command):
             value_matrix (List[List[float]]): image value matrix after cutting
         """
 
-        if self.parm.xmin != None and not isinstance(self.parm.xmin, int):
+        if self.parm.xmin is not None and not isinstance(self.parm.xmin, int):
             self.parm.xmin = int(self.parm.xmin)
-        if self.parm.xmax != None and not isinstance(self.parm.xmax, int):
+        if self.parm.xmax is not None and not isinstance(self.parm.xmax, int):
             self.parm.xmax = int(self.parm.xmax)
-        if self.parm.ymin != None and not isinstance(self.parm.ymin, int):
+        if self.parm.ymin is not None and not isinstance(self.parm.ymin, int):
             self.parm.ymin = int(self.parm.ymin)
-        if self.parm.ymax != None and not isinstance(self.parm.ymax, int):
+        if self.parm.ymax is not None and not isinstance(self.parm.ymax, int):
             self.parm.ymax = int(self.parm.ymax)
 
         if len(xaxis) != len(value_matrix[0]) or len(yaxis) != len(value_matrix):
@@ -193,13 +227,13 @@ class xpm_show(Command):
                 f"unequal size detected in image splitting: xaxis ({len(xaxis)}), yaxis ({len(yaxis)}), value_matrix ({len(value_matrix[0])}*{len(value_matrix)})"
             )
 
-        if self.parm.xmin == None:
+        if self.parm.xmin is None:
             self.parm.xmin = 0
-        if self.parm.xmax == None:
+        if self.parm.xmax is None:
             self.parm.xmax = len(xaxis)
-        if self.parm.ymin == None:
+        if self.parm.ymin is None:
             self.parm.ymin = 0
-        if self.parm.ymax == None:
+        if self.parm.ymax is None:
             self.parm.ymax = len(yaxis)
 
         xmin, xmax = self.parm.xmin, self.parm.xmax
@@ -288,7 +322,7 @@ class xpm_show(Command):
 
             if self.parm.engine == "matplotlib":
                 if mode in ["pcolormesh", "3d", "contour"]:
-                    if interpolation != None:
+                    if interpolation is not None:
                         if self.file.type != "Continuous":
                             self.warn(
                                 f"you are applying interpolation to {self.file.type} type of XPM. It should not be, but DIT would do it. BE CAREFUL for what you get !"
@@ -318,7 +352,7 @@ class xpm_show(Command):
                     fig.final(self.parm.output, self.parm.noshow)
 
             elif self.parm.engine == "plotly":
-                if interpolation != None:
+                if interpolation is not None:
                     if self.file.type != "Continuous":
                         self.warn(
                             f"you are applying interpolation to {self.file.type} type of XPM. It should not be, but DIT would do it. BE CAREFUL for what you get !"
@@ -340,7 +374,7 @@ class xpm_show(Command):
                     fig.final(self.parm.output, self.parm.noshow)
 
             elif self.parm.engine == "gnuplot":
-                if interpolation != None:
+                if interpolation is not None:
                     if self.file.type != "Continuous":
                         self.warn(
                             f"you are applying interpolation to {self.file.type} type of XPM. It should not be, but DIT would do it. BE CAREFUL for what you get !"
@@ -357,7 +391,7 @@ class xpm_show(Command):
                 fig.final(self.parm.output, self.parm.noshow)
 
             elif self.parm.engine == "plotext":
-                if interpolation != None:
+                if interpolation is not None:
                     self.warn(
                         "plotext engine do not support interpolation now, ignored it"
                     )

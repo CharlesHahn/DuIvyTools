@@ -376,7 +376,7 @@ class XPMS(log):
 
     def get_time_series(self) -> List[float]:
         """parsing time infos from xpm titles"""
-        times: float = []
+        times: List[float] = []
         for xpm in self:
             if xpm.title.startswith("t="):
                 times.append(int(xpm.title[2:-2]))
