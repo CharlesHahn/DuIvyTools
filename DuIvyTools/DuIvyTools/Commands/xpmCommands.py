@@ -9,6 +9,7 @@ import os
 import sys
 from typing import List, Union
 
+import numpy as np
 from scipy.interpolate import RectBivariateSpline
 
 base = os.path.dirname(os.path.realpath(os.path.join(__file__, "..")))
@@ -473,9 +474,9 @@ class xpm2csv(Command):
             for y, y_value in enumerate(xpm.yaxis):
                 for x, x_value in enumerate(xpm.xaxis):
                     z_value = xpm.value_matrix[y][x]
-                    x_value *= self.parm.xshrink + self.parm.xplus
-                    y_value *= self.parm.yshrink + self.parm.yplus
-                    z_value *= self.parm.zshrink + self.parm.zplus
+                    x_value = x_value * self.parm.xshrink + self.parm.xplus
+                    y_value = y_value * self.parm.yshrink + self.parm.yplus
+                    z_value = z_value * self.parm.zshrink + self.parm.zplus
                     fo.write(f"{x_value:.6f},{y_value:.6f},{z_value:.6f}\n")
         self.info(
             f"extract data from {xpm.xpmfile} and saved into {self.parm.output} successfully"
@@ -647,7 +648,7 @@ class xpm_diff(Command):
         xpm.yaxis = [y * self.parm.yshrink + self.parm.yplus for y in xpm.yaxis]
         for y, _ in enumerate(xpm.yaxis):
             for x, _ in enumerate(xpm.xaxis):
-                xpm.value_matrix[y][x] *= self.parm.zshrink + self.parm.zplus
+                xpm.value_matrix[y][x] = xpm.value_matrix[y][x] * self.parm.zshrink + self.parm.zplus
         xpm.save(self.parm.output)
 
 
@@ -752,5 +753,5 @@ class xpm_merge(Command):
         out.yaxis = [y * self.parm.yshrink + self.parm.yplus for y in out.yaxis]
         for y, _ in enumerate(out.yaxis):
             for x, _ in enumerate(out.xaxis):
-                out.value_matrix[y][x] *= self.parm.zshrink + self.parm.zplus
+                out.value_matrix[y][x] = out.value_matrix[y][x] * self.parm.zshrink + self.parm.zplus
         out.save(self.parm.output)
