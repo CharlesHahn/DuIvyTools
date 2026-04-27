@@ -378,7 +378,11 @@ class ScatterPlotly(ParentPlotly):
                         marker=dict(
                             colorbar={
                                 "title": {"text": kwargs["zlabel"]},
-                                "tickformat": f".{kwargs['z_precision']}f",
+                                **(
+                                    {"tickformat": f".{kwargs['z_precision']}f"}
+                                    if kwargs["z_precision"] is not None
+                                    else {}
+                                ),
                             },
                             opacity=kwargs["alpha"],
                             color=colors,
@@ -496,7 +500,11 @@ class BoxPlotly(ParentPlotly):
                         marker=dict(
                             colorbar={
                                 "title": {"text": kwargs["zlabel"]},
-                                "tickformat": f".{kwargs['z_precision']}f",
+                                **(
+                                    {"tickformat": f".{kwargs['z_precision']}f"}
+                                    if kwargs["z_precision"] is not None
+                                    else {}
+                                ),
                             },
                             opacity=kwargs["alpha"],
                             color=kwargs["color_list"][i],
