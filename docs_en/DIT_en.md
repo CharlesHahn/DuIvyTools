@@ -1,6 +1,6 @@
 # DuIvyTools v0.6.0
 
-![](../static/cover.png)
+![](../docs/static/cover.png)
 
 
 Welcome to DuIvyTools documentation! DuIvyTools (DIT) is a command-line based MD analysis tool for quick visualization and analysis of GROMACS result files.
@@ -21,7 +21,7 @@ Compared to v0.5.0, v0.6.0 includes the following updates and improvements:
 
 If you encounter any problems or have questions while using DIT, please create a new topic in the DuIvy Feishu (Lark) group for discussion. For urgent issues, you can also contact the author through the DuIvy WeChat official account.
 
-![Feishu(Lark)](../static/feishu.png)
+![Feishu(Lark)](../docs/static/feishu.png)
 
 
 
@@ -301,19 +301,19 @@ Compare data from one or more xvg files using line plots. Select columns with `-
 dit xvg_compare -f energy.xvg -c 1,3 -l "LJ(SR)" "Coulomb(SR)" -xs 0.001 -x "Time(ns)" -smv
 ```
 
-![xvg_compare matplotlib](../static/dit_xvg_compare_matplotlib.png)
+![xvg_compare matplotlib](../docs/static/dit_xvg_compare_matplotlib.png)
 
 ```bash
 dit xvg_compare -f energy.xvg -c 1,3 -l "LJ(SR)" "Coulomb(SR)" -xs 0.001 -x "Time(ns)" -smv -eg plotly
 ```
 
-![xvg_compare matplotlib](../static/dit_xvg_compare_plotly.png)
+![xvg_compare matplotlib](../docs/static/dit_xvg_compare_plotly.png)
 
 ```bash
 dit xvg_compare -f energy.xvg -c 1,3 -l "LJ(SR)" "Coulomb(SR)" -xs 0.001 -x "Time(ns)" -smv -eg gnuplot
 ```
 
-![xvg_compare matplotlib](../static/dit_xvg_compare_gnuplot.png)
+![xvg_compare matplotlib](../docs/static/dit_xvg_compare_gnuplot.png)
 
 To export data to CSV:
 
@@ -350,19 +350,19 @@ Display data distribution. Default shows distribution histogram. Use `-m pdf` fo
 dit xvg_show_distribution -f gyrate.xvg -c 1,2 
 ```
 
-![dit_xvg_show_distribution_matplotlib](../static/dit_xvg_show_distribution_matplotlib.png)
+![dit_xvg_show_distribution_matplotlib](../docs/static/dit_xvg_show_distribution_matplotlib.png)
 
 ```bash
 dit xvg_show_distribution -f gyrate.xvg -c 1,2 -m pdf -eg plotly
 ```
 
-![dit_xvg_show_distribution_plotly](../static/dit_xvg_show_distribution_plotly.png)
+![dit_xvg_show_distribution_plotly](../docs/static/dit_xvg_show_distribution_plotly.png)
 
 ```bash
 dit xvg_show_distribution -f gyrate.xvg -c 1,2 -m cdf -eg gnuplot
 ```
 
-![dit_xvg_show_distribution_gnuplot](../static/dit_xvg_show_distribution_gnuplot.png)
+![dit_xvg_show_distribution_gnuplot](../docs/static/dit_xvg_show_distribution_gnuplot.png)
 
 
 
@@ -374,7 +374,7 @@ Create stacked area plots for selected data columns.
 dit xvg_show_stack -f dssp_sc.xvg -c 2-7 -xs 0.001 -x "Time (ns)"
 ```
 
-![dit_xvg_show_stack](../static/dit_xvg_show_stack.png)
+![dit_xvg_show_stack](../docs/static/dit_xvg_show_stack.png)
 
 
 
@@ -386,7 +386,7 @@ Create scatter plots from two or three columns (third column for color mapping).
 dit xvg_show_scatter -f gyrate.xvg -c 1,2,0 -zs 0.001 -z "Time(ns)" -eg plotly --x_precision 2 --y_precision 2
 ```
 
-![dit_xvg_show_scatter_plotly](../static/dit_xvg_show_scatter_plotly.png)
+![dit_xvg_show_scatter_plotly](../docs/static/dit_xvg_show_scatter_plotly.png)
 
 Note: Although column 0 (time) is selected, in scatter plots it's used for color mapping (third dimension), so adjustments use `-zs 0.001 -z Time(ns)`.
 
@@ -414,19 +414,19 @@ Compare data using violin and scatter plots. Similar to `xvg_compare` but with d
 dit xvg_box_compare -f gyrate.xvg -c 1,2,3,4 -l Gyrate Gx Gy Gz -z "Time(ns)" -zs 0.001
 ```
 
-![dit_xvg_box_compare_matplotlib](../static/dit_xvg_box_compare_matplotlib.png)
+![dit_xvg_box_compare_matplotlib](../docs/static/dit_xvg_box_compare_matplotlib.png)
 
 ```bash
 dit xvg_box_compare -f gyrate.xvg -c 1,2,3,4 -l Gyrate Gx Gy Gz -z "Time(ns)" -zs 0.001 -eg plotly
 ```
 
-![dit_xvg_box_compare_plotly](../static/dit_xvg_box_compare_plotly.png)
+![dit_xvg_box_compare_plotly](../docs/static/dit_xvg_box_compare_plotly.png)
 
 ```bash
 dit xvg_box_compare -f gyrate.xvg -c 1,2,3,4 -l Gyrate Gx Gy Gz -z "Time(ns)" -zs 0.001 -eg gnuplot -ymin 2
 ```
 
-![dit_xvg_box_compare_gnuplot](../static/dit_xvg_box_compare_gnuplot.png)
+![dit_xvg_box_compare_gnuplot](../docs/static/dit_xvg_box_compare_gnuplot.png)
 
 Hide scatter plots with `-m withoutScatter`:
 
@@ -434,7 +434,7 @@ Hide scatter plots with `-m withoutScatter`:
 dit xvg_box_compare -f gyrate.xvg -c 1,2,3,4 -l Gyrate Gx Gy Gz -z "Time(ns)" -zs 0.001 -m withoutScatter 
 ```
 
-![dit_xvg_box_compare_matplotlib](../static/dit_xvg_box_compare_matplotlib2.png)
+![dit_xvg_box_compare_matplotlib](../docs/static/dit_xvg_box_compare_matplotlib2.png)
 
 
 
@@ -458,7 +458,7 @@ This command calculates averages for each file, then computes mean and error for
 dit xvg_ave_bar -f bar_0_0.xvg,bar_0_1.xvg bar_1_0.xvg,bar_1_1.xvg -c 1,2 -l MD_0 MD_1 -al Hbond Pair -csv hhh.csv -y Number
 ```
 
-![dit_xvg_ave_bar_matplotlib](../static/dit_xvg_ave_bar_matplotlib.png)
+![dit_xvg_ave_bar_matplotlib](../docs/static/dit_xvg_ave_bar_matplotlib.png)
 
 `-al` sets X-axis labels, `-csv` exports calculated data.
 
@@ -472,7 +472,7 @@ Convert phi/psi dihedral angle data from `gmx rama` to Ramachandran plot.
 dit xvg_rama -f rama.xvg
 ```
 
-![dit_xvg_rama](../static/dit_xvg_rama.png)
+![dit_xvg_rama](../docs/static/dit_xvg_rama.png)
 
 
 
@@ -490,49 +490,49 @@ Use `-xmin`, `-xmax`, `-ymin`, `-ymax` to crop the matrix by pixel index.
 dit xpm_show -f DSSP.xpm -xmin 1000 -xmax 2001
 ```
 
-![dit_xpm_show_dssp](../static/dit_xpm_show_dssp.png)
+![dit_xpm_show_dssp](../docs/static/dit_xpm_show_dssp.png)
 
 ```bash
 dit xpm_show -f fel.xpm
 ```
 
-![dit_xpm_show_fel](../static/dit_xpm_show_fel.png)
+![dit_xpm_show_fel](../docs/static/dit_xpm_show_fel.png)
 
 ```bash
 dit xpm_show -f fel.xpm -cmap Blues_r -ip bilinear
 ```
 
-![dit_xpm_show_fel2](../static/dit_xpm_show_fel2.png)
+![dit_xpm_show_fel2](../docs/static/dit_xpm_show_fel2.png)
 
 ```bash
 dit xpm_show -f fel.xpm -m pcolormesh -ip linear -ipf 5 -cmap Greys_r
 ```
 
-![dit_xpm_show_fel3](../static/dit_xpm_show_fel3.png)
+![dit_xpm_show_fel3](../docs/static/dit_xpm_show_fel3.png)
 
 ```bash
 dit xpm_show -f fel.xpm -m 3d --x_precision 1 --y_precision 2 --z_precision 0 -cmap summer --colorbar_location bottom 
 ```
 
-![dit_xpm_show_fel4](../static/dit_xpm_show_fel4.png)
+![dit_xpm_show_fel4](../docs/static/dit_xpm_show_fel4.png)
 
 ```bash
 dit xpm_show -f fel.xpm -m contour -cmap jet 
 ```
 
-![dit_xpm_show_fel5](../static/dit_xpm_show_fel5.png)
+![dit_xpm_show_fel5](../docs/static/dit_xpm_show_fel5.png)
 
 ```bash
 dit xpm_show -f fel.xpm -eg plotly -m 3d -cmap spectral
 ```
 
-![dit_xpm_show_fel6](../static/dit_xpm_show_fel6.png)
+![dit_xpm_show_fel6](../docs/static/dit_xpm_show_fel6.png)
 
 ```bash
 dit xpm_show -f fel.xpm -eg gnuplot -m 3d
 ```
 
-![dit_xpm_show_fel7](../static/dit_xpm_show_fel7.png)
+![dit_xpm_show_fel7](../docs/static/dit_xpm_show_fel7.png)
 
 Since v0.6.0, custom tick count is supported:
 
@@ -540,7 +540,7 @@ Since v0.6.0, custom tick count is supported:
 dit xpm_show -f dccm.xpm --x_numticks 5 --y_numticks 5 --z_numticks 5 -zmin -1
 ```
 
-![dit_xpm_show_fel7](../static/dit_xpm_show_8.png)
+![dit_xpm_show_fel7](../docs/static/dit_xpm_show_8.png)
 
 
 ### xpm2csv
@@ -807,4 +807,4 @@ Cite DuIvyTools by:
 
 A lot of time and effort has been spent developing DuIvyTools. If you find it useful, consider supporting its continued development.
 
-![reward](../static/reward.png)
+![reward](../docs/static/reward.png)
