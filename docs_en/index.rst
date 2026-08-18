@@ -8,8 +8,8 @@ DuIvyTools (DIT) is a simple analysis and visualization tool for GROMACS molecul
 .. toctree::
    :maxdepth: 3
 
-   DIT_en
-   DIT_old_en
+   DIT
+   DIT_old
 
 
 Indices and tables
